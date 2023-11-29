@@ -58,5 +58,11 @@ module Sagittarius
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Autofix after generators
+    config.generators.after_generate do |files|
+      parsable_files = files.filter { |file| file.end_with?('.rb') }
+      system("bundle exec rubocop -A --fail-level=E #{parsable_files.shelljoin}", exception: true)
+    end
   end
 end
