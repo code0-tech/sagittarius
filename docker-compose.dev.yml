@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  postgresql:
+    image: postgres:16.1
+    environment:
+      POSTGRES_USER: "sagittarius"
+      POSTGRES_PASSWORD: "sagittarius"
+      POSTGRES_DB: "postgres"
+    volumes:
+      - database:/var/lib/postgresql/data/
+      - ./tooling/init-dev-db:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432"
+  redis:
+    image: redis:7.0.11-alpine
+    command: redis-server --save 1 1 --loglevel warning
+    volumes:
+      - redis:/data
+    ports:
+      - "6380:6379"
+
+volumes:
+  database:
+  redis:

@@ -1,0 +1,69 @@
+require:
+  - ./tooling/rubocop/rubocop
+  - rubocop-factory_bot
+  - rubocop-graphql
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+
+GraphQL/ExtractInputType:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Naming/BlockForwarding:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+# Recreated in Sagittarius/Migration/CreateTableWithTimestamps to account for timezones
+Rails/CreateTableWithTimestamps:
+  Enabled: false
+
+# Prefer foreign keys on database layer
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+# Disabled for now, I18N will follow later
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/graphql/**/*
+    - spec/requests/graphql/**/*
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/ExpectChange:
+  EnforcedStyle: block
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+Style/ArgumentsForwarding:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: never
+
+Style/SymbolProc:
+  Exclude:
+    - db/migrate/*
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
