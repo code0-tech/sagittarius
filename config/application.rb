@@ -13,6 +13,11 @@ module Sagittarius
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
 
+    # Use SQL instead of Active Record's schema dumper when creating the database.
+    # This is necessary if your schema can't be completely dumped by the schema dumper,
+    # like if you have constraints or database-specific column types
+    config.active_record.schema_format = :sql
+
     Rails.application.default_url_options =
       if ENV['SAGITTARIUS_RAILS_HOSTNAME'].nil?
         {
