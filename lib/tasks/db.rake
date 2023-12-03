@@ -24,5 +24,8 @@ namespace :sagittarius do
     Rake::Task['db:schema:dump'].enhance do
       Rake::Task['sagittarius:db:clean_structure_sql'].invoke
     end
+    Rake::Task['db:prepare'].enhance do
+      Rake::Task['sagittarius:db:clean_structure_sql'].invoke
+    end
   end
 end
