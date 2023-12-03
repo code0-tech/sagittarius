@@ -26,7 +26,7 @@ RSpec.describe RuboCop::Cop::Sagittarius::Migration::VersionedClass do
 
   context 'when inside of migration' do
     before do
-      allow(cop).to receive_messages(in_migration?: true, basename: '20230614193853_create_users')
+      allow(cop).to receive_messages(in_migration?: true, basename: '20231129173717_create_users')
     end
 
     it 'registers an offense when the "ActiveRecord::Migration" class is used' do

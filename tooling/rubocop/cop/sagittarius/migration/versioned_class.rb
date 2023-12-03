@@ -19,7 +19,7 @@ module RuboCop
 
           # rubocop:disable Style/NumericLiterals -- the ranges are dates, not numbers
           ALLOWED_MIGRATION_VERSIONS = {
-            2023_06_14_19_38_53.. => 1.0,
+            2023_11_29_17_37_16.. => 1.0,
           }.freeze
           # rubocop:enable Style/NumericLiterals
 
