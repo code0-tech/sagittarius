@@ -7,6 +7,10 @@ module Mutations
     input_object_class Types::BaseInputObject
     object_class Types::BaseObject
 
+    def self.inherited(subclass)
+      subclass.graphql_name subclass.name.delete_prefix('Mutations::').gsub('::', '')
+    end
+
     field :errors, [GraphQL::Types::String],
           null: false,
           description: 'Errors encountered during execution of the mutation.'
