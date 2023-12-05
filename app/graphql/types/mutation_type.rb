@@ -6,6 +6,7 @@ module Types
 
     include Sagittarius::Graphql::MountMutation
 
+    mount_mutation Mutations::Users::Login
     mount_mutation Mutations::Users::Register
 
     field :echo, GraphQL::Types::String, null: false,

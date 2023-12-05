@@ -15,4 +15,6 @@ class User < ApplicationRecord
 
   validates :firstname, length: { maximum: 50 }
   validates :lastname, length: { maximum: 50 }
+
+  has_many :user_sessions, inverse_of: :user
 end

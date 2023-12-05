@@ -21,6 +21,9 @@ module GraphqlHelpers
     return unless graphql_errors
 
     expect(graphql_errors).not_to include(a_hash_including('message' => 'Internal server error'))
+    expect(graphql_errors).not_to include(
+      a_hash_including('message' => a_string_including('Type mismatch on variable'))
+    )
   end
 
   def parsed_response
