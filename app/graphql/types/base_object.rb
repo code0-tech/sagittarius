@@ -9,5 +9,9 @@ module Types
     def id
       object.to_global_id
     end
+
+    def current_user
+      context[:current_user]
+    end
   end
 end

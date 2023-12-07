@@ -13,6 +13,8 @@ module Types
       argument :ids, [ID], required: true, description: 'IDs of the objects.'
     end
 
+    field :current_user, Types::UserType, null: true, description: 'Get the currently logged in user'
+
     field :echo, GraphQL::Types::String, null: false, description: 'Field available for use to test API access' do
       argument :message, GraphQL::Types::String, required: true, description: 'String to echo as response'
     end
