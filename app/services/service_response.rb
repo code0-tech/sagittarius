@@ -30,14 +30,15 @@ class ServiceResponse
   def to_h
     (payload || {}).merge(
       status: status,
-      message: message,
-      http_status: http_status
+      message: message
     )
   end
 
   def to_mutation_response(success_key: :object)
-    if success?
-      { success_key => payload, errors: [] }
+    return { success_key => payload, errors: [] } if success?
+
+    if payload.is_a?(ActiveModel::Errors)
+      { success_key => nil, errors: payload.full_messages }
     else
       { success_key => nil, errors: payload }
     end

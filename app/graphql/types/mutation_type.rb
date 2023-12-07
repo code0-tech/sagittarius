@@ -4,6 +4,11 @@ module Types
   class MutationType < Types::BaseObject
     description 'Root Mutation type'
 
+    include Sagittarius::Graphql::MountMutation
+
+    mount_mutation Mutations::Users::Login
+    mount_mutation Mutations::Users::Register
+
     field :echo, GraphQL::Types::String, null: false,
                                          description: 'Field available for use to test mutation API access' do
       argument :message, GraphQL::Types::String, required: true, description: 'String to echo as response'
