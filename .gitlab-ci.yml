@@ -1,0 +1,63 @@
+stages:
+  - lint
+  - test
+
+.bundle:
+  image: ruby:3.2.2
+  before_script:
+    - bundle install --jobs $(nproc)
+
+.rails:
+  extends:
+    - .bundle
+  services:
+    - postgres:16.1
+  variables:
+    POSTGRES_DB: sagittarius_test
+    POSTGRES_USER: sagittarius
+    POSTGRES_PASSWORD: sagittarius
+    SAGITTARIUS_DATABASE_HOST: postgres
+    SAGITTARIUS_DATABASE_PORT: '5432'
+    RAILS_ENV: test
+
+rubocop:
+  extends:
+    - .bundle
+  stage: lint
+  script:
+    - bundle exec rubocop
+
+rspec:
+  extends:
+    - .rails
+  stage: test
+  script:
+    - bundle exec rspec --format doc --format RspecJunitFormatter --out rspec.xml
+  coverage: '/LOC \((\d+\.\d+%)\) covered.$/'
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - tmp/coverage/index.html
+      - tmp/coverage/assets/
+    reports:
+      junit:
+        - rspec.xml
+
+db:migrate:
+  extends:
+    - .rails
+  stage: test
+  script:
+    - bundle exec rake db:migrate:reset
+    - git diff --exit-code
+
+db:rollback-and-migrate:
+  extends:
+    - .rails
+  stage: test
+  allow_failure: true
+  script:
+    - bundle exec rake db:create db:schema:load
+    - bundle exec rake db:migrate VERSION=20231203194307
+    - bundle exec rake db:migrate
+    - git diff --exit-code
