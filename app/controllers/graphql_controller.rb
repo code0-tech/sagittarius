@@ -6,13 +6,24 @@ class GraphqlController < ApplicationController
   # but you'll have to authenticate your user separately
   # protect_from_forgery with: :null_session
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def execute
+    authorization_token = request.headers['Authorization']
+
+    current_authorization = find_authorization(authorization_token)
+
+    return head :unauthorized if authorization_token.present? == current_authorization.none?
+    return head :unauthorized if current_authorization.invalid?
+    return head :forbidden if !current_authorization.mutations_allowed? && mutation? && !anonymous_mutation?
+
+    current_user = current_authorization.authorization&.user
+
     variables = prepare_variables(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
+      current_user: current_user,
     }
     result = SagittariusSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
@@ -21,6 +32,8 @@ class GraphqlController < ApplicationController
 
     handle_error_in_development(e)
   end
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   private
 
@@ -49,5 +62,48 @@ class GraphqlController < ApplicationController
     logger.error e.backtrace.join("\n")
 
     render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: :internal_server_error
+  end
+
+  def find_authorization(authorization)
+    return Authorization.new(:none, nil) if authorization.blank?
+
+    token_type, token = authorization.split(' ', 2)
+
+    case token_type
+    when 'Session'
+      Authorization.new(:session, UserSession.find_by(token: token, active: true))
+    else
+      Authorization.new(:invalid, nil)
+    end
+  end
+
+  def query(query_string = params[:query], operation_name = params[:operationName])
+    @query ||= ::GraphQL::Query.new(SagittariusSchema, query_string, operation_name: operation_name)
+  end
+
+  def mutation?
+    query.mutation?
+  end
+
+  def anonymous_mutation?
+    selections = query.selected_operation.selections
+    return false unless selections.length == 1
+
+    mutation_name = selections.first.name
+    %w[usersLogin usersRegister].include?(mutation_name)
+  end
+
+  Authorization = Struct.new(:type, :authorization) do
+    def mutations_allowed?
+      return true if session?
+
+      false
+    end
+
+    %i[none invalid session].each do |t|
+      define_method :"#{t}?" do
+        type == t
+      end
+    end
   end
 end

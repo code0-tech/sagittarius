@@ -13,7 +13,9 @@ module GraphqlHelpers
     end
   end
 
-  def post_graphql(query, variables: {}, headers: {})
+  def post_graphql(query, variables: {}, current_user: nil, headers: {})
+    headers = { authorization: "Session #{authorization_token(current_user)}" } unless current_user.nil?
+
     params = { query: query, variables: variables }
 
     post graphql_path, headers: headers, params: params
@@ -58,6 +60,13 @@ module GraphqlHelpers
 
   def graphql_errors(body = parsed_response)
     body['errors']
+  end
+
+  def authorization_token(current_user)
+    session = UserSession.find_by(user: current_user, active: true)
+    session = create(:user_session, user: current_user) if session.nil?
+
+    session.token
   end
 
   def expect_graphql_errors_to_be_empty
