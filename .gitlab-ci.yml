@@ -11,6 +11,7 @@ stages:
   image: ghcr.io/code0-tech/build-images/ruby-3.2.2-postgres-16.1:5.1
   before_script:
     - source ~/.asdf/asdf.sh
+    - bundle config build.pg --with-pg-config=$(asdf where postgres)/bin/pg_config
     - !reference [.bundle, before_script]
   services:
     - postgres:16.1
