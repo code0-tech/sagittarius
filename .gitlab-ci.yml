@@ -36,6 +36,11 @@ rspec:
   stage: test
   script:
     - bundle exec rspec --format doc --format RspecJunitFormatter --out rspec.xml
+    - |
+      echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
+      echo "Coverage report available at https://code0-tech.gitlab.io/-/sagittarius/-/jobs/$CI_JOB_ID/artifacts/tmp/coverage/index.html"
+      echo "Test summary available at https://gitlab.com/code0-tech/sagittarius/-/pipelines/$CI_PIPELINE_ID/test_report"
+      echo -e "\e[0Ksection_end:`date +%s`:glpa_summary\r\e[0K"
   coverage: '/LOC \((\d+\.\d+%)\) covered.$/'
   artifacts:
     expire_in: 7 days
