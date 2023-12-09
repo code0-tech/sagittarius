@@ -9,8 +9,9 @@ stages:
 
 .rails:
   image: ghcr.io/code0-tech/build-images/ruby-3.2.2-postgres-16.1:5.1
-  extends:
-    - .bundle
+  before_script:
+    - source ~/.asdf/asdf.sh
+    - !reference [.bundle, before_script]
   services:
     - postgres:16.1
   variables:
