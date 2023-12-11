@@ -18,6 +18,26 @@ module Sagittarius
     # like if you have constraints or database-specific column types
     config.active_record.schema_format = :sql
 
+    # Enable sql log tags
+    config.active_record.query_log_tags_enabled = true
+    config.active_record.query_log_tags = [
+      :controller,
+      :job,
+      {
+        correlation_id: -> { Sagittarius::Context.correlation_id },
+        user_id: -> { Sagittarius::Context.current&.[](:user)&.[](:id) },
+        user_name: -> { Sagittarius::Context.current&.[](:user)&.[](:username) },
+        application: lambda {
+                       if Rails.const_defined?('Console')
+                         'console'
+                       else
+                         Sagittarius::Context.current&.[](:application) || 'unknown'
+                       end
+                     },
+      }
+    ]
+    ActiveRecord::QueryLogs.prepend_comment = true
+
     Rails.application.default_url_options =
       if ENV['SAGITTARIUS_RAILS_HOSTNAME'].nil?
         {
@@ -36,6 +56,9 @@ module Sagittarius
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
+
+    # Configure active job to use sidekiq
+    config.active_job.queue_adapter = :sidekiq
 
     # Generated with 'bin/rails db:encryption:init'
     # Use some random generated keys, production will override this with the environment variables

@@ -45,6 +45,7 @@ group :development, :test do
   gem 'shoulda-matchers', '~> 5.3'
 
   gem 'rspec_junit_formatter', '~> 0.6.0', require: false
+  gem 'rspec-parameterized', '~> 1.0'
 
   gem 'database_cleaner-active_record', '~> 2.1'
 
@@ -66,3 +67,5 @@ gem 'graphql', '~> 2.1'
 gem 'seed-fu', '~> 2.3'
 
 gem 'sidekiq', '~> 7.1'
+
+gem 'lograge', '~> 0.14.0'

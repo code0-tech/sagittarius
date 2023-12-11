@@ -25,12 +25,20 @@ class GraphqlController < ApplicationController
     context = {
       current_user: current_user,
     }
-    result = SagittariusSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
-    render json: result
-  rescue StandardError => e
-    raise e unless Rails.env.development?
 
-    handle_error_in_development(e)
+    Sagittarius::Context.with_context(user: { id: current_user&.id, username: current_user&.username }) do
+      result = SagittariusSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
+      render json: result
+    rescue StandardError => e
+      logger.error message: e.message, backtrace: e.backtrace, exception_class: e.class
+
+      if Rails.env.local?
+        render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} },
+               status: :internal_server_error
+      else
+        render json: { message: 'Internal server error' }, status: :internal_server_error
+      end
+    end
   end
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/CyclomaticComplexity
@@ -55,13 +63,6 @@ class GraphqlController < ApplicationController
     else
       raise ArgumentError, "Unexpected parameter: #{variables_param}"
     end
-  end
-
-  def handle_error_in_development(e)
-    logger.error e.message
-    logger.error e.backtrace.join("\n")
-
-    render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: :internal_server_error
   end
 
   def find_authorization(authorization)

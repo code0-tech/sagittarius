@@ -58,6 +58,10 @@ Style/ArgumentsForwarding:
 Style/Documentation:
   Enabled: false
 
+Style/FormatStringToken:
+  Exclude:
+    - spec/tooling/rubocop/**/*
+
 Style/HashSyntax:
   EnforcedShorthandSyntax: never
 
