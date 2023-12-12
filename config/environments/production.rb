@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/integer/time'
+require_relative '../../lib/sagittarius/utils'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -44,7 +45,7 @@ Rails.application.configure do
   # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = Sagittarius::Utils.to_boolean(ENV.fetch('RAILS_FORCE_SSL', nil), default: true)
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new($stdout)
