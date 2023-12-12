@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UserLoginService
+  include Sagittarius::Loggable
+
   attr_reader :args
 
   def initialize(args)
@@ -9,14 +11,19 @@ class UserLoginService
 
   def execute
     user = User.authenticate_by(args)
-    return ServiceResponse.error(message: 'Invalid login data', payload: ['Invalid login data']) if user.nil?
+    if user.nil?
+      logger.info(message: 'Failed login', username: args[:username], email: args[:email])
+      return ServiceResponse.error(message: 'Invalid login data', payload: ['Invalid login data'])
+    end
 
     user_session = UserSession.create(user: user)
     unless user_session.valid?
+      logger.warn(message: 'Failed to create valid session for user', user_id: user.id, username: user.username)
       return ServiceResponse.error(message: 'UserSession is invalid',
                                    payload: user_session.errors)
     end
 
+    logger.info(message: 'Login to user', user_id: user.id, username: user.username)
     ServiceResponse.success(payload: user_session)
   end
 end
