@@ -62,6 +62,10 @@ group :development do
   # gem "spring"
 end
 
+group :test do
+  gem "test-prof", "~> 1.0"
+end
+
 gem 'graphql', '~> 2.1'
 
 gem 'seed-fu', '~> 2.3'
