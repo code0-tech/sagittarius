@@ -101,7 +101,11 @@ class GraphqlController < ApplicationController
       false
     end
 
-    %i[none invalid session].each do |t|
+    def invalid?
+      (authorization.nil? && !none?) || type == :invalid
+    end
+
+    %i[none session].each do |t|
       define_method :"#{t}?" do
         type == t
       end

@@ -21,5 +21,9 @@ module Mutations
     field :errors, [GraphQL::Types::String],
           null: false,
           description: 'Errors encountered during execution of the mutation.'
+
+    def current_user
+      context[:current_user]
+    end
   end
 end

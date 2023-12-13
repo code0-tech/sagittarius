@@ -97,6 +97,7 @@ GEM
       irb (>= 1.5.0)
       reline (>= 0.3.1)
     debug_inspector (1.1.0)
+    declarative_policy (1.1.0)
     diff-lcs (1.5.0)
     docile (1.4.0)
     drb (2.2.0)
@@ -319,6 +320,7 @@ DEPENDENCIES
   bootsnap
   database_cleaner-active_record (~> 2.1)
   debug
+  declarative_policy (~> 1.1)
   factory_bot_rails (~> 6.2)
   graphql (~> 2.1)
   lograge (~> 0.14.0)
