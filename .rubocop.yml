@@ -11,6 +11,10 @@ AllCops:
 GraphQL/ExtractInputType:
   Enabled: false
 
+Lint/AmbiguousBlockAssociation:
+  AllowedMethods: [change]
+
+
 Metrics/AbcSize:
   Enabled: false
 

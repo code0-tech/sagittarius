@@ -46,7 +46,7 @@ module GraphqlHelpers
     keys = path.map { |segment| segment.is_a?(Integer) ? segment : GraphqlHelpers.graphql_field_name(segment) }
 
     keys.reduce(data) do |acc, cur|
-      if acc.is_a?(Array) && key.is_a?(Integer)
+      if acc.is_a?(Array) && cur.is_a?(Integer)
         acc[cur]
       elsif acc.is_a?(Array)
         acc.compact.pluck(cur)

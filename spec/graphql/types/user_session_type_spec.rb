@@ -8,6 +8,7 @@ RSpec.describe SagittariusSchema.types['UserSession'] do
       id
       user
       token
+      active
     ]
   end
 

@@ -40,7 +40,7 @@ class ServiceResponse
     if payload.is_a?(ActiveModel::Errors)
       { success_key => nil, errors: payload.full_messages }
     else
-      { success_key => nil, errors: payload }
+      { success_key => nil, errors: Array.wrap(payload) }
     end
   end
 end
