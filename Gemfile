@@ -41,6 +41,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 6.0'
 
   gem 'factory_bot_rails', '~> 6.2'
+  gem 'test-prof', '~> 1.0'
 
   gem 'shoulda-matchers', '~> 5.3'
 
@@ -60,10 +61,6 @@ group :development do
   gem 'rubocop-rspec', '~> 2.22', require: false
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
-end
-
-group :test do
-  gem "test-prof", "~> 1.0"
 end
 
 gem 'graphql', '~> 2.1'
