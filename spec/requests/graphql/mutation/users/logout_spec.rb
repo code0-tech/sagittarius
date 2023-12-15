@@ -57,14 +57,14 @@ RSpec.describe 'usersLogout Mutation' do
       it 'raises validation error' do
         expect(graphql_errors).to include(
           a_hash_including(
-            'message' => a_string_including("Could not coerce value \"#{user_session_id}\" to UserSessionID")
+            'message' => a_string_including("\"#{user_session_id}\" is not a valid Global ID")
           )
         )
       end
     end
 
     context 'when session id is does not exist' do
-      let(:user_session_id) { 'gid://Sagittarius/UserSession/0' }
+      let(:user_session_id) { 'gid://sagittarius/UserSession/0' }
 
       it 'raises validation error' do
         expect(graphql_data_at(:users_logout, :errors)).to include('Invalid user session')
