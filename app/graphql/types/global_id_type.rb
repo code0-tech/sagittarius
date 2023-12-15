@@ -5,14 +5,29 @@ module Types
     graphql_name 'GlobalID'
     description 'A global identifier for an entity'
 
-    def self.coerce_input(input_value, _context)
-      GlobalID.parse(input_value)
+    def self.coerce_input(value, _context)
+      return if value.nil?
+
+      gid = GlobalID.parse(value)
+      raise GraphQL::CoercionError, "#{value.inspect} is not a valid Global ID" if gid.nil?
+      raise GraphQL::CoercionError, "#{value.inspect} is not a Sagittarius Global ID" unless gid.app == GlobalID.app
+
+      gid
     end
 
     def self.coerce_result(value, _context)
-      value.to_global_id.to_s
+      case value
+      when GlobalID
+        value.to_s
+      when URI::GID
+        GlobalID.new(value).to_s
+      else
+        raise GraphQL::CoercionError, "Invalid ID. Cannot coerce instances of #{value.class}"
+      end
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def self.[](model_class)
       @id_types ||= {}
       @id_types[model_class] ||= Class.new(self) do
@@ -38,12 +53,16 @@ module Types
 
         define_singleton_method(:suitable?) do |gid|
           next true if gid.nil?
+          next false unless gid.respond_to?(:model_name)
+          next false unless gid.respond_to?(:model_class)
 
           gid.model_name.safe_constantize.present? &&
             gid.model_class.ancestors.include?(model_class)
         end
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def self.model_name_to_graphql_name(model_name)
       "#{model_name.gsub('::', '')}ID"

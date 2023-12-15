@@ -11,6 +11,7 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'factory_bot'
 require 'test_prof/factory_prof/nate_heckler'
+require 'test_prof/recipes/rspec/let_it_be'
 require 'sidekiq/testing'
 Sidekiq.logger.level = Logger::WARN
 # Requires supporting ruby files with custom matchers and macros, etc, in

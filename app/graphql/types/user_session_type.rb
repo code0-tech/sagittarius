@@ -10,6 +10,8 @@ module Types
     field :token, String, null: true, description: 'Token belonging to the session, only present on creation'
     field :user, Types::UserType, null: false, description: 'User that belongs to the session'
 
+    timestamps
+
     def token
       object.token if object.id_previously_changed?
     end

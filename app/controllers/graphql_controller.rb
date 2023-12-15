@@ -24,6 +24,7 @@ class GraphqlController < ApplicationController
     operation_name = params[:operationName]
     context = {
       current_user: current_user,
+      current_authorization: current_authorization.authorization,
     }
 
     Sagittarius::Context.with_context(user: { id: current_user&.id, username: current_user&.username }) do
