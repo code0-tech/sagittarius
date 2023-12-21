@@ -2,6 +2,11 @@ stages:
   - lint
   - test
 
+include:
+  - project: code0-tech/telescopium
+    ref: build-branch
+    file: ci-template.gitlab-ci.yml
+
 .bundle:
   image: ruby:3.2.2
   before_script:
