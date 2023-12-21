@@ -9,14 +9,6 @@ module Types
     mount_mutation Mutations::Users::Login
     mount_mutation Mutations::Users::Logout
     mount_mutation Mutations::Users::Register
-
-    field :echo, GraphQL::Types::String, null: false,
-                                         description: 'Field available for use to test mutation API access' do
-      argument :message, GraphQL::Types::String, required: true, description: 'String to echo as response'
-    end
-
-    def echo(message:)
-      message
-    end
+    mount_mutation Mutations::Echo
   end
 end

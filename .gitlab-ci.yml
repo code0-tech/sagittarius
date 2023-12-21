@@ -30,6 +30,14 @@ rubocop:
   script:
     - bundle exec rubocop
 
+graphql_docs:
+  extends:
+    - .rails
+  stage: lint
+  script:
+    - bundle exec rake graphql:compile_docs
+    - git diff --exit-code
+
 rspec:
   extends:
     - .rails

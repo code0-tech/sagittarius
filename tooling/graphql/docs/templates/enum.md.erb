@@ -1,0 +1,11 @@
+---
+title: <%= object[:name] %>
+---
+
+<%= object[:description] %>
+
+| Value | Description |
+|-------|-------------|
+<% object[:values].each do |value| -%>
+| `<%= value[:name] %>` | <%= value[:description] %> |
+<% end -%>
