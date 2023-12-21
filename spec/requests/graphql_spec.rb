@@ -32,7 +32,9 @@ RSpec.describe 'Graphql' do
       let(:query) do
         <<~QUERY
           mutation {
-            echo(message: "#{echo_message}")
+            echo(input: { message: "#{echo_message}" }) {
+              message
+            }
           }
         QUERY
       end
@@ -142,7 +144,9 @@ RSpec.describe 'Graphql' do
       let(:query) do
         <<~QUERY
           mutation {
-            echo(message: "#{echo_message}")
+            echo(input: { message: "#{echo_message}" }) {
+              message
+            }
           }
         QUERY
       end
@@ -151,7 +155,7 @@ RSpec.describe 'Graphql' do
         expect(response).to have_http_status(:ok)
 
         expect_graphql_errors_to_be_empty
-        expect(graphql_data_at(:echo)).to eq(echo_message)
+        expect(graphql_data_at(:echo, :message)).to eq(echo_message)
       end
     end
   end

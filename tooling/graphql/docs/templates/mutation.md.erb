@@ -1,0 +1,21 @@
+---
+title: <%= object[:name] %>
+---
+
+<%= object[:description] %>
+
+## Arguments
+
+| Name | Type | Description |
+|------|------|-------------|
+<% sorted_by_name.call(object[:arguments]).each do |argument| -%>
+| `<%= argument[:name] %>` | [`<%= argument[:type][:info] %>`](../<%= argument[:type][:path] %>.md) | <%= argument[:description] %> |
+<% end -%>
+
+## Fields
+
+| Name | Type | Description |
+|------|------|-------------|
+<% sorted_by_name.call(object[:return_fields]).each do |field| -%>
+| `<%= field[:name] %>` | [`<%= field[:type][:info] %>`](../<%= field[:type][:path] %>.md) | <%= field[:description] %> |
+<% end -%>

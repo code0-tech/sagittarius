@@ -1,0 +1,42 @@
+---
+title: <%= object[:name] %>
+---
+
+<%= object[:description] %>
+
+<% unless object[:implemented_by].empty? -%>
+## Implemented by
+
+<% object[:implemented_by].each do |type| -%>
+- [`<%= type %>`](../object/<%= type.downcase %>.md)
+<% end -%>
+<% end -%>
+
+<% (fields_with_arguments, fields_without_arguments) = object[:fields].partition { |f| has_arguments.call(f) } -%>
+<% unless fields_without_arguments.empty? -%>
+## Fields without arguments
+
+| Name | Type | Description |
+|------|------|-------------|
+<% sorted_by_name.call(fields_without_arguments).each do |field| -%>
+| `<%= field[:name] %>` | [`<%= field[:type][:info] %>`](../<%= field[:type][:path] %>.md) | <%= field[:description] %> |
+<% end -%>
+
+<% end -%>
+<% unless fields_with_arguments.empty? -%>
+## Fields with arguments
+<% sorted_by_name.call(fields_with_arguments).each do |field| -%>
+
+### <%= field[:name] %>
+
+<%= field[:description] %>
+
+Returns [`<%= field[:type][:info] %>`](../<%= field[:type][:path] %>.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+<% sorted_by_name.call(field[:arguments]).each do |argument| -%>
+| `<%= argument[:name] %>` | [`<%= argument[:type][:info] %>`](../<%= argument[:type][:path] %>.md) | <%= argument[:description] %> |
+<% end -%>
+<% end -%>
+<% end -%>
