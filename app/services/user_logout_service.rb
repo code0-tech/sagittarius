@@ -10,7 +10,7 @@ class UserLogoutService
 
   def execute
     unless Ability.allowed?(@current_user, :logout_session, @user_session)
-      return ServiceResponse.error(payload: "You can't log out this session")
+      return ServiceResponse.error(payload: :missing_permission)
     end
 
     @user_session.active = false
@@ -20,7 +20,7 @@ class UserLogoutService
       ServiceResponse.success(message: 'Logged out session', payload: @user_session)
     else
       logger.warn(message: 'Failed to log out session', session_id: @user_session.id, user_id: @user_session.user_id)
-      ServiceResponse.error(payload: 'Failed to log out session')
+      ServiceResponse.error(payload: @user_session.errors)
     end
   end
 end

@@ -13,7 +13,7 @@ class UserLoginService
     user = User.authenticate_by(args)
     if user.nil?
       logger.info(message: 'Failed login', username: args[:username], email: args[:email])
-      return ServiceResponse.error(message: 'Invalid login data', payload: ['Invalid login data'])
+      return ServiceResponse.error(message: 'Invalid login data', payload: :invalid_login_data)
     end
 
     user_session = UserSession.create(user: user)

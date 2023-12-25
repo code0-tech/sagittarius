@@ -18,5 +18,5 @@ Register a new user
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `errors` | [`[String!]!`](../scalar/string.md) | Errors encountered during execution of the mutation. |
+| `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
 | `user` | [`User`](../object/user.md) | The created user |

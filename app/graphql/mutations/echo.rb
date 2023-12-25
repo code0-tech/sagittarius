@@ -9,11 +9,6 @@ module Mutations
       that a user has mutation access.
     DOC
 
-    argument :errors,
-             type: [::GraphQL::Types::String],
-             required: false,
-             description: 'Errors to return to the user.'
-
     argument :message,
              type: ::GraphQL::Types::String,
              required: false,

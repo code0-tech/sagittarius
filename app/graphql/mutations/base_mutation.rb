@@ -18,12 +18,16 @@ module Mutations
       end
     end
 
-    field :errors, [GraphQL::Types::String],
+    field :errors, [Types::Errors::ErrorType],
           null: false,
           description: 'Errors encountered during execution of the mutation.'
 
     def current_user
       context[:current_user]
+    end
+
+    def create_message_error(message)
+      Sagittarius::Graphql::ErrorMessageContainer.new(message: message)
     end
   end
 end

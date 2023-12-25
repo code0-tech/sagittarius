@@ -9,7 +9,7 @@ RSpec.describe 'usersLogin Mutation' do
     <<~QUERY
       mutation($input: UsersLoginInput!) {
         usersLogin(input: $input) {
-          errors
+          #{error_query}
           userSession {
             id
             token
@@ -100,7 +100,7 @@ RSpec.describe 'usersLogin Mutation' do
       it 'returns errors', :aggregate_failures do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
-        expect(graphql_data_at(:users_login, :errors)).to include('Invalid login data')
+        expect(graphql_data_at(:users_login, :errors, :message)).to include('invalid_login_data')
       end
     end
 
@@ -115,7 +115,7 @@ RSpec.describe 'usersLogin Mutation' do
       it 'returns errors', :aggregate_failures do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
-        expect(graphql_data_at(:users_login, :errors)).to include('Invalid login data')
+        expect(graphql_data_at(:users_login, :errors, :message)).to include('invalid_login_data')
       end
     end
 
@@ -130,7 +130,7 @@ RSpec.describe 'usersLogin Mutation' do
       it 'returns errors', :aggregate_failures do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
-        expect(graphql_data_at(:users_login, :errors)).to include('Invalid login data')
+        expect(graphql_data_at(:users_login, :errors, :message)).to include('invalid_login_data')
       end
     end
   end
