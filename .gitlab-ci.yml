@@ -33,6 +33,7 @@ docs:preview:
         }
       }'
     - INLINED_QUERY=${QUERY//[$'\t\r\n']}
+    - echo $INLINED_QUERY
     - >
       RESPONSE=$(curl
       -X POST
