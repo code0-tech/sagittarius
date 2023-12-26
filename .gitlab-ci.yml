@@ -26,8 +26,8 @@ docs:preview:
           }
         }
         }","variables":{
-          "fullPath":"$CI_PROJECT_PATH",
-          "iid":"$CI_PIPELINE_IID",
+          "fullPath":"'"$CI_PROJECT_PATH"'",
+          "iid":"'"$CI_PIPELINE_IID"'",
           "bridgeJob":"docs",
           "downstreamJob":"build"
         }
