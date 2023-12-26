@@ -7,6 +7,38 @@ include:
     ref: build-branch
     file: ci-template.gitlab-ci.yml
 
+docs:preview:
+  stage: test
+  image: registry.gitlab.com/gitlab-ci-utils/curl-jq:latest
+  script:
+    - >
+      RESPONSE=$(curl
+      -X POST
+      --data '{
+        "query":"query($fullPath: ID!, $iid: ID!, $bridgeJob: String!, $downstreamJob:String!) {
+          project(fullPath: $fullPath) {
+            pipeline(iid: $iid) {
+              job(name: $bridgeJob) {
+                downstreamPipeline {
+                  job(name: $downstreamJob) { id }
+                }
+              }
+            }
+          }
+        }","variables":{
+          "fullPath":"$CI_PROJECT_PATH",
+          "iid":"$CI_PIPELINE_IID",
+          "bridgeJob":"docs",
+          "downstreamJob":"build"
+        }}'
+      -H 'Content-Type: application/json'
+      https://gitlab.com/api/graphql)
+    - BUILD_JOB_ID=$(echo "$RESPONSE" | jq -r .data.project.pipeline.job.downstreamPipeline.job.id | awk -F '/' '{print $NF}')
+    - |
+      echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
+      echo "Documentation preview available at https://code0-tech.gitlab.io/-/telescopium/-/jobs/$BUILD_JOB_ID/artifacts/dist/index.html"
+      echo -e "\e[0Ksection_end:`date +%s`:glpa_summary\r\e[0K"
+
 .bundle:
   image: ruby:3.2.2
   before_script:
