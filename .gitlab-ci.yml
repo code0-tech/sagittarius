@@ -10,6 +10,8 @@ include:
 docs:preview:
   stage: test
   image: registry.gitlab.com/gitlab-ci-utils/curl-jq:latest
+  needs:
+    - docs
   script:
     - >
       RESPONSE=$(curl
@@ -30,7 +32,8 @@ docs:preview:
           "iid":"$CI_PIPELINE_IID",
           "bridgeJob":"docs",
           "downstreamJob":"build"
-        }}'
+        }
+      }'
       -H 'Content-Type: application/json'
       https://gitlab.com/api/graphql)
     - BUILD_JOB_ID=$(echo "$RESPONSE" | jq -r .data.project.pipeline.job.downstreamPipeline.job.id | awk -F '/' '{print $NF}')
