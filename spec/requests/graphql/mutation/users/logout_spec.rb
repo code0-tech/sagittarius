@@ -9,7 +9,7 @@ RSpec.describe 'usersLogout Mutation' do
     <<~QUERY
       mutation($input: UsersLogoutInput!) {
         usersLogout(input: $input) {
-          errors
+          #{error_query}
           userSession {
             id
             active
@@ -42,7 +42,7 @@ RSpec.describe 'usersLogout Mutation' do
       let(:current_user) { create(:user) }
 
       it 'does not log out the session', :aggregate_failures do
-        expect(graphql_data_at(:users_logout, :errors)).to include("You can't log out this session")
+        expect(graphql_data_at(:users_logout, :errors, :message)).to include('missing_permission')
         expect(graphql_data_at(:users_logout, :user_session)).to be_nil
       end
     end
@@ -67,7 +67,7 @@ RSpec.describe 'usersLogout Mutation' do
       let(:user_session_id) { 'gid://sagittarius/UserSession/0' }
 
       it 'raises validation error' do
-        expect(graphql_data_at(:users_logout, :errors)).to include('Invalid user session')
+        expect(graphql_data_at(:users_logout, :errors, :message)).to include('Invalid user session')
       end
     end
   end

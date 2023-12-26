@@ -9,7 +9,7 @@ RSpec.describe 'usersRegister Mutation' do
     <<~QUERY
       mutation($input: UsersRegisterInput!) {
         usersRegister(input: $input) {
-          errors
+          #{error_query}
           user {
             id
           }
@@ -53,9 +53,12 @@ RSpec.describe 'usersRegister Mutation' do
       expect(graphql_data_at(:users_register, :user)).not_to be_present
 
       expect(graphql_data_at(:users_register, :errors)).to include(
-        "Username can't be blank",
-        "Email can't be blank",
-        "Password can't be blank"
+        { 'attribute' => 'password', 'type' => 'blank' },
+        { 'attribute' => 'username', 'type' => 'too_short' },
+        { 'attribute' => 'username', 'type' => 'blank' },
+        { 'attribute' => 'email', 'type' => 'too_short' },
+        { 'attribute' => 'email', 'type' => 'invalid' },
+        { 'attribute' => 'email', 'type' => 'blank' }
       )
     end
   end

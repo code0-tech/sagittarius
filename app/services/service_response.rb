@@ -38,9 +38,13 @@ class ServiceResponse
     return { success_key => payload, errors: [] } if success?
 
     if payload.is_a?(ActiveModel::Errors)
-      { success_key => nil, errors: payload.full_messages }
+      { success_key => nil, errors: payload.errors }
     else
-      { success_key => nil, errors: Array.wrap(payload) }
+      errors = Array.wrap(payload).map do |message|
+        Sagittarius::Graphql::ErrorMessageContainer.new(message: message)
+      end
+
+      { success_key => nil, errors: errors }
     end
   end
 end

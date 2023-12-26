@@ -52,7 +52,7 @@ RSpec.describe 'Graphql' do
               email: ""
               password: ""
             }) {
-              errors
+              #{error_query}
             }
           }
         QUERY
@@ -62,7 +62,7 @@ RSpec.describe 'Graphql' do
         expect(response).to have_http_status(:ok)
 
         expect_graphql_errors_to_be_empty
-        expect(graphql_data_at(:users_login, :errors)).to be_present
+        expect(graphql_data_at(:users_login, :errors, :message)).to be_present
       end
 
       context 'when aliasing the mutation' do
@@ -73,7 +73,7 @@ RSpec.describe 'Graphql' do
                 email: ""
                 password: ""
               }) {
-                errors
+                #{error_query}
               }
             }
           QUERY
@@ -83,7 +83,7 @@ RSpec.describe 'Graphql' do
           expect(response).to have_http_status(:ok)
 
           expect_graphql_errors_to_be_empty
-          expect(graphql_data_at(:login, :errors)).to be_present
+          expect(graphql_data_at(:login, :errors, :message)).to be_present
         end
       end
 
@@ -95,14 +95,14 @@ RSpec.describe 'Graphql' do
                 email: ""
                 password: ""
               }) {
-                errors
+                #{error_query}
               }
               usersRegister(input: {
                 username: ""
                 email: ""
                 password: ""
               }) {
-                errors
+                #{error_query}
               }
             }
           QUERY

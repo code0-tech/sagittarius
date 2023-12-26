@@ -74,4 +74,18 @@ module GraphqlHelpers
 
     expect(graphql_errors).to be_empty
   end
+
+  def error_query
+    %(
+      errors {
+        ...on ActiveModelError {
+          attribute
+          type
+        }
+        ...on MessageError {
+          message
+        }
+      }
+    )
+  end
 end
