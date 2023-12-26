@@ -36,6 +36,7 @@ docs:preview:
       }'
       -H 'Content-Type: application/json'
       https://gitlab.com/api/graphql)
+    - echo $RESPONSE
     - BUILD_JOB_ID=$(echo "$RESPONSE" | jq -r .data.project.pipeline.job.downstreamPipeline.job.id | awk -F '/' '{print $NF}')
     - |
       echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
