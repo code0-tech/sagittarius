@@ -1,0 +1,8 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":assignee(Taucher2003)",
+    ":label(dependencies)"
+  ]
+}
