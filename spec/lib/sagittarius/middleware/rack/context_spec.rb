@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Sagittarius::Middleware::Rack do
+RSpec.describe Sagittarius::Middleware::Rack::Context do
   let(:app) { double('app') } # rubocop:disable RSpec/VerifiedDoubles
   let(:correlation_id) { 'the id' }
   let(:metadata) { { 'user' => { 'id' => 1 } } }

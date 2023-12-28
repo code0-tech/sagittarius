@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class UserLoginService
+  include Sagittarius::Database::Transactional
   include Sagittarius::Loggable
 
   attr_reader :args
@@ -16,14 +17,24 @@ class UserLoginService
       return ServiceResponse.error(message: 'Invalid login data', payload: :invalid_login_data)
     end
 
-    user_session = UserSession.create(user: user)
-    unless user_session.valid?
-      logger.warn(message: 'Failed to create valid session for user', user_id: user.id, username: user.username)
-      return ServiceResponse.error(message: 'UserSession is invalid',
-                                   payload: user_session.errors)
-    end
+    transactional do
+      user_session = UserSession.create(user: user)
+      unless user_session.persisted?
+        logger.warn(message: 'Failed to create valid session for user', user_id: user.id, username: user.username)
+        return ServiceResponse.error(message: 'UserSession is invalid',
+                                     payload: user_session.errors)
+      end
 
-    logger.info(message: 'Login to user', user_id: user.id, username: user.username)
-    ServiceResponse.success(payload: user_session)
+      AuditService.audit(
+        :user_logged_in,
+        author_id: user.id,
+        entity: user,
+        details: args.slice(:username, :email),
+        target: user
+      )
+
+      logger.info(message: 'Login to user', user_id: user.id, username: user.username)
+      ServiceResponse.success(payload: user_session)
+    end
   end
 end

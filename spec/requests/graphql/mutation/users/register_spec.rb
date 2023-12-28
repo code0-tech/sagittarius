@@ -38,6 +38,13 @@ RSpec.describe 'usersRegister Mutation' do
     expect(user).to be_a(User)
     expect(user.username).to eq(input[:username])
     expect(user.email).to eq(input[:email])
+
+    is_expected.to create_audit_event(
+      :user_registered,
+      author_id: user.id,
+      entity_id: user.id,
+      details: { username: user.username, email: user.email }
+    )
   end
 
   context 'when input is invalid' do

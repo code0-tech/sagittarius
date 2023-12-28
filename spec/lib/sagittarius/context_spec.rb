@@ -51,6 +51,10 @@ RSpec.describe Sagittarius::Context do
 
       expect(contexts).to be_empty
     end
+
+    it 'returns the value from the block' do
+      expect(described_class.with_context { |_| 'some random string' }).to eq('some random string')
+    end
   end
 
   describe '.push' do
