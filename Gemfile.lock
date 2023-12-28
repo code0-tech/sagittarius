@@ -95,9 +95,9 @@ GEM
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
     date (3.3.4)
-    debug (1.8.0)
-      irb (>= 1.5.0)
-      reline (>= 0.3.1)
+    debug (1.9.1)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
     debug_inspector (1.1.0)
     declarative_policy (1.1.0)
     diff-lcs (1.5.0)
@@ -131,8 +131,8 @@ GEM
       nokogiri (>= 1.4)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
-    io-console (0.6.0)
-    irb (1.9.1)
+    io-console (0.7.1)
+    irb (1.11.0)
       rdoc
       reline (>= 0.3.8)
     json (2.6.3)
@@ -176,7 +176,7 @@ GEM
       coderay
       parser
       unparser
-    psych (5.1.1.1)
+    psych (5.1.2)
       stringio
     puma (6.4.0)
       nio4r (~> 2.0)
@@ -220,7 +220,7 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.1.0)
-    rdoc (6.6.0)
+    rdoc (6.6.2)
       psych (>= 4.0.0)
     redis-client (0.18.0)
       connection_pool
