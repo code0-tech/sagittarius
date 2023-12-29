@@ -12,7 +12,7 @@ module Mutations
       argument :username, String, required: true, description: 'Username of the user'
 
       def resolve(username:, email:, password:)
-        UserCreateService.new(username, email, password).execute.to_mutation_response(success_key: :user)
+        UserRegisterService.new(username, email, password).execute.to_mutation_response(success_key: :user)
       end
     end
   end

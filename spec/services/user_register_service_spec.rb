@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe UserCreateService do
+RSpec.describe UserRegisterService do
   subject(:service_response) { described_class.new(username, email, password).execute }
 
   context 'when user is valid' do
@@ -15,6 +15,21 @@ RSpec.describe UserCreateService do
     it('sets username correct') { expect(service_response.payload.username).to eq(username) }
     it('sets email correct') { expect(service_response.payload.email).to eq(email) }
     it('sets password correct') { expect(service_response.payload.password).to eq(password) }
+
+    it 'creates the audit event' do
+      expect { service_response }.to create_audit_event(
+        :user_registered,
+        entity_type: 'User',
+        details: { username: username, email: email },
+        target_type: 'User'
+      )
+    end
+  end
+
+  shared_examples 'invalid user' do
+    it { is_expected.not_to be_success }
+    it { expect(service_response.message).to eq('User is invalid') }
+    it { expect { service_response }.not_to create_audit_event(:user_registered) }
   end
 
   context 'when user is invalid' do
@@ -26,8 +41,7 @@ RSpec.describe UserCreateService do
       let(:email) { generate(:email) }
       let(:password) { generate(:password) }
 
-      it { is_expected.not_to be_success }
-      it { expect(service_response.message).to eq('User is invalid') }
+      it_behaves_like 'invalid user'
       it { expect(service_response.payload.full_messages).to include('Username has already been taken') }
     end
 
@@ -36,8 +50,7 @@ RSpec.describe UserCreateService do
       let(:email) { user_with_email.email }
       let(:password) { generate(:password) }
 
-      it { is_expected.not_to be_success }
-      it { expect(service_response.message).to eq('User is invalid') }
+      it_behaves_like 'invalid user'
       it { expect(service_response.payload.full_messages).to include('Email has already been taken') }
     end
   end
@@ -48,8 +61,7 @@ RSpec.describe UserCreateService do
       let(:email) { generate(:email) }
       let(:password) { generate(:password) }
 
-      it { is_expected.not_to be_success }
-      it { expect(service_response.message).to eq('User is invalid') }
+      it_behaves_like 'invalid user'
       it { expect(service_response.payload.full_messages).to include("Username can't be blank") }
     end
 
@@ -58,8 +70,7 @@ RSpec.describe UserCreateService do
       let(:email) { nil }
       let(:password) { generate(:password) }
 
-      it { is_expected.not_to be_success }
-      it { expect(service_response.message).to eq('User is invalid') }
+      it_behaves_like 'invalid user'
       it { expect(service_response.payload.full_messages).to include("Email can't be blank") }
     end
 
@@ -68,8 +79,7 @@ RSpec.describe UserCreateService do
       let(:email) { generate(:email) }
       let(:password) { nil }
 
-      it { is_expected.not_to be_success }
-      it { expect(service_response.message).to eq('User is invalid') }
+      it_behaves_like 'invalid user'
       it { expect(service_response.payload.full_messages).to include("Password can't be blank") }
     end
   end

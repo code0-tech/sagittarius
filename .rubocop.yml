@@ -14,7 +14,6 @@ GraphQL/ExtractInputType:
 Lint/AmbiguousBlockAssociation:
   AllowedMethods: [change]
 
-
 Metrics/AbcSize:
   Enabled: false
 
@@ -49,6 +48,9 @@ RSpec/ExampleLength:
 
 RSpec/ExpectChange:
   EnforcedStyle: block
+
+RSpec/ImplicitSubject:
+  EnforcedStyle: require_implicit
 
 RSpec/MultipleMemoizedHelpers:
   Enabled: false

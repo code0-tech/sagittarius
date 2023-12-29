@@ -46,6 +46,13 @@ RSpec.describe 'usersLogin Mutation' do
         expect(user_session).to be_a(UserSession)
         expect(user_session.user.username).to eq(user.username)
         expect(user_session.user.email).to eq(user.email)
+
+        is_expected.to create_audit_event(
+          :user_logged_in,
+          author_id: user.id,
+          entity_id: user.id,
+          details: { email: user.email }
+        )
       end
     end
 
@@ -66,6 +73,13 @@ RSpec.describe 'usersLogin Mutation' do
         expect(user_session).to be_a(UserSession)
         expect(user_session.user.username).to eq(user.username)
         expect(user_session.user.email).to eq(user.email)
+
+        is_expected.to create_audit_event(
+          :user_logged_in,
+          author_id: user.id,
+          entity_id: user.id,
+          details: { username: user.username }
+        )
       end
     end
   end

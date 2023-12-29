@@ -7,6 +7,7 @@ RSpec.describe User do
 
   describe 'associations' do
     it { is_expected.to have_many(:user_sessions).inverse_of(:user) }
+    it { is_expected.to have_many(:authored_audit_events).class_name('AuditEvent').inverse_of(:author) }
   end
 
   describe 'validations' do
