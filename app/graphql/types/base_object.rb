@@ -11,6 +11,25 @@ module Types
       field :updated_at, Types::TimeType, null: false, description: "Time when this #{entity_name} was last updated"
     end
 
+    def self.authorized?(object, context)
+      if object.instance_variable_defined?(:@sagittarius_object_authorization_bypass)
+        return object.instance_variable_get(:@sagittarius_object_authorization_bypass)
+      end
+
+      subject = object.try(:declarative_policy_subject) || object
+
+      authorize.all? do |ability|
+        Ability.allowed?(context[:current_user], ability, subject)
+      end
+    end
+
+    def self.authorize(*args)
+      raise 'Cannot redefine authorize' if @authorize_args && args.any?
+
+      @authorize_args = args.freeze if args.any?
+      @authorize_args || (superclass.respond_to?(:authorize) ? superclass.authorize : [])
+    end
+
     def id
       object.to_global_id
     end

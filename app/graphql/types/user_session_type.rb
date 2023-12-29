@@ -4,6 +4,8 @@ module Types
   class UserSessionType < Types::BaseObject
     description 'Represents a user session'
 
+    authorize :read_user_session
+
     field :active, GraphQL::Types::Boolean, null: false,
                                             description: 'Whether or not the session is active and can be used'
     field :id, Types::GlobalIdType[::UserSession], null: false, description: 'GlobalID of the user'

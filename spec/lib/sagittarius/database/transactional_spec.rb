@@ -11,5 +11,16 @@ RSpec.describe Sagittarius::Database::Transactional do
     it 'passes return value from block' do
       expect(described_class.transactional { 1 }).to eq(1)
     end
+
+    it 'can return and rollback', :aggregate_failures do
+      user = nil
+      expect(described_class.transactional do |helper|
+        user = create(:user)
+        expect { user.reload }.not_to raise_error
+        helper.rollback_and_return!(1)
+      end).to eq(1)
+
+      expect { user.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
   end
 end
