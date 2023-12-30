@@ -3,5 +3,20 @@
 module Types
   class BaseField < GraphQL::Schema::Field
     argument_class Types::BaseArgument
+
+    def initialize(**kwargs, &block)
+      @authorize = Array.wrap(kwargs.delete(:authorize))
+
+      super(**kwargs, &block)
+    end
+
+    def authorized?(object, _args, context)
+      object = object.node if object.is_a?(GraphQL::Pagination::Connection::Edge)
+      subject = object.try(:declarative_policy_subject) || object
+
+      @authorize.all? do |ability|
+        Ability.allowed?(context[:current_user], ability, subject)
+      end
+    end
   end
 end

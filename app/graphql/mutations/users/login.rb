@@ -3,6 +3,8 @@
 module Mutations
   module Users
     class Login < BaseMutation
+      include Sagittarius::Graphql::AuthorizationBypass
+
       description 'Login to an existing user'
 
       field :user_session, Types::UserSessionType, null: true, description: 'The created user session'
@@ -14,7 +16,9 @@ module Mutations
       require_one_of %i[email username], self
 
       def resolve(args)
-        UserLoginService.new(args).execute.to_mutation_response(success_key: :user_session)
+        response = UserLoginService.new(args).execute.to_mutation_response(success_key: :user_session)
+        bypass_authorization! response, object_path: %i[user_session user]
+        bypass_authorization! response, object_path: :user_session
       end
     end
   end

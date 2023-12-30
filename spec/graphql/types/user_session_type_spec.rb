@@ -16,6 +16,7 @@ RSpec.describe SagittariusSchema.types['UserSession'] do
 
   it { expect(described_class.graphql_name).to eq('UserSession') }
   it { expect(described_class).to have_graphql_fields(fields) }
+  it { expect(described_class).to require_graphql_authorizations(:read_user_session) }
 
   describe 'when existing session is requested', type: :request do
     include GraphqlHelpers
