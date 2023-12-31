@@ -4,6 +4,7 @@ class AuditEvent < ApplicationRecord
   ACTION_TYPES = {
     user_registered: 1,
     user_logged_in: 2,
+    team_created: 3,
   }.with_indifferent_access
 
   enum :action_type, ACTION_TYPES, prefix: :action

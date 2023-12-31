@@ -2,7 +2,7 @@
 
 class Team < ApplicationRecord
   validates :name, presence: true,
-                   length: { maximum: 50 },
+                   length: { minimum: 3, maximum: 50 },
                    allow_blank: false,
                    uniqueness: { case_sensitive: false }
 
