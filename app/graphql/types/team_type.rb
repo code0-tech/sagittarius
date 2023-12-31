@@ -8,6 +8,12 @@ module Types
 
     field :name, String, null: false, description: 'Name of the team'
 
+    field :members, Types::TeamMemberType.connection_type, null: false, description: 'Members of the team',
+                                                           extras: [:lookahead]
+
+    lookahead_field :members, base_scope: ->(object) { object.team_members },
+                              conditional_lookaheads: { user: :user, team: :team }
+
     id_field Team
     timestamps
   end

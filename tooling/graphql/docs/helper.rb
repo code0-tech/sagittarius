@@ -50,7 +50,7 @@ module Tooling
         end
 
         def object_types
-          objects.reject { |t| t[:is_edge] || t[:is_connection] || t[:is_payload] }
+          objects.reject { |t| t[:is_payload] }
         end
 
         def interfaces

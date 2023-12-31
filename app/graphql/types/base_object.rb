@@ -3,7 +3,7 @@
 module Types
   class BaseObject < GraphQL::Schema::Object
     edge_type_class(Types::BaseEdge)
-    connection_type_class(Types::BaseConnection)
+    connection_type_class(Types::CountableConnectionType)
     field_class Types::BaseField
 
     def self.id_field(type, entity_name = graphql_name)
