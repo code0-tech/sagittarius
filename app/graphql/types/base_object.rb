@@ -16,6 +16,22 @@ module Types
       field :updated_at, Types::TimeType, null: false, description: "Time when this #{entity_name} was last updated"
     end
 
+    def self.lookahead_field(field, base_scope:, lookaheads: [], conditional_lookaheads: {})
+      define_method(field) do |*_args, lookahead:, **_kwargs|
+        field_selected = lambda do |f|
+          lookahead.selects?(f) ||
+            lookahead.selection(:nodes).selects?(f) ||
+            lookahead.selection(:edges).selection(:node).selects?(f)
+        end
+
+        scope = lookaheads.reduce(base_scope.call(object)) { |acc, f| acc.preload(f) }
+
+        conditional_lookaheads.reduce(scope) do |acc, (f, preload_field)|
+          field_selected.call(f) ? acc.preload(preload_field) : acc
+        end
+      end
+    end
+
     def self.authorized?(object, context)
       if object.instance_variable_defined?(:@sagittarius_object_authorization_bypass)
         return object.instance_variable_get(:@sagittarius_object_authorization_bypass)
