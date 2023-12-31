@@ -8,6 +8,7 @@ RSpec.describe SagittariusSchema.types['Query'] do
       currentAuthorization
       currentUser
       echo
+      team
       node
       nodes
     ]

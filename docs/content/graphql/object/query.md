@@ -25,20 +25,31 @@ Returns [`String!`](../scalar/string.md).
 
 ### node
 
-Fetches an object given its ID.
+Fetches an object given its ID
 
 Returns [`Node`](../interface/node.md).
 
 | Name | Type | Description |
 |------|------|-------------|
-| `id` | [`ID!`](../scalar/id.md) | ID of the object. |
+| `id` | [`ID!`](../scalar/id.md) | ID of the object |
 
 ### nodes
 
-Fetches a list of objects given a list of IDs.
+Fetches a list of objects given a list of IDs
 
 Returns [`[Node]`](../interface/node.md).
 
 | Name | Type | Description |
 |------|------|-------------|
-| `ids` | [`[ID!]!`](../scalar/id.md) | IDs of the objects. |
+| `ids` | [`[ID!]!`](../scalar/id.md) | IDs of the objects |
+
+### team
+
+Find a team
+
+Returns [`Team`](../object/team.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `id` | [`TeamID`](../scalar/teamid.md) | GlobalID of the target team |
+| `name` | [`String`](../scalar/string.md) | Name of the target team |

@@ -6,6 +6,11 @@ module Types
     connection_type_class(Types::BaseConnection)
     field_class Types::BaseField
 
+    def self.id_field(type, entity_name = graphql_name)
+      field :id, Types::GlobalIdType[type], null: false, description: "Global ID of this #{entity_name}",
+                                            method: :to_global_id
+    end
+
     def self.timestamps(entity_name = graphql_name)
       field :created_at, Types::TimeType, null: false, description: "Time when this #{entity_name} was created"
       field :updated_at, Types::TimeType, null: false, description: "Time when this #{entity_name} was last updated"
@@ -28,10 +33,6 @@ module Types
 
       @authorize_args = args.freeze if args.any?
       @authorize_args || (superclass.respond_to?(:authorize) ? superclass.authorize : [])
-    end
-
-    def id
-      object.to_global_id
     end
 
     def current_authorization

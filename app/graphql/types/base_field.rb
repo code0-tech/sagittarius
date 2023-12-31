@@ -4,6 +4,10 @@ module Types
   class BaseField < GraphQL::Schema::Field
     argument_class Types::BaseArgument
 
+    def require_one_of(arguments)
+      validates required: { one_of: arguments, message: "Only one of #{arguments.inspect} should be provided" }
+    end
+
     def initialize(**kwargs, &block)
       @authorize = Array.wrap(kwargs.delete(:authorize))
 
