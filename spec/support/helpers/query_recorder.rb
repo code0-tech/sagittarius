@@ -12,6 +12,7 @@ module ActiveRecord
     attr_reader :log, :skip_cached, :skip_schema_queries, :cached, :data
 
     UNKNOWN = %w[unknown unknown].freeze
+    MARGINALIA_ANNOTATION_REGEX = %r{\s*/\*.*\*/}
 
     def initialize(skip_cached: true, skip_schema_queries: true, log_file: nil, query_recorder_debug: false, &block)
       @data = Hash.new { |h, k| h[k] = { count: 0, occurrences: [], backtrace: [], durations: [] } }
@@ -32,7 +33,7 @@ module ActiveRecord
 
     def show_backtrace(values, duration)
       values[:sql].lines.each do |line|
-        print_to_log(:SQL, line)
+        print_to_log(:SQL, line.sub(MARGINALIA_ANNOTATION_REGEX, ''))
       end
       print_to_log(:DURATION, duration)
       Rails.backtrace_cleaner.clean(caller_locations).each do |line|
