@@ -12,10 +12,8 @@ module Mutations
       subclass.graphql_name subclass.name.delete_prefix('Mutations::').gsub('::', '')
     end
 
-    def self.require_one_of(arguments, context)
-      context.instance_eval do
-        validates required: { one_of: arguments, message: "Only one of #{arguments.inspect} should be provided" }
-      end
+    def self.require_one_of(arguments)
+      validates required: { one_of: arguments, message: "Only one of #{arguments.inspect} should be provided" }
     end
 
     field :errors, [Types::Errors::ErrorType],

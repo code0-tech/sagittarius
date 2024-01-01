@@ -26,6 +26,7 @@ module GraphqlHelpers
     expect(graphql_errors).not_to include(
       a_hash_including('message' => a_string_including('Type mismatch on variable'))
     )
+    expect(graphql_errors).not_to include(a_hash_including('backtrace'))
   end
 
   def parsed_response

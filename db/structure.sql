@@ -32,6 +32,40 @@ CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
 
+CREATE TABLE team_members (
+    id bigint NOT NULL,
+    team_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE team_members_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE team_members_id_seq OWNED BY team_members.id;
+
+CREATE TABLE teams (
+    id bigint NOT NULL,
+    name text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT check_b19127323e CHECK ((char_length(name) <= 50))
+);
+
+CREATE SEQUENCE teams_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE teams_id_seq OWNED BY teams.id;
+
 CREATE TABLE user_sessions (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
@@ -76,6 +110,10 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_id_seq'::regclass);
 
+ALTER TABLE ONLY team_members ALTER COLUMN id SET DEFAULT nextval('team_members_id_seq'::regclass);
+
+ALTER TABLE ONLY teams ALTER COLUMN id SET DEFAULT nextval('teams_id_seq'::regclass);
+
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
@@ -89,6 +127,12 @@ ALTER TABLE ONLY audit_events
 ALTER TABLE ONLY schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
 
+ALTER TABLE ONLY team_members
+    ADD CONSTRAINT team_members_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY teams
+    ADD CONSTRAINT teams_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT user_sessions_pkey PRIMARY KEY (id);
 
@@ -97,6 +141,14 @@ ALTER TABLE ONLY users
 
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
 
+CREATE INDEX index_team_members_on_team_id ON team_members USING btree (team_id);
+
+CREATE UNIQUE INDEX index_team_members_on_team_id_and_user_id ON team_members USING btree (team_id, user_id);
+
+CREATE INDEX index_team_members_on_user_id ON team_members USING btree (user_id);
+
+CREATE UNIQUE INDEX "index_teams_on_LOWER_name" ON teams USING btree (lower(name));
+
 CREATE UNIQUE INDEX index_user_sessions_on_token ON user_sessions USING btree (token);
 
 CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_id);
@@ -104,6 +156,12 @@ CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_i
 CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(email));
 
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
+
+ALTER TABLE ONLY team_members
+    ADD CONSTRAINT fk_rails_194b5b076d FOREIGN KEY (team_id) REFERENCES teams(id);
+
+ALTER TABLE ONLY team_members
+    ADD CONSTRAINT fk_rails_9ec2d5e75e FOREIGN KEY (user_id) REFERENCES users(id);
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT fk_rails_9fa262d742 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;

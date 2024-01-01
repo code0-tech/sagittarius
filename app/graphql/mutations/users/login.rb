@@ -13,7 +13,7 @@ module Mutations
       argument :password, String, required: true, description: 'Password of the user'
       argument :username, String, required: false, description: 'Username of the user'
 
-      require_one_of %i[email username], self
+      require_one_of %i[email username]
 
       def resolve(args)
         response = UserLoginService.new(args).execute.to_mutation_response(success_key: :user_session)

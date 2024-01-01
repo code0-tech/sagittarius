@@ -8,6 +8,7 @@ RSpec.describe SagittariusSchema.types['User'] do
       id
       username
       email
+      teamMemberships
       createdAt
       updatedAt
     ]
@@ -16,4 +17,33 @@ RSpec.describe SagittariusSchema.types['User'] do
   it { expect(described_class.graphql_name).to eq('User') }
   it { expect(described_class).to have_graphql_fields(fields) }
   it { expect(described_class).to require_graphql_authorizations(:read_user) }
+
+  context 'when requesting team memberships' do
+    it_behaves_like 'prevents N+1 queries (graphql)' do
+      let(:query) do
+        <<~QUERY
+          query {
+            currentUser {
+              teamMemberships {
+                count
+                nodes {
+                  id
+                  user { username }
+                  team { name }
+                }
+              }
+            }
+          }
+        QUERY
+      end
+
+      before { create(:team_member, user: current_user) }
+
+      let(:current_user) { create(:user) }
+
+      let(:create_new_record) do
+        -> { create(:team_member, user: current_user) }
+      end
+    end
+  end
 end
