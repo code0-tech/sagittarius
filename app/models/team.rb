@@ -8,4 +8,14 @@ class Team < ApplicationRecord
 
   has_many :team_members, inverse_of: :team
   has_many :users, through: :team_members, inverse_of: :teams
+
+  def member?(user)
+    return false if user.nil?
+
+    if team_members.loaded?
+      team_members.any? { |member| member.user.id == user.id }
+    else
+      team_members.exists?(user: user)
+    end
+  end
 end
