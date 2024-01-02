@@ -8,7 +8,7 @@ include:
     file: ci-template.gitlab-ci.yml
 
 .bundle:
-  image: ruby:3.2.2
+  image: ruby:3.3.0
   before_script:
     - bundle install --jobs $(nproc)
 
