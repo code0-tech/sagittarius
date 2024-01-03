@@ -5,6 +5,7 @@ class AuditEvent < ApplicationRecord
     user_registered: 1,
     user_logged_in: 2,
     team_created: 3,
+    application_setting_updated: 4,
   }.with_indifferent_access
 
   enum :action_type, ACTION_TYPES, prefix: :action

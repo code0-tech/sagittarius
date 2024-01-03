@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe SagittariusSchema.types['Query'] do
   let(:fields) do
     %w[
+      applicationSettings
       currentAuthorization
       currentUser
       echo

@@ -52,6 +52,14 @@ module Sagittarius
             end
           end
 
+          t.define_singleton_method(:integer) do |column_name, **inner_kwargs|
+            unique = inner_kwargs.delete(:unique)
+
+            super(column_name, **inner_kwargs)
+
+            t.index column_name, unique: unique unless unique.nil?
+          end
+
           return if block.nil?
 
           t.instance_eval do |obj|

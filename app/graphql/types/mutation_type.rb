@@ -6,6 +6,7 @@ module Types
 
     include Sagittarius::Graphql::MountMutation
 
+    mount_mutation Mutations::ApplicationSettings::Update
     mount_mutation Mutations::Teams::Create
     mount_mutation Mutations::Users::Login
     mount_mutation Mutations::Users::Logout

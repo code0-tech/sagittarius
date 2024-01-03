@@ -13,6 +13,10 @@ class UserRegisterService
   end
 
   def execute
+    unless ApplicationSetting.current[:user_registration_enabled]
+      return ServiceResponse.error(message: 'User registration is disabled', payload: :registration_disabled)
+    end
+
     transactional do
       user = User.create(username: username, email: email, password: password)
       return ServiceResponse.error(message: 'User is invalid', payload: user.errors) unless user.persisted?

@@ -1,3 +1,20 @@
+CREATE TABLE application_settings (
+    id bigint NOT NULL,
+    setting integer NOT NULL,
+    value jsonb NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE application_settings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE application_settings_id_seq OWNED BY application_settings.id;
+
 CREATE TABLE ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
@@ -93,6 +110,7 @@ CREATE TABLE users (
     lastname text,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
+    admin boolean DEFAULT false NOT NULL,
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),
     CONSTRAINT check_60346c5299 CHECK ((char_length(lastname) <= 50)),
@@ -108,6 +126,8 @@ CREATE SEQUENCE users_id_seq
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
+ALTER TABLE ONLY application_settings ALTER COLUMN id SET DEFAULT nextval('application_settings_id_seq'::regclass);
+
 ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_id_seq'::regclass);
 
 ALTER TABLE ONLY team_members ALTER COLUMN id SET DEFAULT nextval('team_members_id_seq'::regclass);
@@ -117,6 +137,9 @@ ALTER TABLE ONLY teams ALTER COLUMN id SET DEFAULT nextval('teams_id_seq'::regcl
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+ALTER TABLE ONLY application_settings
+    ADD CONSTRAINT application_settings_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
@@ -138,6 +161,8 @@ ALTER TABLE ONLY user_sessions
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+CREATE UNIQUE INDEX index_application_settings_on_setting ON application_settings USING btree (setting);
 
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
 
