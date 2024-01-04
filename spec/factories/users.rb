@@ -9,5 +9,9 @@ FactoryBot.define do
     username { generate(:username) }
     email { generate(:email) }
     password { generate(:password) }
+
+    trait :admin do
+      admin { true }
+    end
   end
 end

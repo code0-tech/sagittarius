@@ -24,6 +24,16 @@ RSpec.describe UserRegisterService do
         target_type: 'User'
       )
     end
+
+    context 'when user registration is disabled' do
+      before do
+        stub_application_settings(user_registration_enabled: false)
+      end
+
+      it { is_expected.not_to be_success }
+      it { expect(service_response.message).to eq('User registration is disabled') }
+      it { expect(service_response.payload).to eq(:registration_disabled) }
+    end
   end
 
   shared_examples 'invalid user' do

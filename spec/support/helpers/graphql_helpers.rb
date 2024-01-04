@@ -14,17 +14,24 @@ module GraphqlHelpers
   end
 
   def post_graphql(query, variables: {}, current_user: nil, headers: {})
-    headers = { authorization: "Session #{authorization_token(current_user)}" } unless current_user.nil?
+    local_headers = headers
+    unless current_user.nil?
+      local_headers = local_headers.merge({ authorization: "Session #{authorization_token(current_user)}" })
+    end
+    local_headers = local_headers.merge({ 'content-type': 'application/json' })
 
-    params = { query: query, variables: variables }
+    params = { query: query, variables: variables }.to_json
 
-    post graphql_path, headers: headers, params: params
+    post graphql_path, headers: local_headers, params: params
 
     return unless graphql_errors
 
     expect(graphql_errors).not_to include(a_hash_including('message' => 'Internal server error'))
     expect(graphql_errors).not_to include(
       a_hash_including('message' => a_string_including('Type mismatch on variable'))
+    )
+    expect(graphql_errors).not_to include(
+      a_hash_including('message' => a_string_including("isn't a defined input type"))
     )
     expect(graphql_errors).not_to include(a_hash_including('backtrace'))
   end

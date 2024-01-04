@@ -8,6 +8,7 @@ Root Query type
 
 | Name | Type | Description |
 |------|------|-------------|
+| `applicationSettings` | [`ApplicationSettings`](../object/applicationsettings.md) | Get global application settings |
 | `currentAuthorization` | [`Authorization`](../union/authorization.md) | Get the currently logged in authorization |
 | `currentUser` | [`User`](../object/user.md) | Get the currently logged in user |
 

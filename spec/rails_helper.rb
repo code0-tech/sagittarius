@@ -40,6 +40,10 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   ActiveSupport::ActionableError.dispatch(e, 'Run pending migrations')
 end
+
+SeedFu.quiet = true
+SeedFu.seed(SeedFu.fixture_paths, /01_application_settings/)
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [Rails.root.join('spec/fixtures')]

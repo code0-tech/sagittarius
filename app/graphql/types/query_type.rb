@@ -19,6 +19,9 @@ module Types
     field :current_user, Types::UserType, null: true, description: 'Get the currently logged in user'
     # rubocop:enable GraphQL/ExtractType
 
+    field :application_settings, Types::ApplicationSettingsType, null: true,
+                                                                 description: 'Get global application settings'
+
     field :echo, GraphQL::Types::String, null: false, description: 'Field available for use to test API access' do
       argument :message, GraphQL::Types::String, required: true, description: 'String to echo as response'
     end
@@ -36,6 +39,10 @@ module Types
 
     def nodes(ids:)
       ids.map { |id| context.schema.object_from_id(id, context) }
+    end
+
+    def application_settings
+      ApplicationSetting.current
     end
 
     def echo(message:)
