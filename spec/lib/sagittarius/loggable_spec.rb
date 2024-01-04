@@ -10,10 +10,8 @@ RSpec.describe Sagittarius::Loggable do
   end
 
   context 'with named class' do
-    around do |example|
-      Object.const_set('TestClass', clazz)
-      example.run
-      Object.send(:remove_const, 'TestClass')
+    before do
+      stub_const('TestClass', clazz)
     end
 
     it 'for instantiated class' do

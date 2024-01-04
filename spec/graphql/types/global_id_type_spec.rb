@@ -81,11 +81,11 @@ RSpec.describe Types::GlobalIdType do
         expect { type.coerce_isolated_result(gid) }.to raise_error(GraphQL::CoercionError, /Expected a User ID/)
       end
 
-      it 'will not coerce IDs to a GlobalIDType' do
+      it 'does not coerce IDs to a GlobalIDType' do
         expect { type.coerce_isolated_result(user.id) }.to raise_error(GraphQL::CoercionError, /Expected a User ID/)
       end
 
-      it 'will not coerce invalid input, even if its a valid GID' do
+      it 'does not coerce invalid input, even if its a valid GID' do
         expect do
           type.coerce_isolated_input(gid.to_s)
         end.to raise_error(GraphQL::CoercionError, /does not represent an instance of User/)
