@@ -33,7 +33,7 @@ RSpec.describe AuditService do
         }
       end
 
-      it 'expands to entity_id and entity_type', :aggregate_failures do
+      it 'expands to entity_id and entity_type' do
         event = described_class.audit(:user_registered, payload)
         expect(event.entity_id).to eq(user.id)
         expect(event.entity_type).to eq('User')
@@ -51,7 +51,7 @@ RSpec.describe AuditService do
         }
       end
 
-      it 'expands to target_id and target_type', :aggregate_failures do
+      it 'expands to target_id and target_type' do
         event = described_class.audit(:user_registered, payload)
         expect(event.target_id).to eq(user.id)
         expect(event.target_type).to eq('User')

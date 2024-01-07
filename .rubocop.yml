@@ -52,6 +52,10 @@ RSpec/ExpectChange:
 RSpec/ImplicitSubject:
   EnforcedStyle: require_implicit
 
+# aggregate_failures is defined with derived metadata for every spec
+RSpec/MultipleExpectations:
+  Enabled: false
+
 RSpec/MultipleMemoizedHelpers:
   Enabled: false
 

@@ -26,7 +26,7 @@ RSpec.describe 'applicationSettingsUpdate Mutation' do
 
   before { post_graphql mutation, variables: variables, current_user: current_user }
 
-  it 'updates application settings', :aggregate_failures do
+  it 'updates application settings' do
     expect(graphql_data_at(:application_settings_update, :application_settings)).to be_present
     expect(graphql_data_at(:application_settings_update, :application_settings, :user_registration_enabled)).to be false
 
@@ -42,7 +42,7 @@ RSpec.describe 'applicationSettingsUpdate Mutation' do
   context 'when user is not an admin' do
     let(:current_user) { create(:user) }
 
-    it 'returns an error', :aggregate_failures do
+    it 'returns an error' do
       expect(graphql_data_at(:application_settings_update, :application_settings)).to be_nil
       expect(graphql_data_at(:application_settings_update, :errors)).to include('message' => 'permission_missing')
     end

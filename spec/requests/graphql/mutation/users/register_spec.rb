@@ -30,7 +30,7 @@ RSpec.describe 'usersRegister Mutation' do
 
   before { post_graphql mutation, variables: variables }
 
-  it 'creates the user', :aggregate_failures do
+  it 'creates the user' do
     expect(graphql_data_at(:users_register, :user, :id)).to be_present
 
     user = SagittariusSchema.object_from_id(graphql_data_at(:users_register, :user, :id))
@@ -56,7 +56,7 @@ RSpec.describe 'usersRegister Mutation' do
       }
     end
 
-    it 'returns errors', :aggregate_failures do
+    it 'returns errors' do
       expect(graphql_data_at(:users_register, :user)).not_to be_present
 
       expect(graphql_data_at(:users_register, :errors)).to include(
