@@ -32,7 +32,7 @@ RSpec.describe 'teamsCreate Mutation' do
 
   before { post_graphql mutation, variables: variables, current_user: current_user }
 
-  it 'creates team', :aggregate_failures do
+  it 'creates team' do
     expect(graphql_data_at(:teams_create, :team, :id)).to be_present
 
     team = SagittariusSchema.object_from_id(graphql_data_at(:teams_create, :team, :id))
@@ -54,7 +54,7 @@ RSpec.describe 'teamsCreate Mutation' do
     let(:team) { create(:team) }
     let(:input) { { name: team.name } }
 
-    it 'returns an error', :aggregate_failures do
+    it 'returns an error' do
       expect(graphql_data_at(:teams_create, :team)).to be_nil
       expect(graphql_data_at(:teams_create, :errors)).to include({ 'attribute' => 'name', 'type' => 'taken' })
     end

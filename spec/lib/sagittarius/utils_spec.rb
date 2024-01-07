@@ -5,12 +5,12 @@ require_relative '../../../lib/sagittarius/utils'
 
 RSpec.describe Sagittarius::Utils do
   describe '.to_boolean' do
-    it 'accepts booleans', :aggregate_failures do
+    it 'accepts booleans' do
       expect(described_class.to_boolean(true)).to be(true)
       expect(described_class.to_boolean(false)).to be(false)
     end
 
-    it 'converts a valid value to a boolean', :aggregate_failures do
+    it 'converts a valid value to a boolean' do
       expect(described_class.to_boolean(true)).to be(true)
       expect(described_class.to_boolean('true')).to be(true)
       expect(described_class.to_boolean('YeS')).to be(true)
@@ -28,14 +28,14 @@ RSpec.describe Sagittarius::Utils do
       expect(described_class.to_boolean('oFF')).to be(false)
     end
 
-    it 'converts an invalid value to nil', :aggregate_failures do
+    it 'converts an invalid value to nil' do
       expect(described_class.to_boolean('fals')).to be_nil
       expect(described_class.to_boolean('yeah')).to be_nil
       expect(described_class.to_boolean('')).to be_nil
       expect(described_class.to_boolean(nil)).to be_nil
     end
 
-    it 'accepts a default value, and does not return it when a valid value is given', :aggregate_failures do
+    it 'accepts a default value, and does not return it when a valid value is given' do
       expect(described_class.to_boolean(true, default: false)).to be(true)
       expect(described_class.to_boolean('true', default: false)).to be(true)
       expect(described_class.to_boolean('YeS', default: false)).to be(true)
@@ -51,7 +51,7 @@ RSpec.describe Sagittarius::Utils do
       expect(described_class.to_boolean('oFF', default: 42)).to be(false)
     end
 
-    it 'accepts a default value, and returns it when an invalid value is given', :aggregate_failures do
+    it 'accepts a default value, and returns it when an invalid value is given' do
       expect(described_class.to_boolean('fals', default: true)).to be(true)
       expect(described_class.to_boolean('yeah', default: false)).to be(false)
       expect(described_class.to_boolean('', default: 'any value')).to eq('any value')

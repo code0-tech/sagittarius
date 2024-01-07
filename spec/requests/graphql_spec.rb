@@ -21,7 +21,7 @@ RSpec.describe 'Graphql' do
   end
 
   context 'without authorization' do
-    it 'resolves the query', :aggregate_failures do
+    it 'resolves the query' do
       expect(response).to have_http_status(:ok)
 
       expect_graphql_errors_to_be_empty
@@ -58,7 +58,7 @@ RSpec.describe 'Graphql' do
         QUERY
       end
 
-      it 'resolves the query', :aggregate_failures do
+      it 'resolves the query' do
         expect(response).to have_http_status(:ok)
 
         expect_graphql_errors_to_be_empty
@@ -79,7 +79,7 @@ RSpec.describe 'Graphql' do
           QUERY
         end
 
-        it 'resolves the query', :aggregate_failures do
+        it 'resolves the query' do
           expect(response).to have_http_status(:ok)
 
           expect_graphql_errors_to_be_empty
@@ -133,7 +133,7 @@ RSpec.describe 'Graphql' do
     let(:user_session) { create(:user_session) }
     let(:authorization) { "Session #{user_session.token}" }
 
-    it 'resolves the query', :aggregate_failures do
+    it 'resolves the query' do
       expect(response).to have_http_status(:ok)
 
       expect_graphql_errors_to_be_empty
@@ -151,7 +151,7 @@ RSpec.describe 'Graphql' do
         QUERY
       end
 
-      it 'resolves the query', :aggregate_failures do
+      it 'resolves the query' do
         expect(response).to have_http_status(:ok)
 
         expect_graphql_errors_to_be_empty
@@ -163,7 +163,7 @@ RSpec.describe 'Graphql' do
   context 'with invalid authorization' do
     let(:authorization) { 'blub' }
 
-    it 'returns unauthorized', :aggregate_failures do
+    it 'returns unauthorized' do
       expect(response).to have_http_status(:unauthorized)
       expect(response.body).to be_empty
     end

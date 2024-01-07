@@ -42,7 +42,7 @@ RSpec.describe 'teamRolesCreate Mutation' do
       create(:team_member, team: team, user: current_user)
     end
 
-    it 'creates team role', :aggregate_failures do
+    it 'creates team role' do
       mutate!
 
       expect(graphql_data_at(:team_roles_create, :team_role, :id)).to be_present
@@ -67,7 +67,7 @@ RSpec.describe 'teamRolesCreate Mutation' do
       let(:team_role) { create(:team_role, team: team) }
       let(:input) { { teamId: team.to_global_id.to_s, name: team_role.name } }
 
-      it 'returns an error', :aggregate_failures do
+      it 'returns an error' do
         mutate!
 
         expect(graphql_data_at(:team_roles_create, :team_role)).to be_nil
@@ -78,7 +78,7 @@ RSpec.describe 'teamRolesCreate Mutation' do
     context 'when team role name is taken in another team' do
       let(:other_team) { create(:team).tap { |t| create(:team_role, team: t, name: input[:name]) } }
 
-      it 'creates team role', :aggregate_failures do
+      it 'creates team role' do
         mutate!
 
         expect(graphql_data_at(:team_roles_create, :team_role, :id)).to be_present
@@ -102,7 +102,7 @@ RSpec.describe 'teamRolesCreate Mutation' do
   end
 
   context 'when user is not a member of the team' do
-    it 'returns an error', :aggregate_failures do
+    it 'returns an error' do
       mutate!
 
       expect(graphql_data_at(:team_roles_create, :team_role)).to be_nil

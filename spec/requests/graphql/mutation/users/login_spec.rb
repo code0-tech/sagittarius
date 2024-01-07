@@ -37,7 +37,7 @@ RSpec.describe 'usersLogin Mutation' do
         }
       end
 
-      it 'creates the user session', :aggregate_failures do
+      it 'creates the user session' do
         expect(graphql_data_at(:users_login, :user_session, :id)).to be_present
         expect(graphql_data_at(:users_login, :user_session, :token)).to be_present
 
@@ -64,7 +64,7 @@ RSpec.describe 'usersLogin Mutation' do
         }
       end
 
-      it 'creates the user session', :aggregate_failures do
+      it 'creates the user session' do
         expect(graphql_data_at(:users_login, :user_session, :id)).to be_present
         expect(graphql_data_at(:users_login, :user_session, :token)).to be_present
 
@@ -94,7 +94,7 @@ RSpec.describe 'usersLogin Mutation' do
         }
       end
 
-      it 'returns errors', :aggregate_failures do
+      it 'returns errors' do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
         expect(graphql_errors).to include(
@@ -111,7 +111,7 @@ RSpec.describe 'usersLogin Mutation' do
         }
       end
 
-      it 'returns errors', :aggregate_failures do
+      it 'returns errors' do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
         expect(graphql_data_at(:users_login, :errors, :message)).to include('invalid_login_data')
@@ -126,7 +126,7 @@ RSpec.describe 'usersLogin Mutation' do
         }
       end
 
-      it 'returns errors', :aggregate_failures do
+      it 'returns errors' do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
         expect(graphql_data_at(:users_login, :errors, :message)).to include('invalid_login_data')
@@ -141,7 +141,7 @@ RSpec.describe 'usersLogin Mutation' do
         }
       end
 
-      it 'returns errors', :aggregate_failures do
+      it 'returns errors' do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
         expect(graphql_data_at(:users_login, :errors, :message)).to include('invalid_login_data')

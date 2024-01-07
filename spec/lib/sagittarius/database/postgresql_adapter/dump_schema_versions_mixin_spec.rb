@@ -26,7 +26,7 @@ RSpec.describe Sagittarius::Database::PostgresqlAdapter::DumpSchemaVersionsMixin
 
   let(:instance) { instance_class.new }
 
-  it 'calls SchemaMigrations touch_all and skips original implementation', :aggregate_failures do
+  it 'calls SchemaMigrations touch_all and skips original implementation' do
     allow(Sagittarius::Database::SchemaMigrations).to receive(:touch_all)
     allow(instance).to receive(:original_dump_schema_information)
 

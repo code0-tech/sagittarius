@@ -12,7 +12,7 @@ RSpec.describe Sagittarius::Database::Transactional do
       expect(described_class.transactional { 1 }).to eq(1)
     end
 
-    it 'can return and rollback', :aggregate_failures do
+    it 'can return and rollback' do
       user = nil
       expect(described_class.transactional do |helper|
         user = create(:user)

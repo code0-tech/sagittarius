@@ -25,7 +25,7 @@ RSpec.describe Sagittarius::Database::SchemaMigrations::Migrations do
 
     let(:relative_schema_directory) { 'db/schema_migrations' }
 
-    it 'creates a file containing a checksum for each version with a matching migration', :aggregate_failures do
+    it 'creates a file containing a checksum for each version with a matching migration' do
       Dir.mktmpdir do |tmpdir|
         schema_directory = Pathname.new(tmpdir).join(relative_schema_directory)
         FileUtils.mkdir_p(schema_directory)
@@ -65,7 +65,7 @@ RSpec.describe Sagittarius::Database::SchemaMigrations::Migrations do
     context 'when there are no version files' do
       let(:filenames) { [] }
 
-      it 'does nothing', :aggregate_failures do
+      it 'does nothing' do
         allow(connection).to receive(:quote_string)
         allow(connection).to receive(:execute)
 
@@ -76,7 +76,7 @@ RSpec.describe Sagittarius::Database::SchemaMigrations::Migrations do
       end
     end
 
-    context 'when there are version files', :aggregate_failures do
+    context 'when there are version files' do
       let(:filenames) { %w[123 456 789] }
 
       it 'inserts the missing versions into schema_migrations' do

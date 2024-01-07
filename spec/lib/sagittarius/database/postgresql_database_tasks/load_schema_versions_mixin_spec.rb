@@ -27,7 +27,7 @@ RSpec.describe Sagittarius::Database::PostgresqlDatabaseTasks::LoadSchemaVersion
 
   let(:instance) { instance_class.new }
 
-  it 'calls SchemaMigrations load_all', :aggregate_failures do
+  it 'calls SchemaMigrations load_all' do
     connection = double('connection') # rubocop:disable RSpec/VerifiedDoubles -- we don't need an actual connection here
     allow(instance).to receive(:connection).and_return(connection)
     allow(instance).to receive(:original_structure_load)

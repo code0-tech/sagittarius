@@ -32,7 +32,7 @@ RSpec.describe 'usersLogout Mutation' do
     context 'when logging out a session of the same user' do
       let(:current_user) { user_session.user }
 
-      it 'logs out the session', :aggregate_failures do
+      it 'logs out the session' do
         expect(graphql_data_at(:users_logout, :user_session, :id)).to eq(user_session_id)
         expect(graphql_data_at(:users_logout, :user_session, :active)).to be(false)
       end
@@ -41,7 +41,7 @@ RSpec.describe 'usersLogout Mutation' do
     context 'when logging out a session of another user' do
       let(:current_user) { create(:user) }
 
-      it 'does not log out the session', :aggregate_failures do
+      it 'does not log out the session' do
         expect(graphql_data_at(:users_logout, :errors, :message)).to include('missing_permission')
         expect(graphql_data_at(:users_logout, :user_session)).to be_nil
       end
