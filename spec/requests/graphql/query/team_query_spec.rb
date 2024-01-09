@@ -23,7 +23,7 @@ RSpec.describe 'team Query' do
   before { post_graphql query, variables: variables, current_user: current_user }
 
   context 'without an id' do
-    it 'returns an error', :aggregate_failures do
+    it 'returns an error' do
       expect(graphql_data_at(:graphql)).to be_nil
       expect(graphql_errors).not_to be_empty
     end
@@ -32,7 +32,7 @@ RSpec.describe 'team Query' do
   context 'with an invalid id' do
     let(:team_id) { 'gid://sagittarius/Teams/1' }
 
-    it 'returns an error', :aggregate_failures do
+    it 'returns an error' do
       expect(graphql_data_at(:team)).to be_nil
       expect(graphql_errors).not_to be_empty
     end
@@ -41,7 +41,7 @@ RSpec.describe 'team Query' do
   context 'with a valid id but out of range' do
     let(:team_id) { 'gid://sagittarius/Team/0' }
 
-    it 'returns only nil', :aggregate_failures do
+    it 'returns only nil' do
       expect(graphql_data_at(:team)).to be_nil
       expect_graphql_errors_to_be_empty
     end
@@ -58,7 +58,7 @@ RSpec.describe 'team Query' do
         end
       end
 
-      it 'returns the team', :aggregate_failures do
+      it 'returns the team' do
         expect(graphql_data_at(:team, :id)).to eq(team.to_global_id.to_s)
         expect(graphql_data_at(:team, :name)).to eq(team.name)
       end
@@ -67,14 +67,14 @@ RSpec.describe 'team Query' do
     context 'when user is not a member' do
       let(:current_user) { create(:user) }
 
-      it 'returns only nil', :aggregate_failures do
+      it 'returns only nil' do
         expect(graphql_data_at(:team)).to be_nil
         expect_graphql_errors_to_be_empty
       end
     end
 
     context 'when user is anonymous' do
-      it 'returns only nil', :aggregate_failures do
+      it 'returns only nil' do
         expect(graphql_data_at(:team)).to be_nil
         expect_graphql_errors_to_be_empty
       end

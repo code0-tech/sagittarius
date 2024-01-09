@@ -39,7 +39,7 @@ RSpec.describe Sagittarius::Middleware::Rack::Context do
       expect(app).to have_received(:call).with(env)
     end
 
-    it 'injects meta headers', :aggregate_failures do
+    it 'injects meta headers' do
       Sagittarius::Context.push(metadata)
 
       allow(app).to receive(:call).with(env).and_return([nil, {}, nil])

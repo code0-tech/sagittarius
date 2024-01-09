@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Sagittarius::Context do
   describe '.with_context' do
-    it 'builds a context with values from the previous one', :aggregate_failures do
+    it 'builds a context with values from the previous one' do
       inner = nil
       outer = nil
 
@@ -19,7 +19,7 @@ RSpec.describe Sagittarius::Context do
       expect(data_from(inner)).to eq(log_hash(described_class::CORRELATION_ID_KEY => 'hello', 'user' => 'username'))
     end
 
-    it 'builds a context with overwritten key/values in the newer context', :aggregate_failures do
+    it 'builds a context with overwritten key/values in the newer context' do
       inner = nil
       outer = nil
 
@@ -46,7 +46,7 @@ RSpec.describe Sagittarius::Context do
       end
     end
 
-    it 'pops the context from the stack when the block fails', :aggregate_failures do
+    it 'pops the context from the stack when the block fails' do
       expect { described_class.with_context { |_| raise('broken') } }.to raise_error('broken')
 
       expect(contexts).to be_empty
@@ -104,7 +104,7 @@ RSpec.describe Sagittarius::Context do
       described_class.pop(root_context)
     end
 
-    it 'returns the last context', :aggregate_failures do
+    it 'returns the last context' do
       expect(described_class.current).to eq(root_context)
 
       new_context = described_class.push
@@ -194,7 +194,7 @@ RSpec.describe Sagittarius::Context do
   end
 
   describe '#merge' do
-    it 'returns a new context with duplicated data', :aggregate_failures do
+    it 'returns a new context with duplicated data' do
       context = described_class.new(user: 'user')
 
       new_context = context.merge({})
@@ -211,7 +211,7 @@ RSpec.describe Sagittarius::Context do
       expect(data_from(new_context)).to include(log_hash('root_namespace' => 'namespace', 'user' => 'u'))
     end
 
-    it 'removes empty values', :aggregate_failures do
+    it 'removes empty values' do
       context = described_class.new(project: 'p', root_namespace: 'n', user: 'u')
 
       new_context = context.merge(project: '', user: nil)
@@ -221,7 +221,7 @@ RSpec.describe Sagittarius::Context do
                                                          described_class.log_key('user'))
     end
 
-    it 'keeps false values', :aggregate_failures do
+    it 'keeps false values' do
       context = described_class.new(project: 'p', root_namespace: 'n', flag: false)
 
       new_context = context.merge(project: '', false: nil) # rubocop:disable Lint/BooleanSymbol -- intended for this spec
@@ -238,7 +238,7 @@ RSpec.describe Sagittarius::Context do
       expect(new_context.correlation_id).to eq('hello')
     end
 
-    it 'generates a new correlation id if a blank one was passed', :aggregate_failures do
+    it 'generates a new correlation id if a blank one was passed' do
       context = described_class.new
       old_correlation_id = context.correlation_id
 
