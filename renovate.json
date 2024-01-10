@@ -4,5 +4,11 @@
     "config:recommended",
     ":assignee(Taucher2003)",
     ":label(dependencies)"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["ruby", "redis"],
+      "dependencyDashboardApproval": true
+    }
   ]
 }
