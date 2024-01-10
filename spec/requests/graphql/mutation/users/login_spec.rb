@@ -51,7 +51,7 @@ RSpec.describe 'usersLogin Mutation' do
           :user_logged_in,
           author_id: user.id,
           entity_id: user.id,
-          details: { email: user.email }
+          details: { email: user.email, method: 'username_and_password' }
         )
       end
     end
@@ -78,7 +78,7 @@ RSpec.describe 'usersLogin Mutation' do
           :user_logged_in,
           author_id: user.id,
           entity_id: user.id,
-          details: { username: user.username }
+          details: { username: user.username, method: 'username_and_password' }
         )
       end
     end

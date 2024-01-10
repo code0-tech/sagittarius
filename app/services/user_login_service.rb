@@ -29,7 +29,7 @@ class UserLoginService
         :user_logged_in,
         author_id: user.id,
         entity: user,
-        details: args.slice(:username, :email),
+        details: args.slice(:username, :email).merge({ method: :username_and_password }),
         target: user
       )
 
