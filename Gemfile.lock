@@ -116,7 +116,7 @@ GEM
     gemoji (3.0.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    graphql (2.2.4)
+    graphql (2.2.5)
       racc (~> 1.4)
     graphql-docs (4.0.0)
       commonmarker (~> 0.23, >= 0.23.6)
