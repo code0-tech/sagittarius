@@ -1,5 +1,6 @@
 stages:
   - lint
+  - build
   - test
 
 include:
@@ -43,6 +44,20 @@ graphql_docs:
     - bundle exec rake graphql:compile_docs
     - git diff --exit-code
 
+build-image:
+  image:
+    name: gcr.io/kaniko-project/executor:v1.19.2-debug # Debug Image because a shell is required for GitLab Runner
+    entrypoint: [ "" ]
+  stage: build
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"ghcr.io\":{\"auth\":\"$(printf "%s:%s" "$" "${C0_GH_TOKEN}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}"
+
 rspec:
   extends:
     - .rails
@@ -84,3 +99,55 @@ db:rollback-and-migrate:
     - bundle exec rake db:migrate VERSION=20231203194307
     - bundle exec rake db:migrate
     - git diff --exit-code
+
+boot:production-mode:
+  extends:
+    - .rails
+  stage: test
+  variables:
+    POSTGRES_DB: sagittarius_production
+    POSTGRES_USER: sagittarius
+    POSTGRES_PASSWORD: sagittarius
+    SAGITTARIUS_DATABASE_HOST: postgres
+    SAGITTARIUS_DATABASE_PORT: '5432'
+    RAILS_ENV: production
+    RAILS_FORCE_SSL: 'false'
+    BUNDLE_WITHOUT: 'development:test'
+  script:
+    - bundle exec rake db:prepare db:seed_fu
+    - bin/rails s &
+    - curl --fail -sv --retry 20 --retry-delay 3 --retry-connrefused http://127.0.0.1:3000/health/liveness
+
+boot:docker:
+  stage: test
+  image: docker:24.0.6
+  services:
+    - docker:24.0.6-dind
+  variables:
+    DOCKER_TLS_CERTDIR: /certs
+    DOCKER_HOST: tcp://docker:2376
+  script:
+    - docker compose -f docker-compose.dev.yml up -d
+    - >
+      docker run
+      --name sagittarius
+      --network sagittarius_default
+      --network-alias sagittarius
+      -e SAGITTARIUS_DATABASE_HOST=postgresql
+      -e SAGITTARIUS_DATABASE_PORT=5432
+      -e SAGITTARIUS_REDIS_HOST=redis
+      -e SAGITTARIUS_REDIS_PORT=6379
+      -e RAILS_ENV=production
+      ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA} &
+    - >
+      docker run
+      --rm
+      --network sagittarius_default
+      curlimages/curl:8.5.0
+      curl
+      --fail
+      -sv
+      --retry 20
+      --retry-delay 3
+      --retry-connrefused
+      http://sagittarius:3000/health/liveness

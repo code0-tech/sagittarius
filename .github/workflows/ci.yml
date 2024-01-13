@@ -8,12 +8,13 @@ on:
 
 permissions:
   pull-requests: write
+  packages: write
 
 jobs:
   pipeline:
     runs-on: ubuntu-latest
     steps:
-      - uses: Taucher2003/GitLab-Pipeline-Action@1.5.1
+      - uses: Taucher2003/GitLab-Pipeline-Action@1.6.1
         name: Run pipeline
         id: pipeline
         with:
@@ -24,6 +25,7 @@ jobs:
           SHOW_JOB_LOGS: all
         env:
           GLPA_C0_GH_REF: ${{ github.ref }}
+          GLPA_C0_GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Find existing comment
         uses: peter-evans/find-comment@v2

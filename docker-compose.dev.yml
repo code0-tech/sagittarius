@@ -20,6 +20,19 @@ services:
     ports:
       - "6380:6379"
 
+  sagittarius:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      SAGITTARIUS_DATABASE_HOST: postgresql
+      SAGITTARIUS_DATABASE_PORT: 5432
+      RAILS_FORCE_SSL: 'false'
+    profiles:
+      - sagittarius
+
 volumes:
   database:
   redis:

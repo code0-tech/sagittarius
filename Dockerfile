@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1
 
-# Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
+# Make sure RUBY_VERSION matches the Ruby version in .tool-versions and Gemfile
 ARG RUBY_VERSION=3.2.2
 FROM ruby:$RUBY_VERSION-slim as base
 
@@ -11,7 +11,7 @@ WORKDIR /rails
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+    BUNDLE_WITHOUT="development:test"
 
 
 # Throw-away build stage to reduce size of final image
@@ -28,7 +28,17 @@ RUN bundle install && \
     bundle exec bootsnap precompile --gemfile
 
 # Copy application code
-COPY . .
+COPY log/ log/
+COPY storage/ storage/
+COPY tmp/ tmp/
+COPY bin/ bin/
+COPY public/ public/
+COPY Rakefile Rakefile
+COPY config.ru config.ru
+COPY config/ config/
+COPY lib/ lib/
+COPY db/ db/
+COPY app/ app/
 
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
