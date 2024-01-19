@@ -38,6 +38,7 @@ RSpec.describe TeamRoles::CreateService do
 
     before do
       create(:team_member, team: team, user: current_user)
+      stub_allowed_ability(TeamPolicy, :create_team_role, user: current_user, subject: team)
     end
 
     it { is_expected.to be_success }

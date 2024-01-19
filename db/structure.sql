@@ -49,6 +49,23 @@ CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
 
+CREATE TABLE team_member_roles (
+    id bigint NOT NULL,
+    role_id bigint NOT NULL,
+    member_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE team_member_roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE team_member_roles_id_seq OWNED BY team_member_roles.id;
+
 CREATE TABLE team_members (
     id bigint NOT NULL,
     team_id bigint NOT NULL,
@@ -65,6 +82,23 @@ CREATE SEQUENCE team_members_id_seq
     CACHE 1;
 
 ALTER SEQUENCE team_members_id_seq OWNED BY team_members.id;
+
+CREATE TABLE team_role_abilities (
+    id bigint NOT NULL,
+    team_role_id bigint NOT NULL,
+    ability integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE team_role_abilities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE team_role_abilities_id_seq OWNED BY team_role_abilities.id;
 
 CREATE TABLE team_roles (
     id bigint NOT NULL,
@@ -147,7 +181,11 @@ ALTER TABLE ONLY application_settings ALTER COLUMN id SET DEFAULT nextval('appli
 
 ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_id_seq'::regclass);
 
+ALTER TABLE ONLY team_member_roles ALTER COLUMN id SET DEFAULT nextval('team_member_roles_id_seq'::regclass);
+
 ALTER TABLE ONLY team_members ALTER COLUMN id SET DEFAULT nextval('team_members_id_seq'::regclass);
+
+ALTER TABLE ONLY team_role_abilities ALTER COLUMN id SET DEFAULT nextval('team_role_abilities_id_seq'::regclass);
 
 ALTER TABLE ONLY team_roles ALTER COLUMN id SET DEFAULT nextval('team_roles_id_seq'::regclass);
 
@@ -169,8 +207,14 @@ ALTER TABLE ONLY audit_events
 ALTER TABLE ONLY schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
 
+ALTER TABLE ONLY team_member_roles
+    ADD CONSTRAINT team_member_roles_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY team_members
     ADD CONSTRAINT team_members_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY team_role_abilities
+    ADD CONSTRAINT team_role_abilities_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY team_roles
     ADD CONSTRAINT team_roles_pkey PRIMARY KEY (id);
@@ -188,11 +232,19 @@ CREATE UNIQUE INDEX index_application_settings_on_setting ON application_setting
 
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
 
+CREATE INDEX index_team_member_roles_on_member_id ON team_member_roles USING btree (member_id);
+
+CREATE INDEX index_team_member_roles_on_role_id ON team_member_roles USING btree (role_id);
+
 CREATE INDEX index_team_members_on_team_id ON team_members USING btree (team_id);
 
 CREATE UNIQUE INDEX index_team_members_on_team_id_and_user_id ON team_members USING btree (team_id, user_id);
 
 CREATE INDEX index_team_members_on_user_id ON team_members USING btree (user_id);
+
+CREATE INDEX index_team_role_abilities_on_team_role_id ON team_role_abilities USING btree (team_role_id);
+
+CREATE UNIQUE INDEX index_team_role_abilities_on_team_role_id_and_ability ON team_role_abilities USING btree (team_role_id, ability);
 
 CREATE INDEX index_team_roles_on_team_id ON team_roles USING btree (team_id);
 
@@ -210,6 +262,15 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(
 
 ALTER TABLE ONLY team_members
     ADD CONSTRAINT fk_rails_194b5b076d FOREIGN KEY (team_id) REFERENCES teams(id);
+
+ALTER TABLE ONLY team_member_roles
+    ADD CONSTRAINT fk_rails_2ba25f58d9 FOREIGN KEY (role_id) REFERENCES team_roles(id);
+
+ALTER TABLE ONLY team_member_roles
+    ADD CONSTRAINT fk_rails_5965594cb8 FOREIGN KEY (member_id) REFERENCES team_members(id);
+
+ALTER TABLE ONLY team_role_abilities
+    ADD CONSTRAINT fk_rails_88eb4b9f69 FOREIGN KEY (team_role_id) REFERENCES team_roles(id);
 
 ALTER TABLE ONLY team_members
     ADD CONSTRAINT fk_rails_9ec2d5e75e FOREIGN KEY (user_id) REFERENCES users(id);
