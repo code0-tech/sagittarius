@@ -131,7 +131,7 @@ GEM
       nokogiri (>= 1.4)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
-    io-console (0.7.1)
+    io-console (0.7.2)
     irb (1.11.1)
       rdoc
       reline (>= 0.4.2)
@@ -253,7 +253,7 @@ GEM
     rspec-parameterized-table_syntax (1.0.1)
       binding_of_caller
       rspec-parameterized-core (< 2)
-    rspec-rails (6.1.0)
+    rspec-rails (6.1.1)
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       railties (>= 6.1)
