@@ -28,7 +28,7 @@ jobs:
           GLPA_C0_GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Find existing comment
-        uses: peter-evans/find-comment@v2
+        uses: peter-evans/find-comment@v3
         id: find-comment
         if: ${{ !cancelled() && github.event_name == 'pull_request' }}
         with:
