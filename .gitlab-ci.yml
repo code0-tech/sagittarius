@@ -120,9 +120,9 @@ boot:production-mode:
 
 boot:docker:
   stage: test
-  image: docker:24.0.7
+  image: docker:24.0.8
   services:
-    - docker:24.0.7-dind
+    - docker:24.0.8-dind
   variables:
     DOCKER_TLS_CERTDIR: /certs
     DOCKER_HOST: tcp://docker:2376
