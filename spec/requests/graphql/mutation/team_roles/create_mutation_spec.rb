@@ -40,6 +40,8 @@ RSpec.describe 'teamRolesCreate Mutation' do
   context 'when user is a member of the team' do
     before do
       create(:team_member, team: team, user: current_user)
+      stub_allowed_ability(TeamPolicy, :create_team_role, user: current_user, subject: team)
+      stub_allowed_ability(TeamPolicy, :read_team_role, user: current_user, subject: team)
     end
 
     it 'creates team role' do

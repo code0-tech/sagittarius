@@ -7,6 +7,8 @@ RSpec.describe TeamRole do
 
   describe 'associations' do
     it { is_expected.to belong_to(:team).required }
+    it { is_expected.to have_many(:member_roles).class_name('TeamMemberRole').inverse_of(:role) }
+    it { is_expected.to have_many(:members).class_name('TeamMember').through(:member_roles).inverse_of(:roles) }
   end
 
   describe 'validations' do

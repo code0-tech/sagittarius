@@ -7,6 +7,7 @@ RSpec.describe Team do
 
   describe 'associations' do
     it { is_expected.to have_many(:team_members).inverse_of(:team) }
+    it { is_expected.to have_many(:roles).inverse_of(:team) }
     it { is_expected.to have_many(:users).through(:team_members).inverse_of(:teams) }
   end
 
