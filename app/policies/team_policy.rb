@@ -14,4 +14,5 @@ class TeamPolicy < BasePolicy
 
   customizable_permission :read_team_role
   customizable_permission :create_team_role
+  customizable_permission :invite_member
 end
