@@ -88,7 +88,8 @@ db:migrate:
   stage: test
   script:
     - bundle exec rake db:migrate:reset
-    - git diff --exit-code
+    - git add db
+    - git diff --exit-code --staged
 
 db:rollback-and-migrate:
   extends:
@@ -99,7 +100,8 @@ db:rollback-and-migrate:
     - bundle exec rake db:create db:schema:load
     - bundle exec rake db:migrate VERSION=20231203194307
     - bundle exec rake db:migrate
-    - git diff --exit-code
+    - git add db
+    - git diff --exit-code --staged
 
 boot:production-mode:
   extends:
