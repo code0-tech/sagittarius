@@ -8,6 +8,7 @@ class AuditEvent < ApplicationRecord
     application_setting_updated: 4,
     team_role_created: 5,
     team_member_invited: 6,
+    team_member_roles_updated: 7,
   }.with_indifferent_access
 
   enum :action_type, ACTION_TYPES, prefix: :action
