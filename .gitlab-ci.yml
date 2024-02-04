@@ -42,7 +42,8 @@ graphql_docs:
   stage: lint
   script:
     - bundle exec rake graphql:compile_docs
-    - git diff --exit-code
+    - git add docs
+    - git diff --exit-code --staged
 
 build-image:
   image:
