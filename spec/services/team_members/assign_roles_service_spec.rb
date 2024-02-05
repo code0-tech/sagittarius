@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe TeamMembers::AssignRolesService do
-  subject(:service_response) { described_class.new(current_user, team, member, roles).execute }
+  subject(:service_response) { described_class.new(current_user, member, roles).execute }
 
   let(:current_user) { create(:user) }
   let(:team) { create(:team) }
@@ -18,7 +18,7 @@ RSpec.describe TeamMembers::AssignRolesService do
     it { expect { service_response }.not_to change { TeamMemberRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_member_invited)
+      expect { service_response }.not_to create_audit_event(:team_member_roles_updated)
     end
   end
 
@@ -28,7 +28,7 @@ RSpec.describe TeamMembers::AssignRolesService do
     it { expect { service_response }.not_to change { TeamMemberRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_member_invited)
+      expect { service_response }.not_to create_audit_event(:team_member_roles_updated)
     end
   end
 
@@ -111,6 +111,22 @@ RSpec.describe TeamMembers::AssignRolesService do
           target_id: team.id,
           target_type: 'Team'
         )
+      end
+    end
+
+    context 'when roles and member belong to different teams' do
+      let(:roles) { [create(:team_role)] }
+
+      before do
+        stub_allowed_ability(TeamPolicy, :assign_member_roles, user: current_user, subject: team)
+      end
+
+      it { is_expected.not_to be_success }
+      it { expect(service_response.payload).to eq(:inconsistent_team) }
+      it { expect { service_response }.not_to change { TeamMemberRole.count } }
+
+      it do
+        expect { service_response }.not_to create_audit_event(:team_member_roles_updated)
       end
     end
   end

@@ -4,18 +4,24 @@ module TeamMembers
   class AssignRolesService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :team, :member, :roles
+    attr_reader :current_user, :member, :roles
 
-    def initialize(current_user, team, member, roles)
+    def initialize(current_user, member, roles)
       @current_user = current_user
-      @team = team
       @member = member
       @roles = roles
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def execute
+      team = member.team
       unless Ability.allowed?(current_user, :assign_member_roles, team)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+      end
+
+      unless roles.map(&:team).all? { |t| t == team }
+        return ServiceResponse.error(message: 'Roles and member belong to different teams', payload: :inconsistent_team)
       end
 
       transactional do |t|
@@ -53,5 +59,7 @@ module TeamMembers
         ServiceResponse.success(message: 'Member roles updated', payload: new_roles)
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 end

@@ -20,9 +20,9 @@ module Sagittarius
           raise e if outer_helper.nil?
 
           reraise_rollback = true
+        ensure
+          TransactionContext.current_helper = outer_helper
         end
-
-        TransactionContext.current_helper = outer_helper
 
         outer_helper.rollback_and_return! helper.return_value if reraise_rollback
         return_value || helper.return_value

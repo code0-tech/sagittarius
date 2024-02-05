@@ -35,7 +35,6 @@ RSpec.describe 'teamMembersInvite Mutation' do
   end
   let(:input) do
     {
-      teamId: team.to_global_id.to_s,
       memberId: member.to_global_id.to_s,
       roleIds: [team_roles.first.to_global_id.to_s],
     }
