@@ -3,6 +3,10 @@ title: <%= object[:name] %>
 ---
 
 <%= object[:description] %>
+<% unless object[:markdown_documentation].nil? -%>
+
+<%= object[:markdown_documentation] %>
+<% end -%>
 
 <% unless object[:possible_types].empty? -%>
 ## Possible types
