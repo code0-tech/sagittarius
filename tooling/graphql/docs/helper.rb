@@ -41,7 +41,7 @@ module Tooling
             arguments = input_type[:input_fields]
             t.merge(
               arguments: arguments,
-              markdown_documentation: schema.types[t[:name]].try(:markdown_documentation).try(:strip)
+              markdown_documentation: schema.mutation.fields[t[:name]].mutation.try(:markdown_documentation).try(:strip)
             )
           end
         end
