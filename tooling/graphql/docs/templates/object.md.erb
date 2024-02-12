@@ -3,6 +3,10 @@ title: <%= object[:name] %>
 ---
 
 <%= object[:description] %>
+<% unless object[:markdown_documentation].nil? -%>
+
+<%= object[:markdown_documentation] %>
+<% end -%>
 
 <% (fields_with_arguments, fields_without_arguments) = object[:fields].partition { |f| has_arguments.call(f) } -%>
 <% unless fields_without_arguments.empty? -%>

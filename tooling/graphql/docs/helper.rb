@@ -6,6 +6,7 @@ module Tooling
       ViolatedAssumption = Class.new(StandardError)
       CONNECTION_ARGS = %w[after before first last].to_set
 
+      # rubocop:disable Metrics/ModuleLength
       module Helper # rubocop:disable GraphQL/ObjectDescription -- this is not a graphql object
         include GraphQLDocs::Helpers
 
@@ -15,10 +16,10 @@ module Tooling
 
         def rendering_objects
           {
-            object: object_types + graphql_operation_types.select { |t| t[:name] == 'Query' },
-            scalar: graphql_scalar_types,
+            object: object_types + operation_types.select { |t| t[:name] == 'Query' },
+            scalar: scalar_types,
             interface: interfaces,
-            union: graphql_union_types,
+            union: union_types,
             mutation: mutations,
             enum: enums,
           }
@@ -38,7 +39,10 @@ module Tooling
             assert!(input_type.present?, "Cannot find #{input_type_name} for #{name}.input")
 
             arguments = input_type[:input_fields]
-            t.merge(arguments: arguments)
+            t.merge(
+              arguments: arguments,
+              markdown_documentation: schema.mutation.fields[t[:name]].mutation.try(:markdown_documentation).try(:strip)
+            )
           end
         end
 
@@ -46,7 +50,30 @@ module Tooling
           graphql_enum_types
             .reject { |type| type[:values].empty? }
             .reject { |enum_type| enum_type[:name].start_with?('__') }
-            .map { |type| type.merge(values: sorted_by_name(type[:values])) }
+            .map do |type|
+              type.merge(
+                values: sorted_by_name(type[:values]),
+                markdown_documentation: schema.types[type[:name]].try(:markdown_documentation).try(:strip)
+              )
+            end
+        end
+
+        def operation_types
+          graphql_operation_types.map do |type|
+            type.merge(markdown_documentation: schema.types[type[:name]].try(:markdown_documentation).try(:strip))
+          end
+        end
+
+        def scalar_types
+          graphql_scalar_types.map do |type|
+            type.merge(markdown_documentation: schema.types[type[:name]].try(:markdown_documentation).try(:strip))
+          end
+        end
+
+        def union_types
+          graphql_union_types.map do |type|
+            type.merge(markdown_documentation: schema.types[type[:name]].try(:markdown_documentation).try(:strip))
+          end
         end
 
         def object_types
@@ -54,7 +81,12 @@ module Tooling
         end
 
         def interfaces
-          graphql_interface_types.map { |t| t.merge(fields: t[:fields] + t[:connections]) }
+          graphql_interface_types.map do |t|
+            t.merge(
+              fields: t[:fields] + t[:connections],
+              markdown_documentation: schema.types[t[:name]].try(:markdown_documentation).try(:strip)
+            )
+          end
         end
 
         def sorted_by_name(objects)
@@ -81,7 +113,8 @@ module Tooling
               is_edge: name.end_with?('Edge'),
               is_connection: name.end_with?('Connection'),
               is_payload: name.end_with?('Payload') && mutations.include?(name.chomp('Payload').camelcase(:lower)),
-              fields: type[:fields] + type[:connections]
+              fields: type[:fields] + type[:connections],
+              markdown_documentation: schema.types[name].try(:markdown_documentation).try(:strip)
             )
           end
         end
@@ -113,6 +146,7 @@ module Tooling
           raise ViolatedAssumption, "#{message}\nThis violation should not have happened" unless claim
         end
       end
+      # rubocop:enable Metrics/ModuleLength
     end
   end
 end

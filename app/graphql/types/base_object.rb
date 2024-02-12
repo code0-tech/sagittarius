@@ -2,6 +2,7 @@
 
 module Types
   class BaseObject < GraphQL::Schema::Object
+    include Sagittarius::Graphql::HasMarkdownDocumentation
     edge_type_class(Types::BaseEdge)
     connection_type_class(Types::CountableConnectionType)
     field_class Types::BaseField
