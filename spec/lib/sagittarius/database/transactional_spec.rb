@@ -22,5 +22,18 @@ RSpec.describe Sagittarius::Database::Transactional do
 
       expect { user.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
+
+    it 'can rollback from nested transaction' do
+      user = nil
+      expect(described_class.transactional do |_helper|
+        user = create(:user)
+        expect { user.reload }.not_to raise_error
+        described_class.transactional do |inner_helper|
+          inner_helper.rollback_and_return!(2)
+        end
+      end).to eq(2)
+
+      expect { user.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
   end
 end
