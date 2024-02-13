@@ -2,7 +2,7 @@
 title: teamMembersAssignRoles
 ---
 
-Invite a new member to a team.
+Update the roles a member is assigned to.
 
 ## Arguments
 

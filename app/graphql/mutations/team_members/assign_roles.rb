@@ -3,7 +3,7 @@
 module Mutations
   module TeamMembers
     class AssignRoles < BaseMutation
-      description 'Invite a new member to a team.'
+      description 'Update the roles a member is assigned to.'
 
       field :team_member_roles, [Types::TeamMemberRoleType], description: 'The newly created team member'
 
