@@ -20,7 +20,7 @@ include:
     - bundle config build.pg --with-pg-config=$(asdf where postgres)/bin/pg_config
     - !reference [.bundle, before_script]
   services:
-    - postgres:16.1
+    - postgres:16.2
   variables:
     POSTGRES_DB: sagittarius_test
     POSTGRES_USER: sagittarius
