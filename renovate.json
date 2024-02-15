@@ -7,7 +7,7 @@
   ],
   "packageRules": [
     {
-      "matchPackageNames": ["ruby", "redis"],
+      "matchPackageNames": ["ruby", "redis", "postgres"],
       "dependencyDashboardApproval": true
     }
   ]
