@@ -3,7 +3,8 @@
 class TeamRoleAbility < ApplicationRecord
   ABILITIES = {
     create_team_role: 1,
-    read_team_role: 2,
+    invite_member: 2,
+    assign_member_roles: 3,
   }.with_indifferent_access
 
   enum :ability, ABILITIES, prefix: :can
