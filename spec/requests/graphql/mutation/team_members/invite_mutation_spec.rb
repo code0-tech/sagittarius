@@ -42,7 +42,6 @@ RSpec.describe 'teamMembersInvite Mutation' do
     before do
       create(:team_member, team: team, user: current_user)
       stub_allowed_ability(TeamPolicy, :invite_member, user: current_user, subject: team)
-      stub_allowed_ability(TeamPolicy, :read_team_member, user: current_user, subject: team)
     end
 
     it 'creates team member' do
