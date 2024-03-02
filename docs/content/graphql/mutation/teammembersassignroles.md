@@ -18,4 +18,4 @@ Update the roles a member is assigned to.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
-| `teamMemberRoles` | [`[TeamMemberRole!]`](../object/teammemberrole.md) | The newly created team member |
+| `teamMemberRoles` | [`[TeamMemberRole!]`](../object/teammemberrole.md) | The roles the member is now assigned to |
