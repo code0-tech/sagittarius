@@ -5,7 +5,7 @@ module Mutations
     class AssignRoles < BaseMutation
       description 'Update the roles a member is assigned to.'
 
-      field :team_member_roles, [Types::TeamMemberRoleType], description: 'The newly created team member'
+      field :team_member_roles, [Types::TeamMemberRoleType], description: 'The roles the member is now assigned to'
 
       argument :member_id, Types::GlobalIdType[::TeamMember],
                description: 'The id of the member which should be assigned the roles'

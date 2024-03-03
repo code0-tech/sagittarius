@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'teamMembersInvite Mutation' do
+RSpec.describe 'teamMembersAssignRoles Mutation' do
   include GraphqlHelpers
 
   subject(:mutate!) { post_graphql mutation, variables: variables, current_user: current_user }
