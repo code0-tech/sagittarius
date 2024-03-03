@@ -2,12 +2,13 @@
 
 class TeamRoleAbility < ApplicationRecord
   ABILITIES = {
-    create_team_role: 1,
-    invite_member: 2,
-    assign_member_roles: 3,
+    create_team_role: { db: 1, description: 'Allows the creation of roles in a team' },
+    invite_member: { db: 2, description: 'Allows to invite new members to a team' },
+    assign_member_roles: { db: 3, description: 'Allows to change the roles of a team member' },
+    assign_role_abilities: { db: 4, description: 'Allows to change the abilities of a team role' },
   }.with_indifferent_access
 
-  enum :ability, ABILITIES, prefix: :can
+  enum :ability, ABILITIES.transform_values { |v| v[:db] }, prefix: :can
 
   belongs_to :team_role, inverse_of: :abilities
 

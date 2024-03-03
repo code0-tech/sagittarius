@@ -8,6 +8,7 @@ RSpec.describe SagittariusSchema.types['TeamRole'] do
       id
       team
       name
+      abilities
       createdAt
       updatedAt
     ]
