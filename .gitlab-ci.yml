@@ -47,7 +47,7 @@ graphql_docs:
 
 build-image:
   image:
-    name: gcr.io/kaniko-project/executor:v1.21.0-debug # Debug Image because a shell is required for GitLab Runner
+    name: gcr.io/kaniko-project/executor:v1.21.1-debug # Debug Image because a shell is required for GitLab Runner
     entrypoint: [ "" ]
   stage: build
   script:
