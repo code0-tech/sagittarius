@@ -10,7 +10,7 @@ module Mutations
 
       argument :member_id, Types::GlobalIdType[::TeamMember],
                description: 'The id of the member which should be assigned the roles'
-      argument :role_ids, [Types::GlobalIdType[::TeamRole]],
+      argument :role_ids, [Types::GlobalIdType[::OrganizationRole]],
                description: 'The roles the member should be assigned to the member'
 
       def resolve(member_id:, role_ids:)

@@ -13,26 +13,26 @@ module TeamRoles
     end
 
     def execute
-      unless Ability.allowed?(current_user, :create_team_role, team)
+      unless Ability.allowed?(current_user, :create_organization_role, team)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
       transactional do
-        team_role = TeamRole.create(team: team, **params)
+        organization_role = OrganizationRole.create(team: team, **params)
 
-        unless team_role.persisted?
-          return ServiceResponse.error(message: 'Failed to save team role', payload: team_role.errors)
+        unless organization_role.persisted?
+          return ServiceResponse.error(message: 'Failed to save organization role', payload: organization_role.errors)
         end
 
         AuditService.audit(
-          :team_role_created,
+          :organization_role_created,
           author_id: current_user.id,
-          entity: team_role,
+          entity: organization_role,
           details: { name: params[:name] },
           target: team
         )
 
-        ServiceResponse.success(message: 'Team role created', payload: team_role)
+        ServiceResponse.success(message: 'Organization role created', payload: organization_role)
       end
     end
   end

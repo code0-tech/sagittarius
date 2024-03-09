@@ -34,15 +34,15 @@ RSpec.describe TeamMembers::AssignRolesService do
 
   context 'when user has permission' do
     context 'when adding a role' do
-      let(:team_role) { create(:team_role, team: team) }
-      let(:roles) { [team_role] }
+      let(:organization_role) { create(:organization_role, team: team) }
+      let(:roles) { [organization_role] }
 
       before do
         stub_allowed_ability(TeamPolicy, :assign_member_roles, user: current_user, subject: team)
       end
 
       it { is_expected.to be_success }
-      it { expect(service_response.payload.map(&:role)).to eq([team_role]) }
+      it { expect(service_response.payload.map(&:role)).to eq([organization_role]) }
       it { expect { service_response }.to change { OrganizationMemberRole.count }.by(1) }
 
       it do
@@ -50,7 +50,10 @@ RSpec.describe TeamMembers::AssignRolesService do
           :organization_member_roles_updated,
           author_id: current_user.id,
           entity_type: 'TeamMember',
-          details: { 'old_roles' => [], 'new_roles' => [{ 'id' => team_role.id, 'name' => team_role.name }] },
+          details: {
+            'old_roles' => [],
+            'new_roles' => [{ 'id' => organization_role.id, 'name' => organization_role.name }],
+          },
           target_id: team.id,
           target_type: 'Team'
         )
@@ -58,11 +61,11 @@ RSpec.describe TeamMembers::AssignRolesService do
     end
 
     context 'when removing a role' do
-      let(:team_role) { create(:team_role, team: team) }
+      let(:organization_role) { create(:organization_role, team: team) }
       let(:roles) { [] }
 
       before do
-        create(:organization_member_role, member: member, role: team_role)
+        create(:organization_member_role, member: member, role: organization_role)
         stub_allowed_ability(TeamPolicy, :assign_member_roles, user: current_user, subject: team)
       end
 
@@ -76,7 +79,7 @@ RSpec.describe TeamMembers::AssignRolesService do
           author_id: current_user.id,
           entity_type: 'TeamMember',
           details: {
-            'old_roles' => [{ 'id' => team_role.id, 'name' => team_role.name }],
+            'old_roles' => [{ 'id' => organization_role.id, 'name' => organization_role.name }],
             'new_roles' => [],
           },
           target_id: team.id,
@@ -86,17 +89,17 @@ RSpec.describe TeamMembers::AssignRolesService do
     end
 
     context 'when adding and removing a role' do
-      let(:adding_team_role) { create(:team_role, team: team) }
-      let(:removing_team_role) { create(:team_role, team: team) }
-      let(:roles) { [adding_team_role] }
+      let(:adding_organization_role) { create(:organization_role, team: team) }
+      let(:removing_organization_role) { create(:organization_role, team: team) }
+      let(:roles) { [adding_organization_role] }
 
       before do
-        create(:organization_member_role, member: member, role: removing_team_role)
+        create(:organization_member_role, member: member, role: removing_organization_role)
         stub_allowed_ability(TeamPolicy, :assign_member_roles, user: current_user, subject: team)
       end
 
       it { is_expected.to be_success }
-      it { expect(service_response.payload.map(&:role)).to eq([adding_team_role]) }
+      it { expect(service_response.payload.map(&:role)).to eq([adding_organization_role]) }
       it { expect { service_response }.not_to change { OrganizationMemberRole.count } }
 
       it do
@@ -105,8 +108,8 @@ RSpec.describe TeamMembers::AssignRolesService do
           author_id: current_user.id,
           entity_type: 'TeamMember',
           details: {
-            'old_roles' => [{ 'id' => removing_team_role.id, 'name' => removing_team_role.name }],
-            'new_roles' => [{ 'id' => adding_team_role.id, 'name' => adding_team_role.name }],
+            'old_roles' => [{ 'id' => removing_organization_role.id, 'name' => removing_organization_role.name }],
+            'new_roles' => [{ 'id' => adding_organization_role.id, 'name' => adding_organization_role.name }],
           },
           target_id: team.id,
           target_type: 'Team'
@@ -115,7 +118,7 @@ RSpec.describe TeamMembers::AssignRolesService do
     end
 
     context 'when roles and member belong to different teams' do
-      let(:roles) { [create(:team_role)] }
+      let(:roles) { [create(:organization_role)] }
 
       before do
         stub_allowed_ability(TeamPolicy, :assign_member_roles, user: current_user, subject: team)

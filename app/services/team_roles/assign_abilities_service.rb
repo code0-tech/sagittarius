@@ -25,7 +25,7 @@ module TeamRoles
         current_abilities.where.not(ability: abilities).delete_all
 
         (abilities - current_abilities.map(&:ability)).map do |ability|
-          organization_role_ability = OrganizationRoleAbility.create(team_role: role, ability: ability)
+          organization_role_ability = OrganizationRoleAbility.create(organization_role: role, ability: ability)
 
           next if organization_role_ability.persisted?
 

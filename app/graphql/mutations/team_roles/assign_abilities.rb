@@ -9,7 +9,7 @@ module Mutations
 
       argument :abilities, [Types::OrganizationRoleAbilityEnum],
                description: 'The abilities that should be granted to the ability'
-      argument :role_id, Types::GlobalIdType[::TeamRole],
+      argument :role_id, Types::GlobalIdType[::OrganizationRole],
                description: 'The id of the role which should be granted the abilities'
 
       def resolve(role_id:, abilities:)

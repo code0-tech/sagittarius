@@ -9,7 +9,7 @@ class Team < ApplicationRecord
   has_many :team_members, inverse_of: :team
   has_many :users, through: :team_members, inverse_of: :teams
 
-  has_many :roles, class_name: 'TeamRole', inverse_of: :team
+  has_many :roles, class_name: 'OrganizationRole', inverse_of: :team
 
   def member?(user)
     return false if user.nil?

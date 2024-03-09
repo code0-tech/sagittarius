@@ -18,11 +18,11 @@ RSpec.describe 'teamRolesAssignAbilities Mutation' do
     QUERY
   end
 
-  let(:team_role) { create(:team_role) }
+  let(:organization_role) { create(:organization_role) }
   let(:input) do
     {
-      roleId: team_role.to_global_id.to_s,
-      abilities: ['CREATE_TEAM_ROLE'],
+      roleId: organization_role.to_global_id.to_s,
+      abilities: ['CREATE_ORGANIZATION_ROLE'],
     }
   end
 
@@ -31,7 +31,7 @@ RSpec.describe 'teamRolesAssignAbilities Mutation' do
 
   context 'when user has permission' do
     before do
-      stub_allowed_ability(TeamPolicy, :assign_role_abilities, user: current_user, subject: team_role.team)
+      stub_allowed_ability(TeamPolicy, :assign_role_abilities, user: current_user, subject: organization_role.team)
     end
 
     it 'assigns the given abilities to the role' do
@@ -41,18 +41,18 @@ RSpec.describe 'teamRolesAssignAbilities Mutation' do
       expect(abilities).to be_present
       expect(abilities).to be_a(Array)
 
-      expect(abilities).to eq(['CREATE_TEAM_ROLE'])
+      expect(abilities).to eq(['CREATE_ORGANIZATION_ROLE'])
 
       is_expected.to create_audit_event(
         :organization_role_abilities_updated,
         author_id: current_user.id,
-        entity_id: team_role.id,
-        entity_type: 'TeamRole',
+        entity_id: organization_role.id,
+        entity_type: 'OrganizationRole',
         details: {
-          'new_abilities' => ['create_team_role'],
+          'new_abilities' => ['create_organization_role'],
           'old_abilities' => [],
         },
-        target_id: team_role.team.id,
+        target_id: organization_role.team.id,
         target_type: 'Team'
       )
     end

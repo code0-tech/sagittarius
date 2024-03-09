@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SagittariusSchema.types['TeamRole'] do
+RSpec.describe SagittariusSchema.types['OrganizationRole'] do
   let(:fields) do
     %w[
       id
@@ -14,7 +14,7 @@ RSpec.describe SagittariusSchema.types['TeamRole'] do
     ]
   end
 
-  it { expect(described_class.graphql_name).to eq('TeamRole') }
+  it { expect(described_class.graphql_name).to eq('OrganizationRole') }
   it { expect(described_class).to have_graphql_fields(fields) }
-  it { expect(described_class).to require_graphql_authorizations(:read_team_role) }
+  it { expect(described_class).to require_graphql_authorizations(:read_organization_role) }
 end

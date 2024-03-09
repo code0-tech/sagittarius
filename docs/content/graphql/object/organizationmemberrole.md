@@ -11,6 +11,6 @@ Represents an assigned role to a member
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this OrganizationMemberRole was created |
 | `id` | [`OrganizationMemberRoleID!`](../scalar/organizationmemberroleid.md) | Global ID of this OrganizationMemberRole |
 | `member` | [`TeamMember`](../object/teammember.md) | The member the role is assigned to |
-| `role` | [`TeamRole`](../object/teamrole.md) | The assigned role |
+| `role` | [`OrganizationRole`](../object/organizationrole.md) | The assigned role |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this OrganizationMemberRole was last updated |
 

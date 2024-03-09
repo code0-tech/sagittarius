@@ -27,16 +27,16 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
   end
 
   let(:team) { create(:team) }
-  let(:team_roles) { create_list(:team_role, 2, team: team) }
+  let(:organization_roles) { create_list(:organization_role, 2, team: team) }
   let(:member) do
     create(:team_member, team: team).tap do |m|
-      create(:organization_member_role, member: m, role: team_roles.last)
+      create(:organization_member_role, member: m, role: organization_roles.last)
     end
   end
   let(:input) do
     {
       memberId: member.to_global_id.to_s,
-      roleIds: [team_roles.first.to_global_id.to_s],
+      roleIds: [organization_roles.first.to_global_id.to_s],
     }
   end
 
@@ -58,7 +58,7 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
 
       organization_member_roles = role_ids.map { |id| SagittariusSchema.object_from_id(id) }
 
-      expect(organization_member_roles.map(&:role)).to eq([team_roles.first])
+      expect(organization_member_roles.map(&:role)).to eq([organization_roles.first])
 
       is_expected.to create_audit_event(
         :organization_member_roles_updated,
@@ -66,8 +66,8 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
         entity_id: member.id,
         entity_type: 'TeamMember',
         details: {
-          'new_roles' => [{ 'id' => team_roles.first.id, 'name' => team_roles.first.name }],
-          'old_roles' => [{ 'id' => team_roles.last.id, 'name' => team_roles.last.name }],
+          'new_roles' => [{ 'id' => organization_roles.first.id, 'name' => organization_roles.first.name }],
+          'old_roles' => [{ 'id' => organization_roles.last.id, 'name' => organization_roles.last.name }],
         },
         target_id: team.id,
         target_type: 'Team'

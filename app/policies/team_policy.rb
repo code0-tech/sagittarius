@@ -9,12 +9,12 @@ class TeamPolicy < BasePolicy
     enable :read_team
     enable :read_team_member
     enable :read_organization_member_role
-    enable :read_team_role
+    enable :read_organization_role
   end
 
   team_resolver { |team| team }
 
-  customizable_permission :create_team_role
+  customizable_permission :create_organization_role
   customizable_permission :invite_member
   customizable_permission :assign_member_roles
   customizable_permission :assign_role_abilities

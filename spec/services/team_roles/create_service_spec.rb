@@ -14,10 +14,10 @@ RSpec.describe TeamRoles::CreateService do
 
     it { is_expected.not_to be_success }
     it { expect(service_response.payload).to eq(:missing_permission) }
-    it { expect { service_response }.not_to change { TeamRole.count } }
+    it { expect { service_response }.not_to change { OrganizationRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_role_created)
+      expect { service_response }.not_to create_audit_event(:organization_role_created)
     end
   end
 
@@ -26,10 +26,10 @@ RSpec.describe TeamRoles::CreateService do
 
     it { is_expected.not_to be_success }
     it { expect(service_response.payload).to eq(:missing_permission) }
-    it { expect { service_response }.not_to change { TeamRole.count } }
+    it { expect { service_response }.not_to change { OrganizationRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_role_created)
+      expect { service_response }.not_to create_audit_event(:organization_role_created)
     end
   end
 
@@ -38,19 +38,19 @@ RSpec.describe TeamRoles::CreateService do
 
     before do
       create(:team_member, team: team, user: current_user)
-      stub_allowed_ability(TeamPolicy, :create_team_role, user: current_user, subject: team)
+      stub_allowed_ability(TeamPolicy, :create_organization_role, user: current_user, subject: team)
     end
 
     it { is_expected.to be_success }
     it { expect(service_response.payload.team).to eq(team) }
     it { expect(service_response.payload.name).to eq(role_name) }
-    it { expect { service_response }.to change { TeamRole.count }.by(1) }
+    it { expect { service_response }.to change { OrganizationRole.count }.by(1) }
 
     it do
       expect { service_response }.to create_audit_event(
-        :team_role_created,
+        :organization_role_created,
         author_id: current_user.id,
-        entity_type: 'TeamRole',
+        entity_type: 'OrganizationRole',
         details: { name: role_name },
         target_id: team.id,
         target_type: 'Team'

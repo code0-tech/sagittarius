@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe TeamRole do
-  subject { create(:team_role) }
+RSpec.describe OrganizationRole do
+  subject { create(:organization_role) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:team).required }

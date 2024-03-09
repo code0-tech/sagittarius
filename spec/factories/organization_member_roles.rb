@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :organization_member_role do
-    role factory: :team_role
+    role factory: :organization_role
     member factory: :team_member
   end
 end
