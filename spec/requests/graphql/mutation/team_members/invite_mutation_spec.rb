@@ -17,7 +17,7 @@ RSpec.describe 'teamMembersInvite Mutation' do
             user {
               id
             }
-            team {
+            organization {
               id
             }
           }
@@ -26,11 +26,11 @@ RSpec.describe 'teamMembersInvite Mutation' do
     QUERY
   end
 
-  let(:team) { create(:team) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user) }
   let(:input) do
     {
-      teamId: team.to_global_id.to_s,
+      organizationId: organization.to_global_id.to_s,
       userId: user.to_global_id.to_s,
     }
   end
@@ -40,8 +40,8 @@ RSpec.describe 'teamMembersInvite Mutation' do
 
   context 'when user has permission' do
     before do
-      create(:organization_member, team: team, user: current_user)
-      stub_allowed_ability(TeamPolicy, :invite_member, user: current_user, subject: team)
+      create(:organization_member, organization: organization, user: current_user)
+      stub_allowed_ability(OrganizationPolicy, :invite_member, user: current_user, subject: organization)
     end
 
     it 'creates organization member' do
@@ -54,7 +54,7 @@ RSpec.describe 'teamMembersInvite Mutation' do
       )
 
       expect(organization_member.user).to eq(user)
-      expect(organization_member.team).to eq(team)
+      expect(organization_member.organization).to eq(organization)
 
       is_expected.to create_audit_event(
         :organization_member_invited,
@@ -62,19 +62,21 @@ RSpec.describe 'teamMembersInvite Mutation' do
         entity_id: organization_member.id,
         entity_type: 'OrganizationMember',
         details: {},
-        target_id: team.id,
-        target_type: 'Team'
+        target_id: organization.id,
+        target_type: 'Organization'
       )
     end
 
     context 'when target user is already a member' do
       it 'returns an error' do
-        create(:organization_member, team: team, user: user)
+        create(:organization_member, organization: organization, user: user)
 
         mutate!
 
         expect(graphql_data_at(:team_members_invite, :organization_member)).to be_nil
-        expect(graphql_data_at(:team_members_invite, :errors)).to include({ 'attribute' => 'team', 'type' => 'taken' })
+        expect(
+          graphql_data_at(:team_members_invite, :errors)
+        ).to include({ 'attribute' => 'organization', 'type' => 'taken' })
       end
     end
   end

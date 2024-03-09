@@ -12,31 +12,34 @@ module Teams
     end
 
     def execute
-      unless Ability.allowed?(current_user, :create_team)
+      unless Ability.allowed?(current_user, :create_organization)
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 
       transactional do |t|
-        team = Team.create(name: name)
-        unless team.persisted?
-          t.rollback_and_return! ServiceResponse.error(message: 'Failed to create team', payload: team.errors)
+        organization = Organization.create(name: name)
+        unless organization.persisted?
+          t.rollback_and_return! ServiceResponse.error(
+            message: 'Failed to create organization',
+            payload: organization.errors
+          )
         end
 
-        organization_member = OrganizationMember.create(team: team, user: current_user)
+        organization_member = OrganizationMember.create(organization: organization, user: current_user)
         unless organization_member.persisted?
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to create organization member',
                                                        payload: organization_member.errors)
         end
 
         AuditService.audit(
-          :team_created,
+          :organization_created,
           author_id: current_user.id,
-          entity: team,
-          target: team,
+          entity: organization,
+          target: organization,
           details: { name: name }
         )
 
-        ServiceResponse.success(message: 'Created new team', payload: team)
+        ServiceResponse.success(message: 'Created new organization', payload: organization)
       end
     end
   end

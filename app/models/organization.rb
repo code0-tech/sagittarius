@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-class Team < ApplicationRecord
+class Organization < ApplicationRecord
   validates :name, presence: true,
                    length: { minimum: 3, maximum: 50 },
                    allow_blank: false,
                    uniqueness: { case_sensitive: false }
 
-  has_many :organization_members, inverse_of: :team
-  has_many :users, through: :organization_members, inverse_of: :teams
+  has_many :organization_members, inverse_of: :organization
+  has_many :users, through: :organization_members, inverse_of: :organizations
 
-  has_many :roles, class_name: 'OrganizationRole', inverse_of: :team
+  has_many :roles, class_name: 'OrganizationRole', inverse_of: :organization
 
   def member?(user)
     return false if user.nil?

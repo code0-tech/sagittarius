@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :organization_member do
-    team
+    organization
     user
   end
 end

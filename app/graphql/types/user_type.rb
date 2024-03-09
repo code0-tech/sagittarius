@@ -16,7 +16,7 @@ module Types
 
     lookahead_field :organization_memberships,
                     base_scope: ->(object) { object.organization_memberships },
-                    conditional_lookaheads: { user: :user, team: { team: :organization_members } }
+                    conditional_lookaheads: { user: :user, organization: { organization: :organization_members } }
 
     id_field User
     timestamps

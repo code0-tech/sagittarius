@@ -6,7 +6,7 @@ module Types
 
     authorize :read_organization_member
 
-    field :team, Types::TeamType, null: false, description: 'Team this member belongs to'
+    field :organization, Types::OrganizationType, null: false, description: 'Organization this member belongs to'
     field :user, Types::UserType, null: false, description: 'User this member belongs to'
 
     id_field OrganizationMember

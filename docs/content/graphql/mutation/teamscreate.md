@@ -2,14 +2,14 @@
 title: teamsCreate
 ---
 
-Create a new team.
+Create a new organization.
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `name` | [`String!`](../scalar/string.md) | Name for the new team. |
+| `name` | [`String!`](../scalar/string.md) | Name for the new organization. |
 
 ## Fields
 
@@ -17,4 +17,4 @@ Create a new team.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
-| `team` | [`Team`](../object/team.md) | The newly created team. |
+| `organization` | [`Organization`](../object/organization.md) | The newly created organization. |

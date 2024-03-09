@@ -2,14 +2,14 @@
 title: teamMembersInvite
 ---
 
-Invite a new member to a team.
+Invite a new member to an organization.
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `teamId` | [`TeamID!`](../scalar/teamid.md) | The id of the team which this member will belong to |
+| `organizationId` | [`OrganizationID!`](../scalar/organizationid.md) | The id of the organization which this member will belong to |
 | `userId` | [`UserID!`](../scalar/userid.md) | The id of the user to invite |
 
 ## Fields

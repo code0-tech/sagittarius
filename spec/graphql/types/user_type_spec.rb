@@ -29,7 +29,7 @@ RSpec.describe SagittariusSchema.types['User'] do
                 nodes {
                   id
                   user { username }
-                  team { name }
+                  organization { name }
                 }
               }
             }

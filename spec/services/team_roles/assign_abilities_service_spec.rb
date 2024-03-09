@@ -36,7 +36,7 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
       let(:abilities) { [:create_organization_role] }
 
       before do
-        stub_allowed_ability(TeamPolicy, :assign_role_abilities, user: current_user, subject: role.team)
+        stub_allowed_ability(OrganizationPolicy, :assign_role_abilities, user: current_user, subject: role.organization)
       end
 
       it { is_expected.to be_success }
@@ -50,8 +50,8 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
           entity_id: role.id,
           entity_type: 'OrganizationRole',
           details: { 'old_abilities' => [], 'new_abilities' => ['create_organization_role'] },
-          target_id: role.team.id,
-          target_type: 'Team'
+          target_id: role.organization.id,
+          target_type: 'Organization'
         )
       end
     end
@@ -61,7 +61,7 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
 
       before do
         create(:organization_role_ability, organization_role: role, ability: :create_organization_role)
-        stub_allowed_ability(TeamPolicy, :assign_role_abilities, user: current_user, subject: role.team)
+        stub_allowed_ability(OrganizationPolicy, :assign_role_abilities, user: current_user, subject: role.organization)
       end
 
       it { is_expected.to be_success }
@@ -75,8 +75,8 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
           entity_id: role.id,
           entity_type: 'OrganizationRole',
           details: { 'old_abilities' => ['create_organization_role'], 'new_abilities' => [] },
-          target_id: role.team.id,
-          target_type: 'Team'
+          target_id: role.organization.id,
+          target_type: 'Organization'
         )
       end
     end
@@ -86,7 +86,7 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
 
       before do
         create(:organization_role_ability, organization_role: role, ability: :invite_member)
-        stub_allowed_ability(TeamPolicy, :assign_role_abilities, user: current_user, subject: role.team)
+        stub_allowed_ability(OrganizationPolicy, :assign_role_abilities, user: current_user, subject: role.organization)
       end
 
       it { is_expected.to be_success }
@@ -103,8 +103,8 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
             'old_abilities' => ['invite_member'],
             'new_abilities' => ['create_organization_role'],
           },
-          target_id: role.team.id,
-          target_type: 'Team'
+          target_id: role.organization.id,
+          target_type: 'Organization'
         )
       end
     end

@@ -15,7 +15,7 @@ RSpec.describe 'teamRolesCreate Mutation' do
           organizationRole {
             id
             name
-            team {
+            organization {
               id
             }
           }
@@ -24,12 +24,12 @@ RSpec.describe 'teamRolesCreate Mutation' do
     QUERY
   end
 
-  let(:team) { create(:team) }
+  let(:organization) { create(:organization) }
   let(:input) do
     name = generate(:role_name)
 
     {
-      teamId: team.to_global_id.to_s,
+      organizationId: organization.to_global_id.to_s,
       name: name,
     }
   end
@@ -39,8 +39,8 @@ RSpec.describe 'teamRolesCreate Mutation' do
 
   context 'when user is a member of the organization' do
     before do
-      create(:organization_member, team: team, user: current_user)
-      stub_allowed_ability(TeamPolicy, :create_organization_role, user: current_user, subject: team)
+      create(:organization_member, organization: organization, user: current_user)
+      stub_allowed_ability(OrganizationPolicy, :create_organization_role, user: current_user, subject: organization)
     end
 
     it 'creates organization role' do
@@ -51,7 +51,7 @@ RSpec.describe 'teamRolesCreate Mutation' do
       organization_role = SagittariusSchema.object_from_id(graphql_data_at(:team_roles_create, :organization_role, :id))
 
       expect(organization_role.name).to eq(input[:name])
-      expect(organization_role.team).to eq(team)
+      expect(organization_role.organization).to eq(organization)
 
       is_expected.to create_audit_event(
         :organization_role_created,
@@ -59,14 +59,14 @@ RSpec.describe 'teamRolesCreate Mutation' do
         entity_id: organization_role.id,
         entity_type: 'OrganizationRole',
         details: { name: input[:name] },
-        target_id: team.id,
-        target_type: 'Team'
+        target_id: organization.id,
+        target_type: 'Organization'
       )
     end
 
     context 'when organization role name is taken' do
-      let(:organization_role) { create(:organization_role, team: team) }
-      let(:input) { { teamId: team.to_global_id.to_s, name: organization_role.name } }
+      let(:organization_role) { create(:organization_role, organization: organization) }
+      let(:input) { { organizationId: organization.to_global_id.to_s, name: organization_role.name } }
 
       it 'returns an error' do
         mutate!
@@ -77,7 +77,9 @@ RSpec.describe 'teamRolesCreate Mutation' do
     end
 
     context 'when organization role name is taken in another organization' do
-      let(:other_team) { create(:team).tap { |t| create(:organization_role, team: t, name: input[:name]) } }
+      let(:other_organization) do
+        create(:organization).tap { |o| create(:organization_role, organization: o, name: input[:name]) }
+      end
 
       it 'creates organization role' do
         mutate!
@@ -89,7 +91,7 @@ RSpec.describe 'teamRolesCreate Mutation' do
         )
 
         expect(organization_role.name).to eq(input[:name])
-        expect(organization_role.team).to eq(team)
+        expect(organization_role.organization).to eq(organization)
 
         is_expected.to create_audit_event(
           :organization_role_created,
@@ -97,8 +99,8 @@ RSpec.describe 'teamRolesCreate Mutation' do
           entity_id: organization_role.id,
           entity_type: 'OrganizationRole',
           details: { name: input[:name] },
-          target_id: team.id,
-          target_type: 'Team'
+          target_id: organization.id,
+          target_type: 'Organization'
         )
       end
     end

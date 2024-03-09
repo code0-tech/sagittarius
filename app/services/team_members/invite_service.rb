@@ -4,21 +4,21 @@ module TeamMembers
   class InviteService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :team, :user
+    attr_reader :current_user, :organization, :user
 
-    def initialize(current_user, team, user)
+    def initialize(current_user, organization, user)
       @current_user = current_user
-      @team = team
+      @organization = organization
       @user = user
     end
 
     def execute
-      unless Ability.allowed?(current_user, :invite_member, team)
+      unless Ability.allowed?(current_user, :invite_member, organization)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
       transactional do |t|
-        organization_member = OrganizationMember.create(team: team, user: user)
+        organization_member = OrganizationMember.create(organization: organization, user: user)
 
         unless organization_member.persisted?
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to save organization member',
@@ -30,7 +30,7 @@ module TeamMembers
           author_id: current_user.id,
           entity: organization_member,
           details: {},
-          target: team
+          target: organization
         )
 
         ServiceResponse.success(message: 'Organization member invited', payload: organization_member)

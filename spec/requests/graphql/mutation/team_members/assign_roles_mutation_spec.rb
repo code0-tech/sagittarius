@@ -26,10 +26,10 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
     QUERY
   end
 
-  let(:team) { create(:team) }
-  let(:organization_roles) { create_list(:organization_role, 2, team: team) }
+  let(:organization) { create(:organization) }
+  let(:organization_roles) { create_list(:organization_role, 2, organization: organization) }
   let(:member) do
-    create(:organization_member, team: team).tap do |m|
+    create(:organization_member, organization: organization).tap do |m|
       create(:organization_member_role, member: m, role: organization_roles.last)
     end
   end
@@ -45,8 +45,8 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
 
   context 'when user has permission' do
     before do
-      create(:organization_member, team: team, user: current_user)
-      stub_allowed_ability(TeamPolicy, :assign_member_roles, user: current_user, subject: team)
+      create(:organization_member, organization: organization, user: current_user)
+      stub_allowed_ability(OrganizationPolicy, :assign_member_roles, user: current_user, subject: organization)
     end
 
     it 'assigns the given roles to the member' do
@@ -69,8 +69,8 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
           'new_roles' => [{ 'id' => organization_roles.first.id, 'name' => organization_roles.first.name }],
           'old_roles' => [{ 'id' => organization_roles.last.id, 'name' => organization_roles.last.name }],
         },
-        target_id: team.id,
-        target_type: 'Team'
+        target_id: organization.id,
+        target_type: 'Organization'
       )
     end
   end

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class GlobalPolicy < BasePolicy
-  condition(:team_creation_restricted) { ApplicationSetting.current[:team_creation_restricted] }
+  condition(:organization_creation_restricted) { ApplicationSetting.current[:organization_creation_restricted] }
   condition(:admin) { @user&.admin }
 
-  rule { ~anonymous }.enable :create_team
-  rule { team_creation_restricted & ~admin }.prevent :create_team
+  rule { ~anonymous }.enable :create_organization
+  rule { organization_creation_restricted & ~admin }.prevent :create_organization
 
   rule { admin }.policy do
     enable :read_application_setting

@@ -10,7 +10,7 @@ RSpec.describe 'teamsCreate Mutation' do
       mutation($input: TeamsCreateInput!) {
         teamsCreate(input: $input) {
           #{error_query}
-          team {
+          organization {
             id
             name
           }
@@ -20,7 +20,7 @@ RSpec.describe 'teamsCreate Mutation' do
   end
 
   let(:input) do
-    name = generate(:team_name)
+    name = generate(:organization_name)
 
     {
       name: name,
@@ -32,30 +32,30 @@ RSpec.describe 'teamsCreate Mutation' do
 
   before { post_graphql mutation, variables: variables, current_user: current_user }
 
-  it 'creates team' do
-    expect(graphql_data_at(:teams_create, :team, :id)).to be_present
+  it 'creates organization' do
+    expect(graphql_data_at(:teams_create, :organization, :id)).to be_present
 
-    team = SagittariusSchema.object_from_id(graphql_data_at(:teams_create, :team, :id))
+    organization = SagittariusSchema.object_from_id(graphql_data_at(:teams_create, :organization, :id))
 
-    expect(team.name).to eq(input[:name])
+    expect(organization.name).to eq(input[:name])
 
     is_expected.to create_audit_event(
-      :team_created,
+      :organization_created,
       author_id: current_user.id,
-      entity_id: team.id,
-      entity_type: 'Team',
+      entity_id: organization.id,
+      entity_type: 'Organization',
       details: { name: input[:name] },
-      target_id: team.id,
-      target_type: 'Team'
+      target_id: organization.id,
+      target_type: 'Organization'
     )
   end
 
-  context 'when team name is taken' do
-    let(:team) { create(:team) }
-    let(:input) { { name: team.name } }
+  context 'when organization name is taken' do
+    let(:organization) { create(:organization) }
+    let(:input) { { name: organization.name } }
 
     it 'returns an error' do
-      expect(graphql_data_at(:teams_create, :team)).to be_nil
+      expect(graphql_data_at(:teams_create, :organization)).to be_nil
       expect(graphql_data_at(:teams_create, :errors)).to include({ 'attribute' => 'name', 'type' => 'taken' })
     end
   end

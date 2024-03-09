@@ -7,7 +7,7 @@ RSpec.describe SagittariusSchema.types['OrganizationMember'] do
     %w[
       id
       user
-      team
+      organization
       createdAt
       updatedAt
     ]

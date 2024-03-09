@@ -6,7 +6,7 @@ RSpec.describe SagittariusSchema.types['OrganizationRole'] do
   let(:fields) do
     %w[
       id
-      team
+      organization
       name
       abilities
       createdAt

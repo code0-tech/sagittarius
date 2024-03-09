@@ -8,10 +8,12 @@ module Mutations
       field :application_settings, Types::ApplicationSettingsType, null: true,
                                                                    description: 'The updated application settings.'
 
-      argument :team_creation_restricted, Boolean, required: false,
-                                                   description: 'Set if team creation is restricted to administrators.'
-      argument :user_registration_enabled, Boolean, required: false,
-                                                    description: 'Set if user registration is enabled.'
+      argument :organization_creation_restricted, Boolean,
+               required: false,
+               description: 'Set if organization creation is restricted to administrators.'
+      argument :user_registration_enabled, Boolean,
+               required: false,
+               description: 'Set if user registration is enabled.'
 
       def resolve(params)
         ApplicationSettingsUpdateService.new(

@@ -4,7 +4,7 @@ class AuditEvent < ApplicationRecord
   ACTION_TYPES = {
     user_registered: 1,
     user_logged_in: 2,
-    team_created: 3,
+    organization_created: 3,
     application_setting_updated: 4,
     organization_role_created: 5,
     organization_member_invited: 6,

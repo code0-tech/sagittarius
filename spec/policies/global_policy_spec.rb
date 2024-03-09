@@ -8,23 +8,23 @@ RSpec.describe GlobalPolicy do
   context 'when user is present' do
     let(:current_user) { create(:user) }
 
-    it { is_expected.to be_allowed(:create_team) }
+    it { is_expected.to be_allowed(:create_organization) }
     it { is_expected.not_to be_allowed(:read_application_setting) }
     it { is_expected.not_to be_allowed(:update_application_setting) }
 
-    context 'when team creation is restricted' do
+    context 'when organization creation is restricted' do
       before do
-        stub_application_settings(team_creation_restricted: true)
+        stub_application_settings(organization_creation_restricted: true)
       end
 
-      it { is_expected.not_to be_allowed(:create_team) }
+      it { is_expected.not_to be_allowed(:create_organization) }
     end
   end
 
   context 'when user is nil' do
     let(:current_user) { nil }
 
-    it { is_expected.not_to be_allowed(:create_team) }
+    it { is_expected.not_to be_allowed(:create_organization) }
     it { is_expected.not_to be_allowed(:read_application_setting) }
     it { is_expected.not_to be_allowed(:update_application_setting) }
   end
@@ -35,12 +35,12 @@ RSpec.describe GlobalPolicy do
     it { is_expected.to be_allowed(:read_application_setting) }
     it { is_expected.to be_allowed(:update_application_setting) }
 
-    context 'when team creation is restricted' do
+    context 'when organization creation is restricted' do
       before do
-        stub_application_settings(team_creation_restricted: true)
+        stub_application_settings(organization_creation_restricted: true)
       end
 
-      it { is_expected.to be_allowed(:create_team) }
+      it { is_expected.to be_allowed(:create_organization) }
     end
   end
 end

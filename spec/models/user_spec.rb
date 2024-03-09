@@ -9,7 +9,7 @@ RSpec.describe User do
     it { is_expected.to have_many(:user_sessions).inverse_of(:user) }
     it { is_expected.to have_many(:authored_audit_events).class_name('AuditEvent').inverse_of(:author) }
     it { is_expected.to have_many(:organization_memberships).class_name('OrganizationMember').inverse_of(:user) }
-    it { is_expected.to have_many(:teams).through(:organization_memberships).inverse_of(:users) }
+    it { is_expected.to have_many(:organizations).through(:organization_memberships).inverse_of(:users) }
   end
 
   describe 'validations' do

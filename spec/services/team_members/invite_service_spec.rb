@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe TeamMembers::InviteService do
-  subject(:service_response) { described_class.new(current_user, team, user).execute }
+  subject(:service_response) { described_class.new(current_user, organization, user).execute }
 
-  let(:team) { create(:team) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user) }
 
   context 'when user is nil' do
@@ -36,11 +36,11 @@ RSpec.describe TeamMembers::InviteService do
     let(:current_user) { create(:user) }
 
     before do
-      stub_allowed_ability(TeamPolicy, :invite_member, user: current_user, subject: team)
+      stub_allowed_ability(OrganizationPolicy, :invite_member, user: current_user, subject: organization)
     end
 
     it { is_expected.to be_success }
-    it { expect(service_response.payload.team).to eq(team) }
+    it { expect(service_response.payload.organization).to eq(organization) }
     it { expect(service_response.payload.user).to eq(user) }
     it { expect { service_response }.to change { OrganizationMember.count }.by(1) }
 
@@ -50,8 +50,8 @@ RSpec.describe TeamMembers::InviteService do
         author_id: current_user.id,
         entity_type: 'OrganizationMember',
         details: {},
-        target_id: team.id,
-        target_type: 'Team'
+        target_id: organization.id,
+        target_type: 'Organization'
       )
     end
   end

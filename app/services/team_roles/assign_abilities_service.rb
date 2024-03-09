@@ -13,8 +13,8 @@ module TeamRoles
     end
 
     def execute
-      team = role.team
-      unless Ability.allowed?(current_user, :assign_role_abilities, team)
+      organization = role.organization
+      unless Ability.allowed?(current_user, :assign_role_abilities, organization)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
@@ -45,7 +45,7 @@ module TeamRoles
             old_abilities: old_abilities_for_audit_event,
             new_abilities: new_abilities,
           },
-          target: team
+          target: organization
         )
 
         ServiceResponse.success(message: 'Role abilities updated', payload: new_abilities)

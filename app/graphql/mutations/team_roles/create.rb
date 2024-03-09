@@ -8,17 +8,19 @@ module Mutations
       field :organization_role, Types::OrganizationRoleType, description: 'The newly created organization role'
 
       argument :name, String, description: 'The name for the new role'
-      argument :team_id, Types::GlobalIdType[::Team],
+      argument :organization_id, Types::GlobalIdType[::Organization],
                description: 'The id of the organization which this role will belong to'
 
-      def resolve(team_id:, **params)
-        team = SagittariusSchema.object_from_id(team_id)
+      def resolve(organization_id:, **params)
+        organization = SagittariusSchema.object_from_id(organization_id)
 
-        return { organization_role: nil, errors: [create_message_error('Invalid team')] } if team.nil?
+        return { organization_role: nil, errors: [create_message_error('Invalid organization')] } if organization.nil?
 
-        ::TeamRoles::CreateService.new(current_user, team, params)
-                                  .execute
-                                  .to_mutation_response(success_key: :organization_role)
+        ::TeamRoles::CreateService.new(
+          current_user,
+          organization,
+          params
+        ).execute.to_mutation_response(success_key: :organization_role)
       end
     end
   end

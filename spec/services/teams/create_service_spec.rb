@@ -8,21 +8,21 @@ RSpec.describe Teams::CreateService do
   shared_examples 'does not create' do
     it { is_expected.to be_error }
 
-    it 'does not create team' do
-      expect { service_response }.not_to change { Team.count }
+    it 'does not create organization' do
+      expect { service_response }.not_to change { Organization.count }
     end
 
     it 'does not create organization member' do
       expect { service_response }.not_to change { OrganizationMember.count }
     end
 
-    it { expect { service_response }.not_to create_audit_event(:team_created) }
+    it { expect { service_response }.not_to create_audit_event(:organization_created) }
   end
 
   context 'when user does not exist' do
     let(:current_user) { nil }
     let(:params) do
-      { name: generate(:team_name) }
+      { name: generate(:organization_name) }
     end
 
     it_behaves_like 'does not create'
@@ -32,7 +32,7 @@ RSpec.describe Teams::CreateService do
     let(:current_user) { create(:user) }
 
     context 'when name is to long' do
-      let(:params) { { name: generate(:team_name) + ('*' * 50) } }
+      let(:params) { { name: generate(:organization_name) + ('*' * 50) } }
 
       it_behaves_like 'does not create'
     end
@@ -47,15 +47,15 @@ RSpec.describe Teams::CreateService do
   context 'when user and params are valid' do
     let(:current_user) { create(:user) }
     let(:params) do
-      { name: generate(:team_name) }
+      { name: generate(:organization_name) }
     end
 
     it { is_expected.to be_success }
     it { expect(service_response.payload.reload).to be_valid }
 
     it 'adds current_user as organization member' do
-      team = service_response.payload.reload
-      member = OrganizationMember.find_by(team: team, user: current_user)
+      organization = service_response.payload.reload
+      member = OrganizationMember.find_by(organization: organization, user: current_user)
 
       expect(member).to be_present
     end
@@ -66,11 +66,11 @@ RSpec.describe Teams::CreateService do
 
     it do
       is_expected.to create_audit_event(
-        :team_created,
+        :organization_created,
         author_id: current_user.id,
-        entity_type: 'Team',
+        entity_type: 'Organization',
         details: { name: params[:name] },
-        target_type: 'Team'
+        target_type: 'Organization'
       )
     end
   end

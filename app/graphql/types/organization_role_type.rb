@@ -9,7 +9,8 @@ module Types
     field :abilities, [Types::OrganizationRoleAbilityEnum], null: false,
                                                             description: 'The abilities the role is granted'
     field :name, String, null: false, description: 'The name of this role'
-    field :team, Types::TeamType, null: false, description: 'The organization where this role belongs to'
+    field :organization, Types::OrganizationType, null: false,
+                                                  description: 'The organization where this role belongs to'
 
     id_field ::OrganizationRole
     timestamps

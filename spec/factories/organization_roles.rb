@@ -4,7 +4,7 @@ FactoryBot.define do
   sequence(:role_name) { |n| "role#{n}" }
 
   factory :organization_role do
-    team
+    organization
     name { generate(:role_name) }
   end
 end

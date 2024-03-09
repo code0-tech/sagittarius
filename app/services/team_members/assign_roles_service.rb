@@ -15,13 +15,16 @@ module TeamMembers
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def execute
-      team = member.team
-      unless Ability.allowed?(current_user, :assign_member_roles, team)
+      organization = member.organization
+      unless Ability.allowed?(current_user, :assign_member_roles, organization)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
-      unless roles.map(&:team).all? { |t| t == team }
-        return ServiceResponse.error(message: 'Roles and member belong to different teams', payload: :inconsistent_team)
+      unless roles.map(&:organization).all? { |t| t == organization }
+        return ServiceResponse.error(
+          message: 'Roles and member belong to different organizations',
+          payload: :inconsistent_organization
+        )
       end
 
       transactional do |t|
@@ -53,7 +56,7 @@ module TeamMembers
             old_roles: old_roles_for_audit_event,
             new_roles: new_roles.map { |member_role| { id: member_role.role.id, name: member_role.role.name } },
           },
-          target: team
+          target: organization
         )
 
         ServiceResponse.success(message: 'Member roles updated', payload: new_roles)

@@ -31,7 +31,12 @@ RSpec.describe 'teamRolesAssignAbilities Mutation' do
 
   context 'when user has permission' do
     before do
-      stub_allowed_ability(TeamPolicy, :assign_role_abilities, user: current_user, subject: organization_role.team)
+      stub_allowed_ability(
+        OrganizationPolicy,
+        :assign_role_abilities,
+        user: current_user,
+        subject: organization_role.organization
+      )
     end
 
     it 'assigns the given abilities to the role' do
@@ -52,8 +57,8 @@ RSpec.describe 'teamRolesAssignAbilities Mutation' do
           'new_abilities' => ['create_organization_role'],
           'old_abilities' => [],
         },
-        target_id: organization_role.team.id,
-        target_type: 'Team'
+        target_id: organization_role.organization.id,
+        target_type: 'Organization'
       )
     end
   end

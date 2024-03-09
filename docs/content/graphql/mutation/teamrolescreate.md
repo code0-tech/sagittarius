@@ -10,7 +10,7 @@ Create a new role in an organization.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `name` | [`String!`](../scalar/string.md) | The name for the new role |
-| `teamId` | [`TeamID!`](../scalar/teamid.md) | The id of the organization which this role will belong to |
+| `organizationId` | [`OrganizationID!`](../scalar/organizationid.md) | The id of the organization which this role will belong to |
 
 ## Fields
 

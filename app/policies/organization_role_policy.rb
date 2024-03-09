@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 class OrganizationRolePolicy < BasePolicy
-  delegate { @subject.team }
+  delegate { @subject.organization }
 end

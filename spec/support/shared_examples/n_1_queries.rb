@@ -32,7 +32,10 @@ RSpec.shared_examples 'prevents N+1 queries (graphql)', type: :request do |**kwa
     let(:current_user) { nil }
     let(:variables) { {} }
     let(:action) do
-      -> { post_graphql query, variables: variables, current_user: current_user }
+      lambda do
+        post_graphql query, variables: variables, current_user: current_user
+        expect_graphql_errors_to_be_empty
+      end
     end
   end
 end

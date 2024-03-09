@@ -26,9 +26,10 @@ module Types
       argument :message, GraphQL::Types::String, required: true, description: 'String to echo as response'
     end
 
-    field :team, Types::TeamType, null: true, description: 'Find a team' do
-      argument :id, Types::GlobalIdType[::Team], required: false, description: 'GlobalID of the target team'
-      argument :name, GraphQL::Types::String, required: false, description: 'Name of the target team'
+    field :organization, Types::OrganizationType, null: true, description: 'Find a organization' do
+      argument :id, Types::GlobalIdType[::Organization], required: false,
+                                                         description: 'GlobalID of the target organization'
+      argument :name, GraphQL::Types::String, required: false, description: 'Name of the target organization'
 
       require_one_of %i[id name]
     end
@@ -49,10 +50,10 @@ module Types
       message
     end
 
-    def team(**args)
+    def organization(**args)
       args[:id] = args[:id].model_id if args[:id].present?
 
-      TeamsFinder.new(**args, single: true).execute
+      OrganizationsFinder.new(**args, single: true).execute
     end
   end
 end
