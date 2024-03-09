@@ -18,7 +18,7 @@ RSpec.describe CustomizablePermission do
   let(:team) { create(:team) }
   let(:team_member) { create(:team_member, team: team, user: current_user) }
   let(:team_role) do
-    create(:team_role, team: team).tap { |role| create(:team_member_role, member: team_member, role: role) }
+    create(:team_role, team: team).tap { |role| create(:organization_member_role, member: team_member, role: role) }
   end
 
   context 'when user has a role with the ability' do

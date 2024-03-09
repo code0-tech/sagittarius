@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 module Types
-  class TeamMemberRoleType < BaseObject
+  class OrganizationMemberRoleType < BaseObject
     description 'Represents an assigned role to a member'
 
-    authorize :read_team_member_role
+    authorize :read_organization_member_role
 
     field :member, Types::TeamMemberType, description: 'The member the role is assigned to'
     field :role, Types::TeamRoleType, description: 'The assigned role'
 
-    id_field TeamMemberRole
+    id_field OrganizationMemberRole
     timestamps
   end
 end

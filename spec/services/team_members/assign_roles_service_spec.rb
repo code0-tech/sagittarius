@@ -15,20 +15,20 @@ RSpec.describe TeamMembers::AssignRolesService do
 
     it { is_expected.not_to be_success }
     it { expect(service_response.payload).to eq(:missing_permission) }
-    it { expect { service_response }.not_to change { TeamMemberRole.count } }
+    it { expect { service_response }.not_to change { OrganizationMemberRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_member_roles_updated)
+      expect { service_response }.not_to create_audit_event(:organization_member_roles_updated)
     end
   end
 
   context 'when user does not have permission' do
     it { is_expected.not_to be_success }
     it { expect(service_response.payload).to eq(:missing_permission) }
-    it { expect { service_response }.not_to change { TeamMemberRole.count } }
+    it { expect { service_response }.not_to change { OrganizationMemberRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_member_roles_updated)
+      expect { service_response }.not_to create_audit_event(:organization_member_roles_updated)
     end
   end
 
@@ -43,11 +43,11 @@ RSpec.describe TeamMembers::AssignRolesService do
 
       it { is_expected.to be_success }
       it { expect(service_response.payload.map(&:role)).to eq([team_role]) }
-      it { expect { service_response }.to change { TeamMemberRole.count }.by(1) }
+      it { expect { service_response }.to change { OrganizationMemberRole.count }.by(1) }
 
       it do
         expect { service_response }.to create_audit_event(
-          :team_member_roles_updated,
+          :organization_member_roles_updated,
           author_id: current_user.id,
           entity_type: 'TeamMember',
           details: { 'old_roles' => [], 'new_roles' => [{ 'id' => team_role.id, 'name' => team_role.name }] },
@@ -62,17 +62,17 @@ RSpec.describe TeamMembers::AssignRolesService do
       let(:roles) { [] }
 
       before do
-        create(:team_member_role, member: member, role: team_role)
+        create(:organization_member_role, member: member, role: team_role)
         stub_allowed_ability(TeamPolicy, :assign_member_roles, user: current_user, subject: team)
       end
 
       it { is_expected.to be_success }
       it { expect(service_response.payload.map(&:role)).to eq([]) }
-      it { expect { service_response }.to change { TeamMemberRole.count }.by(-1) }
+      it { expect { service_response }.to change { OrganizationMemberRole.count }.by(-1) }
 
       it do
         expect { service_response }.to create_audit_event(
-          :team_member_roles_updated,
+          :organization_member_roles_updated,
           author_id: current_user.id,
           entity_type: 'TeamMember',
           details: {
@@ -91,17 +91,17 @@ RSpec.describe TeamMembers::AssignRolesService do
       let(:roles) { [adding_team_role] }
 
       before do
-        create(:team_member_role, member: member, role: removing_team_role)
+        create(:organization_member_role, member: member, role: removing_team_role)
         stub_allowed_ability(TeamPolicy, :assign_member_roles, user: current_user, subject: team)
       end
 
       it { is_expected.to be_success }
       it { expect(service_response.payload.map(&:role)).to eq([adding_team_role]) }
-      it { expect { service_response }.not_to change { TeamMemberRole.count } }
+      it { expect { service_response }.not_to change { OrganizationMemberRole.count } }
 
       it do
         expect { service_response }.to create_audit_event(
-          :team_member_roles_updated,
+          :organization_member_roles_updated,
           author_id: current_user.id,
           entity_type: 'TeamMember',
           details: {
@@ -123,10 +123,10 @@ RSpec.describe TeamMembers::AssignRolesService do
 
       it { is_expected.not_to be_success }
       it { expect(service_response.payload).to eq(:inconsistent_team) }
-      it { expect { service_response }.not_to change { TeamMemberRole.count } }
+      it { expect { service_response }.not_to change { OrganizationMemberRole.count } }
 
       it do
-        expect { service_response }.not_to create_audit_event(:team_member_roles_updated)
+        expect { service_response }.not_to create_audit_event(:organization_member_roles_updated)
       end
     end
   end

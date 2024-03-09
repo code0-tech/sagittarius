@@ -33,20 +33,20 @@ module TeamMembers
         current_roles.where.not(role: roles).delete_all
 
         (roles - current_roles.map(&:role)).map do |role|
-          team_member_role = TeamMemberRole.create(member: member, role: role)
+          organization_member_role = OrganizationMemberRole.create(member: member, role: role)
 
-          next if team_member_role.persisted?
+          next if organization_member_role.persisted?
 
           t.rollback_and_return! ServiceResponse.error(
-            message: 'Failed to save team member role',
-            payload: team_member_role.errors
+            message: 'Failed to save organization member role',
+            payload: organization_member_role.errors
           )
         end
 
         new_roles = member.reload.member_roles
 
         AuditService.audit(
-          :team_member_roles_updated,
+          :organization_member_roles_updated,
           author_id: current_user.id,
           entity: member,
           details: {

@@ -12,7 +12,7 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
       mutation($input: TeamMembersAssignRolesInput!) {
         teamMembersAssignRoles(input: $input) {
           #{error_query}
-          teamMemberRoles {
+          organizationMemberRoles {
             id
             member {
               id
@@ -30,7 +30,7 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
   let(:team_roles) { create_list(:team_role, 2, team: team) }
   let(:member) do
     create(:team_member, team: team).tap do |m|
-      create(:team_member_role, member: m, role: team_roles.last)
+      create(:organization_member_role, member: m, role: team_roles.last)
     end
   end
   let(:input) do
@@ -52,16 +52,16 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
     it 'assigns the given roles to the member' do
       mutate!
 
-      role_ids = graphql_data_at(:team_members_assign_roles, :team_member_roles, :id)
+      role_ids = graphql_data_at(:team_members_assign_roles, :organization_member_roles, :id)
       expect(role_ids).to be_present
       expect(role_ids).to be_a(Array)
 
-      team_member_roles = role_ids.map { |id| SagittariusSchema.object_from_id(id) }
+      organization_member_roles = role_ids.map { |id| SagittariusSchema.object_from_id(id) }
 
-      expect(team_member_roles.map(&:role)).to eq([team_roles.first])
+      expect(organization_member_roles.map(&:role)).to eq([team_roles.first])
 
       is_expected.to create_audit_event(
-        :team_member_roles_updated,
+        :organization_member_roles_updated,
         author_id: current_user.id,
         entity_id: member.id,
         entity_type: 'TeamMember',
@@ -79,7 +79,7 @@ RSpec.describe 'teamMembersAssignRoles Mutation' do
     it 'returns an error' do
       mutate!
 
-      expect(graphql_data_at(:team_members_assign_roles, :team_member_roles)).to be_nil
+      expect(graphql_data_at(:team_members_assign_roles, :organization_member_roles)).to be_nil
       expect(graphql_data_at(:team_members_assign_roles, :errors)).to include({ 'message' => 'missing_permission' })
     end
   end
