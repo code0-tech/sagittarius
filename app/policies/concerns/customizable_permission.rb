@@ -29,7 +29,7 @@ module CustomizablePermission
     def user_has_ability?(ability, user, subject)
       return false if team_member(user, subject).nil?
 
-      team_member(user, subject).roles.joins(:abilities).exists?(team_role_abilities: { ability: ability })
+      team_member(user, subject).roles.joins(:abilities).exists?(organization_role_abilities: { ability: ability })
     end
   end
 end

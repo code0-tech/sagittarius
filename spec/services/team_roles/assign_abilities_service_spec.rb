@@ -14,20 +14,20 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
 
     it { is_expected.not_to be_success }
     it { expect(service_response.payload).to eq(:missing_permission) }
-    it { expect { service_response }.not_to change { TeamRoleAbility.count } }
+    it { expect { service_response }.not_to change { OrganizationRoleAbility.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_role_abilities_updated)
+      expect { service_response }.not_to create_audit_event(:organization_role_abilities_updated)
     end
   end
 
   context 'when user does not have permission' do
     it { is_expected.not_to be_success }
     it { expect(service_response.payload).to eq(:missing_permission) }
-    it { expect { service_response }.not_to change { TeamRoleAbility.count } }
+    it { expect { service_response }.not_to change { OrganizationRoleAbility.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_role_abilities_updated)
+      expect { service_response }.not_to create_audit_event(:organization_role_abilities_updated)
     end
   end
 
@@ -41,11 +41,11 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
 
       it { is_expected.to be_success }
       it { expect(service_response.payload).to eq(['create_team_role']) }
-      it { expect { service_response }.to change { TeamRoleAbility.count }.by(1) }
+      it { expect { service_response }.to change { OrganizationRoleAbility.count }.by(1) }
 
       it do
         expect { service_response }.to create_audit_event(
-          :team_role_abilities_updated,
+          :organization_role_abilities_updated,
           author_id: current_user.id,
           entity_id: role.id,
           entity_type: 'TeamRole',
@@ -60,17 +60,17 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
       let(:abilities) { [] }
 
       before do
-        create(:team_role_ability, team_role: role, ability: :create_team_role)
+        create(:organization_role_ability, team_role: role, ability: :create_team_role)
         stub_allowed_ability(TeamPolicy, :assign_role_abilities, user: current_user, subject: role.team)
       end
 
       it { is_expected.to be_success }
       it { expect(service_response.payload).to be_empty }
-      it { expect { service_response }.to change { TeamRoleAbility.count }.by(-1) }
+      it { expect { service_response }.to change { OrganizationRoleAbility.count }.by(-1) }
 
       it do
         expect { service_response }.to create_audit_event(
-          :team_role_abilities_updated,
+          :organization_role_abilities_updated,
           author_id: current_user.id,
           entity_id: role.id,
           entity_type: 'TeamRole',
@@ -85,17 +85,17 @@ RSpec.describe TeamRoles::AssignAbilitiesService do
       let(:abilities) { [:create_team_role] }
 
       before do
-        create(:team_role_ability, team_role: role, ability: :invite_member)
+        create(:organization_role_ability, team_role: role, ability: :invite_member)
         stub_allowed_ability(TeamPolicy, :assign_role_abilities, user: current_user, subject: role.team)
       end
 
       it { is_expected.to be_success }
       it { expect(service_response.payload).to eq(['create_team_role']) }
-      it { expect { service_response }.not_to change { TeamRoleAbility.count } }
+      it { expect { service_response }.not_to change { OrganizationRoleAbility.count } }
 
       it do
         expect { service_response }.to create_audit_event(
-          :team_role_abilities_updated,
+          :organization_role_abilities_updated,
           author_id: current_user.id,
           entity_id: role.id,
           entity_type: 'TeamRole',

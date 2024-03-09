@@ -5,9 +5,9 @@ module Mutations
     class AssignAbilities < BaseMutation
       description 'Update the abilities a role is granted.'
 
-      field :abilities, [Types::TeamRoleAbilityEnum], description: 'The now granted abilities'
+      field :abilities, [Types::OrganizationRoleAbilityEnum], description: 'The now granted abilities'
 
-      argument :abilities, [Types::TeamRoleAbilityEnum],
+      argument :abilities, [Types::OrganizationRoleAbilityEnum],
                description: 'The abilities that should be granted to the ability'
       argument :role_id, Types::GlobalIdType[::TeamRole],
                description: 'The id of the role which should be granted the abilities'

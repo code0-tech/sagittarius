@@ -44,7 +44,7 @@ RSpec.describe 'teamRolesAssignAbilities Mutation' do
       expect(abilities).to eq(['CREATE_TEAM_ROLE'])
 
       is_expected.to create_audit_event(
-        :team_role_abilities_updated,
+        :organization_role_abilities_updated,
         author_id: current_user.id,
         entity_id: team_role.id,
         entity_type: 'TeamRole',

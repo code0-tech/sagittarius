@@ -25,20 +25,20 @@ module TeamRoles
         current_abilities.where.not(ability: abilities).delete_all
 
         (abilities - current_abilities.map(&:ability)).map do |ability|
-          team_role_ability = TeamRoleAbility.create(team_role: role, ability: ability)
+          organization_role_ability = OrganizationRoleAbility.create(team_role: role, ability: ability)
 
-          next if team_role_ability.persisted?
+          next if organization_role_ability.persisted?
 
           t.rollback_and_return! ServiceResponse.error(
-            message: 'Failed to save team role ability',
-            payload: team_role_ability.errors
+            message: 'Failed to save organization role ability',
+            payload: organization_role_ability.errors
           )
         end
 
         new_abilities = role.reload.abilities.map(&:ability)
 
         AuditService.audit(
-          :team_role_abilities_updated,
+          :organization_role_abilities_updated,
           author_id: current_user.id,
           entity: role,
           details: {

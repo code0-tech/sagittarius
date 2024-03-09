@@ -23,7 +23,7 @@ RSpec.describe CustomizablePermission do
 
   context 'when user has a role with the ability' do
     before do
-      create(:team_role_ability, team_role: team_role, ability: :create_team_role)
+      create(:organization_role_ability, team_role: team_role, ability: :create_team_role)
     end
 
     it { is_expected.to be_allowed(:create_team_role) }
@@ -31,7 +31,7 @@ RSpec.describe CustomizablePermission do
 
   context 'when user has a role with a different ability' do
     before do
-      create(:team_role_ability, team_role: team_role, ability: :create_team_role)
+      create(:organization_role_ability, team_role: team_role, ability: :create_team_role)
     end
 
     it { is_expected.not_to be_allowed(:invite_member) }

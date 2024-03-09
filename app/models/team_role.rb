@@ -3,7 +3,7 @@
 class TeamRole < ApplicationRecord
   belongs_to :team, inverse_of: :roles
 
-  has_many :abilities, class_name: 'TeamRoleAbility', inverse_of: :team_role
+  has_many :abilities, class_name: 'OrganizationRoleAbility', inverse_of: :team_role
   has_many :member_roles, class_name: 'OrganizationMemberRole', inverse_of: :role
   has_many :members, class_name: 'TeamMember', through: :member_roles, inverse_of: :roles
 
