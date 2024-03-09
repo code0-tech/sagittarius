@@ -7,7 +7,7 @@ class AuditEvent < ApplicationRecord
     team_created: 3,
     application_setting_updated: 4,
     organization_role_created: 5,
-    team_member_invited: 6,
+    organization_member_invited: 6,
     organization_member_roles_updated: 7,
     organization_role_abilities_updated: 8,
   }.with_indifferent_access

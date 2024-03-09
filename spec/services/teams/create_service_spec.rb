@@ -12,8 +12,8 @@ RSpec.describe Teams::CreateService do
       expect { service_response }.not_to change { Team.count }
     end
 
-    it 'does not create team member' do
-      expect { service_response }.not_to change { TeamMember.count }
+    it 'does not create organization member' do
+      expect { service_response }.not_to change { OrganizationMember.count }
     end
 
     it { expect { service_response }.not_to create_audit_event(:team_created) }
@@ -53,15 +53,15 @@ RSpec.describe Teams::CreateService do
     it { is_expected.to be_success }
     it { expect(service_response.payload.reload).to be_valid }
 
-    it 'adds current_user as team member' do
+    it 'adds current_user as organization member' do
       team = service_response.payload.reload
-      member = TeamMember.find_by(team: team, user: current_user)
+      member = OrganizationMember.find_by(team: team, user: current_user)
 
       expect(member).to be_present
     end
 
     it 'only adds 1 member' do
-      expect { service_response }.to change { TeamMember.count }.by(1)
+      expect { service_response }.to change { OrganizationMember.count }.by(1)
     end
 
     it do

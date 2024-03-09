@@ -7,7 +7,7 @@ class TeamPolicy < BasePolicy
 
   rule { is_member }.policy do
     enable :read_team
-    enable :read_team_member
+    enable :read_organization_member
     enable :read_organization_member_role
     enable :read_organization_role
   end

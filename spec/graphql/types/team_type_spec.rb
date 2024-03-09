@@ -37,11 +37,11 @@ RSpec.describe SagittariusSchema.types['Team'] do
       end
 
       let(:current_user) { create(:user) }
-      let(:team) { create(:team).tap { |team| create(:team_member, team: team, user: current_user) } }
+      let(:team) { create(:team).tap { |team| create(:organization_member, team: team, user: current_user) } }
       let(:variables) { { teamId: team.to_global_id.to_s } }
 
       let(:create_new_record) do
-        -> { create(:team_member, team: team) }
+        -> { create(:organization_member, team: team) }
       end
     end
   end

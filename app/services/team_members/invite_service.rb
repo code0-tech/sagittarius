@@ -18,22 +18,22 @@ module TeamMembers
       end
 
       transactional do |t|
-        team_member = TeamMember.create(team: team, user: user)
+        organization_member = OrganizationMember.create(team: team, user: user)
 
-        unless team_member.persisted?
-          t.rollback_and_return! ServiceResponse.error(message: 'Failed to save team member',
-                                                       payload: team_member.errors)
+        unless organization_member.persisted?
+          t.rollback_and_return! ServiceResponse.error(message: 'Failed to save organization member',
+                                                       payload: organization_member.errors)
         end
 
         AuditService.audit(
-          :team_member_invited,
+          :organization_member_invited,
           author_id: current_user.id,
-          entity: team_member,
+          entity: organization_member,
           details: {},
           target: team
         )
 
-        ServiceResponse.success(message: 'Team member invited', payload: team_member)
+        ServiceResponse.success(message: 'Organization member invited', payload: organization_member)
       end
     end
   end

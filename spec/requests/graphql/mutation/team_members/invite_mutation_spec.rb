@@ -12,7 +12,7 @@ RSpec.describe 'teamMembersInvite Mutation' do
       mutation($input: TeamMembersInviteInput!) {
         teamMembersInvite(input: $input) {
           #{error_query}
-          teamMember {
+          organizationMember {
             id
             user {
               id
@@ -40,25 +40,27 @@ RSpec.describe 'teamMembersInvite Mutation' do
 
   context 'when user has permission' do
     before do
-      create(:team_member, team: team, user: current_user)
+      create(:organization_member, team: team, user: current_user)
       stub_allowed_ability(TeamPolicy, :invite_member, user: current_user, subject: team)
     end
 
-    it 'creates team member' do
+    it 'creates organization member' do
       mutate!
 
-      expect(graphql_data_at(:team_members_invite, :team_member, :id)).to be_present
+      expect(graphql_data_at(:team_members_invite, :organization_member, :id)).to be_present
 
-      team_member = SagittariusSchema.object_from_id(graphql_data_at(:team_members_invite, :team_member, :id))
+      organization_member = SagittariusSchema.object_from_id(
+        graphql_data_at(:team_members_invite, :organization_member, :id)
+      )
 
-      expect(team_member.user).to eq(user)
-      expect(team_member.team).to eq(team)
+      expect(organization_member.user).to eq(user)
+      expect(organization_member.team).to eq(team)
 
       is_expected.to create_audit_event(
-        :team_member_invited,
+        :organization_member_invited,
         author_id: current_user.id,
-        entity_id: team_member.id,
-        entity_type: 'TeamMember',
+        entity_id: organization_member.id,
+        entity_type: 'OrganizationMember',
         details: {},
         target_id: team.id,
         target_type: 'Team'
@@ -67,11 +69,11 @@ RSpec.describe 'teamMembersInvite Mutation' do
 
     context 'when target user is already a member' do
       it 'returns an error' do
-        create(:team_member, team: team, user: user)
+        create(:organization_member, team: team, user: user)
 
         mutate!
 
-        expect(graphql_data_at(:team_members_invite, :team_member)).to be_nil
+        expect(graphql_data_at(:team_members_invite, :organization_member)).to be_nil
         expect(graphql_data_at(:team_members_invite, :errors)).to include({ 'attribute' => 'team', 'type' => 'taken' })
       end
     end
@@ -81,7 +83,7 @@ RSpec.describe 'teamMembersInvite Mutation' do
     it 'returns an error' do
       mutate!
 
-      expect(graphql_data_at(:team_members_invite, :team_member)).to be_nil
+      expect(graphql_data_at(:team_members_invite, :organization_member)).to be_nil
       expect(graphql_data_at(:team_members_invite, :errors)).to include({ 'message' => 'missing_permission' })
     end
   end

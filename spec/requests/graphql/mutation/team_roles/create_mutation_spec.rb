@@ -39,7 +39,7 @@ RSpec.describe 'teamRolesCreate Mutation' do
 
   context 'when user is a member of the organization' do
     before do
-      create(:team_member, team: team, user: current_user)
+      create(:organization_member, team: team, user: current_user)
       stub_allowed_ability(TeamPolicy, :create_organization_role, user: current_user, subject: team)
     end
 

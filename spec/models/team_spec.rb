@@ -6,9 +6,9 @@ RSpec.describe Team do
   subject { create(:team) }
 
   describe 'associations' do
-    it { is_expected.to have_many(:team_members).inverse_of(:team) }
+    it { is_expected.to have_many(:organization_members).inverse_of(:team) }
     it { is_expected.to have_many(:roles).inverse_of(:team) }
-    it { is_expected.to have_many(:users).through(:team_members).inverse_of(:teams) }
+    it { is_expected.to have_many(:users).through(:organization_members).inverse_of(:teams) }
   end
 
   describe 'validations' do
@@ -21,14 +21,14 @@ RSpec.describe Team do
     let(:team) { create(:team) }
     let(:user) { create(:user) }
 
-    before { create(:team_member, team: team, user: user) }
+    before { create(:organization_member, team: team, user: user) }
 
     it 'performs a query if members are not loaded' do
       expect { team.member?(user) }.to match_query_count(1)
     end
 
     it 'performs no query if members are loaded' do
-      team.team_members.load
+      team.organization_members.load
 
       expect { team.member?(user) }.to match_query_count(0)
     end

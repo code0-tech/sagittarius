@@ -7,7 +7,7 @@ RSpec.describe TeamMembers::AssignRolesService do
 
   let(:current_user) { create(:user) }
   let(:team) { create(:team) }
-  let(:member) { create(:team_member, team: team) }
+  let(:member) { create(:organization_member, team: team) }
   let(:roles) { [] }
 
   context 'when user is nil' do
@@ -49,7 +49,7 @@ RSpec.describe TeamMembers::AssignRolesService do
         expect { service_response }.to create_audit_event(
           :organization_member_roles_updated,
           author_id: current_user.id,
-          entity_type: 'TeamMember',
+          entity_type: 'OrganizationMember',
           details: {
             'old_roles' => [],
             'new_roles' => [{ 'id' => organization_role.id, 'name' => organization_role.name }],
@@ -77,7 +77,7 @@ RSpec.describe TeamMembers::AssignRolesService do
         expect { service_response }.to create_audit_event(
           :organization_member_roles_updated,
           author_id: current_user.id,
-          entity_type: 'TeamMember',
+          entity_type: 'OrganizationMember',
           details: {
             'old_roles' => [{ 'id' => organization_role.id, 'name' => organization_role.name }],
             'new_roles' => [],
@@ -106,7 +106,7 @@ RSpec.describe TeamMembers::AssignRolesService do
         expect { service_response }.to create_audit_event(
           :organization_member_roles_updated,
           author_id: current_user.id,
-          entity_type: 'TeamMember',
+          entity_type: 'OrganizationMember',
           details: {
             'old_roles' => [{ 'id' => removing_organization_role.id, 'name' => removing_organization_role.name }],
             'new_roles' => [{ 'id' => adding_organization_role.id, 'name' => adding_organization_role.name }],

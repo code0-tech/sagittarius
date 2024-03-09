@@ -8,7 +8,7 @@ module Mutations
       field :organization_member_roles, [Types::OrganizationMemberRoleType],
             description: 'The roles the member is now assigned to'
 
-      argument :member_id, Types::GlobalIdType[::TeamMember],
+      argument :member_id, Types::GlobalIdType[::OrganizationMember],
                description: 'The id of the member which should be assigned the roles'
       argument :role_ids, [Types::GlobalIdType[::OrganizationRole]],
                description: 'The roles the member should be assigned to the member'

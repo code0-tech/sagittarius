@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe TeamMember do
-  subject { create(:team_member) }
+RSpec.describe OrganizationMember do
+  subject { create(:organization_member) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:team).required }

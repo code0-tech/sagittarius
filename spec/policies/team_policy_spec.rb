@@ -9,10 +9,10 @@ RSpec.describe TeamPolicy do
 
   context 'when user is member of the team' do
     let(:current_user) { create(:user) }
-    let(:team) { create(:team).tap { |team| create(:team_member, team: team, user: current_user) } }
+    let(:team) { create(:team).tap { |team| create(:organization_member, team: team, user: current_user) } }
 
     it { is_expected.to be_allowed(:read_team) }
-    it { is_expected.to be_allowed(:read_team_member) }
+    it { is_expected.to be_allowed(:read_organization_member) }
   end
 
   context 'when user is not member of the team' do
@@ -20,7 +20,7 @@ RSpec.describe TeamPolicy do
     let(:team) { create(:team) }
 
     it { is_expected.not_to be_allowed(:read_team) }
-    it { is_expected.not_to be_allowed(:read_team_member) }
+    it { is_expected.not_to be_allowed(:read_organization_member) }
   end
 
   context 'when user is nil' do
@@ -28,6 +28,6 @@ RSpec.describe TeamPolicy do
     let(:team) { create(:team) }
 
     it { is_expected.not_to be_allowed(:read_team) }
-    it { is_expected.not_to be_allowed(:read_team_member) }
+    it { is_expected.not_to be_allowed(:read_organization_member) }
   end
 end

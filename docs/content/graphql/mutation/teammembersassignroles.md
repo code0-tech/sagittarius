@@ -9,7 +9,7 @@ Update the roles a member is assigned to.
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `memberId` | [`TeamMemberID!`](../scalar/teammemberid.md) | The id of the member which should be assigned the roles |
+| `memberId` | [`OrganizationMemberID!`](../scalar/organizationmemberid.md) | The id of the member which should be assigned the roles |
 | `roleIds` | [`[OrganizationRoleID!]!`](../scalar/organizationroleid.md) | The roles the member should be assigned to the member |
 
 ## Fields

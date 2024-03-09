@@ -54,7 +54,7 @@ RSpec.describe 'team Query' do
     context 'when user is a member' do
       let(:current_user) do
         create(:user).tap do |user|
-          create(:team_member, team: team, user: user)
+          create(:organization_member, team: team, user: user)
         end
       end
 

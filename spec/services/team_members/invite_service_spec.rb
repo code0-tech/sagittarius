@@ -13,10 +13,10 @@ RSpec.describe TeamMembers::InviteService do
 
     it { is_expected.not_to be_success }
     it { expect(service_response.payload).to eq(:missing_permission) }
-    it { expect { service_response }.not_to change { TeamMember.count } }
+    it { expect { service_response }.not_to change { OrganizationMember.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_member_invited)
+      expect { service_response }.not_to create_audit_event(:organization_member_invited)
     end
   end
 
@@ -25,10 +25,10 @@ RSpec.describe TeamMembers::InviteService do
 
     it { is_expected.not_to be_success }
     it { expect(service_response.payload).to eq(:missing_permission) }
-    it { expect { service_response }.not_to change { TeamMember.count } }
+    it { expect { service_response }.not_to change { OrganizationMember.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:team_member_invited)
+      expect { service_response }.not_to create_audit_event(:organization_member_invited)
     end
   end
 
@@ -42,13 +42,13 @@ RSpec.describe TeamMembers::InviteService do
     it { is_expected.to be_success }
     it { expect(service_response.payload.team).to eq(team) }
     it { expect(service_response.payload.user).to eq(user) }
-    it { expect { service_response }.to change { TeamMember.count }.by(1) }
+    it { expect { service_response }.to change { OrganizationMember.count }.by(1) }
 
     it do
       expect { service_response }.to create_audit_event(
-        :team_member_invited,
+        :organization_member_invited,
         author_id: current_user.id,
-        entity_type: 'TeamMember',
+        entity_type: 'OrganizationMember',
         details: {},
         target_id: team.id,
         target_type: 'Team'

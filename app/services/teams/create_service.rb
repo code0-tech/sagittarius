@@ -22,10 +22,10 @@ module Teams
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to create team', payload: team.errors)
         end
 
-        team_member = TeamMember.create(team: team, user: current_user)
-        unless team_member.persisted?
-          t.rollback_and_return! ServiceResponse.error(message: 'Failed to create team member',
-                                                       payload: team_member.errors)
+        organization_member = OrganizationMember.create(team: team, user: current_user)
+        unless organization_member.persisted?
+          t.rollback_and_return! ServiceResponse.error(message: 'Failed to create organization member',
+                                                       payload: organization_member.errors)
         end
 
         AuditService.audit(

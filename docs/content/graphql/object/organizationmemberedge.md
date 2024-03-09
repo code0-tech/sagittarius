@@ -1,5 +1,5 @@
 ---
-title: TeamMemberEdge
+title: OrganizationMemberEdge
 ---
 
 An edge in a connection.
@@ -9,5 +9,5 @@ An edge in a connection.
 | Name | Type | Description |
 |------|------|-------------|
 | `cursor` | [`String!`](../scalar/string.md) | A cursor for use in pagination. |
-| `node` | [`TeamMember`](../object/teammember.md) | The item at the end of the edge. |
+| `node` | [`OrganizationMember`](../object/organizationmember.md) | The item at the end of the edge. |
 

@@ -62,6 +62,23 @@ CREATE SEQUENCE organization_member_roles_id_seq
 
 ALTER SEQUENCE organization_member_roles_id_seq OWNED BY organization_member_roles.id;
 
+CREATE TABLE organization_members (
+    id bigint NOT NULL,
+    team_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE organization_members_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE organization_members_id_seq OWNED BY organization_members.id;
+
 CREATE TABLE organization_role_abilities (
     id bigint NOT NULL,
     organization_role_id bigint NOT NULL,
@@ -99,23 +116,6 @@ ALTER SEQUENCE organization_roles_id_seq OWNED BY organization_roles.id;
 CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
-
-CREATE TABLE team_members (
-    id bigint NOT NULL,
-    team_id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE team_members_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE team_members_id_seq OWNED BY team_members.id;
 
 CREATE TABLE teams (
     id bigint NOT NULL,
@@ -183,11 +183,11 @@ ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_
 
 ALTER TABLE ONLY organization_member_roles ALTER COLUMN id SET DEFAULT nextval('organization_member_roles_id_seq'::regclass);
 
+ALTER TABLE ONLY organization_members ALTER COLUMN id SET DEFAULT nextval('organization_members_id_seq'::regclass);
+
 ALTER TABLE ONLY organization_role_abilities ALTER COLUMN id SET DEFAULT nextval('organization_role_abilities_id_seq'::regclass);
 
 ALTER TABLE ONLY organization_roles ALTER COLUMN id SET DEFAULT nextval('organization_roles_id_seq'::regclass);
-
-ALTER TABLE ONLY team_members ALTER COLUMN id SET DEFAULT nextval('team_members_id_seq'::regclass);
 
 ALTER TABLE ONLY teams ALTER COLUMN id SET DEFAULT nextval('teams_id_seq'::regclass);
 
@@ -207,6 +207,9 @@ ALTER TABLE ONLY audit_events
 ALTER TABLE ONLY organization_member_roles
     ADD CONSTRAINT organization_member_roles_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY organization_members
+    ADD CONSTRAINT organization_members_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY organization_role_abilities
     ADD CONSTRAINT organization_role_abilities_pkey PRIMARY KEY (id);
 
@@ -215,9 +218,6 @@ ALTER TABLE ONLY organization_roles
 
 ALTER TABLE ONLY schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
-
-ALTER TABLE ONLY team_members
-    ADD CONSTRAINT team_members_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY teams
     ADD CONSTRAINT teams_pkey PRIMARY KEY (id);
@@ -238,17 +238,17 @@ CREATE INDEX index_organization_member_roles_on_member_id ON organization_member
 
 CREATE INDEX index_organization_member_roles_on_role_id ON organization_member_roles USING btree (role_id);
 
+CREATE INDEX index_organization_members_on_team_id ON organization_members USING btree (team_id);
+
+CREATE UNIQUE INDEX index_organization_members_on_team_id_and_user_id ON organization_members USING btree (team_id, user_id);
+
+CREATE INDEX index_organization_members_on_user_id ON organization_members USING btree (user_id);
+
 CREATE INDEX index_organization_role_abilities_on_organization_role_id ON organization_role_abilities USING btree (organization_role_id);
 
 CREATE INDEX index_organization_roles_on_team_id ON organization_roles USING btree (team_id);
 
 CREATE UNIQUE INDEX "index_organization_roles_on_team_id_LOWER_name" ON organization_roles USING btree (team_id, lower(name));
-
-CREATE INDEX index_team_members_on_team_id ON team_members USING btree (team_id);
-
-CREATE UNIQUE INDEX index_team_members_on_team_id_and_user_id ON team_members USING btree (team_id, user_id);
-
-CREATE INDEX index_team_members_on_user_id ON team_members USING btree (user_id);
 
 CREATE UNIQUE INDEX "index_teams_on_LOWER_name" ON teams USING btree (lower(name));
 
@@ -260,20 +260,20 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(ema
 
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
 
-ALTER TABLE ONLY team_members
-    ADD CONSTRAINT fk_rails_194b5b076d FOREIGN KEY (team_id) REFERENCES teams(id);
+ALTER TABLE ONLY organization_members
+    ADD CONSTRAINT fk_rails_5552226ecd FOREIGN KEY (team_id) REFERENCES teams(id);
 
 ALTER TABLE ONLY organization_member_roles
     ADD CONSTRAINT fk_rails_585a684166 FOREIGN KEY (role_id) REFERENCES organization_roles(id);
 
 ALTER TABLE ONLY organization_member_roles
-    ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES team_members(id);
-
-ALTER TABLE ONLY team_members
-    ADD CONSTRAINT fk_rails_9ec2d5e75e FOREIGN KEY (user_id) REFERENCES users(id);
+    ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES organization_members(id);
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT fk_rails_9fa262d742 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY organization_members
+    ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id);
 
 ALTER TABLE ONLY organization_roles
     ADD CONSTRAINT fk_rails_b00e4a9b1a FOREIGN KEY (team_id) REFERENCES teams(id);

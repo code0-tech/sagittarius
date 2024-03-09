@@ -37,7 +37,7 @@ RSpec.describe TeamRoles::CreateService do
     let(:current_user) { create(:user) }
 
     before do
-      create(:team_member, team: team, user: current_user)
+      create(:organization_member, team: team, user: current_user)
       stub_allowed_ability(TeamPolicy, :create_organization_role, user: current_user, subject: team)
     end
 

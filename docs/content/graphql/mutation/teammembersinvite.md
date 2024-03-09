@@ -18,4 +18,4 @@ Invite a new member to a team.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
-| `teamMember` | [`TeamMember`](../object/teammember.md) | The newly created team member |
+| `organizationMember` | [`OrganizationMember`](../object/organizationmember.md) | The newly created organization member |

@@ -16,10 +16,10 @@ RSpec.describe CustomizablePermission do
   end
   let(:current_user) { create(:user) }
   let(:team) { create(:team) }
-  let(:team_member) { create(:team_member, team: team, user: current_user) }
+  let(:organization_member) { create(:organization_member, team: team, user: current_user) }
   let(:organization_role) do
     create(:organization_role, team: team).tap do |role|
-      create(:organization_member_role, member: team_member, role: role)
+      create(:organization_member_role, member: organization_member, role: role)
     end
   end
 

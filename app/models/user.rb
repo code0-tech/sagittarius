@@ -19,6 +19,6 @@ class User < ApplicationRecord
   has_many :user_sessions, inverse_of: :user
   has_many :authored_audit_events, class_name: 'AuditEvent', inverse_of: :author
 
-  has_many :team_memberships, class_name: 'TeamMember', inverse_of: :user
-  has_many :teams, through: :team_memberships, inverse_of: :users
+  has_many :organization_memberships, class_name: 'OrganizationMember', inverse_of: :user
+  has_many :teams, through: :organization_memberships, inverse_of: :users
 end

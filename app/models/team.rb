@@ -6,18 +6,18 @@ class Team < ApplicationRecord
                    allow_blank: false,
                    uniqueness: { case_sensitive: false }
 
-  has_many :team_members, inverse_of: :team
-  has_many :users, through: :team_members, inverse_of: :teams
+  has_many :organization_members, inverse_of: :team
+  has_many :users, through: :organization_members, inverse_of: :teams
 
   has_many :roles, class_name: 'OrganizationRole', inverse_of: :team
 
   def member?(user)
     return false if user.nil?
 
-    if team_members.loaded?
-      team_members.any? { |member| member.user.id == user.id }
+    if organization_members.loaded?
+      organization_members.any? { |member| member.user.id == user.id }
     else
-      team_members.exists?(user: user)
+      organization_members.exists?(user: user)
     end
   end
 end
