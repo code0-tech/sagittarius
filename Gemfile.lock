@@ -115,7 +115,7 @@ GEM
     gemoji (3.0.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    graphql (2.2.12)
+    graphql (2.2.13)
       base64
     graphql-docs (4.0.0)
       commonmarker (~> 0.23, >= 0.23.6)
