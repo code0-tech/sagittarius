@@ -9,7 +9,7 @@ Update application settings.
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `teamCreationRestricted` | [`Boolean`](../scalar/boolean.md) | Set if team creation is restricted to administrators. |
+| `organizationCreationRestricted` | [`Boolean`](../scalar/boolean.md) | Set if organization creation is restricted to administrators. |
 | `userRegistrationEnabled` | [`Boolean`](../scalar/boolean.md) | Set if user registration is enabled. |
 
 ## Fields

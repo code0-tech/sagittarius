@@ -9,12 +9,14 @@ module Types
     field :email, String, null: false, description: 'Email of the user'
     field :username, String, null: false, description: 'Username of the user'
 
-    field :team_memberships, Types::TeamMemberType.connection_type, null: false,
-                                                                    description: 'Team Memberships of this user',
-                                                                    extras: [:lookahead]
+    field :organization_memberships, Types::OrganizationMemberType.connection_type,
+          null: false,
+          description: 'Organization Memberships of this user',
+          extras: [:lookahead]
 
-    lookahead_field :team_memberships, base_scope: ->(object) { object.team_memberships },
-                                       conditional_lookaheads: { user: :user, team: { team: :team_members } }
+    lookahead_field :organization_memberships,
+                    base_scope: ->(object) { object.organization_memberships },
+                    conditional_lookaheads: { user: :user, organization: { organization: :organization_members } }
 
     id_field User
     timestamps

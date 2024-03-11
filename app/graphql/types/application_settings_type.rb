@@ -9,7 +9,8 @@ module Types
     field :user_registration_enabled, Boolean, null: false,
                                                description: 'Shows if user registration is enabled'
 
-    field :team_creation_restricted, Boolean, null: false,
-                                              description: 'Shows if team creation is restricted to administrators'
+    field :organization_creation_restricted, Boolean,
+          null: false,
+          description: 'Shows if organization creation is restricted to administrators'
   end
 end

@@ -6,7 +6,7 @@ RSpec.describe SagittariusSchema.types['ApplicationSettings'] do
   let(:fields) do
     %w[
       userRegistrationEnabled
-      teamCreationRestricted
+      organizationCreationRestricted
     ]
   end
 

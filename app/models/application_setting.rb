@@ -9,10 +9,10 @@ class ApplicationSetting < ApplicationRecord
 
   SETTINGS = {
     user_registration_enabled: 1,
-    team_creation_restricted: 2,
+    organization_creation_restricted: 2,
   }.with_indifferent_access
 
-  BOOLEAN_OPTIONS = %i[user_registration_enabled team_creation_restricted].freeze
+  BOOLEAN_OPTIONS = %i[user_registration_enabled organization_creation_restricted].freeze
 
   enum :setting, SETTINGS
 

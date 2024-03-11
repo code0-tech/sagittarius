@@ -6,6 +6,6 @@ ApplicationSetting.seed_once :setting do |s|
 end
 
 ApplicationSetting.seed_once :setting do |s|
-  s.setting = :team_creation_restricted
+  s.setting = :organization_creation_restricted
   s.value = false
 end

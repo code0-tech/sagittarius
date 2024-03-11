@@ -7,11 +7,11 @@ module Types
     include Sagittarius::Graphql::MountMutation
 
     mount_mutation Mutations::ApplicationSettings::Update
-    mount_mutation Mutations::TeamMembers::AssignRoles
-    mount_mutation Mutations::TeamMembers::Invite
-    mount_mutation Mutations::TeamRoles::AssignAbilities
-    mount_mutation Mutations::TeamRoles::Create
-    mount_mutation Mutations::Teams::Create
+    mount_mutation Mutations::OrganizationMembers::AssignRoles
+    mount_mutation Mutations::OrganizationMembers::Invite
+    mount_mutation Mutations::OrganizationRoles::AssignAbilities
+    mount_mutation Mutations::OrganizationRoles::Create
+    mount_mutation Mutations::Organizations::Create
     mount_mutation Mutations::Users::Login
     mount_mutation Mutations::Users::Logout
     mount_mutation Mutations::Users::Register

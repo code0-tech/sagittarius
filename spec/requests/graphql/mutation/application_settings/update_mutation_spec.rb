@@ -12,7 +12,7 @@ RSpec.describe 'applicationSettingsUpdate Mutation' do
           #{error_query}
           applicationSettings {
             userRegistrationEnabled
-            teamCreationRestricted
+            organizationCreationRestricted
           }
         }
       }

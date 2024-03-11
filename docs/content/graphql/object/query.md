@@ -44,13 +44,13 @@ Returns [`[Node]`](../interface/node.md).
 |------|------|-------------|
 | `ids` | [`[ID!]!`](../scalar/id.md) | IDs of the objects |
 
-### team
+### organization
 
-Find a team
+Find a organization
 
-Returns [`Team`](../object/team.md).
+Returns [`Organization`](../object/organization.md).
 
 | Name | Type | Description |
 |------|------|-------------|
-| `id` | [`TeamID`](../scalar/teamid.md) | GlobalID of the target team |
-| `name` | [`String`](../scalar/string.md) | Name of the target team |
+| `id` | [`OrganizationID`](../scalar/organizationid.md) | GlobalID of the target organization |
+| `name` | [`String`](../scalar/string.md) | Name of the target organization |
