@@ -11,7 +11,7 @@
 Rails.application.config.to_prepare do
   # Patch to write version information as empty files under the db/schema_migrations directory
   # This is intended to reduce potential for merge conflicts in db/structure.sql
-  ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.prepend(Sagittarius::Database::PostgresqlAdapter::DumpSchemaVersionsMixin)
+  ActiveSupport.on_load(:active_record_postgresqladapter) { prepend Sagittarius::Database::PostgresqlAdapter::DumpSchemaVersionsMixin }
   # Patch to load version information from empty files under the db/schema_migrations directory
   ActiveRecord::Tasks::PostgreSQLDatabaseTasks.prepend(Sagittarius::Database::PostgresqlDatabaseTasks::LoadSchemaVersionsMixin)
 end
