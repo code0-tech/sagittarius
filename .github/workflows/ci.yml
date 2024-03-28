@@ -14,7 +14,7 @@ jobs:
   pipeline:
     runs-on: ubuntu-latest
     steps:
-      - uses: Taucher2003/GitLab-Pipeline-Action@1.6.6
+      - uses: Taucher2003/GitLab-Pipeline-Action@1.6.7
         name: Run pipeline
         id: pipeline
         with:
