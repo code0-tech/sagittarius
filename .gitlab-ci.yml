@@ -136,7 +136,10 @@ boot:docker:
       --name sagittarius
       --network sagittarius_default
       --network-alias sagittarius
+      -e DOCKER_HOST=$DOCKER_HOST
+      -e DOCKER_TLS_CERTDIR=$DOCKER_TLS_CERTDIR
       -e RAILS_ENV=production
+      -v $DOCKER_TLS_CERTDIR:$DOCKER_TLS_CERTDIR
       ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA} &
     - >
       docker run
