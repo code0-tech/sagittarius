@@ -155,3 +155,31 @@ boot:docker:
       --retry-delay 3
       --retry-connrefused
       http://sagittarius:3000/health/liveness
+
+boot:docker-orchestrated:
+  stage: test
+  image: docker:26.0.0-dind
+  script:
+    - /usr/local/bin/dockerd-entrypoint.sh &
+    - sleep 20
+    - docker network create sagittarius_default
+    - >
+      docker run
+      --name sagittarius
+      --network sagittarius_default
+      --network-alias sagittarius
+      -e RAILS_ENV=production
+      -v /var/run/docker.sock:/var/run/docker.sock
+      ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA} &
+    - >
+      docker run
+      --rm
+      --network sagittarius_default
+      curlimages/curl:8.5.0
+      curl
+      --fail
+      -sv
+      --retry 20
+      --retry-delay 3
+      --retry-connrefused
+      http://sagittarius:3000/health/liveness
