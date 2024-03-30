@@ -1,7 +1,16 @@
 #!/bin/bash -e
 
-# If running the rails server then create or migrate existing database
 if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
+  # orchestrate dependencies
+  bundle exec rake orchestrator:start[postgresql] \
+   orchestrator:start[redis] \
+   orchestrator:await_healthy[postgresql] \
+   orchestrator:await_healthy[redis]
+
+  # create connection environment variables
+  eval $(bundle exec orchestrator:create_connection_environment[postgresql,redis])
+
+  # prepare database
   bundle exec rake db:prepare
   FILTER=01_application_settings bundle exec rake db:seed_fu
 fi

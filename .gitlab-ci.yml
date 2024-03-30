@@ -130,16 +130,12 @@ boot:docker:
     DOCKER_TLS_CERTDIR: /certs
     DOCKER_HOST: tcp://docker:2376
   script:
-    - docker compose -f docker-compose.dev.yml up -d
+    - docker network create sagittarius_default
     - >
       docker run
       --name sagittarius
       --network sagittarius_default
       --network-alias sagittarius
-      -e SAGITTARIUS_DATABASE_HOST=postgresql
-      -e SAGITTARIUS_DATABASE_PORT=5432
-      -e SAGITTARIUS_REDIS_HOST=redis
-      -e SAGITTARIUS_REDIS_PORT=6379
       -e RAILS_ENV=production
       ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA} &
     - >
