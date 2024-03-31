@@ -159,6 +159,8 @@ boot:docker:
 boot:docker-orchestrated:
   stage: test
   image: docker:26.0.0-dind
+  variables:
+    DOCKER_HOST: unix:///var/run/docker.sock
   script:
     - /usr/local/bin/dockerd-entrypoint.sh &
     - sleep 20
