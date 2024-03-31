@@ -45,19 +45,34 @@ namespace :orchestrator do
     abort("#{args[:container]} is not healthy") unless Sagittarius::Orchestrator::State[args[:container]].healthy?
   end
 
-  auto_reenable_task :await_healthy, %i[container timeout] => :build_state do |_, args|
+  auto_reenable_task :await_healthy, %i[container timeout min_attempts] => :build_state do |_, args|
     timeout = args.fetch(:timeout, 30).to_i
+    min_attempts = args.fetch(:min_attempts, 2).to_i
     container = Sagittarius::Orchestrator::State[args[:container]]
 
-    (0..timeout).each do |attempt|
+    total_attempts = 0
+    successful_attempts = 0
+    (0..timeout).each do
+      total_attempts += 1
       if container.healthy?
-        puts "#{container.name} is healthy after #{attempt} seconds"
-        break
+        successful_attempts += 1
+      else
+        successful_attempts = 0
       end
+
+      break if successful_attempts >= min_attempts
+
       sleep 1
     end
 
-    abort("#{container.name} did not get healthy within #{timeout} seconds") unless container.healthy?
+    if successful_attempts >= min_attempts
+      puts "#{container.name} is healthy after #{total_attempts} seconds"
+    elsif container.healthy?
+      abort("#{container.name} did get healthy, but did not meet health threshold of " \
+            "#{min_attempts} within #{timeout} seconds")
+    else
+      abort("#{container.name} did not get healthy within #{timeout} seconds")
+    end
   end
 
   task :create_connection_environment, [] => :build_state do |_, args|

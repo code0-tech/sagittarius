@@ -6,8 +6,8 @@ if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
     bundle exec rake \
       orchestrator:start[postgresql] \
       orchestrator:start[redis] \
-      orchestrator:await_healthy[postgresql] \
-      orchestrator:await_healthy[redis] \
+      orchestrator:await_healthy[postgresql,5] \
+      orchestrator:await_healthy[redis,5] \
       orchestrator:connect_self
 
     # create connection environment variables
