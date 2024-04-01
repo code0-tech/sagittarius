@@ -47,7 +47,10 @@ module Sagittarius
         def network
           network_id = Docker::Network.all(filters: JSON.dump(
             { 'label' => ["#{ORCHESTRATOR_LABEL_PREFIX}=network"] }
-          )).first.id
+          )).first&.id
+
+          return nil if network_id.nil?
+
           Docker::Network.get(network_id)
         end
 
