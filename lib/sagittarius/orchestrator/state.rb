@@ -14,9 +14,9 @@ module Sagittarius
         def build_containers!
           docker_containers = Docker::Container.all(
             all: true,
-            filters: JSON.dump({ 'label' => [Operator::ORCHESTRATOR_LABEL_PREFIX] })
+            filters: JSON.dump({ 'label' => [Operator::CONTAINER_NAME_LABEL] })
           ).to_h do |c|
-            label = c.info['Labels'][Operator::ORCHESTRATOR_LABEL_PREFIX]
+            label = c.info['Labels'][Operator::CONTAINER_NAME_LABEL]
             next [nil, nil] if label.nil?
 
             [label, c]
@@ -47,7 +47,7 @@ module Sagittarius
         end
 
         def self_container_id
-          container_id_from_cgroup
+          container_id_from_cgroup || container_id_from_daemon_search
         end
 
         private
@@ -56,6 +56,14 @@ module Sagittarius
           File.readlines('/proc/self/cgroup').find { |line| line.include?('docker') }&.split('/')&.last&.chomp
         rescue Errno::ENOENT
           nil
+        end
+
+        def container_id_from_daemon_search
+          Docker::Container.all
+                           .filter { |c| c.info['Image'].include?('sagittarius') }
+                           .reject { |c| c.info['Labels'].key?(Operator::CONTAINER_NAME_LABEL) }
+                           .find { |c| c.info['Command'] == '/rails/bin/docker-entrypoint ./bin/rails server' }
+                           &.id
         end
       end
     end

@@ -4,17 +4,21 @@ module Sagittarius
   module Orchestrator
     class Operator
       ORCHESTRATOR_LABEL_PREFIX = 'tech.code0.sagittarius.orchestrator'
+      CONTAINER_NAME_LABEL = "#{ORCHESTRATOR_LABEL_PREFIX}.container.name".freeze
+      NETWORK_NAME_LABEL = "#{ORCHESTRATOR_LABEL_PREFIX}.network.name".freeze
       VOLUME_NAME_LABEL = "#{ORCHESTRATOR_LABEL_PREFIX}.volume.name".freeze
       VOLUME_CONTAINER_LABEL = "#{ORCHESTRATOR_LABEL_PREFIX}.volume.container".freeze
+
+      NoContainerError = Class.new(StandardError)
 
       class << self
         def ensure_self_connected!
           ensure_network!
 
           self_container_id = State.self_container_id
-          return if self_container_id.nil?
+          raise NoContainerError, 'self_container_id is nil' if self_container_id.nil?
 
-          network.connect(State.self_container_id)
+          network.connect(self_container_id)
         end
 
         def ensure_container_up!(container)
@@ -33,25 +37,25 @@ module Sagittarius
           destroy_container!(container) unless State[container.name].internal_container.nil?
         end
 
-        # private
+        def network
+          network_id = Docker::Network.all(filters: JSON.dump(
+            { 'label' => ["#{NETWORK_NAME_LABEL}=main"] }
+          )).first&.id
+
+          return nil if network_id.nil?
+
+          Docker::Network.get(network_id)
+        end
+
+        private
 
         def ensure_network!
           return unless network.nil?
 
           Docker::Network.create(
             unique_name('code0'),
-            'Labels' => { ORCHESTRATOR_LABEL_PREFIX => 'network' }
+            'Labels' => { NETWORK_NAME_LABEL => 'main' }
           )
-        end
-
-        def network
-          network_id = Docker::Network.all(filters: JSON.dump(
-            { 'label' => ["#{ORCHESTRATOR_LABEL_PREFIX}=network"] }
-          )).first&.id
-
-          return nil if network_id.nil?
-
-          Docker::Network.get(network_id)
         end
 
         def ensure_volumes!(container)
@@ -77,7 +81,7 @@ module Sagittarius
           container.internal_container = Docker::Container.create(
             'name' => unique_name(container.name),
             'Image' => container.image,
-            'Labels' => { ORCHESTRATOR_LABEL_PREFIX => container.name },
+            'Labels' => { CONTAINER_NAME_LABEL => container.name },
             'Cmd' => container.cmd,
             'Env' => container.environment_variables,
             'HostConfig' => {
