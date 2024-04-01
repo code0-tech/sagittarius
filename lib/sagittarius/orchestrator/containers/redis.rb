@@ -28,6 +28,10 @@ module Sagittarius
           }
         end
 
+        def last_ip_number
+          5
+        end
+
         def orchestrator_connection_details
           return {} unless healthy?
 

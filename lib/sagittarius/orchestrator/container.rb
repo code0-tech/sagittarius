@@ -36,6 +36,10 @@ module Sagittarius
         internal_container.info['State']['Status'] == 'running'
       end
 
+      def last_ip_number
+        raise NotImplementedError
+      end
+
       def self.[](container)
         Containers.const_get(container.capitalize).new
       end

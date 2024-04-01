@@ -86,6 +86,15 @@ namespace :orchestrator do
     puts env_variables.map { |key, value| "export #{key}=#{value}" }.join("\n")
   end
 
+  task debug: :build_state do
+    puts '=====> volumes'
+    p Sagittarius::Orchestrator::State.volumes
+    puts '=====> containers'
+    p Sagittarius::Orchestrator::State.containers
+    puts '=====> network'
+    p Sagittarius::Orchestrator::Operator.network
+  end
+
   if Rails.env.local?
     namespace :dev do
       task start: :build_state do

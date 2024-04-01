@@ -33,7 +33,7 @@ module Sagittarius
           destroy_container!(container) unless State[container.name].internal_container.nil?
         end
 
-        private
+        # private
 
         def ensure_network!
           return unless network.nil?
@@ -45,7 +45,10 @@ module Sagittarius
         end
 
         def network
-          Docker::Network.all(filters: JSON.dump({ 'label' => ["#{ORCHESTRATOR_LABEL_PREFIX}=network"] })).first
+          network_id = Docker::Network.all(filters: JSON.dump(
+            { 'label' => ["#{ORCHESTRATOR_LABEL_PREFIX}=network"] }
+          )).first.id
+          Docker::Network.get(network_id)
         end
 
         def ensure_volumes!(container)
