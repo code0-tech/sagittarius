@@ -39,10 +39,6 @@ module Sagittarius
           super && internal_container.exec(%w[pg_isready]).last.zero?
         end
 
-        def last_ip_number
-          4
-        end
-
         def orchestrator_connection_details
           return {} unless healthy?
 

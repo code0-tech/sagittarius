@@ -32,11 +32,6 @@ namespace :orchestrator do
     operator.ensure_container_up!(container)
   end
 
-  task state: :build_state do
-    p Sagittarius::Orchestrator::State.containers
-    p Sagittarius::Orchestrator::State.volumes
-  end
-
   task connect_self: :build_state do
     Sagittarius::Orchestrator::Operator.ensure_self_connected!
   end
