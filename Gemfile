@@ -74,3 +74,5 @@ gem 'sidekiq', '~> 7.1'
 gem 'lograge', '~> 0.14.0'
 
 gem 'declarative_policy', '~> 1.1'
+
+gem 'docker-api', '~> 2.2'
