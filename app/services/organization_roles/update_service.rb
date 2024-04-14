@@ -30,7 +30,7 @@ module OrganizationRoles
           :organization_role_updated,
           author_id: current_user.id,
           entity: organization_role,
-          target: organization_role,
+          target: organization_role.organization,
           details: params
         )
 
