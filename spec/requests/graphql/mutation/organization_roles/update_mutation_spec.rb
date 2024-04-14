@@ -37,7 +37,8 @@ RSpec.describe 'organizationRolesUpdate Mutation' do
   context 'when user is a member of the organization' do
     before do
       create(:organization_member, organization: organization_role.organization, user: current_user)
-      stub_allowed_ability(OrganizationPolicy, :update_organization_role, user: current_user, subject: organization_role.organization)
+      stub_allowed_ability(OrganizationPolicy, :update_organization_role, user: current_user,
+                                                                          subject: organization_role.organization)
     end
 
     it 'updates organization role' do

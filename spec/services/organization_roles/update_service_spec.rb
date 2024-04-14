@@ -38,12 +38,18 @@ RSpec.describe OrganizationRoles::UpdateService do
 
     before do
       create(:organization_member, organization: organization_role.organization, user: current_user)
-      stub_allowed_ability(OrganizationPolicy, :update_organization_role, user: current_user, subject: organization_role.organization)
+      stub_allowed_ability(OrganizationPolicy, :update_organization_role, user: current_user,
+                                                                          subject: organization_role.organization)
     end
 
     it { is_expected.to be_success }
     it { expect(service_response.payload.name).to eq(role_name) }
-    it { expect { service_response }.to change { organization_role.reload.name }.from(organization_role.name).to(params[:name]) }
+
+    it do
+      expect do
+        service_response
+      end.to change { organization_role.reload.name }.from(organization_role.name).to(params[:name])
+    end
 
     it do
       expect { service_response }.to create_audit_event(
