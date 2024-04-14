@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Mutations
-  module OrganizationsRoles
+  module OrganizationRoles
     class Update < BaseMutation
       description 'Update an existing organisation role.'
 
