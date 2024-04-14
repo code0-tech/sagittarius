@@ -15,7 +15,10 @@ module Mutations
       def resolve(organization_role_id:, **params)
         organization_role = SagittariusSchema.object_from_id(organization_role_id)
 
-        return { organization_role: nil, errors: [create_message_error('Invalid organization role')] } if organization_role.nil?
+        if organization_role.nil?
+          return { organization_role: nil,
+                   errors: [create_message_error('Invalid organization role')] }
+        end
 
         ::OrganizationRoles::UpdateService.new(
           current_user,
