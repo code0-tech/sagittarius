@@ -8,6 +8,7 @@ RSpec.describe SagittariusSchema.types['Organization'] do
       id
       name
       members
+      roles
       createdAt
       updatedAt
     ]
@@ -46,6 +47,39 @@ RSpec.describe SagittariusSchema.types['Organization'] do
 
       let(:create_new_record) do
         -> { create(:organization_member, organization: organization) }
+      end
+    end
+  end
+  context 'when requesting roles' do
+    it_behaves_like 'prevents N+1 queries (graphql)' do
+      let(:query) do
+        <<~QUERY
+          query($organizationId: OrganizationID) {
+            organization(id: $organizationId) {
+              roles {
+                count
+                nodes {
+                  id
+                  name
+                  organization { name }
+                }
+              }
+            }
+          }
+        QUERY
+      end
+
+      let(:current_user) { create(:user) }
+      let(:organization) do
+        create(:organization).tap do |organization|
+          create(:organization_member, organization: organization, user: current_user)
+          create(:organization_role, organization: organization)
+        end
+      end
+      let(:variables) { { organizationId: organization.to_global_id.to_s } }
+
+      let(:create_new_record) do
+        -> { create(:organization_role, organization: organization) }
       end
     end
   end
