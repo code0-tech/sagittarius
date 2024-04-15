@@ -50,6 +50,7 @@ RSpec.describe SagittariusSchema.types['Organization'] do
       end
     end
   end
+
   context 'when requesting roles' do
     it_behaves_like 'prevents N+1 queries (graphql)' do
       let(:query) do
