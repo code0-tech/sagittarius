@@ -261,25 +261,25 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(ema
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
 
 ALTER TABLE ONLY organization_roles
-    ADD CONSTRAINT fk_rails_1edd21f138 FOREIGN KEY (organization_id) REFERENCES organizations(id);
+    ADD CONSTRAINT fk_rails_1edd21f138 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY organization_member_roles
-    ADD CONSTRAINT fk_rails_585a684166 FOREIGN KEY (role_id) REFERENCES organization_roles(id);
+    ADD CONSTRAINT fk_rails_585a684166 FOREIGN KEY (role_id) REFERENCES organization_roles(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY organization_member_roles
-    ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES organization_members(id);
+    ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES organization_members(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT fk_rails_9fa262d742 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY organization_members
-    ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id);
+    ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY organization_role_abilities
-    ADD CONSTRAINT fk_rails_d6431c7c9d FOREIGN KEY (organization_role_id) REFERENCES organization_roles(id);
+    ADD CONSTRAINT fk_rails_d6431c7c9d FOREIGN KEY (organization_role_id) REFERENCES organization_roles(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY audit_events
-    ADD CONSTRAINT fk_rails_f64374fc56 FOREIGN KEY (author_id) REFERENCES users(id);
+    ADD CONSTRAINT fk_rails_f64374fc56 FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY organization_members
-    ADD CONSTRAINT fk_rails_ff629e24d8 FOREIGN KEY (organization_id) REFERENCES organizations(id);
+    ADD CONSTRAINT fk_rails_ff629e24d8 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;

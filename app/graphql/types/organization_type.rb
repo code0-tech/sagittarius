@@ -12,6 +12,8 @@ module Types
                                                                    description: 'Members of the organization',
                                                                    extras: [:lookahead]
 
+    field :roles, Types::OrganizationRoleType.connection_type, null: false, description: 'Roles of the organization'
+
     lookahead_field :members, base_scope: ->(object) { object.organization_members },
                               conditional_lookaheads: { user: :user, organization: :organization }
 
