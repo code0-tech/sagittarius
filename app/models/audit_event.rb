@@ -10,6 +10,7 @@ class AuditEvent < ApplicationRecord
     organization_member_invited: 6,
     organization_member_roles_updated: 7,
     organization_role_abilities_updated: 8,
+    organization_member_deleted: 9,
   }.with_indifferent_access
 
   enum :action_type, ACTION_TYPES, prefix: :action
