@@ -12,6 +12,7 @@ module Types
     mount_mutation Mutations::OrganizationRoles::AssignAbilities
     mount_mutation Mutations::OrganizationRoles::Create
     mount_mutation Mutations::Organizations::Create
+    mount_mutation Mutations::Organizations::Delete
     mount_mutation Mutations::Users::Login
     mount_mutation Mutations::Users::Logout
     mount_mutation Mutations::Users::Register
