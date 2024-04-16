@@ -15,8 +15,9 @@ class AuditEvent < ApplicationRecord
 
   enum :action_type, ACTION_TYPES, prefix: :action
 
-  belongs_to :author, class_name: 'User', inverse_of: :authored_audit_events
+  belongs_to :author, class_name: 'User', inverse_of: :authored_audit_events, optional: true
 
+  validates :author_id, presence: true, on: :create
   validates :entity_id, presence: true
   validates :entity_type, presence: true
   validates :action_type, presence: true,
