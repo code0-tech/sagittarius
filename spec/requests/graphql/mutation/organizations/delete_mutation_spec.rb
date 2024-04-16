@@ -21,9 +21,6 @@ RSpec.describe 'organizationDelete Mutation' do
   end
 
   let(:organization) { create(:organization) }
-  let(:organization_role) do
-    create(:organization_role, organization: organization)
-  end
   let(:input) do
     {
       organizationId: organization.to_global_id.to_s,
