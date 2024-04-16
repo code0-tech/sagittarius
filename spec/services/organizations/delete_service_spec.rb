@@ -41,7 +41,7 @@ RSpec.describe Organizations::DeleteService do
     end
 
     it { is_expected.to be_success }
-    it { expect(service_response.payload).to eq(organization_role) }
+    it { expect(service_response.payload).to eq(organization) }
     it { expect { service_response }.to change { Organization.count }.by(-1) }
 
     it do

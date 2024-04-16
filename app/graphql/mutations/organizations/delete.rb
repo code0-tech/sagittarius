@@ -3,6 +3,8 @@
 module Mutations
   module Organizations
     class Delete < BaseMutation
+      include Sagittarius::Graphql::AuthorizationBypass
+
       description 'Delete an existing organization.'
 
       field :organization, Types::OrganizationType, null: true, description: 'The deleted organization.'
@@ -17,10 +19,13 @@ module Mutations
           return { organization_role: nil,
                    errors: [create_message_error('Invalid organization')] }
         end
-        ::Organizations::DeleteService.new(
+
+        response = ::Organizations::DeleteService.new(
           current_user,
           organization
         ).execute.to_mutation_response(success_key: :organization)
+
+        bypass_authorization! response, object_path: :organization
       end
     end
   end

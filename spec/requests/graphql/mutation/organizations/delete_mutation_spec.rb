@@ -42,11 +42,11 @@ RSpec.describe 'organizationDelete Mutation' do
     it 'deletes organization' do
       mutate!
 
-      expect(graphql_data_at(:organization_delete, :organization, :id)).to be_present
+      expect(graphql_data_at(:organizations_delete, :organization, :id)).to be_present
 
       expect(
         SagittariusSchema.object_from_id(
-          graphql_data_at(:organization_delete, :organization, :id)
+          graphql_data_at(:organizations_delete, :organization, :id)
         )
       ).to be_nil
 
@@ -66,8 +66,8 @@ RSpec.describe 'organizationDelete Mutation' do
     it 'returns an error' do
       mutate!
 
-      expect(graphql_data_at(:organization_delete, :organization)).to be_nil
-      expect(graphql_data_at(:organization_delete, :errors)).to include({ 'message' => 'missing_permission' })
+      expect(graphql_data_at(:organizations_delete, :organization)).to be_nil
+      expect(graphql_data_at(:organizations_delete, :errors)).to include({ 'message' => 'missing_permission' })
     end
   end
 end
