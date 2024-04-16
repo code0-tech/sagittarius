@@ -31,7 +31,7 @@ module Organizations
           target: organization
         )
 
-        ServiceResponse.success(message: 'Organization deleted', payload: organization_role)
+        ServiceResponse.success(message: 'Organization deleted', payload: organization)
       end
     end
   end
