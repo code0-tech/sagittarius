@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'organizationDelete Mutation' do
+RSpec.describe 'organizationsDelete Mutation' do
   include GraphqlHelpers
 
   subject(:mutate!) { post_graphql mutation, variables: variables, current_user: current_user }
