@@ -11,12 +11,14 @@ class AuditEvent < ApplicationRecord
     organization_member_roles_updated: 7,
     organization_role_abilities_updated: 8,
     organization_role_deleted: 9,
+    organization_role_updated: 10,
   }.with_indifferent_access
 
   enum :action_type, ACTION_TYPES, prefix: :action
 
-  belongs_to :author, class_name: 'User', inverse_of: :authored_audit_events
+  belongs_to :author, class_name: 'User', inverse_of: :authored_audit_events, optional: true
 
+  validates :author_id, presence: true, on: :create
   validates :entity_id, presence: true
   validates :entity_type, presence: true
   validates :action_type, presence: true,
