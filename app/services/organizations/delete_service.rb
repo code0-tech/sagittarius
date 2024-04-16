@@ -16,7 +16,7 @@ module Organizations
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 
-      transactional do
+      transactional do |t|
         organization.delete
 
         if organization.persisted?
