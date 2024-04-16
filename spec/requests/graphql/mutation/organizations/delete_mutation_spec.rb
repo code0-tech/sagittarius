@@ -12,9 +12,9 @@ RSpec.describe 'organizationDelete Mutation' do
       mutation($input: OrganizationsDeleteInput!) {
         organizationsDelete(input: $input) {
           #{error_query}
-            organization {
-              id
-            }
+          organization {
+            id
+          }
         }
       }
     QUERY
