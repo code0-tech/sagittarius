@@ -20,7 +20,8 @@ module Organizations
         organization.delete
 
         if organization.persisted?
-          t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete organization', payload: organization.errors)
+          t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete organization',
+                                                       payload: organization.errors)
         end
 
         AuditService.audit(
