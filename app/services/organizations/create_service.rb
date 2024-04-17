@@ -25,10 +25,10 @@ module Organizations
           )
         end
 
-        organization_role = create_org_role(organization, t)
-        create_role_ability(organization_role, t)
-        organization_member = create_org_member(organization, t)
-        create_org_member_role(organization_member, organization_role, t)
+        organization_role = create_object(t, OrganizationRole, organization: organization, name: 'Initial role')
+        create_object(t, OrganizationRoleAbility, organization_role: organization_role, ability: :assign_role_abilities)
+        organization_member = create_object(t, OrganizationMember, organization: organization, user: current_user)
+        create_object(t, OrganizationMemberRole, member: organization_member, role: organization_role)
 
         AuditService.audit(
           :organization_created,
@@ -44,39 +44,15 @@ module Organizations
 
     private
 
-    def create_org_member_role(organization_member, organization_role, t)
-      organization_member_role = OrganizationMemberRole.create(member: organization_member, role: organization_role)
-      return if organization_member_role.persisted?
+    def create_object(t, model, **params)
+      created_object = model.create(params)
 
-      t.rollback_and_return! ServiceResponse.error(message: 'Failed to create organization member role',
-                                                   payload: organization_member_role.errors)
-    end
-
-    def create_org_member(organization, t)
-      organization_member = OrganizationMember.create(organization: organization, user: current_user)
-      unless organization_member.persisted?
-        t.rollback_and_return! ServiceResponse.error(message: 'Failed to create organization member',
-                                                     payload: organization_member.errors)
+      unless created_object.persisted?
+        t.rollback_and_return! ServiceResponse.error(message: "Failed to create #{model}",
+                                                     payload: created_object.errors)
       end
-      organization_member
-    end
 
-    def create_role_ability(organization_role, t)
-      organization_role_ability = OrganizationRoleAbility.create(organization_role: organization_role,
-                                                                 ability: :assign_role_abilities)
-      return if organization_role_ability.persisted?
-
-      t.rollback_and_return! ServiceResponse.error(message: 'Failed to create organization ability',
-                                                   payload: organization_role_ability.errors)
-    end
-
-    def create_org_role(organization, t)
-      organization_role = OrganizationRole.create(organization: organization, name: 'Admin')
-      unless organization_role.persisted?
-        t.rollback_and_return! ServiceResponse.error(message: 'Failed to create organization role',
-                                                     payload: organization_role.errors)
-      end
-      organization_role
+      created_object
     end
   end
 end
