@@ -3,7 +3,7 @@
 module Mutations
   module OrganizationMembers
     class Delete < BaseMutation
-      description 'Remove a new member to an organization.'
+      description 'Remove a member from an organization.'
 
       field :organization_member, Types::OrganizationMemberType, description: 'The removed organization member'
 
