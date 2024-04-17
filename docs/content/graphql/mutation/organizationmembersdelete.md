@@ -2,14 +2,14 @@
 title: organizationMembersDelete
 ---
 
-Remove a new member to an organization.
+Remove a member from an organization.
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `organizationMemberId` | [`OrganizationMemberID!`](../scalar/organizationmemberid.md) | The id of the organization member which will removed |
+| `organizationMemberId` | [`OrganizationMemberID!`](../scalar/organizationmemberid.md) | The id of the organization member to remove |
 
 ## Fields
 
