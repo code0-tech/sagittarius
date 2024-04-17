@@ -8,7 +8,7 @@ module Mutations
       field :organization_member, Types::OrganizationMemberType, description: 'The removed organization member'
 
       argument :organization_member_id, Types::GlobalIdType[::OrganizationMember],
-               description: 'The id of the organization member which will removed'
+               description: 'The id of the organization member to remove'
 
       def resolve(organization_member_id:)
         organization_member = SagittariusSchema.object_from_id(organization_member_id)
