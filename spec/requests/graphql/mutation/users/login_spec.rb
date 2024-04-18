@@ -85,6 +85,29 @@ RSpec.describe 'usersLogin Mutation' do
   end
 
   context 'when input is invalid' do
+    context 'when error message matches on wrong credentials' do
+      let(:input) do
+        {
+          username: user.username,
+          password: generate(:password),
+        }
+      end
+      let(:wrong_username_input) do
+        {
+          username: generate(:username),
+          password: password,
+        }
+      end
+
+      it 'returns same errors for username and password' do
+        wrong_password_error = graphql_data_at(:users_login, :errors, :message)
+        post_graphql mutation, variables: { input: wrong_username_input }
+        wrong_username_error = graphql_data_at(:users_login, :errors, :message)
+
+        expect(wrong_password_error).to eq(wrong_username_error)
+      end
+    end
+
     context 'when username and email are given' do
       let(:input) do
         {
