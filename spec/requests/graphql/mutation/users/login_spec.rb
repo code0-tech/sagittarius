@@ -98,11 +98,10 @@ RSpec.describe 'usersLogin Mutation' do
           password: password,
         }
       end
-      let(:mutate_wrong_username!) { post_graphql mutation, variables: { input: wrong_username_input } }
 
-      it 'returns errors' do
+      it 'returns same errors for username and password' do
         wrong_password_error = graphql_data_at(:users_login, :errors, :message)
-        mutate_wrong_username!
+        post_graphql mutation, variables: { input: wrong_username_input }
         wrong_username_error = graphql_data_at(:users_login, :errors, :message)
 
         expect(wrong_password_error).to eq(wrong_username_error)
