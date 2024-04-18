@@ -17,6 +17,7 @@ class OrganizationPolicy < BasePolicy
   customizable_permission :create_organization_role
   customizable_permission :delete_organization
   customizable_permission :invite_member
+  customizable_permission :delete_member
   customizable_permission :assign_member_roles
   customizable_permission :assign_role_abilities
   customizable_permission :update_organization_role

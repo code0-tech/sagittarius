@@ -8,6 +8,7 @@ module Types
 
     mount_mutation Mutations::ApplicationSettings::Update
     mount_mutation Mutations::OrganizationMembers::AssignRoles
+    mount_mutation Mutations::OrganizationMembers::Delete
     mount_mutation Mutations::OrganizationMembers::Invite
     mount_mutation Mutations::OrganizationRoles::AssignAbilities
     mount_mutation Mutations::OrganizationRoles::Create
