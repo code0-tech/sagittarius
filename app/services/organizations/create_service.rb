@@ -25,11 +25,10 @@ module Organizations
           )
         end
 
-        organization_member = OrganizationMember.create(organization: organization, user: current_user)
-        unless organization_member.persisted?
-          t.rollback_and_return! ServiceResponse.error(message: 'Failed to create organization member',
-                                                       payload: organization_member.errors)
-        end
+        organization_role = create_object(t, OrganizationRole, organization: organization, name: 'Initial role')
+        create_object(t, OrganizationRoleAbility, organization_role: organization_role, ability: :assign_role_abilities)
+        organization_member = create_object(t, OrganizationMember, organization: organization, user: current_user)
+        create_object(t, OrganizationMemberRole, member: organization_member, role: organization_role)
 
         AuditService.audit(
           :organization_created,
@@ -41,6 +40,19 @@ module Organizations
 
         ServiceResponse.success(message: 'Created new organization', payload: organization)
       end
+    end
+
+    private
+
+    def create_object(t, model, **params)
+      created_object = model.create(params)
+
+      unless created_object.persisted?
+        t.rollback_and_return! ServiceResponse.error(message: "Failed to create #{model}",
+                                                     payload: created_object.errors)
+      end
+
+      created_object
     end
   end
 end
