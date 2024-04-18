@@ -47,6 +47,26 @@ RSpec.describe 'usersRegister Mutation' do
     )
   end
 
+  context 'when the user details already exists' do
+    let(:input) do
+      {
+        username: generate(:username),
+        email: generate(:email),
+        password: generate(:password),
+      }
+    end
+
+    it 'returns errors' do
+      post_graphql mutation, variables: variables
+      expect(graphql_data_at(:users_register, :user)).not_to be_present
+
+      expect(graphql_data_at(:users_register, :errors)).to include(
+        { 'attribute' => 'username', 'type' => 'taken' },
+        { 'attribute' => 'email', 'type' => 'taken' }
+      )
+    end
+  end
+
   context 'when input is invalid' do
     let(:input) do
       {
