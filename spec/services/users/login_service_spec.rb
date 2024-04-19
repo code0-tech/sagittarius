@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe UserLoginService do
+RSpec.describe Users::LoginService do
   subject(:service_response) { described_class.new(email: email, password: password).execute }
 
   context 'when the credentials are correct' do

@@ -2,13 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe UserRegisterService do
+RSpec.describe Users::RegisterService do
   subject(:service_response) { described_class.new(username, email, password).execute }
 
   context 'when user is valid' do
-    let(:username) { 'test' }
-    let(:email) { 'test@code0.tech' }
-    let(:password) { 'test_password' }
+    let(:username) { generate(:username) }
+    let(:email) { generate(:email) }
+    let(:password) { generate(:password) }
 
     it { is_expected.to be_success }
     it { expect(service_response.payload).to be_valid }
