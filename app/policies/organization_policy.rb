@@ -15,6 +15,7 @@ class OrganizationPolicy < BasePolicy
   organization_resolver { |organization| organization }
 
   customizable_permission :create_organization_role
+  customizable_permission :delete_organization_role
   customizable_permission :delete_organization
   customizable_permission :invite_member
   customizable_permission :delete_member

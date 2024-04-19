@@ -10,6 +10,7 @@ class OrganizationRoleAbility < ApplicationRecord
     update_organization: { db: 6, description: 'Allows to update the organization' },
     delete_member: { db: 7, description: 'Allows to remove members of an organization' },
     delete_organization: { db: 8, description: 'Allows to delete the organization' },
+    delete_organization_role: { db: 9, description: 'Allows the deletion of roles in an organization' },
   }.with_indifferent_access
 
   enum :ability, ABILITIES.transform_values { |v| v[:db] }, prefix: :can

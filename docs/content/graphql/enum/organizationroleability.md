@@ -11,6 +11,7 @@ Represents abilities that can be granted to roles in organizations.
 | `CREATE_ORGANIZATION_ROLE` | Allows the creation of roles in an organization |
 | `DELETE_MEMBER` | Allows to remove members of an organization |
 | `DELETE_ORGANIZATION` | Allows to delete the organization |
+| `DELETE_ORGANIZATION_ROLE` | Allows the deletion of roles in an organization |
 | `INVITE_MEMBER` | Allows to invite new members to an organization |
 | `UPDATE_ORGANIZATION` | Allows to update the organization |
 | `UPDATE_ORGANIZATION_ROLE` | Allows to update the organization role |
