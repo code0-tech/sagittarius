@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe UserRegisterService do
+RSpec.describe Users::RegisterService do
   subject(:service_response) { described_class.new(username, email, password).execute }
 
   context 'when user is valid' do

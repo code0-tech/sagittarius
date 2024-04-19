@@ -15,7 +15,7 @@ module Mutations
 
         return { user_session: nil, errors: [create_message_error('Invalid user session')] } if user_session.nil?
 
-        UserLogoutService.new(current_user, user_session).execute.to_mutation_response(success_key: :user_session)
+        ::Users::LogoutService.new(current_user, user_session).execute.to_mutation_response(success_key: :user_session)
       end
     end
   end

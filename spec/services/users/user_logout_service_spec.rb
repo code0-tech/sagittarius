@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe UserLogoutService do
+RSpec.describe Users::LogoutService do
   subject(:service_response) { described_class.new(current_user, user_session).execute }
 
   context 'when current_user can log out user_session' do
