@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-module Users
 
+module Users
   class RegisterService
     include Sagittarius::Database::Transactional
     include Sagittarius::Loggable
@@ -36,4 +36,3 @@ module Users
     end
   end
 end
-
