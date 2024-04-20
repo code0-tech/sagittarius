@@ -50,22 +50,34 @@ build-image:
     name: gcr.io/kaniko-project/executor:v1.22.0-debug # Debug Image because a shell is required for GitLab Runner
     entrypoint: [ "" ]
   stage: build
+  parallel:
+    matrix:
+      - EDITION:
+          - ce
+          - ee
   script:
+    - '[[ "$EDITION" = "ee" ]] || rm -rf ee/'
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"ghcr.io\":{\"auth\":\"$(printf "%s:%s" "$" "${C0_GH_TOKEN}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - >-
       /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}"
+      --destination "ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}-${EDITION}"
 
 rspec:
   extends:
     - .rails
   stage: test
+  parallel:
+    matrix:
+      - EDITION:
+          - ce
+          - ee
   variables:
     FPROF: '1'
   script:
+    - '[[ "$EDITION" = "ee" ]] || rm -rf ee/'
     - bundle exec rspec --format doc --format RspecJunitFormatter --out rspec.xml
     - |
       echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
@@ -107,6 +119,11 @@ boot:production-mode:
   extends:
     - .rails
   stage: test
+  parallel:
+    matrix:
+      - EDITION:
+          - ce
+          - ee
   variables:
     POSTGRES_DB: sagittarius_production
     POSTGRES_USER: sagittarius
@@ -117,6 +134,7 @@ boot:production-mode:
     RAILS_FORCE_SSL: 'false'
     BUNDLE_WITHOUT: 'development:test'
   script:
+    - '[[ "$EDITION" = "ee" ]] || rm -rf ee/'
     - bundle exec rake db:prepare db:seed_fu
     - bin/rails s &
     - curl --fail -sv --retry 20 --retry-delay 3 --retry-connrefused http://127.0.0.1:3000/health/liveness
@@ -126,6 +144,11 @@ boot:docker:
   image: docker:26.1.0
   services:
     - docker:26.1.0-dind
+  parallel:
+    matrix:
+      - EDITION:
+          - ce
+          - ee
   variables:
     DOCKER_TLS_CERTDIR: /certs
     DOCKER_HOST: tcp://docker:2376
@@ -141,8 +164,7 @@ boot:docker:
       -e SAGITTARIUS_REDIS_HOST=redis
       -e SAGITTARIUS_REDIS_PORT=6379
       -e SAGITTARIUS_DISABLE_ORCHESTRATOR=true
-      -e RAILS_ENV=production
-      ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA} &
+      ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}-${EDITION} &
     - >
       docker run
       --rm
@@ -159,6 +181,11 @@ boot:docker:
 boot:docker-orchestrated:
   stage: test
   image: docker:26.1.0-dind
+  parallel:
+    matrix:
+      - EDITION:
+          - ce
+          - ee
   variables:
     DOCKER_HOST: unix:///var/run/docker.sock
   script:
@@ -170,9 +197,8 @@ boot:docker-orchestrated:
       --name sagittarius
       --network sagittarius_default
       --network-alias sagittarius
-      -e RAILS_ENV=production
       -v /var/run/docker.sock:/var/run/docker.sock
-      ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA} &
+      ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}-${EDITION} &
     - >
       docker run
       --rm

@@ -82,6 +82,10 @@ RSpec.configure do |config|
 
   # Load route helpers
   config.include Rails.application.routes.url_helpers, type: :request
+
+  config.before eager_load: true do
+    Rails.application.eager_load!
+  end
 end
 
 Shoulda::Matchers.configure do |config|

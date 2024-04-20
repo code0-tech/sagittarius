@@ -74,6 +74,22 @@ RSpec.configure do |config|
     metadata[:aggregate_failures] = true
   end
 
+  require_relative '../lib/sagittarius/extensions'
+  require_relative '../lib/sagittarius/utils'
+
+  config.define_derived_metadata do |metadata|
+    Sagittarius::Extensions::AVAILABLE_EXTENSIONS.each do |extension|
+      metadata[:extension] = extension if metadata[:file_path].start_with?("./#{extension}/")
+    end
+  end
+
+  patterns = ['**{,/*/**}/*_spec.rb']
+  Sagittarius::Extensions.active.each do |extension|
+    patterns << "../#{extension}/**{,/*/**}/*_spec.rb"
+  end
+
+  config.pattern = patterns.join(',')
+
   # The settings below are suggested to provide a good initial experience
   # with RSpec, but feel free to customize to your heart's content.
   #   # This allows you to limit a spec run to individual examples or groups
