@@ -3,6 +3,8 @@
 require_relative 'boot'
 
 require 'rails/all'
+require_relative '../lib/sagittarius/utils'
+require_relative '../lib/sagittarius/extensions'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -56,6 +58,10 @@ module Sagittarius
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
+
+    Sagittarius::Extensions.active.each do |extension|
+      config.eager_load_paths += Dir.glob("#{config.root}/#{extension}/app/*")
+    end
 
     # Configure active job to use sidekiq
     config.active_job.queue_adapter = :sidekiq

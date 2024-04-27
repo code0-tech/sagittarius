@@ -16,3 +16,7 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"
 # end
+
+ActiveSupport::Inflector.inflections do |inflect|
+  inflect.acronym 'EE'
+end
