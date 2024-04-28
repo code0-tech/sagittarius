@@ -11,20 +11,22 @@ RSpec.describe Users::LoginService do
     let(:password) { generate(:password) }
     let!(:current_user) { create(:user, email: email, username: username, password: password) }
 
-    def check_audit_events(user, key, other_key)
-      is_expected.to create_audit_event(
-        :user_logged_in,
-        author_id: user.id,
-        entity_type: 'User',
-        entity_id: user.id,
-        details: { key => current_user.send(key), method: 'username_and_password' },
-        target_type: 'User',
-        target_id: user.id
-      )
-      is_expected.not_to create_audit_event(
-        :user_logged_in,
-        details: { other_key => current_user.send(other_key), method: 'username_and_password' }
-      )
+    shared_examples 'creates correct audit event' do |key, other_key|
+      it do
+        is_expected.to create_audit_event(
+          :user_logged_in,
+          author_id: user.id,
+          entity_type: 'User',
+          entity_id: user.id,
+          details: { key => current_user.send(key), method: 'username_and_password' },
+          target_type: 'User',
+          target_id: user.id
+        )
+        is_expected.not_to create_audit_event(
+          :user_logged_in,
+          details: { other_key => current_user.send(other_key), method: 'username_and_password' }
+        )
+      end
     end
 
     shared_examples 'check correct credentials' do
@@ -40,22 +42,14 @@ RSpec.describe Users::LoginService do
       let(:params) { { email: email, password: password } }
 
       it_behaves_like 'check correct credentials'
-
-      # rubocop:disable RSpec/NoExpectationExample
-      it 'returns a success response' do
-        check_audit_events(current_user, :email, :username)
-      end
+      it_behaves_like 'creates correct audit event', :email, :username
     end
 
     context 'when logging in with username' do
       let(:params) { { username: username, password: password } }
 
       it_behaves_like 'check correct credentials'
-
-      it 'returns a success response' do
-        check_audit_events(current_user, :username, :email)
-      end
-      # rubocop:enable RSpec/NoExpectationExample
+      it_behaves_like 'creates correct audit event', :username, :email
     end
   end
 
