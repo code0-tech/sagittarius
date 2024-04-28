@@ -23,7 +23,7 @@ RSpec.describe Users::LoginService do
       )
       is_expected.not_to create_audit_event(
         :user_logged_in,
-        details: { other_key: current_user.send(other_key), method: 'username_and_password' }
+        details: { other_key => current_user.send(other_key), method: 'username_and_password' }
       )
     end
 
