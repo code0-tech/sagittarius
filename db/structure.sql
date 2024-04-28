@@ -45,6 +45,23 @@ CREATE SEQUENCE audit_events_id_seq
 
 ALTER SEQUENCE audit_events_id_seq OWNED BY audit_events.id;
 
+CREATE TABLE organization_licenses (
+    id bigint NOT NULL,
+    organization_id bigint NOT NULL,
+    data text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE organization_licenses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE organization_licenses_id_seq OWNED BY organization_licenses.id;
+
 CREATE TABLE organization_member_roles (
     id bigint NOT NULL,
     role_id bigint NOT NULL,
@@ -181,6 +198,8 @@ ALTER TABLE ONLY application_settings ALTER COLUMN id SET DEFAULT nextval('appli
 
 ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_id_seq'::regclass);
 
+ALTER TABLE ONLY organization_licenses ALTER COLUMN id SET DEFAULT nextval('organization_licenses_id_seq'::regclass);
+
 ALTER TABLE ONLY organization_member_roles ALTER COLUMN id SET DEFAULT nextval('organization_member_roles_id_seq'::regclass);
 
 ALTER TABLE ONLY organization_members ALTER COLUMN id SET DEFAULT nextval('organization_members_id_seq'::regclass);
@@ -203,6 +222,9 @@ ALTER TABLE ONLY ar_internal_metadata
 
 ALTER TABLE ONLY audit_events
     ADD CONSTRAINT audit_events_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY organization_licenses
+    ADD CONSTRAINT organization_licenses_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY organization_member_roles
     ADD CONSTRAINT organization_member_roles_pkey PRIMARY KEY (id);
@@ -234,6 +256,8 @@ CREATE UNIQUE INDEX index_application_settings_on_setting ON application_setting
 
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
 
+CREATE INDEX index_organization_licenses_on_organization_id ON organization_licenses USING btree (organization_id);
+
 CREATE INDEX index_organization_member_roles_on_member_id ON organization_member_roles USING btree (member_id);
 
 CREATE INDEX index_organization_member_roles_on_role_id ON organization_member_roles USING btree (role_id);
@@ -259,6 +283,9 @@ CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_i
 CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(email));
 
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
+
+ALTER TABLE ONLY organization_licenses
+    ADD CONSTRAINT fk_rails_11d9c294ea FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY organization_roles
     ADD CONSTRAINT fk_rails_1edd21f138 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
