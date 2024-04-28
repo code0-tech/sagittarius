@@ -15,12 +15,12 @@ RSpec.describe Users::LoginService do
       it do
         is_expected.to create_audit_event(
           :user_logged_in,
-          author_id: user.id,
+          author_id: current_user.id,
           entity_type: 'User',
-          entity_id: user.id,
+          entity_id: current_user.id,
           details: { key => current_user.send(key), method: 'username_and_password' },
           target_type: 'User',
-          target_id: user.id
+          target_id: current_user.id
         )
         is_expected.not_to create_audit_event(
           :user_logged_in,
