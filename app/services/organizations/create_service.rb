@@ -26,7 +26,8 @@ module Organizations
         end
 
         organization_role = create_object(t, OrganizationRole, organization: organization, name: 'Administrator')
-        create_object(t, OrganizationRoleAbility, organization_role: organization_role, ability: :organization_administrator)
+        create_object(t, OrganizationRoleAbility, organization_role: organization_role,
+                                                  ability: :organization_administrator)
         organization_member = create_object(t, OrganizationMember, organization: organization, user: current_user)
         create_object(t, OrganizationMemberRole, member: organization_member, role: organization_role)
 
