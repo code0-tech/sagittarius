@@ -23,6 +23,14 @@ RSpec.describe CustomizablePermission do
     end
   end
 
+  context 'when user has a role with the administrator ability' do
+    before do
+      create(:organization_role_ability, organization_role: organization_role, ability: :organization_administrator)
+    end
+
+    it { is_expected.to be_allowed(:create_organization_role) }
+  end
+
   context 'when user has a role with the ability' do
     before do
       create(:organization_role_ability, organization_role: organization_role, ability: :create_organization_role)

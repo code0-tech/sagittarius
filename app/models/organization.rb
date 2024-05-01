@@ -11,6 +11,13 @@ class Organization < ApplicationRecord
 
   has_many :roles, class_name: 'OrganizationRole', inverse_of: :organization
 
+  def bypass_permission?(user)
+    return false if user.nil?
+    return false if member?(user)
+
+    organization_members.find_by!(user: user).role.abilities.includes(:organization_administrator)
+  end
+
   def member?(user)
     return false if user.nil?
 

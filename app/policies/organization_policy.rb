@@ -4,6 +4,7 @@ class OrganizationPolicy < BasePolicy
   include CustomizablePermission
 
   condition(:is_member) { @subject.member?(@user) }
+  condition(:bypass_permission) { @subject.bypass_permission?(@user) }
 
   rule { is_member }.policy do
     enable :read_organization
@@ -23,4 +24,5 @@ class OrganizationPolicy < BasePolicy
   customizable_permission :assign_role_abilities
   customizable_permission :update_organization_role
   customizable_permission :update_organization
+  customizable_permission :organization_administrator
 end
