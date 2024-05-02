@@ -62,7 +62,8 @@ RSpec.describe Organizations::CreateService do
 
     it 'adds ability to the current_user' do
       organization = service_response.payload.reload
-      expect(Ability.allowed?(current_user, :assign_role_abilities, organization)).to be(true)
+      expect(Ability.allowed?(current_user, :organization_administrator, organization)).to be(true)
+      expect(Ability.allowed?(current_user, :delete_member, organization)).to be(true)
     end
 
     it 'creates ability' do

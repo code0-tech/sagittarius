@@ -23,4 +23,5 @@ class OrganizationPolicy < BasePolicy
   customizable_permission :assign_role_abilities
   customizable_permission :update_organization_role
   customizable_permission :update_organization
+  customizable_permission :organization_administrator
 end

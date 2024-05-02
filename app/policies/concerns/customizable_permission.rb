@@ -13,11 +13,13 @@ module CustomizablePermission
     def customizable_permission(ability)
       condition(ability) { user_has_ability?(ability, @user, @subject) }
 
-      rule { send ability }.enable ability
+      rule { send(ability) | admin }.enable ability
     end
   end
 
   included do
+    condition(:admin) { user_has_ability?(:organization_administrator, @user, @subject) }
+
     def organization(subject)
       @organization ||= self.class.organization_resolver_block.call(subject)
     end
