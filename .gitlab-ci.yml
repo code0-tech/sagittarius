@@ -34,7 +34,12 @@ rubocop:
     - .bundle
   stage: lint
   script:
-    - bundle exec rubocop
+    - bundle exec rubocop | tee output || exit_code=$?
+    - |
+      echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
+      grep -E '[[:digit:]] files inspected, ' output
+      echo -e "\e[0Ksection_end:`date +%s`:glpa_summary\r\e[0K"
+      exit $exit_code
 
 graphql_docs:
   extends:
@@ -78,12 +83,17 @@ rspec:
     FPROF: '1'
   script:
     - '[[ "$EDITION" = "ee" ]] || rm -rf ee/'
-    - bundle exec rspec --format doc --format RspecJunitFormatter --out rspec.xml
+    - bundle exec rspec --format doc --format RspecJunitFormatter --out rspec.xml | tee output || exit_code=$?
     - |
       echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
       echo "Coverage report available at https://code0-tech.gitlab.io/-/development/sagittarius/-/jobs/$CI_JOB_ID/artifacts/tmp/coverage/index.html"
       echo "Test summary available at https://gitlab.com/code0-tech/development/sagittarius/-/pipelines/$CI_PIPELINE_ID/test_report"
+      grep 'Finished in ' output
+      grep -E '[[:digit:]]+ examples, ' output
+      grep -o -E '[[:digit:]]+ / [[:digit:]]+ LOC \(.*\) covered.' output
+      grep 'Time spent in factories' output
       echo -e "\e[0Ksection_end:`date +%s`:glpa_summary\r\e[0K"
+      exit $exit_code
   coverage: '/LOC \((\d+\.\d+%)\) covered.$/'
   artifacts:
     expire_in: 7 days
