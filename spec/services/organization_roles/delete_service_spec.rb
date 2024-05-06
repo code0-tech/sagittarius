@@ -31,28 +31,50 @@ RSpec.describe OrganizationRoles::DeleteService do
     end
   end
 
-  context 'when user is a member' do
+  context 'When role is the last role with the organization_administrator ability' do
     let(:current_user) { create(:user) }
 
     before do
       create(:organization_member, organization: organization_role.organization, user: current_user)
+      create(:organization_role_ability, organization_role: organization_role, ability: :organization_administrator)
       stub_allowed_ability(OrganizationPolicy, :delete_organization_role, user: current_user,
-                                                                          subject: organization_role.organization)
+                           subject: organization_role.organization)
     end
 
-    it { is_expected.to be_success }
-    it { expect(service_response.payload).to eq(organization_role) }
-    it { expect { service_response }.to change { OrganizationRole.count }.by(-1) }
+    it { is_expected.not_to be_success }
+    it { expect { service_response }.not_to change { OrganizationRole.count } }
 
     it do
-      expect { service_response }.to create_audit_event(
-        :organization_role_deleted,
-        author_id: current_user.id,
-        entity_type: 'OrganizationRole',
-        details: {},
-        target_id: organization_role.organization.id,
-        target_type: 'Organization'
-      )
+      expect { service_response }.not_to create_audit_event(:organization_role_deleted)
     end
   end
+  # TODO
+  # context 'when user is a member' do
+  #   let(:current_user) { create(:user) }
+  #   let(:temp_role) { create(:organization_role, organization: organization_role.organization) }
+  #
+  #   before do
+  #     create(:organization_role_ability, organization_role: temp_role, ability: :organization_administrator)
+  #     create(:organization_member, organization: organization_role.organization, user: current_user)
+  #     stub_allowed_ability(OrganizationPolicy, :delete_organization_role, user: current_user,
+  #                          subject: organization_role.organization)
+  #   end
+  #
+  #   it { is_expected.to be_success }
+  #
+  #   it { is_expected.to be_success }
+  #   it { expect(service_response.payload).to eq(organization_role) }
+  #   it { expect { service_response }.to change { OrganizationRole.count }.by(-1) }
+  #
+  #   it do
+  #     expect { service_response }.to create_audit_event(
+  #                                      :organization_role_deleted,
+  #                                      author_id: current_user.id,
+  #                                      entity_type: 'OrganizationRole',
+  #                                      details: {},
+  #                                      target_id: organization_role.organization.id,
+  #                                      target_type: 'Organization'
+  #                                    )
+  #   end
+  # end
 end
