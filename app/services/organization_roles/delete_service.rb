@@ -16,8 +16,11 @@ module OrganizationRoles
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
-      if organization_role.organization.roles.none? { |role| role.abilities.include?(:organization_administrator) }
-        return ServiceResponse.error(message: 'Cannot delete last administrator role', payload: :cannot_delete_last_admin_role)
+      unless organization_role.organization.roles.where.not(id: organization_role.id)
+                              .joins(:abilities)
+                              .exists?(abilities: { ability: :organization_administrator })
+        return ServiceResponse.error(message: 'Cannot delete last administrator role',
+                                     payload: :cannot_delete_last_admin_role)
       end
 
       transactional do
