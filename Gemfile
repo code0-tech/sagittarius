@@ -77,4 +77,4 @@ gem 'declarative_policy', '~> 1.1'
 
 gem 'docker-api', '~> 2.2'
 
-gem "code0-license", "~> 0.1.0"
+gem 'code0-license', '~> 0.1.0'
