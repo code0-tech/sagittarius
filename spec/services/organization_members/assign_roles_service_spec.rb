@@ -9,7 +9,6 @@ RSpec.describe OrganizationMembers::AssignRolesService do
   let(:organization) { create(:organization) }
   let(:member) { create(:organization_member, organization: organization) }
   let(:roles) { [] }
-
   let!(:admin_role) do
     create(:organization_role, organization: organization).tap do |role|
       create(:organization_role_ability, organization_role: role, ability: :organization_administrator)
