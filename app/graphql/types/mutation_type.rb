@@ -23,3 +23,5 @@ module Types
     mount_mutation Mutations::Echo
   end
 end
+
+Types::MutationType.prepend_extensions

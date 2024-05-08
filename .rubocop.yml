@@ -47,6 +47,8 @@ RSpec/DescribeClass:
   Exclude:
     - spec/graphql/**/*
     - spec/requests/graphql/**/*
+    - ee/spec/graphql/**/*
+    - ee/spec/requests/graphql/**/*
 
 RSpec/ExampleLength:
   Enabled: false

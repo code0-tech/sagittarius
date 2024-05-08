@@ -15,6 +15,7 @@ class AuditEvent < ApplicationRecord
     organization_member_deleted: 11,
     organization_deleted: 12,
     organization_role_deleted: 13,
+    organization_license_created: 14, # EE-specific
   }.with_indifferent_access
 
   enum :action_type, ACTION_TYPES, prefix: :action
