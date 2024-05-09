@@ -84,7 +84,7 @@ GEM
     bootsnap (1.18.3)
       msgpack (~> 1.2)
     builder (3.2.4)
-    code0-license (0.1.0)
+    code0-license (0.1.1)
     coderay (1.1.3)
     commonmarker (0.23.10)
     concurrent-ruby (1.2.3)

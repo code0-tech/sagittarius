@@ -6,11 +6,14 @@ class OrganizationLicense < ApplicationRecord
   validate :validate_license
 
   def validate_license
-    if license.nil?
+    loaded_license = license
+
+    if loaded_license.nil?
       errors.add(:data, :invalid)
       return
     end
-    errors.add(:data, :invalid) unless license.valid?
+
+    errors.add(:data, :invalid) unless loaded_license.valid?
   end
 
   def license
