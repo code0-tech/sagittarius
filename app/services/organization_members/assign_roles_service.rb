@@ -46,23 +46,42 @@ module OrganizationMembers
           )
         end
 
+        check_last_admin_user(t)
+
         new_roles = member.reload.member_roles
 
-        AuditService.audit(
-          :organization_member_roles_updated,
-          author_id: current_user.id,
-          entity: member,
-          details: {
-            old_roles: old_roles_for_audit_event,
-            new_roles: new_roles.map { |member_role| { id: member_role.role.id, name: member_role.role.name } },
-          },
-          target: organization
-        )
+        create_audit_event(new_roles, old_roles_for_audit_event, organization)
 
         ServiceResponse.success(message: 'Member roles updated', payload: new_roles)
       end
     end
     # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/CyclomaticComplexity
+
+    private
+
+    def create_audit_event(new_roles, old_roles_for_audit_event, organization)
+      AuditService.audit(
+        :organization_member_roles_updated,
+        author_id: current_user.id,
+        entity: member,
+        details: {
+          old_roles: old_roles_for_audit_event,
+          new_roles: new_roles.map { |member_role| { id: member_role.role.id, name: member_role.role.name } },
+        },
+        target: organization
+      )
+    end
+
+    def check_last_admin_user(t)
+      unless member.organization.roles
+                   .joins(:abilities, :member_roles)
+                   .exists?(abilities: { ability: :organization_administrator })
+        t.rollback_and_return! ServiceResponse.error(
+          message: 'Cannot remove last administrator from organization',
+          payload: :cannot_remove_last_administrator
+        )
+      end
+    end
   end
 end

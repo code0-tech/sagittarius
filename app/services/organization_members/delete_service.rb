@@ -25,6 +25,15 @@ module OrganizationMembers
                                                        payload: organization_member.errors)
         end
 
+        unless organization_member.organization.roles
+                                  .joins(:abilities, :member_roles)
+                                  .exists?(abilities: { ability: :organization_administrator })
+          t.rollback_and_return! ServiceResponse.error(
+            message: 'Cannot remove last administrator from organization',
+            payload: :cannot_remove_last_administrator
+          )
+        end
+
         AuditService.audit(
           :organization_member_deleted,
           author_id: current_user.id,
