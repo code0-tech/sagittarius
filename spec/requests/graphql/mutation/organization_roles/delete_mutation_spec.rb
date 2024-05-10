@@ -23,7 +23,6 @@ RSpec.describe 'organizationRolesDelete Mutation' do
       }
     QUERY
   end
-
   let(:organization) { create(:organization) }
   let(:organization_role) do
     create(:organization_role, organization: organization)
@@ -33,9 +32,14 @@ RSpec.describe 'organizationRolesDelete Mutation' do
       organizationRoleId: organization_role.to_global_id.to_s,
     }
   end
-
   let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
+
+  before do
+    create(:organization_role, organization: organization).tap do |role|
+      create(:organization_role_ability, organization_role: role, ability: :organization_administrator)
+    end
+  end
 
   context 'when user is a member of the organization' do
     before do

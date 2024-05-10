@@ -6,6 +6,11 @@ RSpec.describe OrganizationRoles::DeleteService do
   subject(:service_response) { described_class.new(current_user, organization_role).execute }
 
   let!(:organization_role) { create(:organization_role) }
+  let!(:admin_role) do
+    create(:organization_role, organization: organization_role.organization).tap do |role|
+      create(:organization_role_ability, organization_role: role, ability: :organization_administrator)
+    end
+  end
 
   context 'when user is nil' do
     let(:current_user) { nil }
@@ -24,6 +29,25 @@ RSpec.describe OrganizationRoles::DeleteService do
 
     it { is_expected.not_to be_success }
     it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect { service_response }.not_to change { OrganizationRole.count } }
+
+    it do
+      expect { service_response }.not_to create_audit_event(:organization_role_deleted)
+    end
+  end
+
+  context 'when role is the last role with the organization_administrator ability' do
+    let(:current_user) { create(:user) }
+
+    before do
+      create(:organization_member, organization: organization_role.organization, user: current_user)
+      create(:organization_role_ability, organization_role: organization_role, ability: :organization_administrator)
+      stub_allowed_ability(OrganizationPolicy, :delete_organization_role, user: current_user,
+                                                                          subject: organization_role.organization)
+      admin_role.delete
+    end
+
+    it { is_expected.not_to be_success }
     it { expect { service_response }.not_to change { OrganizationRole.count } }
 
     it do
