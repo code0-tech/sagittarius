@@ -21,3 +21,5 @@ class Organization < ApplicationRecord
     end
   end
 end
+
+Organization.prepend_extensions

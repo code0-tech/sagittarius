@@ -25,3 +25,5 @@ class OrganizationPolicy < BasePolicy
   customizable_permission :update_organization
   customizable_permission :organization_administrator
 end
+
+OrganizationPolicy.prepend_extensions

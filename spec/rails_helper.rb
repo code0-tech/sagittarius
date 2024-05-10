@@ -44,6 +44,12 @@ end
 SeedFu.quiet = true
 SeedFu.seed(SeedFu.fixture_paths, /01_application_settings/)
 
+Sagittarius::Extensions.active.each do |extension|
+  FactoryBot.definition_file_paths << Rails.root.join("#{extension}/spec/factories")
+end
+
+FactoryBot.reload
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [Rails.root.join('spec/fixtures')]
