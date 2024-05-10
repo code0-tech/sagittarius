@@ -6,7 +6,9 @@ module EE
       extend ActiveSupport::Concern
 
       prepended do
-        field :organization_licenses, ::Types::OrganizationLicenseType.connection_type, null: false, description: 'Licenses of the organization'
+        field :organization_licenses, ::Types::OrganizationLicenseType.connection_type,
+              null: false,
+              description: 'Licenses of the organization'
       end
     end
   end

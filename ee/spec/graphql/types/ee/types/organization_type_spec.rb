@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe SagittariusSchema.types['Organization'] do
-
   let(:fields) do
     %w[
       id
