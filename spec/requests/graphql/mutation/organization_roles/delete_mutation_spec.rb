@@ -24,6 +24,12 @@ RSpec.describe 'organizationRolesDelete Mutation' do
     QUERY
   end
 
+  let!(:admin_role) do
+    create(:organization_role, organization: organization).tap do |role|
+      create(:organization_role_ability, organization_role: role, ability: :organization_administrator)
+    end
+  end
+
   let(:organization) { create(:organization) }
   let(:organization_role) do
     create(:organization_role, organization: organization)
@@ -36,6 +42,35 @@ RSpec.describe 'organizationRolesDelete Mutation' do
 
   let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
+
+  context 'when user is a member of the organization' do
+    before do
+      create(:organization_member, organization: organization, user: current_user)
+      stub_allowed_ability(OrganizationPolicy, :delete_organization_role, user: current_user, subject: organization)
+    end
+
+    it 'deletes organization role' do
+      mutate!
+
+      expect(graphql_data_at(:organization_roles_delete, :organization_role, :id)).to be_present
+
+      expect(
+        SagittariusSchema.object_from_id(
+          graphql_data_at(:organization_roles_delete, :organization_role, :id)
+        )
+      ).to be_nil
+
+      is_expected.to create_audit_event(
+                       :organization_role_deleted,
+                       author_id: current_user.id,
+                       entity_id: organization_role.id,
+                       entity_type: 'OrganizationRole',
+                       details: {},
+                       target_id: organization.id,
+                       target_type: 'Organization'
+                     )
+    end
+  end
 
   context 'when user is not a member of the organization' do
     it 'returns an error' do
