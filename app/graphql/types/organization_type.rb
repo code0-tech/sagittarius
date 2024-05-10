@@ -21,3 +21,5 @@ module Types
     timestamps
   end
 end
+
+Types::OrganizationType.prepend_extensions
