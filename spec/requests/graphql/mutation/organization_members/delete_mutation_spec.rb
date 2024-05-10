@@ -7,6 +7,12 @@ RSpec.describe 'organizationMembersDelete Mutation' do
 
   subject(:mutate!) { post_graphql mutation, variables: variables, current_user: current_user }
 
+  let!(:admin_role) do
+    create(:organization_role, organization: organization).tap do |role|
+      create(:organization_role_ability, organization_role: role, ability: :organization_administrator)
+      create(:organization_member_role, role: role)
+    end
+  end
   let(:mutation) do
     <<~QUERY
       mutation($input: OrganizationMembersDeleteInput!) {
@@ -25,7 +31,6 @@ RSpec.describe 'organizationMembersDelete Mutation' do
       }
     QUERY
   end
-
   let(:organization) { create(:organization) }
   let(:organization_member) { create(:organization_member, organization: organization) }
   let(:input) do
@@ -33,9 +38,14 @@ RSpec.describe 'organizationMembersDelete Mutation' do
       organizationMemberId: organization_member.to_global_id.to_s,
     }
   end
-
   let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
+
+  before do
+    create(:organization_member, organization: organization).tap do |member|
+      create(:organization_member_role, member: member, role: admin_role)
+    end
+  end
 
   context 'when user has permission' do
     before do

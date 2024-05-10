@@ -22,9 +22,14 @@ RSpec::Matchers.define :have_graphql_fields do |*expected|
   expected_field_names = Array.wrap(expected).flatten.map { |name| GraphqlHelpers.graphql_field_name(name) }
 
   @allow_extra = false
+  @allow_extra_if_extended = false
 
   chain :at_least do
     @allow_extra = true
+  end
+
+  chain :allow_unexpected_if_extended do
+    @allow_extra_if_extended = true
   end
 
   match do |kls|
@@ -33,6 +38,7 @@ RSpec::Matchers.define :have_graphql_fields do |*expected|
 
     next true if fields == keys
     next true if @allow_extra && fields.proper_subset?(keys)
+    next true if @allow_extra_if_extended && fields.proper_subset?(keys) && InjectExtensions.extended_constants[kls]
 
     false
   end
@@ -43,8 +49,10 @@ RSpec::Matchers.define :have_graphql_fields do |*expected|
 
     message = []
 
+    extra_allowed = @allow_extra || (@allow_extra_if_extended && InjectExtensions.extended_constants[kls])
+
     message << "is missing fields: <#{missing.inspect}>" if missing.any?
-    message << "contained unexpected fields: <#{extra.inspect}>" if extra.any? && !@allow_extra
+    message << "contained unexpected fields: <#{extra.inspect}>" if extra.any? && !extra_allowed
 
     message.join("\n")
   end
