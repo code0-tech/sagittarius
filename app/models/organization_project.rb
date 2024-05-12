@@ -10,11 +10,11 @@ class OrganizationProject < ApplicationRecord
 
   validates :description, length: { maximum: 500 }, allow_blank: true
 
-  # before_validation :strip_whitespace
-  #
-  # private
-  # def strip_whitespace
-  #   self.name = name.strip
-  #   self.description = description.strip
-  # end
+  before_validation :strip_whitespace
+
+  private
+  def strip_whitespace
+    name&.strip!
+    description&.strip!
+  end
 end
