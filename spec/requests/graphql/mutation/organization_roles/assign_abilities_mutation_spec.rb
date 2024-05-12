@@ -17,7 +17,6 @@ RSpec.describe 'organizationRolesAssignAbilities Mutation' do
       }
     QUERY
   end
-
   let(:organization_role) { create(:organization_role) }
   let(:input) do
     {
@@ -25,9 +24,14 @@ RSpec.describe 'organizationRolesAssignAbilities Mutation' do
       abilities: ['CREATE_ORGANIZATION_ROLE'],
     }
   end
-
   let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
+
+  before do
+    create(:organization_role, organization: organization_role.organization).tap do |role|
+      create(:organization_role_ability, organization_role: role, ability: :organization_administrator)
+    end
+  end
 
   context 'when user has permission' do
     before do

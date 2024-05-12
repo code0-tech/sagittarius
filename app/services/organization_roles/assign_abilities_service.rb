@@ -22,6 +22,8 @@ module OrganizationRoles
         current_abilities = role.abilities
         old_abilities_for_audit_event = current_abilities.map(&:ability)
 
+        check_admin_existing(t)
+
         current_abilities.where.not(ability: abilities).delete_all
 
         (abilities - current_abilities.map(&:ability)).map do |ability|
@@ -49,6 +51,20 @@ module OrganizationRoles
         )
 
         ServiceResponse.success(message: 'Role abilities updated', payload: new_abilities)
+      end
+    end
+
+    private
+
+    def check_admin_existing(t)
+      unless role.organization.roles.where.not(id: role.id)
+                 .joins(:abilities)
+                 .exists?(abilities: { ability: :organization_administrator }) ||
+             abilities.include?(:organization_administrator)
+        t.rollback_and_return! ServiceResponse.error(
+          message: 'Cannot remove the last administrator ability',
+          payload: :cannot_remove_last_admin_ability
+        )
       end
     end
   end
