@@ -19,4 +19,5 @@ Represents abilities that can be granted to roles in organizations.
 | `READ_ORGANIZATION_LICENSE` | Allows to read the license of the organization |
 | `READ_ORGANIZATION_PROJECT` | Allows to read the project of the organization |
 | `UPDATE_ORGANIZATION` | Allows to update the organization |
+| `UPDATE_ORGANIZATION_PROJECT` | Allows to update the project of the organization |
 | `UPDATE_ORGANIZATION_ROLE` | Allows to update the organization role |
