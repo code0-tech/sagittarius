@@ -6,7 +6,7 @@ class OrganizationProject < ApplicationRecord
   validates :name, presence: true,
                    length: { minimum: 3, maximum: 50 },
                    allow_blank: false,
-                   uniqueness: { case_sensitive: false }
+                   uniqueness: { case_sensitive: false, scope: :organization_id }
 
   validates :description, length: { maximum: 500 }, allow_blank: true
 

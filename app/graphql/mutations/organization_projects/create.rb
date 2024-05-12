@@ -10,15 +10,18 @@ module Mutations
       argument :organization_id, Types::GlobalIdType[::Organization],
                description: 'The id of the organization which this project will belong to'
 
-      argument :name, String, required: true, description: 'Name for the new organization project.'
       argument :description, String, required: false, description: 'Description for the new organization project.'
+      argument :name, String, required: true, description: 'Name for the new organization project.'
 
       def resolve(organization_id:, **params)
         organization = SagittariusSchema.object_from_id(organization_id)
 
-        return { organization_project: nil, errors: [create_message_error('Invalid organization')] } if organization.nil?
+        if organization.nil?
+          return { organization_project: nil,
+                   errors: [create_message_error('Invalid organization')] }
+        end
 
-        p ::OrganizationProjects::CreateService.new(
+        ::OrganizationProjects::CreateService.new(
           current_user,
           organization: organization,
           **params

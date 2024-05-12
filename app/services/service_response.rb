@@ -35,10 +35,7 @@ class ServiceResponse
   end
 
   def to_mutation_response(success_key: :object)
-    if success?
-      p "123"
-      return p({ success_key => payload, errors: [] })
-    end
+    return { success_key => payload, errors: [] } if success?
 
     if payload.is_a?(ActiveModel::Errors)
       { success_key => nil, errors: payload.errors }

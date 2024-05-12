@@ -48,9 +48,9 @@ RSpec.describe OrganizationProjects::CreateService do
       { organization: organization, name: generate(:organization_project_name) }
     end
 
-  before do
+    before do
       stub_allowed_ability(OrganizationPolicy, :create_organization_project, user: current_user, subject: organization)
-  end
+    end
 
     it { is_expected.to be_success }
     it { expect(service_response.payload.reload).to be_valid }
