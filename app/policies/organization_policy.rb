@@ -25,7 +25,6 @@ class OrganizationPolicy < BasePolicy
   customizable_permission :update_organization
   customizable_permission :organization_administrator
   customizable_permission :create_organization_project
-  customizable_permission :read_organization_project
 end
 
 OrganizationPolicy.prepend_extensions
