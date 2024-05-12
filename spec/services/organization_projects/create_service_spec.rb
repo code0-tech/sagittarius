@@ -14,7 +14,7 @@ RSpec.describe OrganizationProjects::CreateService do
       expect { service_response }.not_to change { OrganizationProject.count }
     end
 
-    it { expect { service_response }.not_to create_audit_event(:organization_created) }
+    it { expect { service_response }.not_to create_audit_event(:organization_project_created) }
   end
 
   context 'when user does not exist' do
