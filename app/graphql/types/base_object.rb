@@ -17,6 +17,41 @@ module Types
       field :updated_at, Types::TimeType, null: false, description: "Time when this #{entity_name} was last updated"
     end
 
+    def self.expose_abilities(abilities, entity_name = graphql_name)
+      @user_ability_types ||= {}
+
+      type_class = @user_ability_types.fetch("#{entity_name}UserAbilities", nil)
+      already_exists = type_class.present?
+
+      if type_class.nil?
+        type_class = Class.new(BaseObject) do
+          graphql_name "#{entity_name}UserAbilities"
+          description "Abilities for the current user on this #{entity_name}"
+        end
+
+        @user_ability_types["#{entity_name}UserAbilities"] = type_class
+      end
+
+      type_class.class_eval do
+        abilities.each do |ability|
+          field ability, Boolean,
+                null: false,
+                description: "Shows if the current user can #{ability} in this #{entity_name}"
+
+          define_method(ability) do
+            Ability.allowed?(current_user, ability, object)
+          end
+        end
+      end
+
+      return if already_exists
+
+      field :user_abilities, type_class,
+            null: false,
+            description: "Abilities for the current user on this #{entity_name}",
+            method: :itself
+    end
+
     def self.lookahead_field(field, base_scope:, lookaheads: [], conditional_lookaheads: {})
       define_method(field) do |*_args, lookahead:, **_kwargs|
         field_selected = lambda do |f|
