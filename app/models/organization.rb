@@ -11,6 +11,8 @@ class Organization < ApplicationRecord
 
   has_many :roles, class_name: 'OrganizationRole', inverse_of: :organization
 
+  has_many :projects, class_name: 'OrganizationProject', inverse_of: :organization
+
   def member?(user)
     return false if user.nil?
 
