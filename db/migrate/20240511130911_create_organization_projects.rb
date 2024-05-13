@@ -6,7 +6,7 @@ class CreateOrganizationProjects < Sagittarius::Database::Migration[1.0]
       t.references :organization, null: false, foreign_key: { on_delete: :cascade }
       t.text :name, null: false, limit: 50
       t.text :description, null: false, default: '', limit: 500
-      
+
       t.index '"organization_id", LOWER("name")', unique: true
 
       t.timestamps_with_timezone

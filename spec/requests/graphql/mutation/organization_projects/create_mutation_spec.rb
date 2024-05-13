@@ -44,7 +44,6 @@ RSpec.describe 'organizationProjectsCreate Mutation' do
   context 'when user is a member of the organization' do
     before do
       stub_allowed_ability(OrganizationPolicy, :create_organization_project, user: current_user, subject: organization)
-      stub_allowed_ability(OrganizationPolicy, :read_organization_project, user: current_user, subject: organization)
     end
 
     it 'creates organization project' do
@@ -89,7 +88,6 @@ RSpec.describe 'organizationProjectsCreate Mutation' do
         create(:organization_project, name: input[:name])
         stub_allowed_ability(OrganizationPolicy, :create_organization_project, user: current_user,
                                                                                subject: organization)
-        stub_allowed_ability(OrganizationPolicy, :read_organization_project, user: current_user, subject: organization)
       end
 
       it 'creates organization project' do

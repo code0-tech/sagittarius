@@ -8,11 +8,12 @@ class OrganizationProject < ApplicationRecord
                    allow_blank: false,
                    uniqueness: { case_sensitive: false, scope: :organization_id }
 
-  validates :description, length: { maximum: 500 }, allow_blank: true
+  validates :description, length: { maximum: 500 }, exclusion: { in: [nil] }
 
   before_validation :strip_whitespace
 
   private
+
   def strip_whitespace
     name&.strip!
     description&.strip!
