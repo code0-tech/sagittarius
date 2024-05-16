@@ -1,5 +1,47 @@
 # frozen_string_literal: true
 
+module Sagittarius
+  module RspecMatchers
+    class GraphqlMatcherHelper
+      # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/PerceivedComplexity
+      def have_graphql_fields(kls, expected, allow_extra: false, allow_extra_if_extended: false)
+        expected_field_names = Array.wrap(expected).flatten.map { |name| GraphqlHelpers.graphql_field_name(name) }
+
+        {
+          match: lambda do
+            keys   = kls.fields.keys.to_set
+            fields = expected_field_names.to_set
+
+            next true if fields == keys
+            next true if allow_extra && fields.proper_subset?(keys)
+            if allow_extra_if_extended && fields.proper_subset?(keys) && InjectExtensions.extended_constants[kls]
+              next true
+            end
+
+            false
+          end,
+          message: lambda do
+            missing = expected_field_names - kls.fields.keys
+            extra = kls.fields.keys - expected_field_names
+
+            message = []
+
+            extra_allowed = allow_extra || (allow_extra_if_extended && InjectExtensions.extended_constants[kls])
+
+            message << "is missing fields: <#{missing.inspect}>" if missing.any?
+            message << "contained unexpected fields: <#{extra.inspect}>" if extra.any? && !extra_allowed
+
+            message.join("\n")
+          end,
+        }
+      end
+      # rubocop:enable Metrics/PerceivedComplexity
+      # rubocop:enable Metrics/CyclomaticComplexity
+    end
+  end
+end
+
 RSpec::Matchers.define :require_graphql_authorizations do |*expected|
   match do |klass|
     expect(klass.authorize).to match_array(expected.compact)
@@ -19,8 +61,6 @@ RSpec::Matchers.define :require_graphql_authorizations do |*expected|
 end
 
 RSpec::Matchers.define :have_graphql_fields do |*expected|
-  expected_field_names = Array.wrap(expected).flatten.map { |name| GraphqlHelpers.graphql_field_name(name) }
-
   @allow_extra = false
   @allow_extra_if_extended = false
 
@@ -32,28 +72,45 @@ RSpec::Matchers.define :have_graphql_fields do |*expected|
     @allow_extra_if_extended = true
   end
 
+  matcher_helper = Sagittarius::RspecMatchers::GraphqlMatcherHelper.new
+
   match do |kls|
-    keys   = kls.fields.keys.to_set
-    fields = expected_field_names.to_set
-
-    next true if fields == keys
-    next true if @allow_extra && fields.proper_subset?(keys)
-    next true if @allow_extra_if_extended && fields.proper_subset?(keys) && InjectExtensions.extended_constants[kls]
-
-    false
+    matcher_helper.have_graphql_fields(
+      kls,
+      expected,
+      allow_extra: @allow_extra,
+      allow_extra_if_extended: @allow_extra_if_extended
+    )[:match].call
   end
 
   failure_message do |kls|
-    missing = expected_field_names - kls.fields.keys
-    extra = kls.fields.keys - expected_field_names
+    matcher_helper.have_graphql_fields(
+      kls,
+      expected,
+      allow_extra: @allow_extra,
+      allow_extra_if_extended: @allow_extra_if_extended
+    )[:message].call
+  end
+end
 
-    message = []
+RSpec::Matchers.define :expose_abilities do |*expected|
+  matcher_helper = Sagittarius::RspecMatchers::GraphqlMatcherHelper.new
 
-    extra_allowed = @allow_extra || (@allow_extra_if_extended && InjectExtensions.extended_constants[kls])
+  match do |kls|
+    type_class = SagittariusSchema.types["#{kls.graphql_name}UserAbilities"]
+    matcher_helper.have_graphql_fields(
+      type_class,
+      expected,
+      allow_extra: InjectExtensions.extended_constants[kls].present?
+    )[:match].call
+  end
 
-    message << "is missing fields: <#{missing.inspect}>" if missing.any?
-    message << "contained unexpected fields: <#{extra.inspect}>" if extra.any? && !extra_allowed
-
-    message.join("\n")
+  failure_message do |kls|
+    type_class = SagittariusSchema.types["#{kls.graphql_name}UserAbilities"]
+    matcher_helper.have_graphql_fields(
+      type_class,
+      expected,
+      allow_extra: InjectExtensions.extended_constants[kls].present?
+    )[:message].call
   end
 end

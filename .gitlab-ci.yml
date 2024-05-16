@@ -14,7 +14,7 @@ include:
     - bundle install --jobs $(nproc)
 
 .rails:
-  image: ghcr.io/code0-tech/build-images/ruby-3.2.2-postgres-16.1:25.1
+  image: ghcr.io/code0-tech/build-images/ruby-3.2.2-postgres-16.1:37.1
   before_script:
     - source ~/.asdf/asdf.sh
     - bundle config build.pg --with-pg-config=$(asdf where postgres)/bin/pg_config
@@ -52,7 +52,7 @@ graphql_docs:
 
 build-image:
   image:
-    name: gcr.io/kaniko-project/executor:v1.22.0-debug # Debug Image because a shell is required for GitLab Runner
+    name: gcr.io/kaniko-project/executor:v1.23.0-debug # Debug Image because a shell is required for GitLab Runner
     entrypoint: [ "" ]
   stage: build
   parallel:
