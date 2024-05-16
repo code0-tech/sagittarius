@@ -9,6 +9,7 @@ RSpec.describe SagittariusSchema.types['Organization'] do
       name
       members
       roles
+      projects
       createdAt
       updatedAt
       organizationLicenses
