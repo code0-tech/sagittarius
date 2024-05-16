@@ -8,6 +8,10 @@ module Types
 
     field :name, String, null: false, description: 'Name of the organization'
 
+    field :projects, ::Types::OrganizationProjectType.connection_type,
+          null: false,
+          description: 'Projects of the organization'
+
     field :members, Types::OrganizationMemberType.connection_type, null: false,
                                                                    description: 'Members of the organization',
                                                                    extras: [:lookahead]
@@ -16,10 +20,6 @@ module Types
 
     lookahead_field :members, base_scope: ->(object) { object.organization_members },
                               conditional_lookaheads: { user: :user, organization: :organization }
-
-    field :projects, ::Types::OrganizationProjectType.connection_type,
-          null: false,
-          description: 'Projects of the organization'
 
     id_field Organization
     timestamps
