@@ -7,6 +7,7 @@ module EE
 
       prepended do
         mount_mutation Mutations::OrganizationLicenses::Create
+        mount_mutation Mutations::OrganizationLicenses::Delete
       end
     end
   end
