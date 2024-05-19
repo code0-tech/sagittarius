@@ -55,3 +55,5 @@ class SagittariusSchema < GraphQL::Schema
 end
 # rubocop:enable GraphQL/MaxDepthSchema
 # rubocop:enable GraphQL/MaxComplexitySchema
+
+Types::BaseObject.instance_variable_set(:@user_ability_types, nil) # release temporary type map

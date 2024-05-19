@@ -16,5 +16,6 @@ RSpec.describe OrganizationProject do
     it { is_expected.to validate_length_of(:description).is_at_most(500) }
     it { is_expected.to allow_value(' ').for(:description) }
     it { is_expected.to allow_value('').for(:description) }
+    it { is_expected.not_to allow_value(nil).for(:description) }
   end
 end

@@ -5,6 +5,7 @@ module InjectExtensions
     extensions = active_extensions(constant, namespace).each do |extension|
       prepend extension
     end
+    return if extensions.empty?
 
     InjectExtensions.extended_constants[self] = extensions if Rails.env.test?
   end
