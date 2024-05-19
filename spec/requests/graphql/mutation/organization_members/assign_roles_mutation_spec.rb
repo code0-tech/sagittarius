@@ -25,7 +25,6 @@ RSpec.describe 'organizationMembersAssignRoles Mutation' do
       }
     QUERY
   end
-
   let(:organization) { create(:organization) }
   let(:organization_roles) { create_list(:organization_role, 2, organization: organization) }
   let(:member) do
@@ -39,9 +38,15 @@ RSpec.describe 'organizationMembersAssignRoles Mutation' do
       roleIds: [organization_roles.first.to_global_id.to_s],
     }
   end
-
   let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
+
+  before do
+    create(:organization_role, organization: organization).tap do |role|
+      create(:organization_role_ability, organization_role: role, ability: :organization_administrator)
+      create(:organization_member_role, role: role)
+    end
+  end
 
   context 'when user has permission' do
     before do

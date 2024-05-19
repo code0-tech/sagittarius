@@ -15,7 +15,9 @@ class OrganizationRoleAbility < ApplicationRecord
     organization_administrator: { db: 10, description: 'Allows to perform any action in the organization' },
     create_organization_license: { db: 11, description: 'Allows to create a license for the organization' }, # EE-specific
     read_organization_license: { db: 12, description: 'Allows to read the license of the organization' }, # EE-specific
-    delete_organization_license: { db: 13, description: 'Allows to delete the license of the organization' }, # EE-specific
+    create_organization_project: { db: 13, description: 'Allows to create a project in the organization' },
+    read_organization_project: { db: 14, description: 'Allows to read the project of the organization' },
+    delete_organization_license: { db: 15, description: 'Allows to delete the license of the organization' }, # EE-specific
   }.with_indifferent_access
   # rubocop:enable Layout/LineLength
 

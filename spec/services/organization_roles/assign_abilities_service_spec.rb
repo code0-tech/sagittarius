@@ -9,6 +9,12 @@ RSpec.describe OrganizationRoles::AssignAbilitiesService do
   let(:role) { create(:organization_role) }
   let(:abilities) { [] }
 
+  let!(:admin_role) do
+    create(:organization_role, organization: role.organization).tap do |role|
+      create(:organization_role_ability, organization_role: role, ability: :organization_administrator)
+    end
+  end
+
   context 'when user is nil' do
     let(:current_user) { nil }
 
@@ -32,6 +38,24 @@ RSpec.describe OrganizationRoles::AssignAbilitiesService do
   end
 
   context 'when user has permission' do
+    context 'when ability is last admin ability' do
+      let(:abilities) { [] }
+
+      before do
+        stub_allowed_ability(OrganizationPolicy, :assign_role_abilities, user: current_user, subject: role.organization)
+        create(:organization_role_ability, organization_role: role, ability: :organization_administrator)
+        admin_role.delete
+      end
+
+      it { is_expected.not_to be_success }
+      it { expect(service_response.payload).to eq(:cannot_remove_last_admin_ability) }
+      it { expect { service_response }.not_to change { OrganizationRoleAbility.count } }
+
+      it do
+        expect { service_response }.not_to create_audit_event(:organization_role_abilities_updated)
+      end
+    end
+
     context 'when adding an ability' do
       let(:abilities) { [:create_organization_role] }
 
