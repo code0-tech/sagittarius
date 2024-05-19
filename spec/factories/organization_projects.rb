@@ -6,5 +6,6 @@ FactoryBot.define do
   factory :organization_project do
     organization
     name { generate(:organization_project_name) }
+    description { '' }
   end
 end
