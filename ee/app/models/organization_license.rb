@@ -47,4 +47,8 @@ class OrganizationLicense < ApplicationRecord
   def restrictions
     license&.restrictions
   end
+
+  def restricted?(attribute)
+    license&.restricted?(attribute)
+  end
 end
