@@ -9,7 +9,7 @@
 
 # rubocop:disable Lint/UnusedBlockArgument
 
-module ExceedQueryLimitHelpers # rubocop:disable Metrics/ModuleLength
+module ExceedQueryLimitHelpers
   class QueryDiff
     def initialize(expected, actual, show_common_queries)
       @expected = expected
