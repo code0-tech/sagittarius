@@ -32,6 +32,8 @@ module Sagittarius
         application: lambda {
                        if Rails.const_defined?('Console')
                          'console'
+                       elsif GoodJob::CLI.within_exe?
+                         'good_job'
                        else
                          Sagittarius::Context.current&.[](:application) || 'unknown'
                        end
@@ -63,8 +65,8 @@ module Sagittarius
       config.eager_load_paths += Dir.glob("#{config.root}/#{extension}/app/*")
     end
 
-    # Configure active job to use sidekiq
-    config.active_job.queue_adapter = :sidekiq
+    # Configure active job to use good_job
+    config.active_job.queue_adapter = :good_job
 
     # Generated with 'bin/rails db:encryption:init'
     # Use some random generated keys, production will override this with the environment variables
