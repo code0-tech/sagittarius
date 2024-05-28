@@ -45,6 +45,81 @@ CREATE SEQUENCE audit_events_id_seq
 
 ALTER SEQUENCE audit_events_id_seq OWNED BY audit_events.id;
 
+CREATE TABLE good_job_batches (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    description text,
+    serialized_properties jsonb,
+    on_finish text,
+    on_success text,
+    on_discard text,
+    callback_queue_name text,
+    callback_priority integer,
+    enqueued_at timestamp with time zone,
+    discarded_at timestamp with time zone,
+    finished_at timestamp with time zone
+);
+
+CREATE TABLE good_job_executions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    active_job_id uuid NOT NULL,
+    job_class text,
+    queue_name text,
+    serialized_params jsonb,
+    scheduled_at timestamp with time zone,
+    finished_at timestamp with time zone,
+    error text,
+    error_event smallint,
+    error_backtrace text[],
+    process_id uuid
+);
+
+CREATE TABLE good_job_processes (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    state jsonb,
+    lock_type smallint
+);
+
+CREATE TABLE good_job_settings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    key text,
+    value jsonb
+);
+
+CREATE TABLE good_jobs (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    queue_name text,
+    priority integer,
+    serialized_params jsonb,
+    scheduled_at timestamp with time zone,
+    performed_at timestamp with time zone,
+    finished_at timestamp with time zone,
+    error text,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    active_job_id uuid,
+    concurrency_key text,
+    cron_key text,
+    retried_good_job_id uuid,
+    cron_at timestamp with time zone,
+    batch_id uuid,
+    batch_callback_id uuid,
+    is_discrete boolean,
+    executions_count integer,
+    job_class text,
+    error_event smallint,
+    labels text[],
+    locked_by_id uuid,
+    locked_at timestamp with time zone
+);
+
 CREATE TABLE organization_licenses (
     id bigint NOT NULL,
     organization_id bigint NOT NULL,
@@ -245,6 +320,21 @@ ALTER TABLE ONLY ar_internal_metadata
 ALTER TABLE ONLY audit_events
     ADD CONSTRAINT audit_events_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY good_job_batches
+    ADD CONSTRAINT good_job_batches_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY good_job_executions
+    ADD CONSTRAINT good_job_executions_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY good_job_processes
+    ADD CONSTRAINT good_job_processes_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY good_job_settings
+    ADD CONSTRAINT good_job_settings_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY good_jobs
+    ADD CONSTRAINT good_jobs_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY organization_licenses
     ADD CONSTRAINT organization_licenses_pkey PRIMARY KEY (id);
 
@@ -280,6 +370,40 @@ CREATE UNIQUE INDEX idx_on_organization_role_id_ability_9df7780947 ON organizati
 CREATE UNIQUE INDEX index_application_settings_on_setting ON application_settings USING btree (setting);
 
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
+
+CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON good_job_executions USING btree (active_job_id, created_at);
+
+CREATE INDEX index_good_job_executions_on_process_id_and_created_at ON good_job_executions USING btree (process_id, created_at);
+
+CREATE INDEX index_good_job_jobs_for_candidate_lookup ON good_jobs USING btree (priority, created_at) WHERE (finished_at IS NULL);
+
+CREATE UNIQUE INDEX index_good_job_settings_on_key ON good_job_settings USING btree (key);
+
+CREATE INDEX index_good_jobs_jobs_on_finished_at ON good_jobs USING btree (finished_at) WHERE ((retried_good_job_id IS NULL) AND (finished_at IS NOT NULL));
+
+CREATE INDEX index_good_jobs_jobs_on_priority_created_at_when_unfinished ON good_jobs USING btree (priority DESC NULLS LAST, created_at) WHERE (finished_at IS NULL);
+
+CREATE INDEX index_good_jobs_on_active_job_id_and_created_at ON good_jobs USING btree (active_job_id, created_at);
+
+CREATE INDEX index_good_jobs_on_batch_callback_id ON good_jobs USING btree (batch_callback_id) WHERE (batch_callback_id IS NOT NULL);
+
+CREATE INDEX index_good_jobs_on_batch_id ON good_jobs USING btree (batch_id) WHERE (batch_id IS NOT NULL);
+
+CREATE INDEX index_good_jobs_on_concurrency_key_when_unfinished ON good_jobs USING btree (concurrency_key) WHERE (finished_at IS NULL);
+
+CREATE INDEX index_good_jobs_on_cron_key_and_created_at_cond ON good_jobs USING btree (cron_key, created_at) WHERE (cron_key IS NOT NULL);
+
+CREATE UNIQUE INDEX index_good_jobs_on_cron_key_and_cron_at_cond ON good_jobs USING btree (cron_key, cron_at) WHERE (cron_key IS NOT NULL);
+
+CREATE INDEX index_good_jobs_on_labels ON good_jobs USING gin (labels) WHERE (labels IS NOT NULL);
+
+CREATE INDEX index_good_jobs_on_locked_by_id ON good_jobs USING btree (locked_by_id) WHERE (locked_by_id IS NOT NULL);
+
+CREATE INDEX index_good_jobs_on_priority_scheduled_at_unfinished_unlocked ON good_jobs USING btree (priority, scheduled_at) WHERE ((finished_at IS NULL) AND (locked_by_id IS NULL));
+
+CREATE INDEX index_good_jobs_on_queue_name_and_scheduled_at ON good_jobs USING btree (queue_name, scheduled_at) WHERE (finished_at IS NULL);
+
+CREATE INDEX index_good_jobs_on_scheduled_at ON good_jobs USING btree (scheduled_at) WHERE (finished_at IS NULL);
 
 CREATE INDEX index_organization_licenses_on_organization_id ON organization_licenses USING btree (organization_id);
 

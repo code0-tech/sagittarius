@@ -6,7 +6,6 @@ module Tooling
       ViolatedAssumption = Class.new(StandardError)
       CONNECTION_ARGS = %w[after before first last].to_set
 
-      # rubocop:disable Metrics/ModuleLength
       module Helper # rubocop:disable GraphQL/ObjectDescription -- this is not a graphql object
         include GraphQLDocs::Helpers
 
@@ -146,7 +145,6 @@ module Tooling
           raise ViolatedAssumption, "#{message}\nThis violation should not have happened" unless claim
         end
       end
-      # rubocop:enable Metrics/ModuleLength
     end
   end
 end

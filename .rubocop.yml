@@ -22,7 +22,13 @@ Metrics/BlockLength:
   Exclude:
     - lib/tasks/**/*
 
+Metrics/ClassLength:
+  Enabled: false
+
 Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
   Enabled: false
 
 Naming/BlockForwarding:

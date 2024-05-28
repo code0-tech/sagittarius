@@ -69,8 +69,6 @@ gem 'graphql', '~> 2.1'
 
 gem 'seed-fu', '~> 2.3'
 
-gem 'sidekiq', '~> 7.1'
-
 gem 'lograge', '~> 0.14.0'
 
 gem 'declarative_policy', '~> 1.1'
@@ -78,3 +76,5 @@ gem 'declarative_policy', '~> 1.1'
 gem 'docker-api', '~> 2.2'
 
 gem 'code0-license', '~> 0.1.0'
+
+gem 'good_job', '~> 3.29'

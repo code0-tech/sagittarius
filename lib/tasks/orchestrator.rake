@@ -94,17 +94,14 @@ namespace :orchestrator do
     namespace :dev do
       task start: :build_state do
         Rake::Task['orchestrator:start'].invoke('postgresql')
-        Rake::Task['orchestrator:start'].invoke('redis')
       end
 
       task stop: :build_state do
         Rake::Task['orchestrator:stop'].invoke('postgresql')
-        Rake::Task['orchestrator:stop'].invoke('redis')
       end
 
       task force_recreate: :build_state do
         Rake::Task['orchestrator:force_recreate'].invoke('postgresql')
-        Rake::Task['orchestrator:force_recreate'].invoke('redis')
       end
     end
   end
