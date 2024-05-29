@@ -20,6 +20,8 @@ module OrganizationMembers
       transactional do |t|
         organization_member = OrganizationMember.create(organization: organization, user: user)
 
+        validate_user_limit!(t)
+
         unless organization_member.persisted?
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to save organization member',
                                                        payload: organization_member.errors)
@@ -36,5 +38,13 @@ module OrganizationMembers
         ServiceResponse.success(message: 'Organization member invited', payload: organization_member)
       end
     end
+
+    protected
+
+    def validate_user_limit!(*)
+      # overridden in EE
+    end
   end
 end
+
+OrganizationMembers::InviteService.prepend_extensions

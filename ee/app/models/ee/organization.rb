@@ -7,5 +7,9 @@ module EE
     prepended do
       has_many :organization_licenses, inverse_of: :organization
     end
+
+    def current_license
+      OrganizationLicense.current(self)
+    end
   end
 end
