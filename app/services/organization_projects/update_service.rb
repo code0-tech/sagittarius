@@ -13,7 +13,7 @@ module OrganizationProjects
     end
 
     def execute
-      unless Ability.allowed?(current_user, :update_organization_project, organization_project.organization)
+      unless Ability.allowed?(current_user, :update_organization_project, organization_project)
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 

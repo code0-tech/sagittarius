@@ -37,8 +37,8 @@ RSpec.describe 'organizationProjectsDelete Mutation' do
   context 'when user is a member of the organization' do
     before do
       create(:organization_member, organization: organization, user: current_user)
-      stub_allowed_ability(OrganizationPolicy, :delete_organization_project, user: current_user, subject: organization)
-      stub_allowed_ability(OrganizationPolicy, :read_organization_project, user: current_user, subject: organization)
+      stub_allowed_ability(OrganizationProjectPolicy, :delete_organization_project, user: current_user, subject: organization_project)
+      stub_allowed_ability(OrganizationProjectPolicy, :read_organization_project, user: current_user, subject: organization_project)
     end
 
     it 'deletes organization' do

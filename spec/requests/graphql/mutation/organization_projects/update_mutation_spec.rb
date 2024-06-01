@@ -40,10 +40,10 @@ RSpec.describe 'organizationProjectsUpdate Mutation' do
   context 'when user is a member of the organization' do
     before do
       create(:organization_member, organization: organization_project.organization, user: current_user)
-      stub_allowed_ability(OrganizationPolicy, :update_organization_project, user: current_user,
-                                                                             subject: organization_project.organization)
-      stub_allowed_ability(OrganizationPolicy, :read_organization_project, user: current_user,
-                                                                           subject: organization_project.organization)
+      stub_allowed_ability(OrganizationProjectPolicy, :update_organization_project, user: current_user,
+                                                                             subject: organization_project)
+      stub_allowed_ability(OrganizationProjectPolicy, :read_organization_project, user: current_user,
+                                                                           subject: organization_project)
     end
 
     it 'updates organization role' do
@@ -74,7 +74,7 @@ RSpec.describe 'organizationProjectsUpdate Mutation' do
         create(:organization_project, organization: organization_project.organization)
       end
       let(:input) do
-        { organizationProjectId: existing_organization_project.to_global_id.to_s, name: organization_project.name }
+        { organizationProjectId: organization_project.to_global_id.to_s, name: existing_organization_project.name }
       end
 
       it 'returns an error' do
