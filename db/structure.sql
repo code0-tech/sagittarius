@@ -295,6 +295,8 @@ CREATE INDEX index_organization_members_on_user_id ON organization_members USING
 
 CREATE INDEX index_organization_projects_on_organization_id ON organization_projects USING btree (organization_id);
 
+CREATE UNIQUE INDEX "index_organization_projects_on_organization_id_LOWER_name" ON organization_projects USING btree (organization_id, lower(name));
+
 CREATE INDEX index_organization_role_abilities_on_organization_role_id ON organization_role_abilities USING btree (organization_role_id);
 
 CREATE INDEX index_organization_roles_on_organization_id ON organization_roles USING btree (organization_id);
