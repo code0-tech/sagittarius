@@ -12,7 +12,7 @@ module Types
     mount_mutation Mutations::OrganizationMembers::Invite
     mount_mutation Mutations::OrganizationProjects::Create
     mount_mutation Mutations::OrganizationProjects::Update
-    mount_mutation Mutations::OrganizationProjects::Delete 
+    mount_mutation Mutations::OrganizationProjects::Delete
     mount_mutation Mutations::OrganizationRoles::AssignAbilities
     mount_mutation Mutations::OrganizationRoles::Create
     mount_mutation Mutations::OrganizationRoles::Delete
@@ -24,7 +24,6 @@ module Types
     mount_mutation Mutations::Users::Logout
     mount_mutation Mutations::Users::Register
     mount_mutation Mutations::Echo
-    
   end
 end
 
