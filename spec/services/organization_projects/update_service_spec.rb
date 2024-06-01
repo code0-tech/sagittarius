@@ -40,7 +40,7 @@ RSpec.describe OrganizationProjects::UpdateService do
     before do
       create(:organization_member, organization: organization_project.organization, user: current_user)
       stub_allowed_ability(OrganizationProjectPolicy, :update_organization_project, user: current_user,
-                                                                             subject: organization_project)
+                                                                                    subject: organization_project)
     end
 
     it { is_expected.to be_success }

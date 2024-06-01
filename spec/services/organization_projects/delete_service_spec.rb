@@ -38,7 +38,7 @@ RSpec.describe OrganizationProjects::DeleteService do
     before do
       create(:organization_member, organization: organization, user: current_user)
       stub_allowed_ability(OrganizationProjectPolicy, :delete_organization_project, user: current_user,
-                                                                             subject: organization_project)
+                                                                                    subject: organization_project)
     end
 
     it { is_expected.to be_success }
