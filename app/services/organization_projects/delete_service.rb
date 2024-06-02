@@ -30,8 +30,8 @@ module OrganizationProjects
           :organization_project_deleted,
           author_id: current_user.id,
           entity: organization_project,
-          target: organization_project,
-          details: { organization_id: organization_project.organization.id }
+          target: organization_project.organization,
+          details: {}
         )
 
         ServiceResponse.success(message: 'Created new project', payload: organization_project)

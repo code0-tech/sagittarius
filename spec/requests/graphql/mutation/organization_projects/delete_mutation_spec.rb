@@ -59,9 +59,9 @@ RSpec.describe 'organizationProjectsDelete Mutation' do
         author_id: current_user.id,
         entity_id: organization_project.id,
         entity_type: 'OrganizationProject',
-        details: { organization_id: organization.id },
-        target_id: organization_project.id,
-        target_type: 'OrganizationProject'
+        details: {},
+        target_id: organization.id,
+        target_type: 'Organization'
       )
     end
   end
