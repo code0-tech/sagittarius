@@ -38,7 +38,7 @@ module Sagittarius
           raise GraphQL::ExecutionError, "Invalid cursor '#{@before_value}' provided"
         end
 
-        @items = @items.where('id < ?', before_id) unless before_id.nil?
+        @items = @items.where(id: ...before_id) unless before_id.nil?
         @items = @items.reverse_order
       end
 

@@ -11,7 +11,7 @@ module Types
     def initialize(**kwargs, &block)
       @authorize = Array.wrap(kwargs.delete(:authorize))
 
-      super(**kwargs, &block)
+      super
     end
 
     def authorized?(object, _args, context)

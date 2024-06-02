@@ -14,7 +14,7 @@ module Sagittarius
         extend ActiveSupport::Concern
 
         def structure_load(...)
-          super(...)
+          super
 
           Sagittarius::Database::SchemaMigrations.load_all(connection)
         end
