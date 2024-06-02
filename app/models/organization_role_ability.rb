@@ -18,6 +18,8 @@ class OrganizationRoleAbility < ApplicationRecord
     create_organization_project: { db: 13, description: 'Allows to create a project in the organization' },
     read_organization_project: { db: 14, description: 'Allows to read the project of the organization' },
     delete_organization_license: { db: 15, description: 'Allows to delete the license of the organization' }, # EE-specific
+    update_organization_project: { db: 16, description: 'Allows to update the project of the organization' },
+    delete_organization_project: { db: 17, description: 'Allows to delete the project of the organization' },
   }.with_indifferent_access
   # rubocop:enable Layout/LineLength
 

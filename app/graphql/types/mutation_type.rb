@@ -11,6 +11,8 @@ module Types
     mount_mutation Mutations::OrganizationMembers::Delete
     mount_mutation Mutations::OrganizationMembers::Invite
     mount_mutation Mutations::OrganizationProjects::Create
+    mount_mutation Mutations::OrganizationProjects::Update
+    mount_mutation Mutations::OrganizationProjects::Delete
     mount_mutation Mutations::OrganizationRoles::AssignAbilities
     mount_mutation Mutations::OrganizationRoles::Create
     mount_mutation Mutations::OrganizationRoles::Delete

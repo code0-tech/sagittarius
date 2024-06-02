@@ -10,4 +10,6 @@ class OrganizationProjectPolicy < BasePolicy
   rule { can_create_projects }.enable :read_organization_project
 
   customizable_permission :read_organization_project
+  customizable_permission :update_organization_project
+  customizable_permission :delete_organization_project
 end
