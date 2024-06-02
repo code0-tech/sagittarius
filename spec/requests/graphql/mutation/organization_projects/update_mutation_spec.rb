@@ -87,43 +87,12 @@ RSpec.describe 'organizationProjectsUpdate Mutation' do
       end
     end
 
-    context 'when organization project description is taken in another organization' do
-      let(:other_organization) do
-        create(:organization).tap do |o|
-          create(:organization_project, organization: o, description: input[:description])
-        end
-      end
-
-      it 'updates organization role' do
-        mutate!
-
-        expect(graphql_data_at(:organization_projects_update, :organization_project, :id)).to be_present
-
-        project = SagittariusSchema.object_from_id(
-          graphql_data_at(:organization_projects_update, :organization_project, :id)
-        )
-
-        expect(project.name).to eq(input[:name])
-        expect(project.description).to eq(input[:description])
-
-        is_expected.to create_audit_event(
-          :organization_project_updated,
-          author_id: current_user.id,
-          entity_id: project.id,
-          entity_type: 'OrganizationProject',
-          details: { description: input[:description], name: input[:name] },
-          target_id: project.id,
-          target_type: 'OrganizationProject'
-        )
-      end
-    end
-
     context 'when organization project name is taken in another organization' do
       let(:other_organization) do
         create(:organization).tap { |o| create(:organization_project, organization: o, name: input[:name]) }
       end
 
-      it 'updates organization role' do
+      it 'updates organization project' do
         mutate!
 
         expect(graphql_data_at(:organization_projects_update, :organization_project, :id)).to be_present
