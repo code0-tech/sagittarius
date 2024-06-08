@@ -120,6 +120,23 @@ CREATE TABLE good_jobs (
     locked_at timestamp with time zone
 );
 
+CREATE TABLE namespaces (
+    id bigint NOT NULL,
+    parent_type character varying NOT NULL,
+    parent_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE namespaces_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE namespaces_id_seq OWNED BY namespaces.id;
+
 CREATE TABLE organization_licenses (
     id bigint NOT NULL,
     organization_id bigint NOT NULL,
@@ -293,6 +310,8 @@ ALTER TABLE ONLY application_settings ALTER COLUMN id SET DEFAULT nextval('appli
 
 ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_id_seq'::regclass);
 
+ALTER TABLE ONLY namespaces ALTER COLUMN id SET DEFAULT nextval('namespaces_id_seq'::regclass);
+
 ALTER TABLE ONLY organization_licenses ALTER COLUMN id SET DEFAULT nextval('organization_licenses_id_seq'::regclass);
 
 ALTER TABLE ONLY organization_member_roles ALTER COLUMN id SET DEFAULT nextval('organization_member_roles_id_seq'::regclass);
@@ -334,6 +353,9 @@ ALTER TABLE ONLY good_job_settings
 
 ALTER TABLE ONLY good_jobs
     ADD CONSTRAINT good_jobs_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY namespaces
+    ADD CONSTRAINT namespaces_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY organization_licenses
     ADD CONSTRAINT organization_licenses_pkey PRIMARY KEY (id);
@@ -404,6 +426,8 @@ CREATE INDEX index_good_jobs_on_priority_scheduled_at_unfinished_unlocked ON goo
 CREATE INDEX index_good_jobs_on_queue_name_and_scheduled_at ON good_jobs USING btree (queue_name, scheduled_at) WHERE (finished_at IS NULL);
 
 CREATE INDEX index_good_jobs_on_scheduled_at ON good_jobs USING btree (scheduled_at) WHERE (finished_at IS NULL);
+
+CREATE UNIQUE INDEX index_namespaces_on_parent_id_and_parent_type ON namespaces USING btree (parent_id, parent_type);
 
 CREATE INDEX index_organization_licenses_on_organization_id ON organization_licenses USING btree (organization_id);
 
