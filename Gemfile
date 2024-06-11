@@ -60,7 +60,7 @@ group :development do
   gem 'rubocop-factory_bot', '~> 2.23', require: false
   gem 'rubocop-graphql', '~> 1.3', require: false
   gem 'rubocop-rails', '~> 2.19', require: false
-  gem 'rubocop-rspec', '~> 2.22', require: false
+  gem 'rubocop-rspec', '~> 3.0', require: false
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
