@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 module Mutations
-  module OrganizationRoles
+  module NamespaceRoles
     class AssignAbilities < BaseMutation
       description 'Update the abilities a role is granted.'
 
-      field :abilities, [Types::OrganizationRoleAbilityEnum], description: 'The now granted abilities'
+      field :abilities, [Types::NamespaceRoleAbilityEnum], description: 'The now granted abilities'
 
-      argument :abilities, [Types::OrganizationRoleAbilityEnum],
+      argument :abilities, [Types::NamespaceRoleAbilityEnum],
                description: 'The abilities that should be granted to the ability'
-      argument :role_id, Types::GlobalIdType[::OrganizationRole],
+      argument :role_id, Types::GlobalIdType[::NamespaceRole],
                description: 'The id of the role which should be granted the abilities'
 
       def resolve(role_id:, abilities:)
@@ -17,7 +17,7 @@ module Mutations
 
         return { abilities: nil, errors: [create_message_error('Invalid role')] } if role.nil?
 
-        ::OrganizationRoles::AssignAbilitiesService.new(
+        ::NamespaceRoles::AssignAbilitiesService.new(
           current_user,
           role,
           abilities
