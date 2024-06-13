@@ -5,8 +5,9 @@ class MoveOrganizationMembersToNamespaces < Sagittarius::Database::Migration[1.0
   def change
     remove_index :organization_members, %i[organization_id user_id],
                  name: 'index_organization_members_on_organization_id_and_user_id', unique: true
-    remove_reference :organization_members, :organization, null: false,
-                                                           foreign_key: { to_table: :namespace, on_delete: :cascade }
+    remove_reference :organization_members, :organization,
+                     null: false,
+                     foreign_key: { to_table: :organizations, on_delete: :cascade }
 
     rename_table :organization_members, :namespace_members
 

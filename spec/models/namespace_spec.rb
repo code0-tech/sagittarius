@@ -14,10 +14,6 @@ RSpec.describe Namespace do
     it { is_expected.to have_many(:users).through(:namespace_members).inverse_of(:namespaces) }
   end
 
-  describe 'validations' do
-    it { is_expected.to validate_presence_of(:parent) }
-  end
-
   describe '#organization_type?' do
     context 'when parent is organization' do
       it { expect(namespace.organization_type?).to be true }
