@@ -1,0 +1,17 @@
+---
+title: NamespaceRole
+---
+
+Represents a namespace role.
+
+## Fields without arguments
+
+| Name | Type | Description |
+|------|------|-------------|
+| `abilities` | [`[NamespaceRoleAbility!]!`](../enum/namespaceroleability.md) | The abilities the role is granted |
+| `createdAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceRole was created |
+| `id` | [`NamespaceRoleID!`](../scalar/namespaceroleid.md) | Global ID of this NamespaceRole |
+| `name` | [`String!`](../scalar/string.md) | The name of this role |
+| `namespace` | [`Namespace`](../object/namespace.md) | The namespace where this role belongs to |
+| `updatedAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceRole was last updated |
+

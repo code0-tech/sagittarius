@@ -24,6 +24,16 @@ Returns [`String!`](../scalar/string.md).
 |------|------|-------------|
 | `message` | [`String!`](../scalar/string.md) | String to echo as response |
 
+### namespace
+
+Find a namespace
+
+Returns [`Namespace`](../object/namespace.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `id` | [`NamespaceID!`](../scalar/namespaceid.md) | GlobalID of the target namespace |
+
 ### node
 
 Fetches an object given its ID
