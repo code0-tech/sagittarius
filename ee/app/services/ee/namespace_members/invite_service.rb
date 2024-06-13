@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module EE
-  module OrganizationMembers
+  module NamespaceMembers
     module InviteService
       include Sagittarius::Override
 
@@ -9,9 +9,9 @@ module EE
 
       override :validate_user_limit!
       def validate_user_limit!(t)
-        license = organization.current_license
+        license = namespace.current_license
         return if license.nil? || !license.restricted?(:user_count)
-        return if organization.organization_members.count <= license.restrictions[:user_count]
+        return if namespace.namespace_members.count <= license.restrictions[:user_count]
 
         t.rollback_and_return! ServiceResponse.error(
           message: 'No free member seats in license',

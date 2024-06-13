@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module OrganizationMembers
+module NamespaceMembers
   class AssignRolesService
     include Sagittarius::Database::Transactional
 
@@ -15,15 +15,15 @@ module OrganizationMembers
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def execute
-      organization = member.organization
-      unless Ability.allowed?(current_user, :assign_member_roles, organization)
+      namespace = member.namespace
+      unless Ability.allowed?(current_user, :assign_member_roles, namespace)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
-      unless roles.map(&:organization).all? { |t| t == organization }
+      unless roles.map(&:namespace).all? { |t| t == namespace }
         return ServiceResponse.error(
-          message: 'Roles and member belong to different organizations',
-          payload: :inconsistent_organization
+          message: 'Roles and member belong to different namespaces',
+          payload: :inconsistent_namespace
         )
       end
 
@@ -36,13 +36,13 @@ module OrganizationMembers
         current_roles.where.not(role: roles).delete_all
 
         (roles - current_roles.map(&:role)).map do |role|
-          organization_member_role = OrganizationMemberRole.create(member: member, role: role)
+          namespace_member_role = NamespaceMemberRole.create(member: member, role: role)
 
-          next if organization_member_role.persisted?
+          next if namespace_member_role.persisted?
 
           t.rollback_and_return! ServiceResponse.error(
-            message: 'Failed to save organization member role',
-            payload: organization_member_role.errors
+            message: 'Failed to save namespace member role',
+            payload: namespace_member_role.errors
           )
         end
 
@@ -50,7 +50,7 @@ module OrganizationMembers
 
         new_roles = member.reload.member_roles
 
-        create_audit_event(new_roles, old_roles_for_audit_event, organization)
+        create_audit_event(new_roles, old_roles_for_audit_event, namespace)
 
         ServiceResponse.success(message: 'Member roles updated', payload: new_roles)
       end
@@ -60,25 +60,25 @@ module OrganizationMembers
 
     private
 
-    def create_audit_event(new_roles, old_roles_for_audit_event, organization)
+    def create_audit_event(new_roles, old_roles_for_audit_event, namespace)
       AuditService.audit(
-        :organization_member_roles_updated,
+        :namespace_member_roles_updated,
         author_id: current_user.id,
         entity: member,
         details: {
           old_roles: old_roles_for_audit_event,
           new_roles: new_roles.map { |member_role| { id: member_role.role.id, name: member_role.role.name } },
         },
-        target: organization
+        target: namespace
       )
     end
 
     def check_last_admin_user(t)
-      unless member.organization.roles
+      unless member.namespace.roles
                    .joins(:abilities, :member_roles)
-                   .exists?(abilities: { ability: :organization_administrator })
+                   .exists?(abilities: { ability: :namespace_administrator })
         t.rollback_and_return! ServiceResponse.error(
-          message: 'Cannot remove last administrator from organization',
+          message: 'Cannot remove last administrator from namespace',
           payload: :cannot_remove_last_administrator
         )
       end

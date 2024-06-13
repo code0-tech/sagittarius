@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module OrganizationRoles
+module NamespaceRoles
   class AssignAbilitiesService
     include Sagittarius::Database::Transactional
 
@@ -13,8 +13,8 @@ module OrganizationRoles
     end
 
     def execute
-      organization = role.organization
-      unless Ability.allowed?(current_user, :assign_role_abilities, organization)
+      namespace = role.namespace
+      unless Ability.allowed?(current_user, :assign_role_abilities, namespace)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
@@ -27,12 +27,12 @@ module OrganizationRoles
         current_abilities.where.not(ability: abilities).delete_all
 
         (abilities - current_abilities.map(&:ability)).map do |ability|
-          organization_role_ability = OrganizationRoleAbility.create(organization_role: role, ability: ability)
+          organization_role_ability = NamespaceRoleAbility.create(namespace_role: role, ability: ability)
 
           next if organization_role_ability.persisted?
 
           t.rollback_and_return! ServiceResponse.error(
-            message: 'Failed to save organization role ability',
+            message: 'Failed to save namespace role ability',
             payload: organization_role_ability.errors
           )
         end
@@ -40,14 +40,14 @@ module OrganizationRoles
         new_abilities = role.reload.abilities.map(&:ability)
 
         AuditService.audit(
-          :organization_role_abilities_updated,
+          :namespace_role_abilities_updated,
           author_id: current_user.id,
           entity: role,
           details: {
             old_abilities: old_abilities_for_audit_event,
             new_abilities: new_abilities,
           },
-          target: organization
+          target: namespace
         )
 
         ServiceResponse.success(message: 'Role abilities updated', payload: new_abilities)
@@ -57,10 +57,10 @@ module OrganizationRoles
     private
 
     def check_admin_existing(t)
-      unless role.organization.roles.where.not(id: role.id)
+      unless role.namespace.roles.where.not(id: role.id)
                  .joins(:abilities)
-                 .exists?(abilities: { ability: :organization_administrator }) ||
-             abilities.include?(:organization_administrator)
+                 .exists?(abilities: { ability: :namespace_administrator }) ||
+             abilities.include?(:namespace_administrator)
         t.rollback_and_return! ServiceResponse.error(
           message: 'Cannot remove the last administrator ability',
           payload: :cannot_remove_last_admin_ability

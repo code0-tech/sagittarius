@@ -25,17 +25,18 @@ module Organizations
           )
         end
 
-        organization_role = create_object(t, OrganizationRole, organization: organization, name: 'Administrator')
-        create_object(t, OrganizationRoleAbility, organization_role: organization_role,
-                                                  ability: :organization_administrator)
-        organization_member = create_object(t, OrganizationMember, organization: organization, user: current_user)
-        create_object(t, OrganizationMemberRole, member: organization_member, role: organization_role)
+        namespace_role = create_object(t, NamespaceRole, namespace: organization.ensure_namespace,
+                                                         name: 'Administrator')
+        create_object(t, NamespaceRoleAbility, namespace_role: namespace_role, ability: :namespace_administrator)
+        organization_member = create_object(t, NamespaceMember, namespace: organization.ensure_namespace,
+                                                                user: current_user)
+        create_object(t, NamespaceMemberRole, member: organization_member, role: namespace_role)
 
         AuditService.audit(
           :organization_created,
           author_id: current_user.id,
           entity: organization,
-          target: organization,
+          target: organization.ensure_namespace,
           details: { name: name }
         )
 

@@ -1,0 +1,45 @@
+# frozen_string_literal: true
+
+module NamespaceRoles
+  class DeleteService
+    include Sagittarius::Database::Transactional
+
+    attr_reader :current_user, :namespace_role
+
+    def initialize(current_user, namespace_role)
+      @current_user = current_user
+      @namespace_role = namespace_role
+    end
+
+    def execute
+      unless Ability.allowed?(current_user, :delete_namespace_role, namespace_role)
+        return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+      end
+
+      unless namespace_role.namespace.roles.where.not(id: namespace_role.id)
+                           .joins(:abilities)
+                           .exists?(abilities: { ability: :namespace_administrator })
+        return ServiceResponse.error(message: 'Cannot delete last administrator role',
+                                     payload: :cannot_delete_last_admin_role)
+      end
+
+      transactional do
+        namespace_role.delete
+
+        if namespace_role.persisted?
+          return ServiceResponse.error(message: 'Failed to delete namespace role', payload: namespace_role.errors)
+        end
+
+        AuditService.audit(
+          :namespace_role_deleted,
+          author_id: current_user.id,
+          entity: namespace_role,
+          details: {},
+          target: namespace_role.namespace
+        )
+
+        ServiceResponse.success(message: 'Namespace role deleted', payload: namespace_role)
+      end
+    end
+  end
+end
