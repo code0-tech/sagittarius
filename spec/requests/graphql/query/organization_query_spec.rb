@@ -54,7 +54,7 @@ RSpec.describe 'organization Query' do
     context 'when user is a member' do
       let(:current_user) do
         create(:user).tap do |user|
-          create(:organization_member, organization: organization, user: user)
+          create(:namespace_member, namespace: organization.ensure_namespace, user: user)
         end
       end
 

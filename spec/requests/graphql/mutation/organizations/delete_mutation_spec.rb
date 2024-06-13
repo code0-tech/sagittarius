@@ -32,7 +32,7 @@ RSpec.describe 'organizationsDelete Mutation' do
 
   context 'when user is a member of the organization' do
     before do
-      create(:organization_member, organization: organization, user: current_user)
+      create(:namespace_member, namespace: organization.ensure_namespace, user: current_user)
       stub_allowed_ability(OrganizationPolicy, :delete_organization, user: current_user, subject: organization)
     end
 
@@ -53,8 +53,8 @@ RSpec.describe 'organizationsDelete Mutation' do
         entity_id: organization.id,
         entity_type: 'Organization',
         details: {},
-        target_id: organization.id,
-        target_type: 'Organization'
+        target_id: organization.namespace.id,
+        target_type: 'Namespace'
       )
     end
   end

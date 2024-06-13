@@ -45,8 +45,8 @@ RSpec.describe 'organizationsCreate Mutation' do
       entity_id: organization.id,
       entity_type: 'Organization',
       details: { name: input[:name] },
-      target_id: organization.id,
-      target_type: 'Organization'
+      target_id: organization.namespace.id,
+      target_type: 'Namespace'
     )
   end
 
