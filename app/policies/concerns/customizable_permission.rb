@@ -4,10 +4,10 @@ module CustomizablePermission
   extend ActiveSupport::Concern
 
   class_methods do
-    attr_reader :organization_resolver_block
+    attr_reader :namespace_resolver_block
 
-    def organization_resolver(&block)
-      @organization_resolver_block = block
+    def namespace_resolver(&block)
+      @namespace_resolver_block = block
     end
 
     def customizable_permission(ability)
@@ -18,23 +18,23 @@ module CustomizablePermission
   end
 
   included do
-    condition(:admin) { user_has_ability?(:organization_administrator, @user, @subject) }
+    condition(:admin) { user_has_ability?(:namespace_administrator, @user, @subject) }
 
-    def organization(subject)
-      @organization ||= self.class.organization_resolver_block.call(subject)
+    def namespace(subject)
+      @namespace ||= self.class.namespace_resolver_block.call(subject)
     end
 
-    def organization_member(user, subject)
-      @organization_member ||= organization(subject).organization_members.find_by(user: user)
+    def namespace_member(user, subject)
+      @namespace_member ||= namespace(subject).namespace_members.find_by(user: user)
     end
 
     def user_has_ability?(ability, user, subject)
-      return false if organization_member(user, subject).nil?
+      return false if namespace_member(user, subject).nil?
 
-      organization_member(user, subject)
+      namespace_member(user, subject)
         .roles
         .joins(:abilities)
-        .exists?(organization_role_abilities: { ability: ability })
+        .exists?(namespace_role_abilities: { ability: ability })
     end
   end
 end
