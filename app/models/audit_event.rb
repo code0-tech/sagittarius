@@ -6,20 +6,20 @@ class AuditEvent < ApplicationRecord
     user_logged_in: 2,
     organization_created: 3,
     application_setting_updated: 4,
-    organization_role_created: 5,
-    organization_member_invited: 6,
-    organization_member_roles_updated: 7,
-    organization_role_abilities_updated: 8,
-    organization_role_updated: 9,
+    namespace_role_created: 5,
+    namespace_member_invited: 6,
+    namespace_member_roles_updated: 7,
+    namespace_role_abilities_updated: 8,
+    namespace_role_updated: 9,
     organization_updated: 10,
-    organization_member_deleted: 11,
+    namespace_member_deleted: 11,
     organization_deleted: 12,
-    organization_role_deleted: 13,
-    organization_license_created: 14, # EE-specific
-    organization_project_created: 15,
-    organization_license_deleted: 16, # EE-specific
-    organization_project_deleted: 17,
-    organization_project_updated: 18,
+    namespace_role_deleted: 13,
+    namespace_license_created: 14, # EE-specific
+    namespace_project_created: 15,
+    namespace_license_deleted: 16, # EE-specific
+    namespace_project_deleted: 17,
+    namespace_project_updated: 18,
   }.with_indifferent_access
 
   enum :action_type, ACTION_TYPES, prefix: :action

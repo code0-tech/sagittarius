@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class OrganizationLicense < ApplicationRecord
+class NamespaceLicense < ApplicationRecord
   include Sagittarius::Memoize
 
-  belongs_to :organization, inverse_of: :organization_licenses
+  belongs_to :namespace, inverse_of: :namespace_licenses
 
-  scope :for_organization, ->(organization) { where(organization: organization) }
+  scope :for_namespace, ->(namespace) { where(namespace: namespace) }
   scope :latest_first, -> { reorder(id: :desc) }
   scope :last_fifty, -> { latest_first.limit(50) }
 
@@ -14,15 +14,15 @@ class OrganizationLicense < ApplicationRecord
   class << self
     include Sagittarius::Memoize
 
-    def current(organization)
-      memoize(:current, reset_on_change: -> { organization.id }) do
-        load_license(organization)
+    def current(namespace)
+      memoize(:current, reset_on_change: -> { namespace.id }) do
+        load_license(namespace)
       end
     end
 
-    def load_license(organization)
-      for_organization(organization).last_fifty.find do |organization_license|
-        organization_license.license.in_active_time?
+    def load_license(namespace)
+      for_namespace(namespace).last_fifty.find do |namespace_license|
+        namespace_license.license.in_active_time?
       end
     end
   end

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 module EE
-  module Organization
+  module Namespace
     extend ActiveSupport::Concern
 
     prepended do
-      has_many :organization_licenses, inverse_of: :organization
+      has_many :namespace_licenses, inverse_of: :namespace
     end
 
     def current_license
-      OrganizationLicense.current(self)
+      NamespaceLicense.current(self)
     end
   end
 end

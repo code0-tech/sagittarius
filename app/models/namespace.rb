@@ -3,9 +3,26 @@
 class Namespace < ApplicationRecord
   belongs_to :parent, polymorphic: true
 
-  validates :parent, presence: true
+  has_many :roles, class_name: 'NamespaceRole', inverse_of: :namespace
+
+  has_many :namespace_members, inverse_of: :namespace
+  has_many :users, through: :namespace_members, inverse_of: :namespaces
+
+  has_many :projects, class_name: 'NamespaceProject', inverse_of: :namespace
 
   def organization_type?
     parent_type == Organization.name
   end
+
+  def member?(user)
+    return false if user.nil?
+
+    if namespace_members.loaded?
+      namespace_members.any? { |member| member.user.id == user.id }
+    else
+      namespace_members.exists?(user: user)
+    end
+  end
 end
+
+Namespace.prepend_extensions
