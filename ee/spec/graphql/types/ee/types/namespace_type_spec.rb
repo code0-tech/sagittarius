@@ -2,20 +2,20 @@
 
 require 'rails_helper'
 
-RSpec.describe SagittariusSchema.types['Organization'] do
+RSpec.describe SagittariusSchema.types['Namespace'] do
   let(:fields) do
     %w[
       id
-      name
+      parent
       members
       roles
       projects
       createdAt
       updatedAt
-      organizationLicenses
+      namespaceLicenses
     ]
   end
 
-  it { expect(described_class).to include_module(EE::Types::OrganizationType) }
+  it { expect(described_class).to include_module(EE::Types::NamespaceType) }
   it { expect(described_class).to have_graphql_fields(fields) }
 end
