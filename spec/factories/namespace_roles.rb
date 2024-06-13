@@ -3,8 +3,8 @@
 FactoryBot.define do
   sequence(:role_name) { |n| "role#{n}" }
 
-  factory :organization_role do
-    organization
+  factory :namespace_role do
+    namespace
     name { generate(:role_name) }
   end
 end

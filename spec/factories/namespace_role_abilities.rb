@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :organization_role_ability do
-    organization_role
+  factory :namespace_role_ability do
+    namespace_role
     ability { nil }
   end
 end

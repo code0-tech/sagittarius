@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :organization_member do
-    organization
+  factory :namespace_member do
+    namespace
     user
   end
 end
