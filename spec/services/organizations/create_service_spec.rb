@@ -13,7 +13,7 @@ RSpec.describe Organizations::CreateService do
     end
 
     it 'does not create organization member' do
-      expect { service_response }.not_to change { OrganizationMember.count }
+      expect { service_response }.not_to change { NamespaceMember.count }
     end
 
     it { expect { service_response }.not_to create_audit_event(:organization_created) }
@@ -55,27 +55,27 @@ RSpec.describe Organizations::CreateService do
 
     it 'adds current_user as organization member' do
       organization = service_response.payload.reload
-      member = OrganizationMember.find_by(organization: organization, user: current_user)
+      member = NamespaceMember.find_by(namespace: organization.namespace, user: current_user)
 
       expect(member).to be_present
     end
 
     it 'adds ability to the current_user' do
       organization = service_response.payload.reload
-      expect(Ability.allowed?(current_user, :organization_administrator, organization)).to be(true)
+      expect(Ability.allowed?(current_user, :namespace_administrator, organization)).to be(true)
       expect(Ability.allowed?(current_user, :delete_member, organization)).to be(true)
     end
 
     it 'creates ability' do
-      expect { service_response }.to change { OrganizationRoleAbility.count }.by(1)
+      expect { service_response }.to change { NamespaceRoleAbility.count }.by(1)
     end
 
     it 'creates role' do
-      expect { service_response }.to change { OrganizationRole.count }.by(1)
+      expect { service_response }.to change { NamespaceRole.count }.by(1)
     end
 
     it 'only adds 1 member' do
-      expect { service_response }.to change { OrganizationMember.count }.by(1)
+      expect { service_response }.to change { NamespaceMember.count }.by(1)
     end
 
     it do
@@ -84,7 +84,7 @@ RSpec.describe Organizations::CreateService do
         author_id: current_user.id,
         entity_type: 'Organization',
         details: { name: params[:name] },
-        target_type: 'Organization'
+        target_type: 'Namespace'
       )
     end
   end

@@ -70,7 +70,7 @@ RSpec.describe Organizations::UpdateService do
         author_id: current_user.id,
         entity_type: 'Organization',
         details: { name: params[:name] },
-        target_type: 'Organization'
+        target_type: 'Namespace'
       )
     end
   end
