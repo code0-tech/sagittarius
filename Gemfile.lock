@@ -132,7 +132,7 @@ GEM
       fugit (>= 1.1)
       railties (>= 6.0.0)
       thor (>= 0.14.1)
-    graphql (2.3.4)
+    graphql (2.3.5)
       base64
     graphql-docs (4.0.0)
       commonmarker (~> 0.23, >= 0.23.6)
