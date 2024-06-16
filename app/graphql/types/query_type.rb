@@ -34,6 +34,10 @@ module Types
       require_one_of %i[id name]
     end
 
+    field :namespace, Types::NamespaceType, null: true, description: 'Find a namespace' do
+      argument :id, Types::GlobalIdType[::Namespace], required: true, description: 'GlobalID of the target namespace'
+    end
+
     def node(id:)
       context.schema.object_from_id(id, context)
     end
@@ -54,6 +58,10 @@ module Types
       args[:id] = args[:id].model_id if args[:id].present?
 
       OrganizationsFinder.new(**args, single: true).execute
+    end
+
+    def namespace(id:)
+      SagittariusSchema.object_from_id(id)
     end
   end
 end

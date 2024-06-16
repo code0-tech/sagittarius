@@ -31,7 +31,7 @@ RSpec.describe 'organizationsUpdate Mutation' do
   let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
   let(:organization) do
-    create(:organization).tap { |org| create(:organization_member, user: current_user, organization: org) }
+    create(:organization).tap { |org| create(:namespace_member, user: current_user, namespace: org.ensure_namespace) }
   end
 
   before do
@@ -52,8 +52,8 @@ RSpec.describe 'organizationsUpdate Mutation' do
       entity_id: organization.id,
       entity_type: 'Organization',
       details: { name: input[:name] },
-      target_id: organization.id,
-      target_type: 'Organization'
+      target_id: organization.namespace.id,
+      target_type: 'Namespace'
     )
   end
 

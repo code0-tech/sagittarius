@@ -3,28 +3,12 @@
 class OrganizationPolicy < BasePolicy
   include CustomizablePermission
 
-  condition(:is_member) { @subject.member?(@user) }
+  delegate { @subject.ensure_namespace }
 
-  rule { is_member }.policy do
-    enable :read_organization
-    enable :read_organization_member
-    enable :read_organization_member_role
-    enable :read_organization_role
-  end
+  rule { can?(:read_namespace) }.enable :read_organization
 
-  organization_resolver { |organization| organization }
+  namespace_resolver(&:ensure_namespace)
 
-  customizable_permission :create_organization_role
-  customizable_permission :delete_organization_role
-  customizable_permission :delete_organization
-  customizable_permission :invite_member
-  customizable_permission :delete_member
-  customizable_permission :assign_member_roles
-  customizable_permission :assign_role_abilities
-  customizable_permission :update_organization_role
   customizable_permission :update_organization
-  customizable_permission :organization_administrator
-  customizable_permission :create_organization_project
+  customizable_permission :delete_organization
 end
-
-OrganizationPolicy.prepend_extensions

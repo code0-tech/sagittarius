@@ -29,7 +29,7 @@ module Organizations
           author_id: current_user.id,
           entity: organization,
           details: {},
-          target: organization
+          target: organization.ensure_namespace
         )
 
         ServiceResponse.success(message: 'Organization deleted', payload: organization)

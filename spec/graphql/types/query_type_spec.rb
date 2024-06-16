@@ -10,6 +10,7 @@ RSpec.describe SagittariusSchema.types['Query'] do
       currentUser
       echo
       organization
+      namespace
       node
       nodes
     ]

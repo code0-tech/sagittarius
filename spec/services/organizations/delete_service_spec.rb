@@ -35,9 +35,8 @@ RSpec.describe Organizations::DeleteService do
     let(:current_user) { create(:user) }
 
     before do
-      create(:organization_member, organization: organization, user: current_user)
-      stub_allowed_ability(OrganizationPolicy, :delete_organization, user: current_user,
-                                                                     subject: organization)
+      create(:namespace_member, namespace: organization.ensure_namespace, user: current_user)
+      stub_allowed_ability(OrganizationPolicy, :delete_organization, user: current_user, subject: organization)
     end
 
     it { is_expected.to be_success }
@@ -50,8 +49,8 @@ RSpec.describe Organizations::DeleteService do
         author_id: current_user.id,
         entity_type: 'Organization',
         details: {},
-        target_id: organization.id,
-        target_type: 'Organization'
+        target_id: organization.namespace.id,
+        target_type: 'Namespace'
       )
     end
   end

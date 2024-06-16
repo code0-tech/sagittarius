@@ -120,24 +120,24 @@ CREATE TABLE good_jobs (
     locked_at timestamp with time zone
 );
 
-CREATE TABLE organization_licenses (
+CREATE TABLE namespace_licenses (
     id bigint NOT NULL,
-    organization_id bigint NOT NULL,
     data text NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    namespace_id bigint NOT NULL
 );
 
-CREATE SEQUENCE organization_licenses_id_seq
+CREATE SEQUENCE namespace_licenses_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE organization_licenses_id_seq OWNED BY organization_licenses.id;
+ALTER SEQUENCE namespace_licenses_id_seq OWNED BY namespace_licenses.id;
 
-CREATE TABLE organization_member_roles (
+CREATE TABLE namespace_member_roles (
     id bigint NOT NULL,
     role_id bigint NOT NULL,
     member_id bigint NOT NULL,
@@ -145,85 +145,102 @@ CREATE TABLE organization_member_roles (
     updated_at timestamp with time zone NOT NULL
 );
 
-CREATE SEQUENCE organization_member_roles_id_seq
+CREATE SEQUENCE namespace_member_roles_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE organization_member_roles_id_seq OWNED BY organization_member_roles.id;
+ALTER SEQUENCE namespace_member_roles_id_seq OWNED BY namespace_member_roles.id;
 
-CREATE TABLE organization_members (
+CREATE TABLE namespace_members (
     id bigint NOT NULL,
-    organization_id bigint NOT NULL,
     user_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    namespace_id bigint NOT NULL
 );
 
-CREATE SEQUENCE organization_members_id_seq
+CREATE SEQUENCE namespace_members_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE organization_members_id_seq OWNED BY organization_members.id;
+ALTER SEQUENCE namespace_members_id_seq OWNED BY namespace_members.id;
 
-CREATE TABLE organization_projects (
+CREATE TABLE namespace_projects (
     id bigint NOT NULL,
-    organization_id bigint NOT NULL,
     name text NOT NULL,
     description text DEFAULT ''::text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
+    namespace_id bigint NOT NULL,
     CONSTRAINT check_09e881e641 CHECK ((char_length(name) <= 50)),
     CONSTRAINT check_a77bf7c685 CHECK ((char_length(description) <= 500))
 );
 
-CREATE SEQUENCE organization_projects_id_seq
+CREATE SEQUENCE namespace_projects_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE organization_projects_id_seq OWNED BY organization_projects.id;
+ALTER SEQUENCE namespace_projects_id_seq OWNED BY namespace_projects.id;
 
-CREATE TABLE organization_role_abilities (
+CREATE TABLE namespace_role_abilities (
     id bigint NOT NULL,
-    organization_role_id bigint NOT NULL,
     ability integer NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    namespace_role_id bigint NOT NULL
 );
 
-CREATE SEQUENCE organization_role_abilities_id_seq
+CREATE SEQUENCE namespace_role_abilities_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE organization_role_abilities_id_seq OWNED BY organization_role_abilities.id;
+ALTER SEQUENCE namespace_role_abilities_id_seq OWNED BY namespace_role_abilities.id;
 
-CREATE TABLE organization_roles (
+CREATE TABLE namespace_roles (
     id bigint NOT NULL,
-    organization_id bigint NOT NULL,
     name text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    namespace_id bigint NOT NULL
+);
+
+CREATE SEQUENCE namespace_roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE namespace_roles_id_seq OWNED BY namespace_roles.id;
+
+CREATE TABLE namespaces (
+    id bigint NOT NULL,
+    parent_type character varying NOT NULL,
+    parent_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
 
-CREATE SEQUENCE organization_roles_id_seq
+CREATE SEQUENCE namespaces_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE organization_roles_id_seq OWNED BY organization_roles.id;
+ALTER SEQUENCE namespaces_id_seq OWNED BY namespaces.id;
 
 CREATE TABLE organizations (
     id bigint NOT NULL,
@@ -293,17 +310,19 @@ ALTER TABLE ONLY application_settings ALTER COLUMN id SET DEFAULT nextval('appli
 
 ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_id_seq'::regclass);
 
-ALTER TABLE ONLY organization_licenses ALTER COLUMN id SET DEFAULT nextval('organization_licenses_id_seq'::regclass);
+ALTER TABLE ONLY namespace_licenses ALTER COLUMN id SET DEFAULT nextval('namespace_licenses_id_seq'::regclass);
 
-ALTER TABLE ONLY organization_member_roles ALTER COLUMN id SET DEFAULT nextval('organization_member_roles_id_seq'::regclass);
+ALTER TABLE ONLY namespace_member_roles ALTER COLUMN id SET DEFAULT nextval('namespace_member_roles_id_seq'::regclass);
 
-ALTER TABLE ONLY organization_members ALTER COLUMN id SET DEFAULT nextval('organization_members_id_seq'::regclass);
+ALTER TABLE ONLY namespace_members ALTER COLUMN id SET DEFAULT nextval('namespace_members_id_seq'::regclass);
 
-ALTER TABLE ONLY organization_projects ALTER COLUMN id SET DEFAULT nextval('organization_projects_id_seq'::regclass);
+ALTER TABLE ONLY namespace_projects ALTER COLUMN id SET DEFAULT nextval('namespace_projects_id_seq'::regclass);
 
-ALTER TABLE ONLY organization_role_abilities ALTER COLUMN id SET DEFAULT nextval('organization_role_abilities_id_seq'::regclass);
+ALTER TABLE ONLY namespace_role_abilities ALTER COLUMN id SET DEFAULT nextval('namespace_role_abilities_id_seq'::regclass);
 
-ALTER TABLE ONLY organization_roles ALTER COLUMN id SET DEFAULT nextval('organization_roles_id_seq'::regclass);
+ALTER TABLE ONLY namespace_roles ALTER COLUMN id SET DEFAULT nextval('namespace_roles_id_seq'::regclass);
+
+ALTER TABLE ONLY namespaces ALTER COLUMN id SET DEFAULT nextval('namespaces_id_seq'::regclass);
 
 ALTER TABLE ONLY organizations ALTER COLUMN id SET DEFAULT nextval('organizations_id_seq'::regclass);
 
@@ -335,23 +354,26 @@ ALTER TABLE ONLY good_job_settings
 ALTER TABLE ONLY good_jobs
     ADD CONSTRAINT good_jobs_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY organization_licenses
-    ADD CONSTRAINT organization_licenses_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY namespace_licenses
+    ADD CONSTRAINT namespace_licenses_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY organization_member_roles
-    ADD CONSTRAINT organization_member_roles_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY namespace_member_roles
+    ADD CONSTRAINT namespace_member_roles_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY organization_members
-    ADD CONSTRAINT organization_members_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY namespace_members
+    ADD CONSTRAINT namespace_members_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY organization_projects
-    ADD CONSTRAINT organization_projects_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY namespace_projects
+    ADD CONSTRAINT namespace_projects_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY organization_role_abilities
-    ADD CONSTRAINT organization_role_abilities_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY namespace_role_abilities
+    ADD CONSTRAINT namespace_role_abilities_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY organization_roles
-    ADD CONSTRAINT organization_roles_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY namespace_roles
+    ADD CONSTRAINT namespace_roles_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY namespaces
+    ADD CONSTRAINT namespaces_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY organizations
     ADD CONSTRAINT organizations_pkey PRIMARY KEY (id);
@@ -365,7 +387,7 @@ ALTER TABLE ONLY user_sessions
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
-CREATE UNIQUE INDEX idx_on_organization_role_id_ability_9df7780947 ON organization_role_abilities USING btree (organization_role_id, ability);
+CREATE UNIQUE INDEX idx_on_namespace_role_id_ability_a092da8841 ON namespace_role_abilities USING btree (namespace_role_id, ability);
 
 CREATE UNIQUE INDEX index_application_settings_on_setting ON application_settings USING btree (setting);
 
@@ -405,27 +427,21 @@ CREATE INDEX index_good_jobs_on_queue_name_and_scheduled_at ON good_jobs USING b
 
 CREATE INDEX index_good_jobs_on_scheduled_at ON good_jobs USING btree (scheduled_at) WHERE (finished_at IS NULL);
 
-CREATE INDEX index_organization_licenses_on_organization_id ON organization_licenses USING btree (organization_id);
+CREATE INDEX index_namespace_licenses_on_namespace_id ON namespace_licenses USING btree (namespace_id);
 
-CREATE INDEX index_organization_member_roles_on_member_id ON organization_member_roles USING btree (member_id);
+CREATE INDEX index_namespace_member_roles_on_member_id ON namespace_member_roles USING btree (member_id);
 
-CREATE INDEX index_organization_member_roles_on_role_id ON organization_member_roles USING btree (role_id);
+CREATE INDEX index_namespace_member_roles_on_role_id ON namespace_member_roles USING btree (role_id);
 
-CREATE INDEX index_organization_members_on_organization_id ON organization_members USING btree (organization_id);
+CREATE UNIQUE INDEX index_namespace_members_on_namespace_id_and_user_id ON namespace_members USING btree (namespace_id, user_id);
 
-CREATE UNIQUE INDEX index_organization_members_on_organization_id_and_user_id ON organization_members USING btree (organization_id, user_id);
+CREATE INDEX index_namespace_members_on_user_id ON namespace_members USING btree (user_id);
 
-CREATE INDEX index_organization_members_on_user_id ON organization_members USING btree (user_id);
+CREATE INDEX index_namespace_projects_on_namespace_id ON namespace_projects USING btree (namespace_id);
 
-CREATE INDEX index_organization_projects_on_organization_id ON organization_projects USING btree (organization_id);
+CREATE UNIQUE INDEX "index_namespace_roles_on_namespace_id_LOWER_name" ON namespace_roles USING btree (namespace_id, lower(name));
 
-CREATE UNIQUE INDEX "index_organization_projects_on_organization_id_LOWER_name" ON organization_projects USING btree (organization_id, lower(name));
-
-CREATE INDEX index_organization_role_abilities_on_organization_role_id ON organization_role_abilities USING btree (organization_role_id);
-
-CREATE INDEX index_organization_roles_on_organization_id ON organization_roles USING btree (organization_id);
-
-CREATE UNIQUE INDEX "index_organization_roles_on_organization_id_LOWER_name" ON organization_roles USING btree (organization_id, lower(name));
+CREATE UNIQUE INDEX index_namespaces_on_parent_id_and_parent_type ON namespaces USING btree (parent_id, parent_type);
 
 CREATE UNIQUE INDEX "index_organizations_on_LOWER_name" ON organizations USING btree (lower(name));
 
@@ -437,32 +453,32 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(ema
 
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
 
-ALTER TABLE ONLY organization_licenses
-    ADD CONSTRAINT fk_rails_11d9c294ea FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
+ALTER TABLE ONLY namespace_roles
+    ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY organization_roles
-    ADD CONSTRAINT fk_rails_1edd21f138 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
+ALTER TABLE ONLY namespace_licenses
+    ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY organization_member_roles
-    ADD CONSTRAINT fk_rails_585a684166 FOREIGN KEY (role_id) REFERENCES organization_roles(id) ON DELETE CASCADE;
+ALTER TABLE ONLY namespace_members
+    ADD CONSTRAINT fk_rails_567f152a62 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY organization_member_roles
-    ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES organization_members(id) ON DELETE CASCADE;
+ALTER TABLE ONLY namespace_member_roles
+    ADD CONSTRAINT fk_rails_585a684166 FOREIGN KEY (role_id) REFERENCES namespace_roles(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY namespace_member_roles
+    ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES namespace_members(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY namespace_role_abilities
+    ADD CONSTRAINT fk_rails_6f3304b078 FOREIGN KEY (namespace_role_id) REFERENCES namespace_roles(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT fk_rails_9fa262d742 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY organization_members
+ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY organization_role_abilities
-    ADD CONSTRAINT fk_rails_d6431c7c9d FOREIGN KEY (organization_role_id) REFERENCES organization_roles(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY organization_projects
-    ADD CONSTRAINT fk_rails_ece07c98f6 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
+ALTER TABLE ONLY namespace_projects
+    ADD CONSTRAINT fk_rails_d4f50e2f00 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY audit_events
     ADD CONSTRAINT fk_rails_f64374fc56 FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL;
-
-ALTER TABLE ONLY organization_members
-    ADD CONSTRAINT fk_rails_ff629e24d8 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;

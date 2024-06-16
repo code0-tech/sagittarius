@@ -30,7 +30,7 @@ module Organizations
           :organization_updated,
           author_id: current_user.id,
           entity: organization,
-          target: organization,
+          target: organization.ensure_namespace,
           details: params
         )
 
