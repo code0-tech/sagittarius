@@ -81,8 +81,8 @@ RSpec.describe NamespaceLicense do
       create(
         :namespace_license,
         namespace: namespace,
-        start_date: Time.zone.today + 1,
-        end_date: Time.zone.today + 2
+        start_date: Time.zone.today + 2,
+        end_date: Time.zone.today + 3
       )
 
       expect(described_class.load_license(namespace)).to eq(current_license)
