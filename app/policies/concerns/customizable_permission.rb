@@ -31,10 +31,11 @@ module CustomizablePermission
     def user_has_ability?(ability, user, subject)
       return false if namespace_member(user, subject).nil?
 
-      namespace_member(user, subject)
-        .roles
-        .joins(:abilities)
-        .exists?(namespace_role_abilities: { ability: ability })
+      roles = namespace_member(user, subject).roles
+
+      roles = roles.applicable_to_project(subject) if subject.is_a?(NamespaceProject)
+
+      roles.joins(:abilities).exists?(namespace_role_abilities: { ability: ability })
     end
   end
 end

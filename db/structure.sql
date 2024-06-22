@@ -208,6 +208,23 @@ CREATE SEQUENCE namespace_role_abilities_id_seq
 
 ALTER SEQUENCE namespace_role_abilities_id_seq OWNED BY namespace_role_abilities.id;
 
+CREATE TABLE namespace_role_project_assignments (
+    id bigint NOT NULL,
+    role_id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE namespace_role_project_assignments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE namespace_role_project_assignments_id_seq OWNED BY namespace_role_project_assignments.id;
+
 CREATE TABLE namespace_roles (
     id bigint NOT NULL,
     name text NOT NULL,
@@ -341,6 +358,8 @@ ALTER TABLE ONLY namespace_projects ALTER COLUMN id SET DEFAULT nextval('namespa
 
 ALTER TABLE ONLY namespace_role_abilities ALTER COLUMN id SET DEFAULT nextval('namespace_role_abilities_id_seq'::regclass);
 
+ALTER TABLE ONLY namespace_role_project_assignments ALTER COLUMN id SET DEFAULT nextval('namespace_role_project_assignments_id_seq'::regclass);
+
 ALTER TABLE ONLY namespace_roles ALTER COLUMN id SET DEFAULT nextval('namespace_roles_id_seq'::regclass);
 
 ALTER TABLE ONLY namespaces ALTER COLUMN id SET DEFAULT nextval('namespaces_id_seq'::regclass);
@@ -392,6 +411,9 @@ ALTER TABLE ONLY namespace_projects
 ALTER TABLE ONLY namespace_role_abilities
     ADD CONSTRAINT namespace_role_abilities_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY namespace_role_project_assignments
+    ADD CONSTRAINT namespace_role_project_assignments_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT namespace_roles_pkey PRIMARY KEY (id);
 
@@ -414,6 +436,8 @@ ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 CREATE UNIQUE INDEX idx_on_namespace_role_id_ability_a092da8841 ON namespace_role_abilities USING btree (namespace_role_id, ability);
+
+CREATE UNIQUE INDEX idx_on_role_id_project_id_5d4b5917dc ON namespace_role_project_assignments USING btree (role_id, project_id);
 
 CREATE UNIQUE INDEX index_application_settings_on_setting ON application_settings USING btree (setting);
 
@@ -465,6 +489,8 @@ CREATE INDEX index_namespace_members_on_user_id ON namespace_members USING btree
 
 CREATE INDEX index_namespace_projects_on_namespace_id ON namespace_projects USING btree (namespace_id);
 
+CREATE INDEX index_namespace_role_project_assignments_on_project_id ON namespace_role_project_assignments USING btree (project_id);
+
 CREATE UNIQUE INDEX "index_namespace_roles_on_namespace_id_LOWER_name" ON namespace_roles USING btree (namespace_id, lower(name));
 
 CREATE UNIQUE INDEX index_namespaces_on_parent_id_and_parent_type ON namespaces USING btree (parent_id, parent_type);
@@ -494,6 +520,12 @@ ALTER TABLE ONLY namespace_members
 
 ALTER TABLE ONLY namespace_member_roles
     ADD CONSTRAINT fk_rails_585a684166 FOREIGN KEY (role_id) REFERENCES namespace_roles(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY namespace_role_project_assignments
+    ADD CONSTRAINT fk_rails_623f8a5b72 FOREIGN KEY (role_id) REFERENCES namespace_roles(id);
+
+ALTER TABLE ONLY namespace_role_project_assignments
+    ADD CONSTRAINT fk_rails_69066bda8f FOREIGN KEY (project_id) REFERENCES namespace_projects(id);
 
 ALTER TABLE ONLY namespace_member_roles
     ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES namespace_members(id) ON DELETE CASCADE;
