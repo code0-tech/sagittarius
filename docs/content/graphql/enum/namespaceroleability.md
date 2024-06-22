@@ -8,6 +8,7 @@ Represents abilities that can be granted to roles in namespaces.
 |-------|-------------|
 | `ASSIGN_MEMBER_ROLES` | Allows to change the roles of a namespace member |
 | `ASSIGN_ROLE_ABILITIES` | Allows to change the abilities of a namespace role |
+| `ASSIGN_ROLE_PROJECTS` | Allows to change the assigned projects of a namespace role |
 | `CREATE_NAMESPACE_LICENSE` | Allows to create a license for the namespace |
 | `CREATE_NAMESPACE_PROJECT` | Allows to create a project in the namespace |
 | `CREATE_NAMESPACE_ROLE` | Allows the creation of roles in a namespace |

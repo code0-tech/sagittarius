@@ -23,6 +23,7 @@ class NamespacePolicy < BasePolicy
   customizable_permission :update_namespace_role
   customizable_permission :namespace_administrator
   customizable_permission :create_namespace_project
+  customizable_permission :assign_role_projects
 end
 
 NamespacePolicy.prepend_extensions

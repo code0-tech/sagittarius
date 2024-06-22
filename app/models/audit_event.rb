@@ -20,6 +20,7 @@ class AuditEvent < ApplicationRecord
     namespace_license_deleted: 16, # EE-specific
     namespace_project_deleted: 17,
     namespace_project_updated: 18,
+    namespace_role_projects_updated: 19,
   }.with_indifferent_access
 
   enum :action_type, ACTION_TYPES, prefix: :action
