@@ -12,6 +12,9 @@ module Types
     field :namespace, Types::NamespaceType, null: true,
                                             description: 'The namespace where this role belongs to'
 
+    field :assigned_projects, Types::NamespaceProjectType.connection_type,
+          description: 'The projects this role is assigned to'
+
     id_field ::NamespaceRole
     timestamps
 

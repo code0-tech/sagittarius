@@ -7,6 +7,14 @@ RSpec.describe NamespaceProject do
 
   describe 'associations' do
     it { is_expected.to belong_to(:namespace).required }
+    it { is_expected.to have_many(:role_assignments).class_name('NamespaceRoleProjectAssignment').inverse_of(:project) }
+
+    it do
+      is_expected.to have_many(:assigned_roles).class_name('NamespaceRole')
+                                               .through(:role_assignments)
+                                               .source(:project)
+                                               .inverse_of(:assigned_projects)
+    end
   end
 
   describe 'validations' do

@@ -13,6 +13,12 @@ module StubAbility
       .and_return(true)
     # rubocop:enable RSpec/AnyInstance
   end
+
+  def stub_all_abilities(policy_class)
+    # rubocop:disable RSpec/AnyInstance -- policy instances are per user and subject
+    allow_any_instance_of(policy_class).to receive(:user_has_ability?).and_return(false)
+    # rubocop:enable RSpec/AnyInstance
+  end
 end
 
 RSpec.configure do |config|
