@@ -10,6 +10,7 @@ class NamespacePolicy < BasePolicy
     enable :read_namespace_member
     enable :read_namespace_member_role
     enable :read_namespace_role
+    enable :read_runtime
   end
 
   namespace_resolver { |namespace| namespace }
@@ -23,6 +24,7 @@ class NamespacePolicy < BasePolicy
   customizable_permission :update_namespace_role
   customizable_permission :namespace_administrator
   customizable_permission :create_namespace_project
+  customizable_permission :create_runtime
 end
 
 NamespacePolicy.prepend_extensions

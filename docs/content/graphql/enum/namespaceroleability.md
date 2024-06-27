@@ -11,6 +11,7 @@ Represents abilities that can be granted to roles in namespaces.
 | `CREATE_NAMESPACE_LICENSE` | Allows to create a license for the namespace |
 | `CREATE_NAMESPACE_PROJECT` | Allows to create a project in the namespace |
 | `CREATE_NAMESPACE_ROLE` | Allows the creation of roles in a namespace |
+| `CREATE_RUNTIME` | Allows to create a namespace globally or for the namespace |
 | `DELETE_MEMBER` | Allows to remove members of a namespace |
 | `DELETE_NAMESPACE_LICENSE` | Allows to delete the license of the namespace |
 | `DELETE_NAMESPACE_PROJECT` | Allows to delete the project of the namespace |

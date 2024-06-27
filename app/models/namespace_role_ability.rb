@@ -19,6 +19,7 @@ class NamespaceRoleAbility < ApplicationRecord
     delete_namespace_license: { db: 15, description: 'Allows to delete the license of the namespace' }, # EE-specific
     update_namespace_project: { db: 16, description: 'Allows to update the project of the namespace' },
     delete_namespace_project: { db: 17, description: 'Allows to delete the project of the namespace' },
+    create_runtime: { db: 18, description: 'Allows to create a namespace globally or for the namespace' },
   }.with_indifferent_access
   enum :ability, ABILITIES.transform_values { |v| v[:db] }, prefix: :can
 

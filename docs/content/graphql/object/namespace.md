@@ -15,5 +15,6 @@ Represents a Namespace
 | `parent` | [`NamespaceParent!`](../union/namespaceparent.md) | Parent of this namespace |
 | `projects` | [`NamespaceProjectConnection!`](../object/namespaceprojectconnection.md) | Projects of the namespace |
 | `roles` | [`NamespaceRoleConnection!`](../object/namespaceroleconnection.md) | Roles of the namespace |
+| `runtimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Runtime of the namespace |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Namespace was last updated |
 
