@@ -74,7 +74,6 @@ RSpec.describe 'runtimesUpdate Mutation' do
     end
 
     it 'updates runtime' do
-      p parsed_response
       expect(graphql_data_at(:runtimes_update, :runtime, :id)).to be_present
 
       runtime = SagittariusSchema.object_from_id(graphql_data_at(:runtimes_update, :runtime, :id))
