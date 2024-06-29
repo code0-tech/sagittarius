@@ -15,7 +15,7 @@ module Types
     timestamps
 
     def token
-      object.token if object.id_previously_changed?
+      object.token if object.token_previously_changed?
     end
   end
 end

@@ -27,6 +27,7 @@ class NamespacePolicy < BasePolicy
   customizable_permission :create_runtime
   customizable_permission :update_runtime
   customizable_permission :delete_runtime
+  customizable_permission :rotate_runtime_token
 end
 
 NamespacePolicy.prepend_extensions

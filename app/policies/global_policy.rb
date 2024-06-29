@@ -15,5 +15,6 @@ class GlobalPolicy < BasePolicy
     enable :create_runtime
     enable :update_runtime
     enable :delete_runtime
+    enable :rotate_runtime_token
   end
 end

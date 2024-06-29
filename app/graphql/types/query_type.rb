@@ -66,9 +66,8 @@ module Types
       SagittariusSchema.object_from_id(id)
     end
 
-    def global_runtimes()
+    def global_runtimes
       Runtime.where(namespace: nil)
     end
-
   end
 end

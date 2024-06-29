@@ -2,13 +2,13 @@
 
 module Mutations
   module Runtimes
-    class Delete < BaseMutation
-      description 'Delete an existing runtime.'
+    class RotateToken < BaseMutation
+      description 'reloads the token of an existing runtime.'
 
-      field :runtime, Types::RuntimeType, null: true, description: 'The updated organization.'
+      field :runtime, Types::RuntimeType, null: true, description: 'The updated runtime.'
 
       argument :runtime_id, Types::GlobalIdType[::Runtime], required: true,
-                                                            description: 'The runtime to delete.'
+                                                            description: 'The runtime to rotate the token.'
 
       def resolve(runtime_id:)
         runtime = SagittariusSchema.object_from_id(runtime_id)
@@ -18,7 +18,7 @@ module Mutations
                    errors: [create_message_error('Invalid runtime')] }
         end
 
-        ::Runtimes::DeleteService.new(
+        ::Runtimes::RotateTokenService.new(
           current_user,
           runtime
         ).execute.to_mutation_response(success_key: :runtime)

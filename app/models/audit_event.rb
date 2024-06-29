@@ -23,6 +23,7 @@ class AuditEvent < ApplicationRecord
     runtime_created: 19,
     runtime_updated: 20,
     runtime_deleted: 21,
+    runtime_token_rotated: 22,
   }.with_indifferent_access
 
   # rubocop:disable Lint/StructNewOverride
