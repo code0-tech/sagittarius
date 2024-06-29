@@ -26,6 +26,7 @@ class NamespacePolicy < BasePolicy
   customizable_permission :create_namespace_project
   customizable_permission :create_runtime
   customizable_permission :update_runtime
+  customizable_permission :delete_runtime
 end
 
 NamespacePolicy.prepend_extensions
