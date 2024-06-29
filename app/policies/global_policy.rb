@@ -13,5 +13,6 @@ class GlobalPolicy < BasePolicy
     enable :read_application_setting
     enable :update_application_setting
     enable :create_runtime
+    enable :update_runtime
   end
 end

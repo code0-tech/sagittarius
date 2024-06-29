@@ -24,3 +24,4 @@ Represents abilities that can be granted to roles in namespaces.
 | `UPDATE_NAMESPACE_PROJECT` | Allows to update the project of the namespace |
 | `UPDATE_NAMESPACE_ROLE` | Allows to update the namespace role |
 | `UPDATE_ORGANIZATION` | Allows to update the organization |
+| `UPDATE_RUNTIME` | Allows to update a namespace globally or for the namespace |
