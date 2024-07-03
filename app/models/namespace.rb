@@ -10,6 +10,8 @@ class Namespace < ApplicationRecord
 
   has_many :projects, class_name: 'NamespaceProject', inverse_of: :namespace
 
+  has_many :runtimes, inverse_of: :namespace
+
   def organization_type?
     parent_type == Organization.name
   end

@@ -20,7 +20,15 @@ class AuditEvent < ApplicationRecord
     namespace_license_deleted: 16, # EE-specific
     namespace_project_deleted: 17,
     namespace_project_updated: 18,
+    runtime_created: 19,
+    runtime_updated: 20,
+    runtime_deleted: 21,
+    runtime_token_rotated: 22,
   }.with_indifferent_access
+
+  # rubocop:disable Lint/StructNewOverride
+  GLOBAL_TARGET = Struct.new(:id, :class).new(0, Struct.new(:name).new('global'))
+  # rubocop:enable Lint/StructNewOverride
 
   enum :action_type, ACTION_TYPES, prefix: :action
 

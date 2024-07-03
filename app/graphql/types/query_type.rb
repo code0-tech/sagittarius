@@ -38,6 +38,8 @@ module Types
       argument :id, Types::GlobalIdType[::Namespace], required: true, description: 'GlobalID of the target namespace'
     end
 
+    field :global_runtimes, Types::RuntimeType.connection_type, null: false, description: 'Find runtimes'
+
     def node(id:)
       context.schema.object_from_id(id, context)
     end
@@ -62,6 +64,10 @@ module Types
 
     def namespace(id:)
       SagittariusSchema.object_from_id(id)
+    end
+
+    def global_runtimes
+      Runtime.where(namespace: nil)
     end
   end
 end

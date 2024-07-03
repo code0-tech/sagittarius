@@ -4,7 +4,7 @@ module TokenAttr
   extend ActiveSupport::Concern
 
   class_methods do
-    def token_attr(attribute, prefix: 'v_t_', length: 48, allow_nil: false)
+    def token_attr(attribute, prefix: 's_t_', length: 48, allow_nil: false)
       encrypts attribute, deterministic: true
 
       if allow_nil
