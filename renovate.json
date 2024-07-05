@@ -5,6 +5,7 @@
     ":assignee(Taucher2003)",
     ":label(dependencies)"
   ],
+  "rangeStrategy": "bump",
   "packageRules": [
     {
       "matchDepNames": ["ruby", "redis", "postgres"],
