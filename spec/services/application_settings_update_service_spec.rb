@@ -17,7 +17,7 @@ RSpec.describe ApplicationSettingsUpdateService do
     end
 
     it do
-      expect { service_response }.not_to create_audit_event(:application_setting_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -33,7 +33,7 @@ RSpec.describe ApplicationSettingsUpdateService do
     end
 
     it do
-      expect { service_response }.not_to create_audit_event(:application_setting_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 

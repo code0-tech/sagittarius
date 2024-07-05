@@ -17,7 +17,7 @@ RSpec.describe NamespaceRoles::AssignProjectsService do
     it { expect { service_response }.not_to change { NamespaceRoleProjectAssignment.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_role_projects_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe NamespaceRoles::AssignProjectsService do
     it { expect { service_response }.not_to change { NamespaceRoleProjectAssignment.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_role_projects_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 

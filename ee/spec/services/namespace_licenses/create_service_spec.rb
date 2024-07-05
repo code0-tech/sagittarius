@@ -14,7 +14,7 @@ RSpec.describe NamespaceLicenses::CreateService do
       expect { service_response }.not_to change { NamespaceLicense.count }
     end
 
-    it { expect { service_response }.not_to create_audit_event(:namespace_license_created) }
+    it { expect { service_response }.not_to create_audit_event }
   end
 
   context 'when user does not exist' do

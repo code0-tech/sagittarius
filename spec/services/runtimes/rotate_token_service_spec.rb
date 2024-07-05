@@ -15,7 +15,7 @@ RSpec.describe Runtimes::RotateTokenService do
     it { expect { service_response }.not_to change { runtime.reload.token } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:runtime_token_rotated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 

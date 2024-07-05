@@ -15,7 +15,7 @@ RSpec.describe Runtimes::CreateService do
       expect { service_response }.not_to change { Runtime.count }
     end
 
-    it { expect { service_response }.not_to create_audit_event(:runtime_created) }
+    it { expect { service_response }.not_to create_audit_event }
   end
 
   context 'when runtime does not exist' do
