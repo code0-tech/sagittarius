@@ -5,7 +5,7 @@
     ":assignee(Taucher2003)",
     ":label(dependencies)"
   ],
-  "rangeStrategy": "bump",
+  "rangeStrategy": "update-lockfile",
   "packageRules": [
     {
       "matchDepNames": ["ruby", "redis", "postgres"],
