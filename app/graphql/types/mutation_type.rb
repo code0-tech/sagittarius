@@ -14,6 +14,7 @@ module Types
     mount_mutation Mutations::NamespaceProjects::Update
     mount_mutation Mutations::NamespaceProjects::Delete
     mount_mutation Mutations::NamespaceRoles::AssignAbilities
+    mount_mutation Mutations::NamespaceRoles::AssignProjects
     mount_mutation Mutations::NamespaceRoles::Create
     mount_mutation Mutations::NamespaceRoles::Delete
     mount_mutation Mutations::NamespaceRoles::Update
