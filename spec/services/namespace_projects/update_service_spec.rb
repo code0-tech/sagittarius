@@ -18,7 +18,7 @@ RSpec.describe NamespaceProjects::UpdateService do
     it { expect { service_response }.not_to change { namespace_project.reload.name } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_project_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -30,7 +30,7 @@ RSpec.describe NamespaceProjects::UpdateService do
     it { expect { service_response }.not_to change { namespace_project.reload.name } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_project_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 

@@ -24,7 +24,7 @@ RSpec.describe NamespaceMembers::AssignRolesService do
     it { expect { service_response }.not_to change { NamespaceMemberRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_member_roles_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -34,7 +34,7 @@ RSpec.describe NamespaceMembers::AssignRolesService do
     it { expect { service_response }.not_to change { NamespaceMemberRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_member_roles_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -52,7 +52,7 @@ RSpec.describe NamespaceMembers::AssignRolesService do
       it { expect { service_response }.not_to change { NamespaceMemberRole.count } }
 
       it do
-        expect { service_response }.not_to create_audit_event(:namespace_member_roles_updated)
+        expect { service_response }.not_to create_audit_event
       end
     end
 
@@ -152,7 +152,7 @@ RSpec.describe NamespaceMembers::AssignRolesService do
       it { expect { service_response }.not_to change { NamespaceMemberRole.count } }
 
       it do
-        expect { service_response }.not_to create_audit_event(:namespace_member_roles_updated)
+        expect { service_response }.not_to create_audit_event
       end
     end
   end

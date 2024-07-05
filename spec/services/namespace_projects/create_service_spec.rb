@@ -14,7 +14,7 @@ RSpec.describe NamespaceProjects::CreateService do
       expect { service_response }.not_to change { NamespaceProject.count }
     end
 
-    it { expect { service_response }.not_to create_audit_event(:namespace_project_created) }
+    it { expect { service_response }.not_to create_audit_event }
   end
 
   context 'when user does not exist' do

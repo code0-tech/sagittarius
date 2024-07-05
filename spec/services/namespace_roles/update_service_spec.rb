@@ -17,7 +17,7 @@ RSpec.describe NamespaceRoles::UpdateService do
     it { expect { service_response }.not_to change { namespace_role.reload.name } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_role_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -29,7 +29,7 @@ RSpec.describe NamespaceRoles::UpdateService do
     it { expect { service_response }.not_to change { namespace_role.reload.name } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_role_updated)
+      expect { service_response }.not_to create_audit_event
     end
   end
 

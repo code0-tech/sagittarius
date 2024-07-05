@@ -39,7 +39,7 @@ RSpec.describe Users::RegisterService do
   shared_examples 'invalid user' do
     it { is_expected.not_to be_success }
     it { expect(service_response.message).to eq('User is invalid') }
-    it { expect { service_response }.not_to create_audit_event(:user_registered) }
+    it { expect { service_response }.not_to create_audit_event }
   end
 
   context 'when user is invalid' do
