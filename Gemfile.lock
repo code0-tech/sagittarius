@@ -298,7 +298,7 @@ GEM
       rubocop (~> 1.61)
     rubocop-graphql (1.5.3)
       rubocop (>= 1.50, < 2)
-    rubocop-rails (2.25.0)
+    rubocop-rails (2.25.1)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.33.0, < 2.0)
