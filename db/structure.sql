@@ -74,7 +74,8 @@ CREATE TABLE good_job_executions (
     error text,
     error_event smallint,
     error_backtrace text[],
-    process_id uuid
+    process_id uuid,
+    duration interval
 );
 
 CREATE TABLE good_job_processes (
