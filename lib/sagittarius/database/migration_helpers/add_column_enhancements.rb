@@ -7,12 +7,13 @@ module Sagittarius
         def add_column(table_name, column_name, type, *args, **kwargs, &block)
           helper_context = self
 
+          limit = kwargs.delete(:limit)
+          unique = kwargs.delete(:unique)
+
           super
 
           return unless type == :text
 
-          limit = kwargs.delete(:limit)
-          unique = kwargs.delete(:unique)
 
           quoted_column_name = helper_context.quote_column_name(column_name)
 
