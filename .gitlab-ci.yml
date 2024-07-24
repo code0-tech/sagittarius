@@ -151,9 +151,9 @@ boot:production-mode:
 
 boot:docker:
   stage: test
-  image: docker:27.1.0
+  image: docker:27.1.1
   services:
-    - docker:27.1.0-dind
+    - docker:27.1.1-dind
   parallel:
     matrix:
       - EDITION:
@@ -190,7 +190,7 @@ boot:docker:
 
 boot:docker-orchestrated:
   stage: test
-  image: docker:27.1.0-dind
+  image: docker:27.1.1-dind
   parallel:
     matrix:
       - EDITION:
