@@ -14,7 +14,6 @@ module Sagittarius
 
           return unless type == :text
 
-
           quoted_column_name = helper_context.quote_column_name(column_name)
 
           if limit

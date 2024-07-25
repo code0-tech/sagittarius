@@ -12,11 +12,26 @@ module Users
     end
 
     def execute
+      mfa = args.delete(:mfa)
       user = User.authenticate_by(args)
       if user.nil?
         logger.info(message: 'Failed login', username: args[:username], email: args[:email])
         return ServiceResponse.error(message: 'Invalid login data', payload: :invalid_login_data)
       end
+
+      # validate mfa
+
+      mfa_passed = false
+      mfa_type = mfa&.[](:type)
+      mfa_value = mfa&.[](:value)
+
+      case mfa_type
+      when 'totp'
+        totp = ROTP::TOTP.new(user.totp_secret)
+        mfa_passed = totp.verify(mfa_value)
+      end
+
+      return ServiceResponse.error(message: 'MFA failed', payload: :mfa_failed) if !mfa_passed && user.mfa_enabled?
 
       transactional do
         user_session = UserSession.create(user: user)

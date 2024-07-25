@@ -312,6 +312,7 @@ CREATE TABLE users (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     admin boolean DEFAULT false NOT NULL,
+    totp_secret text,
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),
     CONSTRAINT check_60346c5299 CHECK ((char_length(lastname) <= 50)),
@@ -482,6 +483,8 @@ CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_i
 CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(email));
 
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
+
+CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
 
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;

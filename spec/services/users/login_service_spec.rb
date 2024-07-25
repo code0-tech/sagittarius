@@ -51,6 +51,33 @@ RSpec.describe Users::LoginService do
       it_behaves_like 'check correct credentials'
       it_behaves_like 'creates correct audit event', :username, :email
     end
+
+    context 'when user has enabled TOTP' do
+      let(:totp_secret) { ROTP::Base32.random }
+
+      before do
+        current_user.totp_secret = totp_secret
+        current_user.save!
+      end
+
+      context 'when otp is valid' do
+        let(:otp) { ROTP::TOTP.new(totp_secret).now }
+        let(:params) { { username: username, password: password, mfa: { type: 'totp', value: otp } } }
+
+        it_behaves_like 'check correct credentials'
+        it_behaves_like 'creates correct audit event', :username, :email
+      end
+
+      context 'when otp is invalid' do
+        let(:params) { { username: username, password: password, mfa: { type: 'totp', value: '000000' } } }
+
+        it 'returns an error response' do
+          expect(service_response).to be_error
+          expect(service_response.payload).to eq(:mfa_failed)
+          is_expected.not_to create_audit_event
+        end
+      end
+    end
   end
 
   context 'when the credentials are incorrect' do
