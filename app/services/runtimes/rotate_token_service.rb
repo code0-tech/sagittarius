@@ -12,15 +12,10 @@ module Runtimes
     end
 
     def execute
-      if runtime.namespace.present?
-        unless Ability.allowed?(current_user, :rotate_runtime_token, runtime.namespace)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
-        end
-      else
-        unless Ability.allowed?(current_user, :rotate_runtime_token)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
-        end
+      unless Ability.allowed?(current_user, :rotate_runtime_token, runtime.namespace || :global)
+        return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
+
       transactional do |t|
         runtime.regenerate_token!
         unless runtime.save

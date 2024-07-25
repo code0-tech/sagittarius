@@ -14,14 +14,8 @@ module Runtimes
     end
 
     def execute
-      if namespace.present?
-        unless Ability.allowed?(current_user, :create_runtime, namespace)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
-        end
-      else
-        unless Ability.allowed?(current_user, :create_runtime)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
-        end
+      unless Ability.allowed?(current_user, :create_runtime, namespace || :global)
+        return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
       transactional do

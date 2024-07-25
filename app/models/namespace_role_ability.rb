@@ -23,6 +23,7 @@ class NamespaceRoleAbility < ApplicationRecord
     update_runtime: { db: 19, description: 'Allows to update a runtime globally or for the namespace' },
     delete_runtime: { db: 20, description: 'Allows to delete a runtime' },
     rotate_runtime_token: { db: 21, description: 'Allows to regenerate a runtime token' },
+    assign_role_projects: { db: 22, description: 'Allows to change the assigned projects of a namespace role' },
   }.with_indifferent_access
   enum :ability, ABILITIES.transform_values { |v| v[:db] }, prefix: :can
 

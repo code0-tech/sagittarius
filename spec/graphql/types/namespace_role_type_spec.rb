@@ -9,6 +9,7 @@ RSpec.describe SagittariusSchema.types['NamespaceRole'] do
       namespace
       name
       abilities
+      assignedProjects
       createdAt
       updatedAt
     ]

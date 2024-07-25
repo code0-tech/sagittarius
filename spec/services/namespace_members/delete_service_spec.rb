@@ -27,7 +27,7 @@ RSpec.describe NamespaceMembers::DeleteService do
     it { expect { service_response }.not_to change { NamespaceMember.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_member_deleted)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -39,7 +39,7 @@ RSpec.describe NamespaceMembers::DeleteService do
     it { expect { service_response }.not_to change { NamespaceMember.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_member_deleted)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -58,7 +58,7 @@ RSpec.describe NamespaceMembers::DeleteService do
     it { expect { service_response }.not_to change { NamespaceMember.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_member_deleted)
+      expect { service_response }.not_to create_audit_event
     end
   end
 

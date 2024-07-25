@@ -88,7 +88,7 @@ RSpec.describe Users::LoginService do
     it 'returns an error response' do
       expect(service_response).to be_error
       expect(service_response.message).to eq('Invalid login data')
-      is_expected.not_to create_audit_event(:user_logged_in)
+      is_expected.not_to create_audit_event
     end
   end
 end

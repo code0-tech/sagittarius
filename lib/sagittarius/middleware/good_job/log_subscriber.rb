@@ -8,10 +8,6 @@ module Sagittarius
 
         include Sagittarius::Loggable
 
-        def create(event)
-          in_context { logger.debug(message: 'Created job resource', execution_id: event.payload[:execution].id) }
-        end
-
         def finished_timer_task(event)
           exception = event.payload[:error]
           return unless exception
@@ -78,14 +74,14 @@ module Sagittarius
         end
 
         def perform_job(event)
-          execution = event.payload[:execution]
+          job = event.payload[:job]
           process_id = event.payload[:process_id]
           thread_name = event.payload[:thread_name]
 
           in_context do
             logger.info(
               message: 'Executed job',
-              execution_id: execution.id,
+              execution_id: job.id,
               process_id: process_id,
               thread_name: thread_name
             )

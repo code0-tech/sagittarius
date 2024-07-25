@@ -20,7 +20,7 @@ RSpec.describe NamespaceRoles::DeleteService do
     it { expect { service_response }.not_to change { NamespaceRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_role_deleted)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -32,7 +32,7 @@ RSpec.describe NamespaceRoles::DeleteService do
     it { expect { service_response }.not_to change { NamespaceRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_role_deleted)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -51,7 +51,7 @@ RSpec.describe NamespaceRoles::DeleteService do
     it { expect { service_response }.not_to change { NamespaceRole.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:namespace_role_deleted)
+      expect { service_response }.not_to create_audit_event
     end
   end
 

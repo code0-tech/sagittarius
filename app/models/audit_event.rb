@@ -24,7 +24,8 @@ class AuditEvent < ApplicationRecord
     runtime_updated: 20,
     runtime_deleted: 21,
     runtime_token_rotated: 22,
-    mfa_enabled: 23,
+    namespace_role_projects_updated: 23,
+    mfa_enabled: 24,
   }.with_indifferent_access
 
   # rubocop:disable Lint/StructNewOverride

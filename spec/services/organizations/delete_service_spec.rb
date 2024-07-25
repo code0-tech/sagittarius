@@ -15,7 +15,7 @@ RSpec.describe Organizations::DeleteService do
     it { expect { service_response }.not_to change { Organization.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:organization_deleted)
+      expect { service_response }.not_to create_audit_event
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe Organizations::DeleteService do
     it { expect { service_response }.not_to change { Organization.count } }
 
     it do
-      expect { service_response }.not_to create_audit_event(:organization_deleted)
+      expect { service_response }.not_to create_audit_event
     end
   end
 

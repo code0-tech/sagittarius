@@ -12,7 +12,7 @@ RSpec.describe Organizations::UpdateService do
       expect { service_response }.not_to change { organization.reload.name }
     end
 
-    it { expect { service_response }.not_to create_audit_event(:organization_updated) }
+    it { expect { service_response }.not_to create_audit_event }
   end
 
   context 'when user does not exist' do
