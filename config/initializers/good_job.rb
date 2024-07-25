@@ -18,3 +18,12 @@ Rails.application.config.to_prepare do
   GoodJob::Engine.middleware.use ActionDispatch::Cookies
   GoodJob::Engine.middleware.use ActionDispatch::Session::CookieStore
 end
+
+if Rails.env.development?
+  Rails.application.config.after_initialize do
+    # rubocop:disable Lint/Void -- Eager load ActiveRecord and ActiveJob so that GoodJob will start properly
+    ActiveRecord::Base
+    ActiveJob::Base
+    # rubocop:enable Lint/Void
+  end
+end
