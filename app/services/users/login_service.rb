@@ -24,13 +24,16 @@ module Users
 
         mfa_passed, mfa_type = validate_mfa(mfa, t, user)
 
-        t.rollback_and_return! ServiceResponse.error(message: 'MFA failed', payload: :mfa_failed) if !mfa_passed && user.mfa_enabled?
+        if !mfa_passed && user.mfa_enabled?
+          t.rollback_and_return! ServiceResponse.error(message: 'MFA failed',
+                                                       payload: :mfa_failed)
+        end
 
         user_session = UserSession.create(user: user)
         unless user_session.persisted?
           logger.warn(message: 'Failed to create valid session for user', user_id: user.id, username: user.username)
           t.rollback_and_return! ServiceResponse.error(message: 'UserSession is invalid',
-                                       payload: user_session.errors)
+                                                       payload: user_session.errors)
         end
 
         AuditService.audit(
