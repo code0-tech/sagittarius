@@ -17,6 +17,8 @@ class User < ApplicationRecord
   validates :lastname, length: { maximum: 50 }
   validates :totp_secret, length: { maximum: 32 }
 
+  has_many :backup_codes, inverse_of: :user
+
   has_many :user_sessions, inverse_of: :user
   has_many :authored_audit_events, class_name: 'AuditEvent', inverse_of: :author
 

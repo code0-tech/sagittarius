@@ -11,14 +11,15 @@ RSpec.describe Users::LoginService do
     let(:password) { generate(:password) }
     let!(:current_user) { create(:user, email: email, username: username, password: password) }
 
-    shared_examples 'creates correct audit event' do |key, other_key|
+    shared_examples 'creates correct audit event' do |key, other_key, mfa_type|
       it do
         is_expected.to create_audit_event(
           :user_logged_in,
           author_id: current_user.id,
           entity_type: 'User',
           entity_id: current_user.id,
-          details: { key => current_user.send(key), method: 'username_and_password' },
+          details: { key => current_user.send(key), method: 'username_and_password',
+                     mfa_type: mfa_type },
           target_type: 'User',
           target_id: current_user.id
         )
@@ -52,6 +53,31 @@ RSpec.describe Users::LoginService do
       it_behaves_like 'creates correct audit event', :username, :email
     end
 
+    context 'when using a backup code' do
+      let!(:current_user) do
+        create(:user, email: email, username: username, password: password, totp_secret: ROTP::Base32.random)
+      end
+      let!(:backup_code) { create(:backup_code, user: current_user) }
+
+      context 'when backup code is valid' do
+        let(:params) do
+          { username: username, password: password, mfa: { type: :backup_code, value: backup_code.token } }
+        end
+
+        it { expect { service_response }.to change { BackupCode.count }.by(-1) }
+
+        it_behaves_like 'check correct credentials'
+        it_behaves_like 'creates correct audit event', :username, :email, 'backup_code'
+      end
+
+      context 'when backup code is invalid' do
+        let(:params) { { username: username, password: password, mfa: { type: :backup_code, value: '1234567890' } } }
+
+        it { expect { service_response }.not_to change { BackupCode.count } }
+        it { expect(service_response).not_to be_success }
+      end
+    end
+
     context 'when user has enabled TOTP' do
       let(:totp_secret) { ROTP::Base32.random }
 
@@ -62,14 +88,14 @@ RSpec.describe Users::LoginService do
 
       context 'when otp is valid' do
         let(:otp) { ROTP::TOTP.new(totp_secret).now }
-        let(:params) { { username: username, password: password, mfa: { type: 'totp', value: otp } } }
+        let(:params) { { username: username, password: password, mfa: { type: :totp, value: otp } } }
 
         it_behaves_like 'check correct credentials'
-        it_behaves_like 'creates correct audit event', :username, :email
+        it_behaves_like 'creates correct audit event', :username, :email, 'totp'
       end
 
       context 'when otp is invalid' do
-        let(:params) { { username: username, password: password, mfa: { type: 'totp', value: '000000' } } }
+        let(:params) { { username: username, password: password, mfa: { type: :totp, value: '000000' } } }
 
         it 'returns an error response' do
           expect(service_response).to be_error
