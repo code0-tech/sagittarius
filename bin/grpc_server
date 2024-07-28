@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../config/environment'
+
+class GrpcServerMain
+  include Sagittarius::Loggable
+
+  def run!
+    server = GRPC::RpcServer.new
+    logger.info("GRPC server created")
+
+    # todo: make this configurable
+    server.add_http2_port('0.0.0.0:50051', :this_port_is_insecure)
+
+    logger.info("Loading application")
+    Rails.application.eager_load!
+    logger.info("Loaded application")
+
+    GrpcHandler.register_on_server(server)
+
+    logger.info("Running server")
+    server.run_till_terminated_or_interrupted(['QUIT', 'INT', 'TERM'])
+  end
+end
+
+Rails.logger.broadcast_to ActiveSupport::Logger.new($stdout, formatter: Rails.logger.formatter)
+GrpcServerMain.new.run!
