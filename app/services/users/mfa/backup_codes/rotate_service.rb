@@ -13,7 +13,7 @@ module Users
         end
 
         def execute
-          unless Ability.allowed?(@current_user, :manage_mfa, @current_user)
+          unless Ability.allowed?(current_user, :manage_mfa, current_user)
             return ServiceResponse.error(payload: :missing_permission)
           end
 

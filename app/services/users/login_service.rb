@@ -20,7 +20,6 @@ module Users
       end
 
       transactional do |t|
-        # validate mfa
 
         mfa_passed, mfa_type = validate_mfa(mfa, t, user)
 

@@ -15,9 +15,11 @@ module Users
         end
 
         def execute
-          unless Ability.allowed?(@current_user, :manage_mfa, @current_user)
+          unless Ability.allowed?(current_user, :manage_mfa, current_user)
             return ServiceResponse.error(payload: :missing_permission)
           end
+
+          return ServiceResponse.error(payload: :totp_secret_already_set) if @current_user.totp_secret.nil?
 
           totp_secret = Rails.application.message_verifier(:totp_secret).verified(secret)
 
@@ -28,20 +30,21 @@ module Users
           return ServiceResponse.error(payload: :wrong_totp) unless totp.verify(current_totp)
 
           transactional do
-            @current_user.totp_secret = totp_secret
-            unless @current_user.save
-              return ServiceResponse.error(message: 'Error while saving user', payload: @current_user.errors)
+            current_user.totp_secret = totp_secret
+            unless current_user.save
+              return ServiceResponse.error(message: 'Error while saving user', payload: current_user.errors)
             end
 
             AuditService.audit(
               :mfa_enabled,
-              author_id: @current_user.id,
-              entity: @current_user,
+              author_id: current_user.id,
+              entity: current_user,
               details: { type: :totp },
-              target: @current_user
+              target: current_user
             )
 
-            ServiceResponse.success(message: 'TOTP secret validated', payload: @current_user)
+            ServiceResponse.success(message: 'TOTP secret validated',
+                                    payload: @current_user)
           end
         end
       end

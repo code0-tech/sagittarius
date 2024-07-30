@@ -7,7 +7,7 @@ module Mutations
         class GenerateSecret < BaseMutation
           description 'Generates an encrypted totp secret'
 
-          field :secret, String, null: true, description: 'The created user session'
+          field :secret, String, null: true, description: 'The created and signed secret'
 
           def resolve
             ::Users::Mfa::Totp::GenerateSecretService.new(current_user).execute

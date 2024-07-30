@@ -5,7 +5,7 @@ module Mutations
     module Mfa
       module Totp
         class ValidateSecret < BaseMutation
-          description 'Generates an encrypted totp secret'
+          description 'Validates a TOTP value for the given secret and enables TOTP MFA for the user'
 
           field :user, ::Types::UserType, null: true, description: 'The modified user'
 
@@ -15,8 +15,11 @@ module Mutations
           argument :secret, String, required: true, description: 'The signed secret from the generation'
 
           def resolve(secret:, current_totp:)
-            ::Users::Mfa::Totp::ValidateSecretService.new(current_user, secret,
-                                                          current_totp).execute.to_mutation_response(success_key: :user)
+            ::Users::Mfa::Totp::ValidateSecretService.new(
+              current_user,
+              secret,
+              current_totp
+            ).execute.to_mutation_response(success_key: :user)
           end
         end
       end

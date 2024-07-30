@@ -5,7 +5,7 @@ module Mutations
     module Mfa
       module BackupCodes
         class Rotate < BaseMutation
-          description 'rotates the backup codes of a user.'
+          description 'Rotates the backup codes of a user.'
 
           field :codes, [String], null: true, description: 'The newly rotated backup codes.'
 

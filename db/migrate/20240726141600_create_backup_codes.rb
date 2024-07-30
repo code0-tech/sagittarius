@@ -3,8 +3,8 @@
 class CreateBackupCodes < Sagittarius::Database::Migration[1.0]
   def change
     create_table :backup_codes do |t|
-      t.text :token, limit: 10
-      t.references :user, null: false, foreign_key: true
+      t.text :token, limit: 10, null: false
+      t.references :user, null: false, foreign_key: { on_delete: :cascade }, index: false
 
       t.index '"user_id", LOWER("token")', unique: true
 
