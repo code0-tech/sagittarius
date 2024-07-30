@@ -19,7 +19,7 @@ module Users
             return ServiceResponse.error(payload: :missing_permission)
           end
 
-          return ServiceResponse.error(payload: :totp_secret_already_set) if @current_user.totp_secret.nil?
+          return ServiceResponse.error(payload: :totp_secret_already_set) if current_user.totp_secret.nil?
 
           totp_secret = Rails.application.message_verifier(:totp_secret).verified(secret)
 
@@ -44,7 +44,7 @@ module Users
             )
 
             ServiceResponse.success(message: 'TOTP secret validated',
-                                    payload: @current_user)
+                                    payload: current_user)
           end
         end
       end

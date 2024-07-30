@@ -21,6 +21,11 @@ module Users
 
       transactional do |t|
 
+        if mfa.present? && !user.mfa_enabled?
+          t.rollback_and_return! ServiceResponse.error(message: 'Tried to login via MFA even if mfa is disabled',
+                                                       payload: :mfa_failed)
+        end
+
         mfa_passed, mfa_type = validate_mfa(mfa, t, user)
 
         if !mfa_passed && user.mfa_enabled?

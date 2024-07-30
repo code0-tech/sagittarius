@@ -16,4 +16,4 @@ Generates an encrypted totp secret
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
-| `secret` | [`String`](../scalar/string.md) | The created user session |
+| `secret` | [`String`](../scalar/string.md) | The created and signed secret |

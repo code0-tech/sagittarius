@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'rotate Mutation' do
+RSpec.describe 'usersMfaBackupCodesRotate Mutation' do
   include GraphqlHelpers
 
   subject(:mutate!) { post_graphql mutation, current_user: current_user }

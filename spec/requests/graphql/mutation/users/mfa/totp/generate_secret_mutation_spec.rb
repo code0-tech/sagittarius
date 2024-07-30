@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'generateSecret Mutation' do
+RSpec.describe 'usersMfaTotpGenerateSecret Mutation' do
   include GraphqlHelpers
 
   subject(:mutate!) { post_graphql mutation, current_user: current_user }

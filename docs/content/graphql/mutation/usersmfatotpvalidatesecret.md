@@ -2,7 +2,7 @@
 title: usersMfaTotpValidateSecret
 ---
 
-Generates an encrypted totp secret
+Validates a TOTP value for the given secret and enables TOTP MFA for the user
 
 ## Arguments
 

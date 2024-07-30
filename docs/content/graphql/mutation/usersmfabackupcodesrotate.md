@@ -2,7 +2,7 @@
 title: usersMfaBackupCodesRotate
 ---
 
-rotates the backup codes of a user.
+Rotates the backup codes of a user.
 
 ## Arguments
 
