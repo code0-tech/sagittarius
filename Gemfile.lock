@@ -132,6 +132,11 @@ GEM
       fugit (>= 1.11.0)
       railties (>= 6.1.0)
       thor (>= 1.0.0)
+    google-protobuf (4.27.2-x86_64-linux)
+      bigdecimal
+      rake (>= 13)
+    googleapis-common-protos-types (1.15.0)
+      google-protobuf (>= 3.18, < 5.a)
     graphql (2.3.10)
       base64
     graphql-docs (4.0.0)
@@ -142,6 +147,9 @@ GEM
       gemoji (~> 3.0)
       graphql (~> 2.0)
       html-pipeline (~> 2.14, >= 2.14.3)
+    grpc (1.65.2-x86_64-linux)
+      google-protobuf (>= 3.25, < 5.0)
+      googleapis-common-protos-types (~> 1.0)
     html-pipeline (2.14.3)
       activesupport (>= 2)
       nokogiri (>= 1.4)
@@ -328,6 +336,8 @@ GEM
     test-prof (1.3.3.1)
     thor (1.3.1)
     timeout (0.4.1)
+    tucana (0.0.2)
+      grpc (~> 1.65)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
@@ -372,6 +382,7 @@ DEPENDENCIES
   simplecov (~> 0.22.0)
   simplecov-cobertura (~> 2.1)
   test-prof (~> 1.0)
+  tucana (= 0.0.2)
   tzinfo-data
 
 RUBY VERSION
