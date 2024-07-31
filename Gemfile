@@ -80,4 +80,4 @@ gem 'code0-license', '~> 0.2.0'
 
 gem 'good_job', '~> 4.0'
 
-gem 'tucana', '0.0.0', path: '../tucana/build/ruby'
+gem 'tucana', '0.0.2'
