@@ -20,7 +20,6 @@ module Users
       end
 
       transactional do |t|
-
         if mfa.present? && !user.mfa_enabled?
           t.rollback_and_return! ServiceResponse.error(message: 'Tried to login via MFA even if mfa is disabled',
                                                        payload: :mfa_failed)

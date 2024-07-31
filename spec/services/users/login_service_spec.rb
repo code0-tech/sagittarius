@@ -14,19 +14,19 @@ RSpec.describe Users::LoginService do
     shared_examples 'creates correct audit event' do |key, other_key, mfa_type|
       it do
         is_expected.to create_audit_event(
-                         :user_logged_in,
-                         author_id: current_user.id,
-                         entity_type: 'User',
-                         entity_id: current_user.id,
-                         details: { key => current_user.send(key), method: 'username_and_password',
-                                    mfa_type: mfa_type },
-                         target_type: 'User',
-                         target_id: current_user.id
-                       )
+          :user_logged_in,
+          author_id: current_user.id,
+          entity_type: 'User',
+          entity_id: current_user.id,
+          details: { key => current_user.send(key), method: 'username_and_password',
+                     mfa_type: mfa_type },
+          target_type: 'User',
+          target_id: current_user.id
+        )
         is_expected.not_to create_audit_event(
-                             :user_logged_in,
-                             details: { other_key => current_user.send(other_key), method: 'username_and_password' }
-                           )
+          :user_logged_in,
+          details: { other_key => current_user.send(other_key), method: 'username_and_password' }
+        )
       end
     end
 
@@ -52,18 +52,18 @@ RSpec.describe Users::LoginService do
       it_behaves_like 'check correct credentials'
       it_behaves_like 'creates correct audit event', :username, :email
     end
-    context 'when using mfa' do
 
+    context 'when using mfa' do
       context 'when mfa is not activated' do
         let(:params) do
           { username: username, password: password, mfa: { type: :totp, value: nil } }
         end
-        it 'should fail' do
+
+        it 'fails' do
           expect(service_response).not_to be_success
           expect(service_response.payload).to eq(:mfa_failed)
           is_expected.not_to create_audit_event
         end
-
       end
 
       context 'when using a backup code' do
@@ -118,7 +118,6 @@ RSpec.describe Users::LoginService do
         end
       end
     end
-
   end
 
   context 'when the credentials are incorrect' do

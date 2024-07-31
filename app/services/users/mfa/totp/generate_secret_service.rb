@@ -15,7 +15,7 @@ module Users
             return ServiceResponse.error(payload: :missing_permission)
           end
 
-          return ServiceResponse.error(payload: :totp_secret_already_set) if @current_user.totp_secret.nil?
+          return ServiceResponse.error(payload: :totp_secret_already_set) unless @current_user.totp_secret.nil?
 
           totp_secret = ROTP::Base32.random
 
