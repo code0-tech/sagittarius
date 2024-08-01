@@ -13,13 +13,14 @@ RSpec.describe Users::Mfa::Totp::GenerateSecretService do
   end
 
   context 'when user is valid' do
-    context 'totp secret is already set' do
+    context 'when totp secret is already set' do
       let(:current_user) { create(:user, totp_secret: ROTP::Base32.random) }
 
-      it { is_expected.to_not be_success }
+      it { is_expected.not_to be_success }
       it { expect(service_response.payload).to eq(:totp_secret_already_set) }
     end
-    context 'totp secret is not set' do
+
+    context 'when totp secret is not set' do
       let(:current_user) { create(:user) }
 
       it { is_expected.to be_success }
@@ -29,6 +30,5 @@ RSpec.describe Users::Mfa::Totp::GenerateSecretService do
         expect(totp.secret.length).to eq(48)
       end
     end
-
   end
 end
