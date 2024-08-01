@@ -60,15 +60,16 @@ RSpec.describe NamespaceMembers::DeleteService do
 
       it do
         expect { service_response }.to create_audit_event(
-                                         :namespace_member_deleted,
-                                         author_id: current_user.id,
-                                         entity_type: 'NamespaceMember',
-                                         details: {},
-                                         target_id: namespace.id,
-                                         target_type: 'Namespace'
-                                       )
+          :namespace_member_deleted,
+          author_id: current_user.id,
+          entity_type: 'NamespaceMember',
+          details: {},
+          target_id: namespace.id,
+          target_type: 'Namespace'
+        )
       end
     end
+
     context 'when namespace is a organization' do
       let(:current_user) { create(:user) }
 
@@ -88,6 +89,7 @@ RSpec.describe NamespaceMembers::DeleteService do
       end
     end
   end
+
   context 'when user is a member' do
     let(:current_user) { create(:user) }
 
@@ -101,13 +103,13 @@ RSpec.describe NamespaceMembers::DeleteService do
 
     it do
       expect { service_response }.to create_audit_event(
-                                       :namespace_member_deleted,
-                                       author_id: current_user.id,
-                                       entity_type: 'NamespaceMember',
-                                       details: {},
-                                       target_id: namespace.id,
-                                       target_type: 'Namespace'
-                                     )
+        :namespace_member_deleted,
+        author_id: current_user.id,
+        entity_type: 'NamespaceMember',
+        details: {},
+        target_id: namespace.id,
+        target_type: 'Namespace'
+      )
     end
   end
 end

@@ -20,9 +20,11 @@ class Namespace < ApplicationRecord
     parent_type == User.name
   end
 
+  # rubocop:disable Naming/PredicateName
   def has_owner?
     user_type?
   end
+  # rubocop:enable Naming/PredicateName
 
   def member?(user)
     return false if user.nil?

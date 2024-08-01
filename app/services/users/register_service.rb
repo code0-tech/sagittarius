@@ -22,7 +22,6 @@ module Users
         user = User.create(username: username, email: email, password: password)
         return ServiceResponse.error(message: 'User is invalid', payload: user.errors) unless user.persisted?
 
-
         AuditService.audit(
           :user_registered,
           author_id: user.id,

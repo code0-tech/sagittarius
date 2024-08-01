@@ -56,6 +56,7 @@ RSpec.describe NamespaceRoles::AssignAbilitiesService do
           expect { service_response }.to create_audit_event(:namespace_role_abilities_updated)
         end
       end
+
       context 'when namespace is an organization' do
         let(:abilities) { [] }
 
@@ -88,14 +89,15 @@ RSpec.describe NamespaceRoles::AssignAbilitiesService do
 
       it do
         expect { service_response }.to create_audit_event(
-                                         :namespace_role_abilities_updated,
-                                         author_id: current_user.id,
-                                         entity_id: role.id,
-                                         entity_type: 'NamespaceRole',
-                                         details: { 'old_abilities' => [], 'new_abilities' => ['create_namespace_role'] },
-                                         target_id: role.namespace.id,
-                                         target_type: 'Namespace'
-                                       )
+          :namespace_role_abilities_updated,
+          author_id: current_user.id,
+          entity_id: role.id,
+          entity_type: 'NamespaceRole',
+          details: { 'old_abilities' => [],
+                     'new_abilities' => ['create_namespace_role'] },
+          target_id: role.namespace.id,
+          target_type: 'Namespace'
+        )
       end
     end
 
@@ -113,14 +115,15 @@ RSpec.describe NamespaceRoles::AssignAbilitiesService do
 
       it do
         expect { service_response }.to create_audit_event(
-                                         :namespace_role_abilities_updated,
-                                         author_id: current_user.id,
-                                         entity_id: role.id,
-                                         entity_type: 'NamespaceRole',
-                                         details: { 'old_abilities' => ['create_namespace_role'], 'new_abilities' => [] },
-                                         target_id: role.namespace.id,
-                                         target_type: 'Namespace'
-                                       )
+          :namespace_role_abilities_updated,
+          author_id: current_user.id,
+          entity_id: role.id,
+          entity_type: 'NamespaceRole',
+          details: { 'old_abilities' => ['create_namespace_role'],
+                     'new_abilities' => [] },
+          target_id: role.namespace.id,
+          target_type: 'Namespace'
+        )
       end
     end
 
@@ -138,17 +141,17 @@ RSpec.describe NamespaceRoles::AssignAbilitiesService do
 
       it do
         expect { service_response }.to create_audit_event(
-                                         :namespace_role_abilities_updated,
-                                         author_id: current_user.id,
-                                         entity_id: role.id,
-                                         entity_type: 'NamespaceRole',
-                                         details: {
-                                           'old_abilities' => ['invite_member'],
-                                           'new_abilities' => ['create_namespace_role'],
-                                         },
-                                         target_id: role.namespace.id,
-                                         target_type: 'Namespace'
-                                       )
+          :namespace_role_abilities_updated,
+          author_id: current_user.id,
+          entity_id: role.id,
+          entity_type: 'NamespaceRole',
+          details: {
+            'old_abilities' => ['invite_member'],
+            'new_abilities' => ['create_namespace_role'],
+          },
+          target_id: role.namespace.id,
+          target_type: 'Namespace'
+        )
       end
     end
   end

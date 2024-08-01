@@ -74,9 +74,8 @@ module NamespaceMembers
     end
 
     def check_last_admin_user(t)
-      if member.namespace.has_owner?
-        return
-      end
+      return if member.namespace.has_owner?
+
       unless member.namespace.roles
                    .joins(:abilities, :member_roles)
                    .exists?(abilities: { ability: :namespace_administrator })
