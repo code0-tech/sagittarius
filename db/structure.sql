@@ -47,7 +47,7 @@ ALTER SEQUENCE audit_events_id_seq OWNED BY audit_events.id;
 
 CREATE TABLE backup_codes (
     id bigint NOT NULL,
-    token text,
+    token text NOT NULL,
     user_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
@@ -468,8 +468,6 @@ CREATE UNIQUE INDEX index_application_settings_on_setting ON application_setting
 
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
 
-CREATE INDEX index_backup_codes_on_user_id ON backup_codes USING btree (user_id);
-
 CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes USING btree (user_id, lower(token));
 
 CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON good_job_executions USING btree (active_job_id, created_at);
@@ -547,7 +545,7 @@ ALTER TABLE ONLY namespace_licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY backup_codes
-    ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id);
+    ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_567f152a62 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
