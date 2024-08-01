@@ -68,7 +68,7 @@ RSpec.describe 'runtimesCreate Mutation' do
       }
     end
 
-    let(:current_user) { create(:user, admin: true) }
+    let(:current_user) { create(:user, :admin) }
 
     it 'creates runtime' do
       expect(graphql_data_at(:runtimes_create, :runtime, :token)).to be_present
