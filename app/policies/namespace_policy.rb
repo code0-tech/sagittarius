@@ -5,7 +5,17 @@ class NamespacePolicy < BasePolicy
 
   condition(:is_member) { @subject.member?(@user) }
 
-  rule { is_member }.policy do
+  condition(:is_user_namespace) { @subject.user_type? }
+  condition(:is_owner) { @subject.parent == @user }
+
+  rule { is_member }.enable :has_access
+
+  rule { is_user_namespace & is_owner }.policy do
+    enable :has_access
+    enable :namespace_administrator
+  end
+
+  rule { can?(:has_access) }.policy do
     enable :read_namespace
     enable :read_namespace_member
     enable :read_namespace_member_role

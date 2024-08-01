@@ -16,9 +16,9 @@ module NamespaceRoles
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
-      unless namespace_role.namespace.roles.where.not(id: namespace_role.id)
-                           .joins(:abilities)
-                           .exists?(abilities: { ability: :namespace_administrator })
+      if !namespace_role.namespace.has_owner? && !namespace_role.namespace.roles.where.not(id: namespace_role.id)
+                                                                .joins(:abilities)
+                                                                .exists?(abilities: { ability: :namespace_administrator })
         return ServiceResponse.error(message: 'Cannot delete last administrator role',
                                      payload: :cannot_delete_last_admin_role)
       end

@@ -24,14 +24,7 @@ module NamespaceMembers
                                                        payload: namespace_member.errors)
         end
 
-        unless namespace_member.namespace.roles
-                               .joins(:abilities, :member_roles)
-                               .exists?(abilities: { ability: :namespace_administrator })
-          t.rollback_and_return! ServiceResponse.error(
-            message: 'Cannot remove last administrator from namespace',
-            payload: :cannot_remove_last_administrator
-          )
-        end
+        check_last_administrator(t)
 
         AuditService.audit(
           :namespace_member_deleted,
@@ -42,6 +35,22 @@ module NamespaceMembers
         )
 
         ServiceResponse.success(message: 'Namespace member deleted', payload: namespace_member)
+      end
+    end
+
+    private
+
+    def check_last_administrator(t)
+      if namespace_member.namespace.has_owner?
+        return
+      end
+      unless namespace_member.namespace.roles
+                             .joins(:abilities, :member_roles)
+                             .exists?(abilities: { ability: :namespace_administrator })
+        t.rollback_and_return! ServiceResponse.error(
+          message: 'Cannot remove last administrator from namespace',
+          payload: :cannot_remove_last_administrator
+        )
       end
     end
   end

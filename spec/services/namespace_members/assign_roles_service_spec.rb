@@ -40,19 +40,37 @@ RSpec.describe NamespaceMembers::AssignRolesService do
 
   context 'when user has permission' do
     context 'when removing last admin role' do
-      let(:roles) { [] }
+      context 'when namespace is an user' do
+        let(:namespace) { create(:namespace, :user) }
+        let(:namespace_role) { create(:namespace_role, namespace: namespace) }
 
-      before do
-        stub_allowed_ability(NamespacePolicy, :assign_member_roles, user: current_user, subject: namespace)
-        admin_role.delete
+        before do
+          create(:namespace_member_role, member: member, role: namespace_role)
+          stub_allowed_ability(NamespacePolicy, :assign_member_roles, user: current_user, subject: namespace)
+          admin_role.delete
+        end
+
+        it { is_expected.to be_success }
+        it { expect { service_response }.to change { NamespaceMemberRole.count }.by(-1) }
+
+        it do
+          expect { service_response }.to create_audit_event(:namespace_member_roles_updated)
+        end
       end
+      context 'when namespace is an organization' do
 
-      it { is_expected.not_to be_success }
-      it { expect(service_response.payload).to eq(:cannot_remove_last_administrator) }
-      it { expect { service_response }.not_to change { NamespaceMemberRole.count } }
+        before do
+          stub_allowed_ability(NamespacePolicy, :assign_member_roles, user: current_user, subject: namespace)
+          admin_role.delete
+        end
 
-      it do
-        expect { service_response }.not_to create_audit_event
+        it { is_expected.not_to be_success }
+        it { expect(service_response.payload).to eq(:cannot_remove_last_administrator) }
+        it { expect { service_response }.not_to change { NamespaceMemberRole.count } }
+
+        it do
+          expect { service_response }.not_to create_audit_event
+        end
       end
     end
 
@@ -70,16 +88,16 @@ RSpec.describe NamespaceMembers::AssignRolesService do
 
       it do
         expect { service_response }.to create_audit_event(
-          :namespace_member_roles_updated,
-          author_id: current_user.id,
-          entity_type: 'NamespaceMember',
-          details: {
-            'old_roles' => [],
-            'new_roles' => [{ 'id' => namespace_role.id, 'name' => namespace_role.name }],
-          },
-          target_id: namespace.id,
-          target_type: 'Namespace'
-        )
+                                         :namespace_member_roles_updated,
+                                         author_id: current_user.id,
+                                         entity_type: 'NamespaceMember',
+                                         details: {
+                                           'old_roles' => [],
+                                           'new_roles' => [{ 'id' => namespace_role.id, 'name' => namespace_role.name }],
+                                         },
+                                         target_id: namespace.id,
+                                         target_type: 'Namespace'
+                                       )
       end
     end
 
@@ -98,16 +116,16 @@ RSpec.describe NamespaceMembers::AssignRolesService do
 
       it do
         expect { service_response }.to create_audit_event(
-          :namespace_member_roles_updated,
-          author_id: current_user.id,
-          entity_type: 'NamespaceMember',
-          details: {
-            'old_roles' => [{ 'id' => namespace_role.id, 'name' => namespace_role.name }],
-            'new_roles' => [],
-          },
-          target_id: namespace.id,
-          target_type: 'Namespace'
-        )
+                                         :namespace_member_roles_updated,
+                                         author_id: current_user.id,
+                                         entity_type: 'NamespaceMember',
+                                         details: {
+                                           'old_roles' => [{ 'id' => namespace_role.id, 'name' => namespace_role.name }],
+                                           'new_roles' => [],
+                                         },
+                                         target_id: namespace.id,
+                                         target_type: 'Namespace'
+                                       )
       end
     end
 
@@ -127,16 +145,16 @@ RSpec.describe NamespaceMembers::AssignRolesService do
 
       it do
         expect { service_response }.to create_audit_event(
-          :namespace_member_roles_updated,
-          author_id: current_user.id,
-          entity_type: 'NamespaceMember',
-          details: {
-            'old_roles' => [{ 'id' => removing_namespace_role.id, 'name' => removing_namespace_role.name }],
-            'new_roles' => [{ 'id' => adding_namespace_role.id, 'name' => adding_namespace_role.name }],
-          },
-          target_id: namespace.id,
-          target_type: 'Namespace'
-        )
+                                         :namespace_member_roles_updated,
+                                         author_id: current_user.id,
+                                         entity_type: 'NamespaceMember',
+                                         details: {
+                                           'old_roles' => [{ 'id' => removing_namespace_role.id, 'name' => removing_namespace_role.name }],
+                                           'new_roles' => [{ 'id' => adding_namespace_role.id, 'name' => adding_namespace_role.name }],
+                                         },
+                                         target_id: namespace.id,
+                                         target_type: 'Namespace'
+                                       )
       end
     end
 

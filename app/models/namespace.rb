@@ -16,6 +16,14 @@ class Namespace < ApplicationRecord
     parent_type == Organization.name
   end
 
+  def user_type?
+    parent_type == User.name
+  end
+
+  def has_owner?
+    user_type?
+  end
+
   def member?(user)
     return false if user.nil?
 
