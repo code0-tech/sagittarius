@@ -12,8 +12,6 @@ module NamespaceMembers
       @roles = roles
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
     def execute
       namespace = member.namespace
       unless Ability.allowed?(current_user, :assign_member_roles, namespace)
@@ -55,8 +53,6 @@ module NamespaceMembers
         ServiceResponse.success(message: 'Member roles updated', payload: new_roles)
       end
     end
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/CyclomaticComplexity
 
     private
 

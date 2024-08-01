@@ -22,8 +22,6 @@ module Sagittarius
 
         private
 
-        # rubocop:disable Metrics/CyclomaticComplexity
-        # rubocop:disable Metrics/PerceivedComplexity
         def enhance(t, table_name, helper_context, &block)
           t.define_singleton_method(:text) do |column_name, **inner_kwargs|
             limit = inner_kwargs.delete(:limit)
@@ -72,8 +70,6 @@ module Sagittarius
             end
           end
         end
-        # rubocop:enable Metrics/PerceivedComplexity
-        # rubocop:enable Metrics/CyclomaticComplexity
       end
     end
   end

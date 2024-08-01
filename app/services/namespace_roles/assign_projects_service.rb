@@ -12,8 +12,6 @@ module NamespaceRoles
       @projects = projects
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
     def execute
       namespace = role.namespace
       unless Ability.allowed?(current_user, :assign_role_projects, namespace)
@@ -55,7 +53,5 @@ module NamespaceRoles
         ServiceResponse.success(message: 'Role project assignments updated', payload: new_projects)
       end
     end
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/CyclomaticComplexity
   end
 end

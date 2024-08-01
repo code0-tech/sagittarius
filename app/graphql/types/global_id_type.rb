@@ -26,8 +26,6 @@ module Types
       end
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
     def self.[](model_class)
       @id_types ||= {}
       @id_types[model_class] ||= Class.new(self) do
@@ -61,8 +59,6 @@ module Types
         end
       end
     end
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/CyclomaticComplexity
 
     def self.model_name_to_graphql_name(model_name)
       "#{model_name.gsub('::', '')}ID"
