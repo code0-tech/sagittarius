@@ -99,8 +99,6 @@ module Tooling
           type_name.present? && type_name.ends_with?('Connection')
         end
 
-        # rubocop:disable Metrics/CyclomaticComplexity
-        # rubocop:disable Metrics/PerceivedComplexity
         def objects
           mutations = schema.mutation&.fields&.keys&.to_set || []
 
@@ -117,8 +115,6 @@ module Tooling
             )
           end
         end
-        # rubocop:enable Metrics/PerceivedComplexity
-        # rubocop:enable Metrics/CyclomaticComplexity
 
         def arguments?(field)
           args = field[:arguments]

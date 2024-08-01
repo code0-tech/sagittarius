@@ -48,8 +48,6 @@ module GraphqlHelpers
     graphql_dig_at(graphql_data, *path)
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def graphql_dig_at(data, *path)
     keys = path.map { |segment| segment.is_a?(Integer) ? segment : GraphqlHelpers.graphql_field_name(segment) }
 
@@ -62,8 +60,6 @@ module GraphqlHelpers
         acc&.dig(cur)
       end
     end
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/CyclomaticComplexity
   end
 
   def graphql_errors(body = parsed_response)

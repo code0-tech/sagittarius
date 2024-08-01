@@ -15,20 +15,7 @@ GraphQL/ExtractInputType:
 Lint/AmbiguousBlockAssociation:
   AllowedMethods: [change]
 
-Metrics/AbcSize:
-  Enabled: false
-
-Metrics/BlockLength:
-  Exclude:
-    - lib/tasks/**/*
-
-Metrics/ClassLength:
-  Enabled: false
-
-Metrics/MethodLength:
-  Enabled: false
-
-Metrics/ModuleLength:
+Metrics:
   Enabled: false
 
 Naming/BlockForwarding:
