@@ -1,18 +1,17 @@
 ---
-title: usersLogin
+title: usersMfaTotpValidateSecret
 ---
 
-Login to an existing user
+Validates a TOTP value for the given secret and enables TOTP MFA for the user
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `email` | [`String`](../scalar/string.md) | Email of the user |
-| `mfa` | [`MfaInput`](../input_object/mfainput.md) | The data of the mfa login |
-| `password` | [`String!`](../scalar/string.md) | Password of the user |
-| `username` | [`String`](../scalar/string.md) | Username of the user |
+| `currentTotp` | [`String!`](../scalar/string.md) | The current totp at the time to verify the mfa
+                                                        authentication device |
+| `secret` | [`String!`](../scalar/string.md) | The signed secret from the generation |
 
 ## Fields
 
@@ -20,4 +19,4 @@ Login to an existing user
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
-| `userSession` | [`UserSession`](../object/usersession.md) | The created user session |
+| `user` | [`User`](../object/user.md) | The modified user |

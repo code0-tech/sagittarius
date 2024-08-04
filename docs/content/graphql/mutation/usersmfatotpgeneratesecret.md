@@ -1,18 +1,14 @@
 ---
-title: usersLogin
+title: usersMfaTotpGenerateSecret
 ---
 
-Login to an existing user
+Generates an encrypted totp secret
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `email` | [`String`](../scalar/string.md) | Email of the user |
-| `mfa` | [`MfaInput`](../input_object/mfainput.md) | The data of the mfa login |
-| `password` | [`String!`](../scalar/string.md) | Password of the user |
-| `username` | [`String`](../scalar/string.md) | Username of the user |
 
 ## Fields
 
@@ -20,4 +16,4 @@ Login to an existing user
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
-| `userSession` | [`UserSession`](../object/usersession.md) | The created user session |
+| `secret` | [`String`](../scalar/string.md) | The created and signed secret |

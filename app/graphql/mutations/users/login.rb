@@ -13,6 +13,8 @@ module Mutations
       argument :password, String, required: true, description: 'Password of the user'
       argument :username, String, required: false, description: 'Username of the user'
 
+      argument :mfa, Types::Input::MfaInput, required: false, description: 'The data of the mfa login'
+
       require_one_of %i[email username]
 
       def resolve(args)
