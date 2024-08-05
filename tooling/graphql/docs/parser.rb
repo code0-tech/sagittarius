@@ -38,8 +38,12 @@ module Tooling
               next true if name.start_with?('__')
               next true if type == :object && name == 'Mutation'
 
-              name.end_with?('Payload') && elements[:mutation].find do |mutation|
+              next true if type == :object && name.end_with?('Payload') && elements[:mutation].find do |mutation|
                 mutation[:name] == name.chomp('Payload').camelcase(:lower)
+              end
+
+              type == :input_object && name.end_with?('Input') && elements[:mutation].find do |mutation|
+                mutation[:name] == name.chomp('Input').camelcase(:lower)
               end
             end
           end
@@ -68,7 +72,7 @@ module Tooling
             payload_object = elements[:object].find { |type| type[:name] == mutation[:type][:name] }
             assert!(payload_object.present?, "Cannot find #{mutation[:type][:name]} as payload for #{mutation[:name]}")
 
-            mutation[:arguments] = input_object[:input_fields]
+            mutation[:arguments] = input_object[:fields]
             mutation[:fields] = payload_object[:fields]
           end
 
@@ -98,7 +102,7 @@ module Tooling
             element[:possible_types] = type.possible_types.map(&:graphql_name).sort
             element[:type] = 'union'
           elsif type < ::GraphQL::Schema::InputObject
-            element[:input_fields] = build_fields(type.arguments)
+            element[:fields] = build_fields(type.arguments)
             element[:type] = 'input_object'
           elsif type < ::GraphQL::Schema::Scalar
             element[:type] = 'scalar'
