@@ -11,6 +11,7 @@ Root Query type
 | `applicationSettings` | [`ApplicationSettings`](../object/applicationsettings.md) | Get global application settings |
 | `currentAuthorization` | [`Authorization`](../union/authorization.md) | Get the currently logged in authorization |
 | `currentUser` | [`User`](../object/user.md) | Get the currently logged in user |
+| `globalRuntimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Find runtimes |
 
 ## Fields with arguments
 
