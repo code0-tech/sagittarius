@@ -28,4 +28,9 @@ class User < ApplicationRecord
   def mfa_enabled?
     totp_secret != nil
   end
+
+  def is_admin?
+    admin
+  end
+
 end
