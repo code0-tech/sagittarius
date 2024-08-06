@@ -8,14 +8,6 @@ title: <%= object[:name] %>
 <%= object[:markdown_documentation] %>
 <% end -%>
 
-## Arguments
-
-| Name | Type | Description |
-|------|------|-------------|
-<% sorted_by_name.call(object[:arguments]).each do |argument| -%>
-| `<%= argument[:name] %>` | [`<%= argument[:type][:info] %>`](../<%= argument[:type][:path] %>.md) | <%= argument[:description] %> |
-<% end -%>
-
 ## Fields
 
 | Name | Type | Description |

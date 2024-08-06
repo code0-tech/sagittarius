@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'helper'
+require_relative 'parser'
 
 module Tooling
   module Graphql
@@ -8,15 +9,15 @@ module Tooling
       class Renderer # rubocop:disable GraphQL/ObjectDescription -- this is not a graphql object
         include Tooling::Graphql::Docs::Helper
 
-        attr_reader :schema
+        attr_reader :parser
 
         def initialize(schema, output_dir:)
           @output_dir = output_dir
-          @parsed_schema = GraphQLDocs::Parser.new(schema, {}).parse
-          @schema = schema
+          @parser = Parser.new(schema)
         end
 
         def write
+          parser.parse
           file_contents = files
 
           FileUtils.mkdir_p(Rails.root.join(@output_dir))
