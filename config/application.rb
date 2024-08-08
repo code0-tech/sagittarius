@@ -77,6 +77,8 @@ module Sagittarius
     config.active_record.encryption.key_derivation_salt =
       ENV.fetch('SAGITTARIUS_DATABASE_ENCRYPTION_KEY_DERIVATION_SALT', 'Z6zcLTgobXLYjXUslRsLMKxvXKq3j6DJ')
 
+    config.secret_key_base = ENV.fetch('SAGITTARIUS_SECRET_KEY_BASE', 'MVMD6CtQwEWrQ28TdokQakbG2FG5abOn')
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

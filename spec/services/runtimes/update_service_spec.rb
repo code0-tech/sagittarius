@@ -26,7 +26,7 @@ RSpec.describe Runtimes::UpdateService do
   end
 
   context 'when params are invalid' do
-    let(:current_user) { create(:user, admin: true) }
+    let(:current_user) { create(:user, :admin) }
     let(:runtime) { create(:runtime) }
 
     context 'when name is to long' do
@@ -43,7 +43,7 @@ RSpec.describe Runtimes::UpdateService do
   end
 
   context 'when user and params are valid and user is admin' do
-    let(:current_user) { create(:user, admin: true) }
+    let(:current_user) { create(:user, :admin) }
     let(:runtime) { create(:runtime) }
     let(:params) do
       { name: generate(:runtime_name) }

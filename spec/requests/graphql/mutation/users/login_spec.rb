@@ -29,6 +29,41 @@ RSpec.describe 'usersLogin Mutation' do
   before { post_graphql mutation, variables: variables }
 
   context 'when input is valid' do
+    context 'when using totp mfa authentication' do
+      let(:user) { create(:user, password: password, totp_secret: totp_secret) }
+      let(:totp_secret) { ROTP::Base32.random }
+      let(:totp) { ROTP::TOTP.new(totp_secret).now }
+
+      let(:input) do
+        {
+          email: user.email,
+          password: password,
+          mfa: {
+            type: 'TOTP',
+            value: totp,
+          },
+        }
+      end
+
+      it 'creates the user session' do
+        expect(graphql_data_at(:users_login, :user_session, :id)).to be_present
+        expect(graphql_data_at(:users_login, :user_session, :token)).to be_present
+
+        user_session = SagittariusSchema.object_from_id(graphql_data_at(:users_login, :user_session, :id))
+
+        expect(user_session).to be_a(UserSession)
+        expect(user_session.user.username).to eq(user.username)
+        expect(user_session.user.email).to eq(user.email)
+
+        is_expected.to create_audit_event(
+          :user_logged_in,
+          author_id: user.id,
+          entity_id: user.id,
+          details: { email: user.email, method: 'username_and_password', mfa_type: 'totp' }
+        )
+      end
+    end
+
     context 'when logging in with email' do
       let(:input) do
         {
@@ -51,7 +86,7 @@ RSpec.describe 'usersLogin Mutation' do
           :user_logged_in,
           author_id: user.id,
           entity_id: user.id,
-          details: { email: user.email, method: 'username_and_password' }
+          details: { email: user.email, method: 'username_and_password', mfa_type: nil }
         )
       end
     end
@@ -78,7 +113,7 @@ RSpec.describe 'usersLogin Mutation' do
           :user_logged_in,
           author_id: user.id,
           entity_id: user.id,
-          details: { username: user.username, method: 'username_and_password' }
+          details: { username: user.username, method: 'username_and_password', mfa_type: nil }
         )
       end
     end

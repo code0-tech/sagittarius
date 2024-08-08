@@ -45,6 +45,24 @@ CREATE SEQUENCE audit_events_id_seq
 
 ALTER SEQUENCE audit_events_id_seq OWNED BY audit_events.id;
 
+CREATE TABLE backup_codes (
+    id bigint NOT NULL,
+    token text NOT NULL,
+    user_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT check_458fe46218 CHECK ((char_length(token) <= 10))
+);
+
+CREATE SEQUENCE backup_codes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE backup_codes_id_seq OWNED BY backup_codes.id;
+
 CREATE TABLE good_job_batches (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     created_at timestamp with time zone NOT NULL,
@@ -330,6 +348,7 @@ CREATE TABLE users (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     admin boolean DEFAULT false NOT NULL,
+    totp_secret text,
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),
     CONSTRAINT check_60346c5299 CHECK ((char_length(lastname) <= 50)),
@@ -348,6 +367,8 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 ALTER TABLE ONLY application_settings ALTER COLUMN id SET DEFAULT nextval('application_settings_id_seq'::regclass);
 
 ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_id_seq'::regclass);
+
+ALTER TABLE ONLY backup_codes ALTER COLUMN id SET DEFAULT nextval('backup_codes_id_seq'::regclass);
 
 ALTER TABLE ONLY namespace_licenses ALTER COLUMN id SET DEFAULT nextval('namespace_licenses_id_seq'::regclass);
 
@@ -381,6 +402,9 @@ ALTER TABLE ONLY ar_internal_metadata
 
 ALTER TABLE ONLY audit_events
     ADD CONSTRAINT audit_events_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY backup_codes
+    ADD CONSTRAINT backup_codes_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY good_job_batches
     ADD CONSTRAINT good_job_batches_pkey PRIMARY KEY (id);
@@ -443,6 +467,8 @@ CREATE UNIQUE INDEX idx_on_role_id_project_id_5d4b5917dc ON namespace_role_proje
 CREATE UNIQUE INDEX index_application_settings_on_setting ON application_settings USING btree (setting);
 
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
+
+CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes USING btree (user_id, lower(token));
 
 CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON good_job_executions USING btree (active_job_id, created_at);
 
@@ -510,11 +536,16 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(ema
 
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
 
+CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
+
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY backup_codes
+    ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_567f152a62 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;

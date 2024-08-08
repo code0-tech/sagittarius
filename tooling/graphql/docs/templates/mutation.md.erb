@@ -20,6 +20,6 @@ title: <%= object[:name] %>
 
 | Name | Type | Description |
 |------|------|-------------|
-<% sorted_by_name.call(object[:return_fields]).each do |field| -%>
+<% sorted_by_name.call(object[:fields]).each do |field| -%>
 | `<%= field[:name] %>` | [`<%= field[:type][:info] %>`](../<%= field[:type][:path] %>.md) | <%= field[:description] %> |
 <% end -%>

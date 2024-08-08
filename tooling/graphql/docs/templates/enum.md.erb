@@ -10,6 +10,6 @@ title: <%= object[:name] %>
 
 | Value | Description |
 |-------|-------------|
-<% object[:values].each do |value| -%>
+<% sorted_by_name.call(object[:values]).each do |value| -%>
 | `<%= value[:name] %>` | <%= value[:description] %> |
 <% end -%>

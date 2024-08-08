@@ -30,7 +30,7 @@ RSpec.describe 'runtimesUpdate Mutation' do
   end
 
   let(:variables) { { input: input } }
-  let(:current_user) { create(:user, admin: true) }
+  let(:current_user) { create(:user, :admin) }
   let(:runtime) do
     create(:runtime)
   end

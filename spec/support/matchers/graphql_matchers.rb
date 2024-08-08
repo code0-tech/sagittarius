@@ -3,8 +3,6 @@
 module Sagittarius
   module RspecMatchers
     class GraphqlMatcherHelper
-      # rubocop:disable Metrics/CyclomaticComplexity
-      # rubocop:disable Metrics/PerceivedComplexity
       def have_graphql_fields(kls, expected, allow_extra: false, allow_extra_if_extended: false)
         expected_field_names = Array.wrap(expected).flatten.map { |name| GraphqlHelpers.graphql_field_name(name) }
 
@@ -36,8 +34,6 @@ module Sagittarius
           end,
         }
       end
-      # rubocop:enable Metrics/PerceivedComplexity
-      # rubocop:enable Metrics/CyclomaticComplexity
     end
   end
 end
