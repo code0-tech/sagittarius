@@ -16,7 +16,9 @@ module Types
 
     field :namespace, Types::NamespaceType,
           null: false,
-          description: 'Namespace of this user'
+          description: 'Namespace of this user',
+          method: :ensure_namespace
+
 
     lookahead_field :namespace_memberships,
                     base_scope: ->(object) { object.namespace_memberships },
