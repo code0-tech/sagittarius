@@ -18,7 +18,7 @@ module CustomizablePermission
   end
 
   included do
-    condition(:admin) { user_has_ability?(:namespace_administrator, @user, @subject) }
+    condition(:admin) { user_has_ability?(:namespace_administrator, @user, @subject) || can?(:namespace_administrator) }
 
     def namespace(subject)
       @namespace ||= self.class.namespace_resolver_block.call(subject)

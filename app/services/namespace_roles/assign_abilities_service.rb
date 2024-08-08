@@ -57,6 +57,8 @@ module NamespaceRoles
     private
 
     def check_admin_existing(t)
+      return if role.namespace.has_owner?
+
       unless role.namespace.roles.where.not(id: role.id)
                  .joins(:abilities)
                  .exists?(abilities: { ability: :namespace_administrator }) ||

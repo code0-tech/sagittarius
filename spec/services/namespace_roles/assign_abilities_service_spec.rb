@@ -39,20 +39,40 @@ RSpec.describe NamespaceRoles::AssignAbilitiesService do
 
   context 'when user has permission' do
     context 'when ability is last admin ability' do
-      let(:abilities) { [] }
+      context 'when namespace is an user' do
+        let(:abilities) { [] }
+        let(:role) { create(:namespace_role, namespace: create(:namespace, :user)) }
 
-      before do
-        stub_allowed_ability(NamespacePolicy, :assign_role_abilities, user: current_user, subject: role.namespace)
-        create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
-        admin_role.delete
+        before do
+          stub_allowed_ability(NamespacePolicy, :assign_role_abilities, user: current_user, subject: role.namespace)
+          create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
+          admin_role.delete
+        end
+
+        it { is_expected.to be_success }
+        it { expect { service_response }.to change { NamespaceRoleAbility.count }.by(-1) }
+
+        it do
+          expect { service_response }.to create_audit_event(:namespace_role_abilities_updated)
+        end
       end
 
-      it { is_expected.not_to be_success }
-      it { expect(service_response.payload).to eq(:cannot_remove_last_admin_ability) }
-      it { expect { service_response }.not_to change { NamespaceRoleAbility.count } }
+      context 'when namespace is an organization' do
+        let(:abilities) { [] }
 
-      it do
-        expect { service_response }.not_to create_audit_event
+        before do
+          stub_allowed_ability(NamespacePolicy, :assign_role_abilities, user: current_user, subject: role.namespace)
+          create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
+          admin_role.delete
+        end
+
+        it { is_expected.not_to be_success }
+        it { expect(service_response.payload).to eq(:cannot_remove_last_admin_ability) }
+        it { expect { service_response }.not_to change { NamespaceRoleAbility.count } }
+
+        it do
+          expect { service_response }.not_to create_audit_event
+        end
       end
     end
 
@@ -73,7 +93,8 @@ RSpec.describe NamespaceRoles::AssignAbilitiesService do
           author_id: current_user.id,
           entity_id: role.id,
           entity_type: 'NamespaceRole',
-          details: { 'old_abilities' => [], 'new_abilities' => ['create_namespace_role'] },
+          details: { 'old_abilities' => [],
+                     'new_abilities' => ['create_namespace_role'] },
           target_id: role.namespace.id,
           target_type: 'Namespace'
         )
@@ -98,7 +119,8 @@ RSpec.describe NamespaceRoles::AssignAbilitiesService do
           author_id: current_user.id,
           entity_id: role.id,
           entity_type: 'NamespaceRole',
-          details: { 'old_abilities' => ['create_namespace_role'], 'new_abilities' => [] },
+          details: { 'old_abilities' => ['create_namespace_role'],
+                     'new_abilities' => [] },
           target_id: role.namespace.id,
           target_type: 'Namespace'
         )
