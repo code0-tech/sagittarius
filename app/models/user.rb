@@ -29,8 +29,7 @@ class User < ApplicationRecord
     totp_secret != nil
   end
 
-  def is_admin?
+  def admin?
     admin
   end
-
 end

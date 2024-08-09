@@ -43,14 +43,14 @@ RSpec.describe 'usersUpdate Mutation' do
     expect(user.username).to eq(input[:username])
 
     is_expected.to create_audit_event(
-                     :user_updated,
-                     author_id: current_user.id,
-                     entity_id: user.id,
-                     entity_type: 'User',
-                     details: { username: input[:username] },
-                     target_id: user.id,
-                     target_type: 'User'
-                   )
+      :user_updated,
+      author_id: current_user.id,
+      entity_id: user.id,
+      entity_type: 'User',
+      details: { username: input[:username] },
+      target_id: user.id,
+      target_type: 'User'
+    )
   end
 
   context 'when user name is taken' do

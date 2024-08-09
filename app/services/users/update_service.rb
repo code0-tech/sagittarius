@@ -18,15 +18,15 @@ module Users
       end
 
       if params.key?(:admin)
-        unless current_user.is_admin?
-          return ServiceResponse.error(message: 'Cannot modify users admin status because user isn`t admin', payload: :unmodifiable_field)
+        unless current_user.admin?
+          return ServiceResponse.error(message: 'Cannot modify users admin status because user isn`t admin',
+                                       payload: :unmodifiable_field)
         end
 
         if current_user == user
           return ServiceResponse.error(message: 'Cannot modify own admin status', payload: :unmodifiable_field)
         end
       end
-
 
       transactional do |t|
         success = user.update(params)

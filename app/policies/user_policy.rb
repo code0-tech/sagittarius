@@ -2,8 +2,7 @@
 
 class UserPolicy < BasePolicy
   condition(:user_is_self) { @subject.id == @user&.id }
-  condition(:user_is_admin) { @user.is_admin? }
-
+  condition(:user_is_admin) { @user.admin? }
 
   rule { ~anonymous }.enable :read_user
 

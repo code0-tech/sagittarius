@@ -6,11 +6,11 @@ module Types
 
     authorize :read_user
 
+    field :admin, Boolean, null: false, description: 'Global admin status of the user'
     field :email, String, null: false, description: 'Email of the user'
-    field :username, String, null: false, description: 'Username of the user'
     field :firstname, String, null: false, description: 'Firstname of the user'
     field :lastname, String, null: false, description: 'Lastname of the user'
-    field :admin, Boolean, null: false, description: 'Global admin status of the user'
+    field :username, String, null: false, description: 'Username of the user'
 
     field :namespace_memberships, Types::NamespaceMemberType.connection_type,
           null: false,
