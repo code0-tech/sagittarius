@@ -19,7 +19,6 @@ module Types
           description: 'Namespace of this user',
           method: :ensure_namespace
 
-
     lookahead_field :namespace_memberships,
                     base_scope: ->(object) { object.namespace_memberships },
                     conditional_lookaheads: { user: :user, namespace: { namespace: :namespace_members } }
