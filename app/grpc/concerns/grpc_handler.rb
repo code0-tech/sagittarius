@@ -5,7 +5,6 @@ module GrpcHandler
 
   def self.included(base)
     GrpcHandler.handlers << base
-    logger.info(message: 'Added handler', handler: base)
   end
 
   def self.register_on_server(server)
