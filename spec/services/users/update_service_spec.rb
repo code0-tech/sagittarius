@@ -35,6 +35,23 @@ RSpec.describe Users::UpdateService do
     context 'when user tries to update admin status' do
       subject(:service_response) { described_class.new(current_user, user, params).execute }
       context 'when user is admin' do
+        context 'when user is trying to modify its own admin status' do
+          let(:current_user) { create(:user) }
+          let(:user) { current_user }
+          let(:params) do
+            { admin: true }
+          end
+
+          it { is_expected.not_to be_success }
+
+          it 'updates user' do
+            expect { service_response }.not_to change { user.reload.admin }
+          end
+
+          it do
+            is_expected.not_to create_audit_event
+          end
+        end
         let(:user) { create(:user) }
         let(:current_user) { create(:user, :admin) }
         let(:params) do
