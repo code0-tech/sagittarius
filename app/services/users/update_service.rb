@@ -17,9 +17,16 @@ module Users
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 
-      if params&.[](:admin) != nil && !current_user.is_admin?
-        return ServiceResponse.error(message: 'Cannot modify users admin status because user isnt admin', payload: :missing_permission)
+      if params.key?(:admin)
+        unless current_user.is_admin?
+          return ServiceResponse.error(message: 'Cannot modify users admin status because user isnt admin', payload: :missing_permission)
+        end
+
+        if current_user == user
+          return ServiceResponse.error(message: 'Cannot modify own admin status', payload: :missing_permission)
+        end
       end
+
 
       transactional do |t|
         success = user.update(params)
