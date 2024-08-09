@@ -70,7 +70,7 @@ RSpec.describe Runtimes::CreateService do
   end
 
   context 'when user and params are valid and user is admin' do
-    let(:current_user) { create(:user, admin: true) }
+    let(:current_user) { create(:user, :admin) }
     let(:params) do
       { name: generate(:runtime_name) }
     end

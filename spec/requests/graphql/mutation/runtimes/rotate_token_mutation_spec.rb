@@ -30,7 +30,7 @@ RSpec.describe 'runtimesRotate Mutation' do
   end
 
   let(:variables) { { input: input } }
-  let(:current_user) { create(:user, admin: true) }
+  let(:current_user) { create(:user, :admin) }
 
   context 'when rotating token' do
     it 'creates runtime' do

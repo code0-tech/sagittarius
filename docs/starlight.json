@@ -6,19 +6,28 @@
       "items": [
         {
           "label": "Enums",
-          "autogenerate": { "directory": "graphql/enum" }
+          "autogenerate": { "directory": "graphql/enum" },
+          "collapsed": true
         },
         {
           "label": "Interfaces",
-          "autogenerate": { "directory": "graphql/interface" }
+          "autogenerate": { "directory": "graphql/interface" },
+          "collapsed": true
         },
         {
           "label": "Mutations",
-          "autogenerate": { "directory": "graphql/mutation" }
+          "autogenerate": { "directory": "graphql/mutation" },
+          "collapsed": true
         },
         {
           "label": "Objects",
-          "autogenerate": { "directory": "graphql/object" }
+          "autogenerate": { "directory": "graphql/object" },
+          "collapsed": true
+        },
+        {
+          "label": "Input objects",
+          "autogenerate": { "directory": "graphql/input_object" },
+          "collapsed": true
         },
         {
           "label": "Scalars",
@@ -27,7 +36,8 @@
         },
         {
           "label": "Unions",
-          "autogenerate": { "directory": "graphql/union" }
+          "autogenerate": { "directory": "graphql/union" },
+          "collapsed": true
         }
       ]
     }

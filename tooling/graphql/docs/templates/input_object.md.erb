@@ -1,0 +1,17 @@
+---
+title: <%= object[:name] %>
+---
+
+<%= object[:description] %>
+<% unless object[:markdown_documentation].nil? -%>
+
+<%= object[:markdown_documentation] %>
+<% end -%>
+
+## Fields
+
+| Name | Type | Description |
+|------|------|-------------|
+<% sorted_by_name.call(object[:fields]).each do |field| -%>
+| `<%= field[:name] %>` | [`<%= field[:type][:info] %>`](../<%= field[:type][:path] %>.md) | <%= field[:description] %> |
+<% end -%>

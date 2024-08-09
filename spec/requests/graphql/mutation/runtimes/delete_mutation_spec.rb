@@ -31,7 +31,7 @@ RSpec.describe 'runtimesDelete Mutation' do
   let(:current_user) { create(:user) }
 
   context 'when user is valid and is admin' do
-    let(:current_user) { create(:user, admin: true) }
+    let(:current_user) { create(:user, :admin) }
 
     it 'deletes runtime' do
       mutate!

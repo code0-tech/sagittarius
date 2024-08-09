@@ -20,7 +20,7 @@ RSpec.describe Runtimes::RotateTokenService do
   end
 
   context 'when user is a valid and is admin' do
-    let(:current_user) { create(:user, admin: true) }
+    let(:current_user) { create(:user, :admin) }
 
     it { is_expected.to be_success }
     it { expect(service_response.payload).to eq(runtime) }
@@ -39,7 +39,7 @@ RSpec.describe Runtimes::RotateTokenService do
   end
 
   context 'when user is a valid and namespace is present and user has permissions' do
-    let(:current_user) { create(:user, admin: true) }
+    let(:current_user) { create(:user, :admin) }
     let(:namespace) do
       create(:namespace).tap do |namespace|
         create(:namespace_member, namespace: namespace, user: current_user)
