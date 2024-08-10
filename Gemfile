@@ -79,3 +79,5 @@ gem 'code0-license', '~> 0.2.0'
 gem 'good_job', '~> 4.0'
 
 gem 'rotp'
+
+gem 'tucana', '0.0.3'
