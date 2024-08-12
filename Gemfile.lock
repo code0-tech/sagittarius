@@ -350,6 +350,7 @@ DEPENDENCIES
   factory_bot_rails (~> 6.2)
   good_job (~> 4.0)
   graphql (~> 2.1)
+  grpc (~> 1.65)
   lograge (~> 0.14.0)
   pg (~> 1.1)
   puma (>= 5.0)

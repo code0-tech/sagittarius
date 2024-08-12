@@ -80,4 +80,5 @@ gem 'good_job', '~> 4.0'
 
 gem 'rotp'
 
+gem 'grpc', '~> 1.65'
 gem 'tucana', '0.0.3'
