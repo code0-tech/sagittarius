@@ -13,5 +13,10 @@ module Sagittarius
 
       default
     end
+
+    # Returns the current monotonic clock time as seconds with microseconds precision
+    def monotonic_time
+      Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_second)
+    end
   end
 end
