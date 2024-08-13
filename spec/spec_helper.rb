@@ -7,7 +7,7 @@ SimpleCov.start do
 
   add_filter 'spec'
 
-  %w[controllers finders graphql jobs models policies services].each do |type|
+  %w[controllers finders graphql grpc jobs models policies services].each do |type|
     add_group type.capitalize, "app/#{type}"
   end
 
