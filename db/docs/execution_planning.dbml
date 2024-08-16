@@ -1,0 +1,26 @@
+Table RuntimeFunctionDefinition  {
+    id int [pk, increment]
+    return_type int [null]
+}
+
+
+Table RuntimeParameterDefinition {
+    id int [pk, increment]
+    runtime_function_id int [ref: > RuntimeFunctionDefinition.id]
+    type int [not null]
+    name varchar [not null, note: 'the parameter name on runtime level']
+}
+
+
+Table FunctionDefinition {
+    id int [pk, increment]
+    runtime_function_id int [ref: > RuntimeFunctionDefinition.id]
+    return_type int [null]
+}
+
+Table ParameterDefinition {
+    id int [pk, increment]
+    function_id int [ref: > FunctionDefinition.id]
+    type int [not null]
+    name varchar [not null, note: 'the parameter name on runtime level']
+}
