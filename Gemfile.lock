@@ -132,7 +132,7 @@ GEM
       rake (>= 13)
     googleapis-common-protos-types (1.15.0)
       google-protobuf (>= 3.18, < 5.a)
-    graphql (2.3.12)
+    graphql (2.3.14)
       base64
       fiber-storage
     grpc (1.65.2-x86_64-linux)
