@@ -3,11 +3,11 @@
 module Mutations
   module Users
     class Update < BaseMutation
-      description 'Update an existing organization.'
+      description 'Update an existing user.'
 
       field :user, Types::UserType, null: true, description: 'The updated user.'
 
-      argument :admin, Boolean, required: false, description: ''
+      argument :admin, Boolean, required: false, description: 'New global admin status for the user.'
       argument :email, String, required: false, description: 'New email for the user.'
       argument :firstname, String, required: false, description: 'New firstname for the user.'
       argument :lastname, String, required: false, description: 'New lastname for the user.'

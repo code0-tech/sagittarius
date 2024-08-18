@@ -35,7 +35,6 @@ RSpec.describe Users::UpdateService do
     let(:params) do
       { username: generate(:username) }
     end
-    let(:organization) { create(:organization) }
     let(:current_user) { create(:user) }
 
     context 'when user tries to update admin status' do
@@ -49,7 +48,6 @@ RSpec.describe Users::UpdateService do
         let(:user) { create(:user) }
 
         context 'when user is trying to modify its own admin status' do
-          let(:current_user) { create(:user) }
           let(:user) { current_user }
           let(:params) do
             { admin: true }
@@ -57,7 +55,7 @@ RSpec.describe Users::UpdateService do
 
           it { is_expected.not_to be_success }
 
-          it 'updates user' do
+          it 'does not update user' do
             expect { service_response }.not_to change { user.reload.admin }
           end
 
