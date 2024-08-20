@@ -1,13 +1,24 @@
+Table Runtime {
+    id int [pk, increment]
+    //....
+}
+
+Table Runtime2RuntimeFunctionDefinition {
+    id int [pk, increment]
+    runtime_id int [ref: < Runtime.id]
+    runtime_function_id int [ref: > RuntimeFunctionDefinition.id]
+}
+
 Table RuntimeFunctionDefinition  {
     id int [pk, increment]
-    return_type int [null]
+    return_type int [ref: > DataType.id]
 }
 
 
 Table RuntimeParameterDefinition {
     id int [pk, increment]
     runtime_function_id int [ref: > RuntimeFunctionDefinition.id]
-    type int [not null]
+    type int [ref: > DataType.id]
     name varchar [not null, note: 'the parameter name on runtime level']
 }
 
@@ -15,12 +26,106 @@ Table RuntimeParameterDefinition {
 Table FunctionDefinition {
     id int [pk, increment]
     runtime_function_id int [ref: > RuntimeFunctionDefinition.id]
-    return_type int [null]
+    return_type int [ref: > DataType.id]
 }
 
 Table ParameterDefinition {
     id int [pk, increment]
     function_id int [ref: > FunctionDefinition.id]
-    type int [not null]
+    type int [ref: > DataType.id]
     name varchar [not null, note: 'the parameter name on runtime level']
+}
+
+Enum EDataType {
+    PRIMITIVE
+    TYPE
+    OBJECT
+    DATATYPE
+    FUNCTION
+}
+
+Table DataType {
+    id int [pk, increment]
+    name varchar
+    type EDataType
+    returnType int [ref: > DataType.id]
+    parent int [ref: > DataType.id]
+    
+}
+
+Table DataType2InputType {
+    id int [pk, increment]
+    data_type int [ref: < DataType.id]
+    input_type int [ref: < DataType.id]
+    
+}
+
+Enum EDataTypeRuleType {
+    REGEX
+    NUMBER_RANGE
+    ITEM_OF_COLLECTION
+    //etc
+}
+
+Table DataTypeRule {
+    id int [pk, increment]
+    data_type int [ref: > DataType.id]
+    type EDataTypeRuleType
+    config varchar [note: 'JSON object']
+}
+
+Table DataTypeObjectKey {
+    id int [pk, increment]
+    name varchar
+    type int [ref: > DataType.id]
+    required bit
+    
+}
+
+Table DataType2ObjectKey {
+    id int [pk, increment]
+    data_type int [ref: < DataType.id]
+    object_key int [ref: < DataTypeObjectKey.id]
+    
+}
+
+Table FlowDefinition {
+    id int [pk, increment]    
+}
+
+Table FlowDefinition2ParameterDefinition {
+    id int [pk, increment]
+    flow_definition_id int [ref: < FlowDefinition.id]
+    parameter_id int [ref: < ParameterDefinition.id]
+}
+
+Table FlowType {
+    id int [pk, increment]
+    name varchar
+    flow_definition_id int [ref: > FlowDefinition.id]
+}
+
+
+//actual implementation
+
+Table Node {
+    id int [pk, increment]
+    function_id int [ref: > FunctionDefinition.id]
+    next_node int [ref: > Node.id]
+    
+    
+}
+
+Table Parameter {
+    id int [pk, increment]
+    parent_id int [ref: > Node.id]
+    parameter_id int [ref: > ParameterDefinition.id]
+    value varchar [note: 'JSON object']
+    sub_node int [ref: > Node.id]
+}
+
+Table Flow {
+    id int [pk, increment]
+    starting_node int [ref: > Node.id]
+    type int [ref: > FlowType.id]
 }
