@@ -8,7 +8,7 @@ RSpec.describe 'internal.PingService', :need_grpc_server do
   describe 'Ping' do
     it 'returns the same ping id' do
       message = Tucana::Internal::PingMessage.new(ping_id: 42)
-      expect(stub.ping(message).ping_id).to eq(message.ping_id)
+      expect(stub.ping(message, authorization).ping_id).to eq(message.ping_id)
     end
   end
 end
