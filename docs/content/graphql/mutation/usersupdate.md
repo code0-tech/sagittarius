@@ -2,13 +2,13 @@
 title: usersUpdate
 ---
 
-Update an existing organization.
+Update an existing user.
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
-| `admin` | [`Boolean`](../scalar/boolean.md) |  |
+| `admin` | [`Boolean`](../scalar/boolean.md) | New global admin status for the user. |
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `email` | [`String`](../scalar/string.md) | New email for the user. |
 | `firstname` | [`String`](../scalar/string.md) | New firstname for the user. |
