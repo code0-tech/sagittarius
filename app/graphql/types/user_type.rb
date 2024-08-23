@@ -15,7 +15,7 @@ module Types
           extras: [:lookahead]
 
     field :namespace, Types::NamespaceType,
-          null: false,
+          null: true,
           description: 'Namespace of this user',
           method: :ensure_namespace
 
