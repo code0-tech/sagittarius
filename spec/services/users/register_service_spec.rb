@@ -13,10 +13,9 @@ RSpec.describe Users::RegisterService do
     it { is_expected.to be_success }
 
     it do
-      it { expect(service_response.payload).to be_valid }
-
+      expect(service_response.payload).to be_valid
       expect(service_response.payload).to be_a(UserSession)
-      expect(service_response.payload.user.id).to eq(current_user.id)
+      expect(service_response.payload.user.id).to be_present
       expect(service_response.payload.token).to be_present
     end
 

@@ -7,7 +7,7 @@ module Mutations
 
       description 'Register a new user'
 
-      field :session, Types::UserSessionType, null: true, description: 'The created users session'
+      field :user_session, Types::UserSessionType, null: true, description: 'The created users session'
 
       argument :email, String, required: true, description: 'Email of the user'
       argument :password, String, required: true, description: 'Password of the user'
@@ -18,8 +18,9 @@ module Mutations
           username,
           email,
           password
-        ).execute.to_mutation_response(success_key: :user)
-        bypass_authorization! response, object_path: :user
+        ).execute.to_mutation_response(success_key: :user_session)
+        bypass_authorization! response, object_path: %i[user_session user]
+        bypass_authorization! response, object_path: :user_session
       end
     end
   end
