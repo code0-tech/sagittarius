@@ -9,6 +9,9 @@ RSpec.describe SagittariusSchema.types['User'] do
       username
       email
       namespace
+      firstname
+      lastname
+      admin
       namespaceMemberships
       createdAt
       updatedAt

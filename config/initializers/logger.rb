@@ -11,3 +11,11 @@ end
 Rails.logger.formatter = Sagittarius::Logs::JsonFormatter::Tagged.new
 
 Rails.application.config.colorize_logging = Rails.const_defined? 'Console'
+
+module GrpcLogger
+  def logger
+    Rails.logger
+  end
+end
+
+GRPC.extend GrpcLogger

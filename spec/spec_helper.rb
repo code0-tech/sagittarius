@@ -7,7 +7,7 @@ SimpleCov.start do
 
   add_filter 'spec'
 
-  %w[controllers finders graphql jobs models policies services].each do |type|
+  %w[controllers finders graphql grpc jobs models policies services].each do |type|
     add_group type.capitalize, "app/#{type}"
   end
 
@@ -77,9 +77,14 @@ RSpec.configure do |config|
   require_relative '../lib/sagittarius/extensions'
   require_relative '../lib/sagittarius/utils'
 
+  base_glob = "{,#{Sagittarius::Extensions::AVAILABLE_EXTENSIONS.map { |ext| "#{ext}/" }.join(',')}}spec"
   config.define_derived_metadata do |metadata|
     Sagittarius::Extensions::AVAILABLE_EXTENSIONS.each do |extension|
       metadata[:extension] = extension if metadata[:file_path].start_with?("./#{extension}/")
+    end
+
+    if File.fnmatch?("#{base_glob}/grpc/{,**/}*_spec.rb", metadata[:file_path].delete_prefix('./'), File::FNM_EXTGLOB)
+      metadata[:type] = :grpc
     end
   end
 
