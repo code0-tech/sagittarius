@@ -11,10 +11,19 @@ RSpec.describe Users::RegisterService do
     let(:password) { generate(:password) }
 
     it { is_expected.to be_success }
-    it { expect(service_response.payload).to be_valid }
-    it('sets username correct') { expect(service_response.payload.username).to eq(username) }
-    it('sets email correct') { expect(service_response.payload.email).to eq(email) }
-    it('sets password correct') { expect(service_response.payload.password).to eq(password) }
+
+    it do
+      it { expect(service_response.payload).to be_valid }
+      expect(service_response.payload).to be_a(UserSession)
+      expect(service_response.payload.user.id).to eq(current_user.id)
+      expect(service_response.payload.token).to be_present
+    end
+
+
+    it('sets username correct') { expect(service_response.payload.user.username).to eq(username) }
+    it('sets email correct') { expect(service_response.payload.user.email).to eq(email) }
+    it('sets password correct') { expect(service_response.payload.user.password).to eq(password) }
+
 
     it 'creates the audit event' do
       expect { service_response }.to create_audit_event(

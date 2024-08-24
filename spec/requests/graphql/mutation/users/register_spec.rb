@@ -10,8 +10,10 @@ RSpec.describe 'usersRegister Mutation' do
       mutation($input: UsersRegisterInput!) {
         usersRegister(input: $input) {
           #{error_query}
-          user {
-            id
+          session {
+            user {
+              id
+            }
           }
         }
       }
@@ -31,9 +33,9 @@ RSpec.describe 'usersRegister Mutation' do
   before { post_graphql mutation, variables: variables }
 
   it 'creates the user' do
-    expect(graphql_data_at(:users_register, :user, :id)).to be_present
+    expect(graphql_data_at(:users_register, :session, :user, :id)).to be_present
 
-    user = SagittariusSchema.object_from_id(graphql_data_at(:users_register, :user, :id))
+    user = SagittariusSchema.object_from_id(graphql_data_at(:users_register, :session, :user, :id))
 
     expect(user).to be_a(User)
     expect(user.username).to eq(input[:username])
@@ -77,7 +79,7 @@ RSpec.describe 'usersRegister Mutation' do
     end
 
     it 'returns errors' do
-      expect(graphql_data_at(:users_register, :user)).not_to be_present
+      expect(graphql_data_at(:users_register, :session)).not_to be_present
 
       expect(graphql_data_at(:users_register, :errors)).to include(
         { 'attribute' => 'password', 'type' => 'blank' },

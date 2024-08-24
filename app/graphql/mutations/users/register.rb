@@ -7,7 +7,7 @@ module Mutations
 
       description 'Register a new user'
 
-      field :user, Types::UserType, null: true, description: 'The created user'
+      field :session, Types::UserSessionType, null: true, description: 'The created users session'
 
       argument :email, String, required: true, description: 'Email of the user'
       argument :password, String, required: true, description: 'Password of the user'
