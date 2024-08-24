@@ -82,3 +82,6 @@ gem 'rotp'
 
 gem 'grpc', '~> 1.64', '< 1.65'
 gem 'tucana', '0.0.4'
+
+gem 'pry', '~> 0.14.2'
+gem 'pry-byebug', '~> 3.10'
