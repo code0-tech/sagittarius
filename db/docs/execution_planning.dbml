@@ -11,7 +11,8 @@ Table Runtime2RuntimeFunctionDefinition {
 
 Table RuntimeFunctionDefinition  {
     id int [pk, increment]
-    return_type int [ref: > DataType.id]
+    runtime_id varchar
+    return_type int [null, ref: > DataType.id]
 }
 
 
@@ -19,7 +20,7 @@ Table RuntimeParameterDefinition {
     id int [pk, increment]
     runtime_function_id int [ref: > RuntimeFunctionDefinition.id]
     type int [ref: > DataType.id]
-    name varchar [not null, note: 'the parameter name on runtime level']
+    runtime_name varchar [not null, note: 'the parameter name on runtime level']
 }
 
 
@@ -27,13 +28,18 @@ Table FunctionDefinition {
     id int [pk, increment]
     runtime_function_id int [ref: > RuntimeFunctionDefinition.id]
     return_type int [ref: > DataType.id]
+    name varchar [note: 'ref to language entry']
+    description varchar [note: 'ref to language entry']
+
 }
 
 Table ParameterDefinition {
     id int [pk, increment]
     function_id int [ref: > FunctionDefinition.id]
     type int [ref: > DataType.id]
-    name varchar [not null, note: 'the parameter name on runtime level']
+    name varchar [not null, note: 'overrides the runtime parameter name and ref to language entry']
+    description varchar [note: 'ref to language entry']
+    value varchar [null, note: 'sets a value for the parameter to cancel out the parameter for the frontend']
 }
 
 Enum EDataType {
