@@ -18,9 +18,15 @@ module Users
         return ServiceResponse.error(message: 'User registration is disabled', payload: :registration_disabled)
       end
 
-      transactional do
+      transactional do |t|
         user = User.create(username: username, email: email, password: password)
         return ServiceResponse.error(message: 'User is invalid', payload: user.errors) unless user.persisted?
+
+        user_session = UserSession.create(user: user)
+        unless user_session.persisted?
+          t.rollback_and_return! ServiceResponse.error(message: 'UserSession is invalid',
+                                                       payload: user_session.errors)
+        end
 
         AuditService.audit(
           :user_registered,
@@ -31,7 +37,7 @@ module Users
         )
 
         logger.info(message: 'Created new user', user_id: user.id, username: user.username)
-        ServiceResponse.success(payload: user)
+        ServiceResponse.success(payload: user_session)
       end
     end
   end
