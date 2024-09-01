@@ -18,6 +18,7 @@ include:
   before_script:
     - source ~/.asdf/asdf.sh
     - bundle config build.pg --with-pg-config=$(asdf where postgres)/bin/pg_config
+    - cp tooling/pipeline/sagittarius.yml config/sagittarius.yml
     - !reference [.bundle, before_script]
   services:
     - postgres:16.1
@@ -25,8 +26,6 @@ include:
     POSTGRES_DB: sagittarius_test
     POSTGRES_USER: sagittarius
     POSTGRES_PASSWORD: sagittarius
-    SAGITTARIUS_DATABASE_HOST: postgres
-    SAGITTARIUS_DATABASE_PORT: '5432'
     RAILS_ENV: test
 
 rubocop:
@@ -138,10 +137,7 @@ boot:production-mode:
     POSTGRES_DB: sagittarius_production
     POSTGRES_USER: sagittarius
     POSTGRES_PASSWORD: sagittarius
-    SAGITTARIUS_DATABASE_HOST: postgres
-    SAGITTARIUS_DATABASE_PORT: '5432'
     RAILS_ENV: production
-    RAILS_FORCE_SSL: 'false'
     BUNDLE_WITHOUT: 'development:test'
   script:
     - '[[ "$EDITION" = "ee" ]] || rm -rf ee/'
@@ -169,10 +165,7 @@ boot:docker:
       --name sagittarius
       --network sagittarius_default
       --network-alias sagittarius
-      -e SAGITTARIUS_DATABASE_HOST=postgresql
-      -e SAGITTARIUS_DATABASE_PORT=5432
-      -e SAGITTARIUS_REDIS_HOST=redis
-      -e SAGITTARIUS_REDIS_PORT=6379
+      -v $(pwd)/tooling/pipeline/sagittarius.yml:/rails/config/sagittarius.yml
       -e SAGITTARIUS_DISABLE_ORCHESTRATOR=true
       ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}-${EDITION} &
     - >

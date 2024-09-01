@@ -1,0 +1,6 @@
+rails:
+  db:
+    host: postgres
+    port: 5432
+  web:
+    force_ssl: false
