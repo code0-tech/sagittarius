@@ -12,16 +12,19 @@
 # Configure Using Gemfile
 # gem "pg"
 #
+
+<% db_config = Sagittarius::Configuration.config[:rails][:db] %>
+
 default: &default
   adapter: postgresql
   encoding: unicode
-  username: <%= ENV.fetch("SAGITTARIUS_DATABASE_USERNAME") { "sagittarius" } %>
-  password: <%= ENV.fetch("SAGITTARIUS_DATABASE_PASSWORD") { "sagittarius" } %>
-  host: <%= ENV.fetch("SAGITTARIUS_DATABASE_HOST") { "localhost" } %>
-  port: <%= ENV.fetch("SAGITTARIUS_DATABASE_PORT") { 5433 } %>
+  username: <%= db_config[:username] %>
+  password: <%= db_config[:password] %>
+  host: <%= db_config[:host] %>
+  port: <%= db_config[:port] %>
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= Sagittarius::Configuration.config[:rails][:threads] %>
 
 development:
   <<: *default

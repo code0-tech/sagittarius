@@ -45,8 +45,10 @@ class ApplicationSetting < ApplicationRecord
     records = ApplicationSetting.all
     assert_settings_present!(records)
 
+    overrides = Sagittarius::Configuration.application_setting_overrides
+
     records.each_with_object(ApplicationSettings.new) do |record, acc|
-      acc[record.setting] = record.value
+      acc[record.setting] = overrides.fetch(record.setting.to_sym, record.value)
     end
   end
 end
