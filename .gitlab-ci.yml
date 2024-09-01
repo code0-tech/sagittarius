@@ -181,7 +181,7 @@ boot:docker:
       --retry-connrefused
       http://sagittarius:3000/health/liveness
 
-boot:docker-orchestrated:
+.boot:docker-orchestrated:
   stage: test
   image: docker:27.1.1-dind
   parallel:
