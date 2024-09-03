@@ -28,7 +28,7 @@ module Sagittarius
       {
         correlation_id: -> { Sagittarius::Context.correlation_id },
         user_id: -> { Sagittarius::Context.current&.[](:user)&.[](:id) },
-        user_name: -> { Sagittarius::Context.current&.[](:user)&.[](:username) },
+        runtime_id: -> { Sagittarius::Context.current&.[](:runtime)&.[](:id) },
         application: lambda {
                        if Rails.const_defined?('Console')
                          'console'

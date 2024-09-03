@@ -10,7 +10,8 @@ module Sagittarius
       def load
         @server = GRPC::RpcServer.new(interceptors: [
           Sagittarius::Middleware::Grpc::Context.new,
-          Sagittarius::Middleware::Grpc::Logger.new
+          Sagittarius::Middleware::Grpc::Logger.new,
+          Sagittarius::Middleware::Grpc::Authentication.new
         ].reverse) # grpc handles interceptors in opposite order. Reversing so we can list them in top-to-bottom order
         logger.info('GRPC server created')
 
