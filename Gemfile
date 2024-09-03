@@ -82,3 +82,5 @@ gem 'rotp'
 
 gem 'grpc', '~> 1.64', '< 1.65'
 gem 'tucana', '0.0.4'
+
+gem 'code0-identities', '~> 0.0.1'
