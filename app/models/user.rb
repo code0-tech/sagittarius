@@ -25,6 +25,8 @@ class User < ApplicationRecord
   has_many :namespace_memberships, class_name: 'NamespaceMember', inverse_of: :user
   has_many :namespaces, through: :namespace_memberships, inverse_of: :users
 
+  has_many :user_identities, inverse_of: :user
+
   def mfa_enabled?
     totp_secret != nil
   end
