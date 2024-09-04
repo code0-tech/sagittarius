@@ -12,9 +12,7 @@ RSpec.describe Users::Identity::BaseService do
 
   context '#identity_provider' do
     before do
-      setting = ApplicationSetting.last
-      setting.value = [{id: :google, type: :google, config: {}}]
-      setting.save
+      stub_application_settings(identity_providers: [{id: :google, type: :google, config: {}}])
     end
 
     it 'applies the right providers' do
