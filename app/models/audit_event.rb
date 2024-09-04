@@ -28,6 +28,7 @@ class AuditEvent < ApplicationRecord
     mfa_enabled: 24,
     backup_codes_rotated: 25,
     user_updated: 26,
+    user_identity_linked: 27,
   }.with_indifferent_access
 
   # rubocop:disable Lint/StructNewOverride
@@ -42,9 +43,9 @@ class AuditEvent < ApplicationRecord
   validates :entity_id, presence: true
   validates :entity_type, presence: true
   validates :action_type, presence: true,
-                          inclusion: {
-                            in: ACTION_TYPES.keys.map(&:to_s),
-                          }
+            inclusion: {
+              in: ACTION_TYPES.keys.map(&:to_s),
+            }
   validate :validate_details
   validates :target_id, presence: true
   validates :target_type, presence: true
