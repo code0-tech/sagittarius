@@ -2,7 +2,6 @@ module Users
   module Identity
     class LoginService < BaseService
       include Sagittarius::Database::Transactional
-      include Sagittarius::Loggable
 
       attr_reader :provider_id, :args
 
