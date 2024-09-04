@@ -32,9 +32,9 @@ RSpec.describe Users::Identity::RegisterService do
 
     it { is_expected.to be_success }
     it { expect(service_response.payload).to be_valid }
-    it('sets username correct') { expect(service_response.payload.username).to eq("username") }
-    it('sets email correct') { expect(service_response.payload.email).to eq("test@code0.tech") }
-    it('sets password correct') { expect(service_response.payload.password.length).to eq(50) }
+    it('sets username correct') { expect(service_response.payload.user.username).to eq("username") }
+    it('sets email correct') { expect(service_response.payload.user.email).to eq("test@code0.tech") }
+    it('sets password correct') { expect(service_response.payload.user.password.length).to eq(50) }
 
     it 'creates the audit event' do
       expect { service_response }.to create_audit_event(
@@ -93,7 +93,7 @@ RSpec.describe Users::Identity::RegisterService do
       context 'when address name is not a duplicate' do
 
         it "gets the username out of the address name" do
-          expect(service_response.payload.username).to eq("test")
+          expect(service_response.payload.user.username).to eq("test")
           is_expected.to be_success
         end
       end
@@ -105,9 +105,10 @@ RSpec.describe Users::Identity::RegisterService do
         end
 
         it "modifies the username to be not unique" do
-          expect(service_response.payload.username).not_to eq("test")
-          expect(service_response.payload.username).to eq("testa")
+          expect(service_response.payload.user.username).not_to eq("test")
+          expect(service_response.payload.user.username).to eq("testa")
           expect(service_response.payload).not_to be_nil
+          expect(service_response.payload.user).not_to be_nil
           is_expected.to be_success
         end
       end
@@ -119,9 +120,9 @@ RSpec.describe Users::Identity::RegisterService do
         let(:email) { "#{username}@code0.tech" }
 
         it "modifies the username to be not unique" do
-          expect(service_response.payload.username).not_to eq(username)
-          expect(service_response.payload.username).to eq(username[0..49])
-          expect(service_response.payload).not_to be_nil
+          expect(service_response.payload.user.username).not_to eq(username)
+          expect(service_response.payload.user.username).to eq(username[0..49])
+          expect(service_response.payload.user).not_to be_nil
           is_expected.to be_success
         end
 
@@ -137,9 +138,9 @@ RSpec.describe Users::Identity::RegisterService do
           end
 
           it "modifies the username to be not unique" do
-            expect(service_response.payload.username).not_to eq(username)
-            expect(service_response.payload.username).to eq("ABC")
-            expect(service_response.payload).not_to be_nil
+            expect(service_response.payload.user.username).not_to eq(username)
+            expect(service_response.payload.user.username).to eq("ABC")
+            expect(service_response.payload.user).not_to be_nil
             is_expected.to be_success
           end
         end

@@ -57,6 +57,11 @@ module Users
           unless user_identity.persisted?
             t.rollback_and_return! ServiceResponse.error(message: 'UserIdentity is invalid', payload: user_identity.errors)
           end
+          user_session = UserSession.create(user: user)
+          unless user_session.persisted?
+            t.rollback_and_return! ServiceResponse.error(message: 'UserSession is invalid',
+                                                         payload: user_session.errors)
+          end
 
           AuditService.audit(
             :user_registered,
@@ -69,7 +74,7 @@ module Users
             target: user
           )
 
-          ServiceResponse.success(payload: user)
+          ServiceResponse.success(payload: user_session)
         end
 
       end
