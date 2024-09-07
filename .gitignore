@@ -48,3 +48,10 @@
 *.njsproj
 *.sln
 *.sw?
+
+################
+##
+## Configuration files
+##
+################
+config/sagittarius.yml
