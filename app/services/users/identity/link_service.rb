@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Users
   module Identity
     class LinkService < BaseService
@@ -6,6 +8,7 @@ module Users
       attr_reader :current_user, :provider_id, :args
 
       def initialize(current_user, provider_id, args)
+        super()
         @current_user = current_user
         @provider_id = provider_id
         @args = args
@@ -15,23 +18,25 @@ module Users
         begin
           identity = identity_provider.load_identity(provider_id, args)
         rescue Code0::Identities::Error => e
-          return ServiceResponse.error(payload: e, message: "An error occurred while loading external identity")
+          return ServiceResponse.error(payload: e, message: 'An error occurred while loading external identity')
         end
         if identity.nil?
-          return ServiceResponse.error(payload: :invalid_external_identity, message: "External identity is nil")
+          return ServiceResponse.error(payload: :invalid_external_identity, message: 'External identity is nil')
         end
 
         transactional do |t|
-          user_identity = UserIdentity.create(user: current_user, identifier: identity.identifier, provider_id: provider_id)
+          user_identity = UserIdentity.create(user: current_user, identifier: identity.identifier,
+                                              provider_id: provider_id)
 
           unless user_identity.valid?
-            t.rollback_and_return! ServiceResponse.error(payload: user_identity.errors, message: "An error occurred while creating user identity")
+            t.rollback_and_return! ServiceResponse.error(payload: user_identity.errors,
+                                                         message: 'An error occurred while creating user identity')
           end
 
           current_user.user_identities << user_identity
 
           unless current_user.save
-            t.rollback_and_return! ServiceResponse.error(payload: current_user.errors, message: "Failed to save user")
+            t.rollback_and_return! ServiceResponse.error(payload: current_user.errors, message: 'Failed to save user')
           end
 
           AuditService.audit(
@@ -42,7 +47,7 @@ module Users
             target: current_user
           )
 
-          ServiceResponse.success(payload: current_user)
+          ServiceResponse.success(payload: user_identity)
         end
       end
     end

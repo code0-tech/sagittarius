@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Users
   module Identity
     class LoginService < BaseService
@@ -6,6 +8,7 @@ module Users
       attr_reader :provider_id, :args
 
       def initialize(provider_id, args)
+        super()
         @provider_id = provider_id
         @args = args
       end
@@ -14,17 +17,19 @@ module Users
         begin
           identity = identity_provider.load_identity(provider_id, args)
         rescue Code0::Identities::Error => e
-            return ServiceResponse.error(payload: e, message: "An error occurred while loading external identity")
+          return ServiceResponse.error(payload: e, message: 'An error occurred while loading external identity')
         end
         if identity.nil?
-          return ServiceResponse.error(payload: :invalid_external_identity, message: "External identity is nil")
+          return ServiceResponse.error(payload: :invalid_external_identity, message: 'External identity is nil')
         end
+
         user_identity = UserIdentity.find_by(provider_id: identity.provider.to_s, identifier: identity.identifier)
 
-
         if user_identity.nil?
-          return ServiceResponse.error(payload: :external_identity_does_not_exist, message: "No user with that external identity exists, please register first")
+          return ServiceResponse.error(payload: :external_identity_does_not_exist,
+                                       message: 'No user with that external identity exists, please register first')
         end
+
         user = user_identity.user
 
         transactional do |t|

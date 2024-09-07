@@ -88,7 +88,7 @@ class GraphqlController < ApplicationController
     return false unless selections.length == 1
 
     mutation_name = selections.first.name
-    %w[usersLogin usersRegister usersIdentityRegister userIdentityLogin].include?(mutation_name)
+    %w[usersLogin usersRegister usersIdentityRegister usersIdentityLogin].include?(mutation_name)
   end
 
   Authorization = Struct.new(:type, :authorization) do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Users
   module Identity
     class RegisterService < BaseService
@@ -7,7 +9,8 @@ module Users
       attr_reader :provider_id, :args
 
       def initialize(provider_id, args)
-        @provider_id = provider_id
+        super()
+        @provider_id = provider_id.to_sym
         @args = args
       end
 
@@ -30,32 +33,26 @@ module Users
         lastname = identity.lastname
         password = SecureRandom.base58(50)
 
-        if email.nil?
-          return ServiceResponse.error(message: 'No email given', payload: :missing_identity_data)
-        end
+        return ServiceResponse.error(message: 'No email given', payload: :missing_identity_data) if email.nil?
 
-        if username.nil?
-          username = email.split("@").first
-        end
+        username = email.split('@').first if username.nil?
 
-        if username.length > 50
-          username = username[0..49]
-        end
+        username = username[0..49] if username.length > 50
 
         while User.exists?(username: username)
           username += SecureRandom.base36(1)
-          if username.length > 50
-            username = SecureRandom.base36(20)
-          end
+          username = SecureRandom.base36(20) if username.length > 50
         end
 
         transactional do |t|
-          user = User.create(username: username, email: email, password: password, firstname: firstname, lastname: lastname)
+          user = User.create(username: username, email: email, password: password, firstname: firstname,
+                             lastname: lastname)
           return ServiceResponse.error(message: 'User is invalid', payload: user.errors) unless user.persisted?
 
           user_identity = UserIdentity.create(user: user, provider_id: provider_id, identifier: identifier)
           unless user_identity.persisted?
-            t.rollback_and_return! ServiceResponse.error(message: 'UserIdentity is invalid', payload: user_identity.errors)
+            t.rollback_and_return! ServiceResponse.error(message: 'UserIdentity is invalid',
+                                                         payload: user_identity.errors)
           end
           user_session = UserSession.create(user: user)
           unless user_session.persisted?
@@ -76,9 +73,7 @@ module Users
 
           ServiceResponse.success(payload: user_session)
         end
-
       end
-
     end
   end
 end

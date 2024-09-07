@@ -8,9 +8,4 @@ RSpec.describe UserIdentity do
   describe 'associations' do
     it { is_expected.to belong_to(:user).required }
   end
-
-  describe 'validations' do
-
-  end
-
 end
