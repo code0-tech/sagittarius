@@ -12,6 +12,7 @@ RSpec.describe 'usersIdentityUnlink Mutation' do
           #{error_query}
           userIdentity {
             id
+            identifier
             user {
               id
             }
@@ -43,20 +44,19 @@ RSpec.describe 'usersIdentityUnlink Mutation' do
   it 'removes the user identity' do
     expect(graphql_data_at(:users_identity_unlink, :user_identity, :id)).to be_present
     expect(graphql_data_at(:users_identity_unlink, :user_identity, :user)).to be_present
+    expect(graphql_data_at(:users_identity_unlink, :user_identity, :identifier)).to eq(identity.identifier)
 
     found_identity = SagittariusSchema.object_from_id(graphql_data_at(:users_identity_unlink, :user_identity, :id))
 
-    expect(found_identity).to be_a(UserIdentity)
-    expect(found_identity.identifier).to eq(identity.identifier)
-    expect(found_identity.provider_id).to eq(identity.provider_id)
+    expect(found_identity).to be_nil
 
     expect(current_user.reload.user_identities.length).to eq(0)
 
     is_expected.to create_audit_event(
-      :user_identity_linked,
+      :user_identity_unlinked,
       author_id: current_user.id,
       entity_id: current_user.id,
-      details: { provider_id: identity.provider_id, identifier: identity.provider_id }
+      details: { provider_id: identity.provider_id, identifier: identity.identifier }
     )
   end
 end
