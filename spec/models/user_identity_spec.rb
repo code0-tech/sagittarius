@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe UserIdentity do
-  subject { create(:user_session) }
+  subject { create(:user_identity) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:user).required }

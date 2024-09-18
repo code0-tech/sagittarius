@@ -4,7 +4,7 @@ module Mutations
   module Users
     module Identity
       class Unlink < BaseMutation
-        description 'Links an external identity to and existing user'
+        description 'Unlinks an external identity from an user'
 
         field :user_identity, Types::UserIdentityType, null: true, description: 'The removed identity'
 

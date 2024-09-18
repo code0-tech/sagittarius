@@ -15,8 +15,10 @@ module Mutations
                                        description: 'The ID of the external provider (e.g. google, discord, gitlab...) '
 
         def resolve(provider_id:, args:)
-          response = ::Users::Identity::LoginService.new(provider_id,
-                                                         args).execute.to_mutation_response(success_key: :user_session)
+          response = ::Users::Identity::LoginService.new(
+            provider_id,
+            args
+          ).execute.to_mutation_response(success_key: :user_session)
           bypass_authorization! response, object_path: %i[user_session user]
           bypass_authorization! response, object_path: :user_session
         end

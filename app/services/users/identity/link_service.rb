@@ -28,7 +28,7 @@ module Users
           user_identity = UserIdentity.create(user: current_user, identifier: identity.identifier,
                                               provider_id: provider_id)
 
-          unless user_identity.valid?
+          unless user_identity.persisted?
             t.rollback_and_return! ServiceResponse.error(payload: user_identity.errors,
                                                          message: 'An error occurred while creating user identity')
           end

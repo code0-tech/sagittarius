@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'usersLogin Mutation' do
+RSpec.describe 'usersIdentityLogin Mutation' do
   include GraphqlHelpers
 
   let(:mutation) do
