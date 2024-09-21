@@ -76,7 +76,8 @@ CREATE TABLE good_job_batches (
     callback_priority integer,
     enqueued_at timestamp with time zone,
     discarded_at timestamp with time zone,
-    finished_at timestamp with time zone
+    finished_at timestamp with time zone,
+    jobs_finished_at timestamp with time zone
 );
 
 CREATE TABLE good_job_executions (
