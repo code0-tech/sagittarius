@@ -9,6 +9,7 @@ class CreateUserIdentities < Sagittarius::Database::Migration[1.0]
       t.text :identifier, null: false
 
       t.index %i[provider_id identifier], unique: true
+      t.index %i[user_id identifier], unique: true
 
       t.timestamps_with_timezone
     end

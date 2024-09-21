@@ -7,4 +7,5 @@ class UserIdentity < ApplicationRecord
   validates :identifier, presence: true
 
   validates :identifier, uniqueness: { scope: :provider_id }
+  validates :provider_id, uniqueness: { scope: :user_id }
 end
