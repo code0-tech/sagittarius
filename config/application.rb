@@ -5,6 +5,8 @@ require_relative 'boot'
 require 'rails/all'
 require_relative '../lib/sagittarius/utils'
 require_relative '../lib/sagittarius/extensions'
+require_relative '../lib/sagittarius/memoize'
+require_relative '../lib/sagittarius/configuration'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -12,8 +14,7 @@ Bundler.require(*Rails.groups)
 
 module Sagittarius
   class Application < Rails::Application
-    # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 7.2
 
     # Use SQL instead of Active Record's schema dumper when creating the database.
     # This is necessary if your schema can't be completely dumped by the schema dumper,
@@ -68,16 +69,14 @@ module Sagittarius
     # Configure active job to use good_job
     config.active_job.queue_adapter = :good_job
 
-    # Generated with 'bin/rails db:encryption:init'
-    # Use some random generated keys, production will override this with the environment variables
-    config.active_record.encryption.primary_key = ENV.fetch('SAGITTARIUS_DATABASE_ENCRYPTION_PRIMARY_KEY',
-                                                            'YzaMv4bXYK84unYIQI4Ms4sV3ucbvWs0')
-    config.active_record.encryption.deterministic_key = ENV.fetch('SAGITTARIUS_DATABASE_ENCRYPTION_DETERMINISTIC_KEY',
-                                                                  'jgTaxTqzM15ved1S8HdXrqrjfCfF5R0h')
-    config.active_record.encryption.key_derivation_salt =
-      ENV.fetch('SAGITTARIUS_DATABASE_ENCRYPTION_KEY_DERIVATION_SALT', 'Z6zcLTgobXLYjXUslRsLMKxvXKq3j6DJ')
+    configuration = Sagittarius::Configuration.config
+    encryption_config = configuration[:rails][:db][:encryption]
 
-    config.secret_key_base = ENV.fetch('SAGITTARIUS_SECRET_KEY_BASE', 'MVMD6CtQwEWrQ28TdokQakbG2FG5abOn')
+    config.active_record.encryption.primary_key = encryption_config[:primary_key]
+    config.active_record.encryption.deterministic_key = encryption_config[:deterministic_key]
+    config.active_record.encryption.key_derivation_salt = encryption_config[:key_derivation_salt]
+
+    config.secret_key_base = configuration[:rails][:secret_key_base]
 
     # Configuration for the application, engines, and railties goes here.
     #

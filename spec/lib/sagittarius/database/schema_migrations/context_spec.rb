@@ -22,11 +22,11 @@ RSpec.describe Sagittarius::Database::SchemaMigrations::Context do
   describe '#versions_to_create' do
     before do
       # rubocop:disable RSpec/MessageChain -- we are mocking into active records structure
-      allow(connection).to receive_message_chain(:schema_migration, :versions).and_return(migrated_versions)
+      allow(connection.pool).to receive_message_chain(:schema_migration, :versions).and_return(migrated_versions)
 
       migrations_struct = Struct.new(:version)
       migrations = file_versions.map { |version| migrations_struct.new(version) }
-      allow(connection).to receive_message_chain(:migration_context, :migrations).and_return(migrations)
+      allow(connection.pool).to receive_message_chain(:migration_context, :migrations).and_return(migrations)
       # rubocop:enable RSpec/MessageChain
     end
 

@@ -45,7 +45,8 @@ Rails.application.configure do
   # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = Sagittarius::Utils.to_boolean(ENV.fetch('RAILS_FORCE_SSL', nil), default: true)
+  config.force_ssl = Sagittarius::Utils.to_boolean(Sagittarius::Configuration.config[:rails][:web][:force_ssl],
+                                                   default: true)
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new($stdout)
