@@ -19,9 +19,7 @@ module InjectExtensions
       extension_namespace = find_const(namespace, extension.upcase)
       extension_module = find_const(extension_namespace, constant) if extension_namespace
 
-      # rubocop:disable Style/RedundantCondition -- this is actually not redundant. returning nil or false makes a difference
       extension_module if extension_module
-      # rubocop:enable Style/RedundantCondition
     end.compact
   end
 
