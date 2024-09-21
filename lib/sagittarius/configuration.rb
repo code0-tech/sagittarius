@@ -20,7 +20,7 @@ module Sagittarius
     def self.defaults
       {
         rails: {
-          threads: 5,
+          threads: 3,
           web: {
             port: 3000,
             force_ssl: nil,
