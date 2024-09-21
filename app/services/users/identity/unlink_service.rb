@@ -15,16 +15,12 @@ module Users
 
       def execute
         transactional do |t|
-          unless identity.valid?
-            t.rollback_and_return! ServiceResponse.error(payload: user_identity.errors,
-                                                         message: 'User identity is invalid')
+          if identity.nil?
+            t.rollback_and_return! ServiceResponse.error(payload: :given_nil_identity,
+                                                         message: 'Nil identity given')
           end
 
           identity.delete
-
-          unless current_user.save
-            t.rollback_and_return! ServiceResponse.error(payload: current_user.errors, message: 'Failed to save user')
-          end
 
           AuditService.audit(
             :user_identity_unlinked,
