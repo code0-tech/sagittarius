@@ -2,7 +2,7 @@
 title: usersIdentityUnlink
 ---
 
-Links an external identity to and existing user
+Unlinks an external identity from an user
 
 ## Arguments
 

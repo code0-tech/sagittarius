@@ -18,4 +18,4 @@ Links an external identity to and existing user
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
-| `userIdentity` | [`UserIdentity`](../object/useridentity.md) | The created user session |
+| `userIdentity` | [`UserIdentity`](../object/useridentity.md) | The created user identity |
