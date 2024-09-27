@@ -158,21 +158,24 @@ boot:docker:
   variables:
     DOCKER_TLS_CERTDIR: /certs
     DOCKER_HOST: tcp://docker:2376
+    SAGITTARIUS_IMAGE: ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}-${EDITION}
+    CURL_IMAGE: curlimages/curl:8.5.0
   script:
     - docker compose -f docker-compose.dev.yml up -d
+    - docker pull ${SAGITTARIUS_IMAGE}
+    - docker pull ${CURL_IMAGE}
     - >
       docker run
       --name sagittarius
       --network sagittarius_default
       --network-alias sagittarius
       -v $(pwd)/tooling/pipeline/sagittarius.yml:/rails/config/sagittarius.yml
-      -e SAGITTARIUS_DISABLE_ORCHESTRATOR=true
-      ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}-${EDITION} &
+      ${SAGITTARIUS_IMAGE} &
     - >
       docker run
       --rm
       --network sagittarius_default
-      curlimages/curl:8.5.0
+      ${CURL_IMAGE}
       curl
       --fail
       -sv
