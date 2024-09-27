@@ -7,32 +7,12 @@ services:
       POSTGRES_USER: "sagittarius"
       POSTGRES_PASSWORD: "sagittarius"
       POSTGRES_DB: "postgres"
+    restart: unless-stopped
     volumes:
       - database:/var/lib/postgresql/data/
       - ./tooling/init-dev-db:/docker-entrypoint-initdb.d
     ports:
       - "5433:5432"
-  redis:
-    image: redis:7.2.3-alpine
-    command: redis-server --save 1 1 --loglevel warning
-    volumes:
-      - redis:/data
-    ports:
-      - "6380:6379"
-
-  sagittarius:
-    build:
-      dockerfile: Dockerfile
-      context: .
-    ports:
-      - "3000:3000"
-    environment:
-      SAGITTARIUS_DATABASE_HOST: postgresql
-      SAGITTARIUS_DATABASE_PORT: 5432
-      RAILS_FORCE_SSL: 'false'
-    profiles:
-      - sagittarius
 
 volumes:
   database:
-  redis:
