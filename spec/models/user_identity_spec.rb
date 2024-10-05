@@ -7,6 +7,9 @@ RSpec.describe UserIdentity do
 
   describe 'associations' do
     it { is_expected.to belong_to(:user).required }
+  end
+
+  describe 'validations' do
     it { is_expected.to validate_presence_of(:provider_id) }
     it { is_expected.to validate_presence_of(:identifier) }
     it { is_expected.to validate_uniqueness_of(:identifier).scoped_to(:provider_id) }

@@ -12,14 +12,12 @@ RSpec.describe Users::Identity::UnlinkService do
   context 'when user is valid' do
     let(:provider_id) { :google }
     let(:current_user) { create(:user) }
-
-    before do
-      create(:user_identity, user: current_user, identifier: 'identifier', provider_id: :google)
-    end
+    let!(:identity) { create(:user_identity, user: current_user, identifier: 'identifier', provider_id: :google) }
 
     it do
       expect { service_response }.to change { current_user.reload.user_identities.length }.by(-1)
       expect(service_response).to be_success
+      expect(identity).not_to be_persisted
     end
 
     it 'creates the audit event' do

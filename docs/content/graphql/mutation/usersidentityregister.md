@@ -2,7 +2,7 @@
 title: usersIdentityRegister
 ---
 
-Register a new user via a external identity
+Register a new user via an external identity
 
 ## Arguments
 

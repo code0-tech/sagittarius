@@ -6,7 +6,7 @@ module Mutations
       class Register < BaseMutation
         include Sagittarius::Graphql::AuthorizationBypass
 
-        description 'Register a new user via a external identity'
+        description 'Register a new user via an external identity'
 
         field :user_session, Types::UserSessionType, null: true, description: 'The created users session'
 

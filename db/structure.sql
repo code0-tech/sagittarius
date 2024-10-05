@@ -556,7 +556,7 @@ CREATE UNIQUE INDEX index_user_identities_on_provider_id_and_identifier ON user_
 
 CREATE INDEX index_user_identities_on_user_id ON user_identities USING btree (user_id);
 
-CREATE UNIQUE INDEX index_user_identities_on_user_id_and_identifier ON user_identities USING btree (user_id, identifier);
+CREATE UNIQUE INDEX index_user_identities_on_user_id_and_provider_id ON user_identities USING btree (user_id, provider_id);
 
 CREATE UNIQUE INDEX index_user_sessions_on_token ON user_sessions USING btree (token);
 

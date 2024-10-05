@@ -2,7 +2,7 @@
 title: usersIdentityLink
 ---
 
-Links an external identity to and existing user
+Links an external identity to an existing user
 
 ## Arguments
 

@@ -4,7 +4,7 @@ module Mutations
   module Users
     module Identity
       class Link < BaseMutation
-        description 'Links an external identity to and existing user'
+        description 'Links an external identity to an existing user'
 
         field :user_identity, Types::UserIdentityType, null: true, description: 'The created user identity'
 
