@@ -9,3 +9,8 @@ ApplicationSetting.seed_once :setting do |s|
   s.setting = :organization_creation_restricted
   s.value = false
 end
+
+ApplicationSetting.seed_once :setting do |s|
+  s.setting = :identity_providers
+  s.value = []
+end

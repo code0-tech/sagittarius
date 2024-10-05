@@ -10,6 +10,7 @@ class ApplicationSetting < ApplicationRecord
   SETTINGS = {
     user_registration_enabled: 1,
     organization_creation_restricted: 2,
+    identity_providers: 3,
   }.with_indifferent_access
 
   BOOLEAN_OPTIONS = %i[user_registration_enabled organization_creation_restricted].freeze

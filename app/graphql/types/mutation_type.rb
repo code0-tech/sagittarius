@@ -25,6 +25,10 @@ module Types
     mount_mutation Mutations::Runtimes::Delete
     mount_mutation Mutations::Runtimes::RotateToken
     mount_mutation Mutations::Runtimes::Update
+    mount_mutation Mutations::Users::Identity::Link
+    mount_mutation Mutations::Users::Identity::Login
+    mount_mutation Mutations::Users::Identity::Register
+    mount_mutation Mutations::Users::Identity::Unlink
     mount_mutation Mutations::Users::Mfa::BackupCodes::Rotate
     mount_mutation Mutations::Users::Mfa::Totp::GenerateSecret
     mount_mutation Mutations::Users::Mfa::Totp::ValidateSecret

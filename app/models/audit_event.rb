@@ -28,6 +28,8 @@ class AuditEvent < ApplicationRecord
     mfa_enabled: 24,
     backup_codes_rotated: 25,
     user_updated: 26,
+    user_identity_linked: 27,
+    user_identity_unlinked: 28,
   }.with_indifferent_access
 
   # rubocop:disable Lint/StructNewOverride

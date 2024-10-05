@@ -321,6 +321,24 @@ CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
 
+CREATE TABLE user_identities (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    provider_id text NOT NULL,
+    identifier text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE user_identities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE user_identities_id_seq OWNED BY user_identities.id;
+
 CREATE TABLE user_sessions (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
@@ -391,6 +409,8 @@ ALTER TABLE ONLY organizations ALTER COLUMN id SET DEFAULT nextval('organization
 
 ALTER TABLE ONLY runtimes ALTER COLUMN id SET DEFAULT nextval('runtimes_id_seq'::regclass);
 
+ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_identities_id_seq'::regclass);
+
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
@@ -454,6 +474,9 @@ ALTER TABLE ONLY runtimes
 
 ALTER TABLE ONLY schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+ALTER TABLE ONLY user_identities
+    ADD CONSTRAINT user_identities_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT user_sessions_pkey PRIMARY KEY (id);
@@ -529,6 +552,12 @@ CREATE INDEX index_runtimes_on_namespace_id ON runtimes USING btree (namespace_i
 
 CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
 
+CREATE UNIQUE INDEX index_user_identities_on_provider_id_and_identifier ON user_identities USING btree (provider_id, identifier);
+
+CREATE INDEX index_user_identities_on_user_id ON user_identities USING btree (user_id);
+
+CREATE UNIQUE INDEX index_user_identities_on_user_id_and_provider_id ON user_identities USING btree (user_id, provider_id);
+
 CREATE UNIQUE INDEX index_user_sessions_on_token ON user_sessions USING btree (token);
 
 CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_id);
@@ -556,6 +585,9 @@ ALTER TABLE ONLY namespace_member_roles
 
 ALTER TABLE ONLY namespace_role_project_assignments
     ADD CONSTRAINT fk_rails_623f8a5b72 FOREIGN KEY (role_id) REFERENCES namespace_roles(id);
+
+ALTER TABLE ONLY user_identities
+    ADD CONSTRAINT fk_rails_684b0e1ce0 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_role_project_assignments
     ADD CONSTRAINT fk_rails_69066bda8f FOREIGN KEY (project_id) REFERENCES namespace_projects(id);
