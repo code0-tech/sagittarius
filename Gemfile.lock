@@ -130,7 +130,7 @@ GEM
     google-protobuf (3.25.4-x86_64-linux)
     googleapis-common-protos-types (1.15.0)
       google-protobuf (>= 3.18, < 5.a)
-    graphql (2.3.16)
+    graphql (2.3.18)
       base64
       fiber-storage
     grpc (1.64.3-x86_64-linux)
@@ -170,7 +170,6 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
-    mutex_m (0.2.0)
     net-imap (0.4.16)
       date
       net-protocol
