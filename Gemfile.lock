@@ -361,7 +361,7 @@ DEPENDENCIES
   factory_bot_rails (~> 6.2)
   good_job (~> 4.0)
   graphql (~> 2.1)
-  grpc (~> 1.64, < 1.67.1)
+  grpc (~> 1.67)
   lograge (~> 0.14.0)
   pg (~> 1.1)
   pry (~> 0.14.2)
