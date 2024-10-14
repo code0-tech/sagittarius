@@ -78,7 +78,7 @@ gem 'good_job', '~> 4.0'
 
 gem 'rotp'
 
-gem 'grpc', '~> 1.64', '< 1.65'
+gem 'grpc', '~> 1.67'
 gem 'tucana', '0.0.8'
 
 gem 'code0-identities', '~> 0.0.1'
