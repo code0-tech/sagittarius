@@ -24,7 +24,7 @@ module InjectExtensions
   end
 
   def find_const(mod, name)
-    mod&.const_defined?(name, false) && mod&.const_get(name, false)
+    mod&.const_defined?(name, false) && mod.const_get(name, false)
   end
 end
 
