@@ -39,8 +39,8 @@ module RuboCop
 
               next unless %i[datetime timestamp].include?(last_argument)
 
-              add_offense(node, message: format(MSG, last_argument)) do |corrector|
-                corrector.replace(node, 'datetime_with_timezone')
+              add_offense(descendant, message: format(MSG, last_argument)) do |corrector|
+                corrector.replace(descendant, ':datetime_with_timezone')
               end
             end
           end
