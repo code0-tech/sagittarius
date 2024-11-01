@@ -36,6 +36,44 @@ RSpec.describe RuboCop::Cop::Sagittarius::Migration::Datetime do
           end
         CODE
       end
+
+      it "registers an offense when the \"#{method}\" argument is used" do
+        expect_offense(<<~CODE)
+          class Users < ActiveRecord::Migration[4.2]
+            def change
+              add_column :users, :confirmed_at, :#{method}
+                                                ^#{'^' * method.length} Do not use the `#{method}` data type, use `datetime_with_timezone` instead
+            end
+          end
+        CODE
+
+        expect_correction(<<~CODE)
+          class Users < ActiveRecord::Migration[4.2]
+            def change
+              add_column :users, :confirmed_at, :datetime_with_timezone
+            end
+          end
+        CODE
+      end
+
+      it "registers an offense when the \"#{method}\" argument is used and keyword arguments are present" do
+        expect_offense(<<~CODE)
+          class Users < ActiveRecord::Migration[4.2]
+            def change
+              add_column :users, :confirmed_at, :#{method}, null: false
+                                                ^#{'^' * method.length} Do not use the `#{method}` data type, use `datetime_with_timezone` instead
+            end
+          end
+        CODE
+
+        expect_correction(<<~CODE)
+          class Users < ActiveRecord::Migration[4.2]
+            def change
+              add_column :users, :confirmed_at, :datetime_with_timezone, null: false
+            end
+          end
+        CODE
+      end
     end
 
     it 'registers no offense when datetime_with_timezone is used' do
