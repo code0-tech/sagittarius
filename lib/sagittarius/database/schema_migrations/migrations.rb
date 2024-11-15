@@ -34,6 +34,7 @@ module Sagittarius
 
         def load_all
           return if version_filenames.empty?
+          return unless @context.connection.pool.schema_migration.table_exists?
 
           values = version_filenames.map { |vf| "('#{@context.connection.quote_string(vf)}')" }
 
