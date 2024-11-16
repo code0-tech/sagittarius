@@ -80,6 +80,7 @@ RSpec.describe Sagittarius::Database::SchemaMigrations::Migrations do
       let(:filenames) { %w[123 456 789] }
 
       it 'inserts the missing versions into schema_migrations' do
+        allow(connection).to receive(:quote_string).with('schema_migrations').and_return('schema_migrations')
         filenames.each do |filename|
           allow(connection).to receive(:quote_string).with(filename).and_return(filename)
         end
@@ -95,6 +96,18 @@ RSpec.describe Sagittarius::Database::SchemaMigrations::Migrations do
           VALUES ('123'),('456'),('789')
           ON CONFLICT DO NOTHING
         SQL
+      end
+
+      it 'does nothing if schema_migrations table does not exist' do
+        allow(connection).to receive(:execute)
+
+        schema_migration = connection.pool.schema_migration
+        allow(connection.pool).to receive(:schema_migration).and_return(schema_migration)
+        allow(schema_migration).to receive(:table_exists?).and_return(false)
+
+        migrations.load_all
+
+        expect(connection).not_to have_received(:execute)
       end
     end
   end
