@@ -83,5 +83,5 @@ gem 'tucana', '0.0.8'
 
 gem 'code0-identities', '~> 0.0.1'
 
-gem 'pry', '~> 0.14.2'
+gem 'pry', '~> 0.15.0'
 gem 'pry-byebug', '~> 3.10'
