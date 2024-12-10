@@ -112,7 +112,7 @@ GEM
     factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
-    fiber-storage (0.0.1)
+    fiber-storage (0.1.2)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
@@ -128,7 +128,7 @@ GEM
     google-protobuf (3.25.5-x86_64-linux)
     googleapis-common-protos-types (1.16.0)
       google-protobuf (>= 3.18, < 5.a)
-    graphql (2.3.19)
+    graphql (2.4.8)
       base64
       fiber-storage
     grpc (1.67.0-x86_64-linux)
