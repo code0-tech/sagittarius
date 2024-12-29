@@ -79,7 +79,7 @@ gem 'good_job', '~> 4.0'
 gem 'rotp'
 
 gem 'grpc', '~> 1.67'
-gem 'tucana', '0.0.0', path: '../tucana/build/ruby'
+gem 'tucana', '0.0.13'
 
 gem 'code0-identities', '~> 0.0.1'
 

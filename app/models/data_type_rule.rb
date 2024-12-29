@@ -2,8 +2,7 @@
 
 class DataTypeRule < ApplicationRecord
   VARIANTS = {
-    dummy: 1, # TODO: implement actual rules
-    number_range: 2,
+    number_range: 1,
   }.with_indifferent_access
 
   enum :variant, VARIANTS, prefix: :types
