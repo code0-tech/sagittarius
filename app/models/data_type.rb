@@ -22,4 +22,18 @@ class DataType < ApplicationRecord
                       inclusion: {
                         in: VARIANTS.keys.map(&:to_s),
                       }
+
+  validate :validate_recursion, if: :parent_type_changed?
+
+  def validate_recursion
+    current_type = self
+    until current_type.parent_type.nil?
+      current_type = current_type.parent_type
+
+      if current_type == self
+        errors.add(:parent_type, :recursion)
+        break
+      end
+    end
+  end
 end
