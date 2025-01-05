@@ -3,7 +3,7 @@
 class CreateDataTypeRules < Sagittarius::Database::Migration[1.0]
   def change
     create_table :data_type_rules do |t|
-      t.references :data_type, null: false, foreign_key: true
+      t.references :data_type, null: false, foreign_key: { on_delete: :cascade }
       t.integer :variant, null: false
       t.jsonb :config, null: false
 
