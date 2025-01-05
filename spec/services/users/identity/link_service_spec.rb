@@ -6,7 +6,7 @@ RSpec.describe Users::Identity::LinkService do
   subject(:service_response) { service.execute }
 
   let(:service) do
-    described_class.new(current_user, provider_id, args)
+    described_class.new(create_authentication(current_user), provider_id, args)
   end
 
   def setup_identity_provider(identity)

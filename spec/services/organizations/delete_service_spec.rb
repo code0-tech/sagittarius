@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Organizations::DeleteService do
-  subject(:service_response) { described_class.new(current_user, organization).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), organization).execute }
 
   let!(:organization) { create(:organization) }
 

@@ -4,16 +4,16 @@ module NamespaceLicenses
   class CreateService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :namespace, :data
+    attr_reader :current_authentication, :namespace, :data
 
-    def initialize(current_user, namespace:, data:)
-      @current_user = current_user
+    def initialize(current_authentication, namespace:, data:)
+      @current_authentication = current_authentication
       @namespace = namespace
       @data = data
     end
 
     def execute
-      unless Ability.allowed?(current_user, :create_namespace_license, namespace)
+      unless Ability.allowed?(current_authentication, :create_namespace_license, namespace)
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 
@@ -30,7 +30,7 @@ module NamespaceLicenses
 
         AuditService.audit(
           :namespace_license_created,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: namespace_license,
           target: namespace,
           details: {

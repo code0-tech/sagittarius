@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe UserSessionPolicy do
-  subject { described_class.new(current_user, user_session) }
+  subject { described_class.new(create_authentication(current_user), user_session) }
 
   let(:current_user) { nil }
   let(:user_session) { nil }

@@ -83,8 +83,19 @@ RSpec.configure do |config|
       metadata[:extension] = extension if metadata[:file_path].start_with?("./#{extension}/")
     end
 
-    if File.fnmatch?("#{base_glob}/grpc/{,**/}*_spec.rb", metadata[:file_path].delete_prefix('./'), File::FNM_EXTGLOB)
+    if File.fnmatch?("#{base_glob}/grpc/{,**/}*_spec.rb", metadata[:file_path].delete_prefix('./'),
+                     File::FNM_EXTGLOB)
       metadata[:type] = :grpc
+    end
+
+    if File.fnmatch?("#{base_glob}/policies/{,**/}*_spec.rb", metadata[:file_path].delete_prefix('./'),
+                     File::FNM_EXTGLOB)
+      metadata[:type] = :policy
+    end
+
+    if File.fnmatch?("#{base_glob}/services/{,**/}*_spec.rb", metadata[:file_path].delete_prefix('./'),
+                     File::FNM_EXTGLOB)
+      metadata[:type] = :service
     end
   end
 

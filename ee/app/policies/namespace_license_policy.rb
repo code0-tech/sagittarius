@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 class NamespaceLicensePolicy < BasePolicy
-  delegate { @subject.namespace }
+  delegate { subject.namespace }
 end

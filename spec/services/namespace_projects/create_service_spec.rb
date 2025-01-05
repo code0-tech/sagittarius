@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe NamespaceProjects::CreateService do
-  subject(:service_response) { described_class.new(current_user, **params).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), **params).execute }
 
   let(:namespace) { create(:namespace) }
 

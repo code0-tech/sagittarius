@@ -10,7 +10,7 @@ module Mutations
           field :secret, String, null: true, description: 'The created and signed secret'
 
           def resolve
-            ::Users::Mfa::Totp::GenerateSecretService.new(current_user).execute
+            ::Users::Mfa::Totp::GenerateSecretService.new(current_authentication).execute
                                                      .to_mutation_response(success_key: :secret)
           end
         end

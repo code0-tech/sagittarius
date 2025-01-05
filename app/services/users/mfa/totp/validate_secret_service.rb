@@ -6,16 +6,17 @@ module Users
       class ValidateSecretService
         include Sagittarius::Database::Transactional
 
-        attr_reader :current_user, :secret, :current_totp
+        attr_reader :current_authentication, :current_user, :secret, :current_totp
 
-        def initialize(current_user, secret, current_totp)
-          @current_user = current_user
+        def initialize(current_authentication, secret, current_totp)
+          @current_authentication = current_authentication
+          @current_user = current_authentication.user
           @secret = secret
           @current_totp = current_totp
         end
 
         def execute
-          unless Ability.allowed?(current_user, :manage_mfa, current_user)
+          unless Ability.allowed?(current_authentication, :manage_mfa, current_user)
             return ServiceResponse.error(payload: :missing_permission)
           end
 

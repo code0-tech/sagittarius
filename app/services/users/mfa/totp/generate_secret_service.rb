@@ -4,18 +4,20 @@ module Users
   module Mfa
     module Totp
       class GenerateSecretService
-        attr_reader :current_user
+        attr_reader :current_authentication
 
-        def initialize(current_user)
-          @current_user = current_user
+        def initialize(current_authentication)
+          @current_authentication = current_authentication
         end
 
         def execute
-          unless Ability.allowed?(current_user, :manage_mfa, current_user)
+          unless Ability.allowed?(current_authentication, :manage_mfa, current_authentication.user)
             return ServiceResponse.error(payload: :missing_permission)
           end
 
-          return ServiceResponse.error(payload: :totp_secret_already_set) unless @current_user.totp_secret.nil?
+          unless current_authentication.user.totp_secret.nil?
+            return ServiceResponse.error(payload: :totp_secret_already_set)
+          end
 
           totp_secret = ROTP::Base32.random
 

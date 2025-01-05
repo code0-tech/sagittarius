@@ -3,7 +3,7 @@
 class OrganizationPolicy < BasePolicy
   include CustomizablePermission
 
-  delegate { @subject.ensure_namespace }
+  delegate { subject.ensure_namespace }
 
   rule { can?(:read_namespace) }.enable :read_organization
 

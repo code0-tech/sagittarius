@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe NamespaceRoles::AssignAbilitiesService do
-  subject(:service_response) { described_class.new(current_user, role, abilities).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), role, abilities).execute }
 
   let(:current_user) { create(:user) }
   let(:role) { create(:namespace_role) }

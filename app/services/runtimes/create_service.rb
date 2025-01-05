@@ -4,17 +4,17 @@ module Runtimes
   class CreateService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :namespace, :name, :params
+    attr_reader :current_authentication, :namespace, :name, :params
 
-    def initialize(current_user, namespace, name, **params)
-      @current_user = current_user
+    def initialize(current_authentication, namespace, name, **params)
+      @current_authentication = current_authentication
       @namespace = namespace
       @name = name
       @params = params
     end
 
     def execute
-      unless Ability.allowed?(current_user, :create_runtime, namespace || :global)
+      unless Ability.allowed?(current_authentication, :create_runtime, namespace || :global)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
@@ -24,7 +24,7 @@ module Runtimes
 
         AuditService.audit(
           :runtime_created,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: runtime,
           details: { name: name, **params },
           target: namespace || AuditEvent::GLOBAL_TARGET

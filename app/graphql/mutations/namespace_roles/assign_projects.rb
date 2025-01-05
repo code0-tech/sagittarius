@@ -20,7 +20,7 @@ module Mutations
         return { projects: nil, errors: [create_message_error('Invalid project')] } if projects.any?(&:nil?)
 
         ::NamespaceRoles::AssignProjectsService.new(
-          current_user,
+          current_authentication,
           role,
           projects
         ).execute.to_mutation_response(success_key: :projects)

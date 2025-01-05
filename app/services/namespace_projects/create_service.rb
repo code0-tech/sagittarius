@@ -4,17 +4,17 @@ module NamespaceProjects
   class CreateService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :namespace, :name, :params
+    attr_reader :current_authentication, :namespace, :name, :params
 
-    def initialize(current_user, namespace:, name:, **params)
-      @current_user = current_user
+    def initialize(current_authentication, namespace:, name:, **params)
+      @current_authentication = current_authentication
       @namespace = namespace
       @name = name
       @params = params
     end
 
     def execute
-      unless Ability.allowed?(current_user, :create_namespace_project, namespace)
+      unless Ability.allowed?(current_authentication, :create_namespace_project, namespace)
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 
@@ -29,7 +29,7 @@ module NamespaceProjects
 
         AuditService.audit(
           :namespace_project_created,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: project,
           target: namespace,
           details: {

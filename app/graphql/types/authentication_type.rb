@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Types
-  class AuthorizationType < BaseUnion
-    description 'Objects that can present an authorization'
+  class AuthenticationType < BaseUnion
+    description 'Objects that can present an authentication'
     possible_types UserSessionType
 
     def self.resolve_type(object, _ctx)
@@ -10,7 +10,7 @@ module Types
       when UserSession
         Types::UserSessionType
       else
-        raise 'Unsupported AuthorizationType'
+        raise 'Unsupported AuthenticationType'
       end
     end
   end

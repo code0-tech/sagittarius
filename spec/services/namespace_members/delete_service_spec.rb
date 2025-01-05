@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe NamespaceMembers::DeleteService do
-  subject(:service_response) { described_class.new(current_user, namespace_member).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), namespace_member).execute }
 
   let(:namespace) { create(:namespace) }
   let!(:namespace_member) { create(:namespace_member, namespace: namespace) }

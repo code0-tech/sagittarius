@@ -19,7 +19,7 @@ module Mutations
         end
 
         ::NamespaceProjects::DeleteService.new(
-          current_user,
+          current_authentication,
           project
         ).execute.to_mutation_response(success_key: :namespace_project)
       end

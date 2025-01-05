@@ -5,11 +5,11 @@ module Users
     class UnlinkService < BaseService
       include Sagittarius::Database::Transactional
 
-      attr_reader :current_user, :identity, :args
+      attr_reader :current_authentication, :identity, :args
 
-      def initialize(current_user, identity)
+      def initialize(current_authentication, identity)
         super()
-        @current_user = current_user
+        @current_authentication = current_authentication
         @identity = identity
       end
 
@@ -24,10 +24,10 @@ module Users
 
           AuditService.audit(
             :user_identity_unlinked,
-            author_id: current_user.id,
-            entity: current_user,
+            author_id: current_authentication.user.id,
+            entity: current_authentication.user,
             details: { provider_id: identity.provider_id, identifier: identity.identifier },
-            target: current_user
+            target: current_authentication.user
           )
 
           ServiceResponse.success(payload: identity)

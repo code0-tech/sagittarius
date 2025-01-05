@@ -18,7 +18,7 @@ module Mutations
         return { organization: nil, errors: [create_message_error('Invalid organization')] } if organization.nil?
 
         ::Organizations::UpdateService.new(
-          current_user,
+          current_authentication,
           organization,
           params
         ).execute.to_mutation_response(success_key: :organization)

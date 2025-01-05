@@ -6,7 +6,7 @@ RSpec.describe Users::Identity::UnlinkService do
   subject(:service_response) { service.execute }
 
   let(:service) do
-    described_class.new(current_user, identity)
+    described_class.new(create_authentication(current_user), identity)
   end
 
   context 'when user is valid' do

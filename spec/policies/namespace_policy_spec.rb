@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe NamespacePolicy do
-  subject { described_class.new(current_user, namespace) }
+  subject { described_class.new(create_authentication(current_user), namespace) }
 
   context 'when user is member of the namespace' do
     let(:current_user) { create(:user) }

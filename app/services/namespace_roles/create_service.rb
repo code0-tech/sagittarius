@@ -4,16 +4,16 @@ module NamespaceRoles
   class CreateService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :namespace, :params
+    attr_reader :current_authentication, :namespace, :params
 
-    def initialize(current_user, namespace, params)
-      @current_user = current_user
+    def initialize(current_authentication, namespace, params)
+      @current_authentication = current_authentication
       @namespace = namespace
       @params = params
     end
 
     def execute
-      unless Ability.allowed?(current_user, :create_namespace_role, namespace)
+      unless Ability.allowed?(current_authentication, :create_namespace_role, namespace)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
@@ -26,7 +26,7 @@ module NamespaceRoles
 
         AuditService.audit(
           :namespace_role_created,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: namespace_role,
           details: { name: params[:name] },
           target: namespace

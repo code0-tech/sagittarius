@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Organizations::UpdateService do
-  subject(:service_response) { described_class.new(current_user, organization, params).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), organization, params).execute }
 
   shared_examples 'does not update' do
     it { is_expected.to be_error }

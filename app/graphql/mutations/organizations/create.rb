@@ -11,7 +11,7 @@ module Mutations
 
       def resolve(name:)
         ::Organizations::CreateService.new(
-          current_user,
+          current_authentication,
           name: name
         ).execute.to_mutation_response(success_key: :organization)
       end

@@ -16,7 +16,7 @@ module Mutations
 
           def resolve(secret:, current_totp:)
             ::Users::Mfa::Totp::ValidateSecretService.new(
-              current_user,
+              current_authentication,
               secret,
               current_totp
             ).execute.to_mutation_response(success_key: :user)

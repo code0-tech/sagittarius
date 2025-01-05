@@ -4,16 +4,16 @@ module Organizations
   class UpdateService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :organization, :params
+    attr_reader :current_authentication, :organization, :params
 
-    def initialize(current_user, organization, params)
-      @current_user = current_user
+    def initialize(current_authentication, organization, params)
+      @current_authentication = current_authentication
       @organization = organization
       @params = params
     end
 
     def execute
-      unless Ability.allowed?(current_user, :update_organization, organization)
+      unless Ability.allowed?(current_authentication, :update_organization, organization)
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 
@@ -28,7 +28,7 @@ module Organizations
 
         AuditService.audit(
           :organization_updated,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: organization,
           target: organization.ensure_namespace,
           details: params

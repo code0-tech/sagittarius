@@ -17,7 +17,7 @@ module Mutations
 
       def resolve(params)
         ApplicationSettingsUpdateService.new(
-          current_user,
+          current_authentication,
           params
         ).execute.to_mutation_response(success_key: :application_settings)
       end

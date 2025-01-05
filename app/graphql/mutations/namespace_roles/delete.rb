@@ -19,7 +19,7 @@ module Mutations
         end
 
         ::NamespaceRoles::DeleteService.new(
-          current_user,
+          current_authentication,
           namespace_role
         ).execute.to_mutation_response(success_key: :namespace_role)
       end

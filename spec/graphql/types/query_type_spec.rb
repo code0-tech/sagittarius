@@ -6,7 +6,7 @@ RSpec.describe SagittariusSchema.types['Query'] do
   let(:fields) do
     %w[
       applicationSettings
-      currentAuthorization
+      currentAuthentication
       currentUser
       echo
       organization

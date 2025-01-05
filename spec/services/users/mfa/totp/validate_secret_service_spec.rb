@@ -3,7 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Users::Mfa::Totp::ValidateSecretService do
-  subject(:service_response) { described_class.new(current_user, signed_secret, current_totp).execute }
+  subject(:service_response) do
+    described_class.new(create_authentication(current_user), signed_secret, current_totp).execute
+  end
 
   context 'when user is nil' do
     let(:current_user) { nil }

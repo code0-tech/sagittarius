@@ -6,14 +6,15 @@ module Users
       class RotateService
         include Sagittarius::Database::Transactional
 
-        attr_reader :current_user
+        attr_reader :current_authentication, :current_user
 
-        def initialize(current_user)
-          @current_user = current_user
+        def initialize(current_authentication)
+          @current_authentication = current_authentication
+          @current_user = current_authentication.user
         end
 
         def execute
-          unless Ability.allowed?(current_user, :manage_mfa, current_user)
+          unless Ability.allowed?(current_authentication, :manage_mfa, current_user)
             return ServiceResponse.error(payload: :missing_permission)
           end
 

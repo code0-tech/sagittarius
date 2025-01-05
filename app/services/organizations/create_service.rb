@@ -4,15 +4,15 @@ module Organizations
   class CreateService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :name
+    attr_reader :current_authentication, :name
 
-    def initialize(current_user, name:)
-      @current_user = current_user
+    def initialize(current_authentication, name:)
+      @current_authentication = current_authentication
       @name = name
     end
 
     def execute
-      unless Ability.allowed?(current_user, :create_organization)
+      unless Ability.allowed?(current_authentication, :create_organization)
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 
@@ -29,12 +29,12 @@ module Organizations
                                                          name: 'Administrator')
         create_object(t, NamespaceRoleAbility, namespace_role: namespace_role, ability: :namespace_administrator)
         organization_member = create_object(t, NamespaceMember, namespace: organization.ensure_namespace,
-                                                                user: current_user)
+                                                                user: current_authentication.user)
         create_object(t, NamespaceMemberRole, member: organization_member, role: namespace_role)
 
         AuditService.audit(
           :organization_created,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: organization,
           target: organization.ensure_namespace,
           details: { name: name }

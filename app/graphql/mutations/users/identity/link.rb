@@ -14,7 +14,7 @@ module Mutations
 
         def resolve(provider_id:, args:)
           ::Users::Identity::LinkService.new(
-            current_user,
+            current_authentication,
             provider_id,
             args
           ).execute.to_mutation_response(success_key: :user_identity)

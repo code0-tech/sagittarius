@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SagittariusSchema.types['Authorization'] do
+RSpec.describe SagittariusSchema.types['Authentication'] do
   it 'returns possible types' do
     expect(described_class.possible_types).to include(Types::UserSessionType)
   end
@@ -13,7 +13,7 @@ RSpec.describe SagittariusSchema.types['Authorization'] do
     end
 
     it 'raises an error for invalid types' do
-      expect { described_class.resolve_type(build(:user), {}) }.to raise_error 'Unsupported AuthorizationType'
+      expect { described_class.resolve_type(build(:user), {}) }.to raise_error 'Unsupported AuthenticationType'
     end
   end
 end

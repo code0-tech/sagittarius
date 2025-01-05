@@ -19,7 +19,7 @@ module Types
       subject = object.try(:declarative_policy_subject) || object
 
       @authorize.all? do |ability|
-        Ability.allowed?(context[:current_user], ability, subject)
+        Ability.allowed?(context[:current_authentication], ability, subject)
       end
     end
   end

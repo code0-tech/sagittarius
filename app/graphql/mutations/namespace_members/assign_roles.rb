@@ -21,7 +21,7 @@ module Mutations
         return { namespace_member_roles: nil, errors: [create_message_error('Invalid role')] } if roles.any?(&:nil?)
 
         ::NamespaceMembers::AssignRolesService.new(
-          current_user,
+          current_authentication,
           member,
           roles
         ).execute.to_mutation_response(success_key: :namespace_member_roles)

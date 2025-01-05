@@ -20,7 +20,7 @@ module Mutations
           end
 
           ::Users::Identity::UnlinkService.new(
-            current_user,
+            current_authentication,
             user_identity
           ).execute.to_mutation_response(success_key: :user_identity)
         end

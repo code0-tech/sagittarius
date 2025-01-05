@@ -84,6 +84,10 @@ RSpec.configure do |config|
   # Load route helpers
   config.include Rails.application.routes.url_helpers, type: :request
 
+  # Load authentication helpers
+  config.include AuthenticationHelpers, type: :policy
+  config.include AuthenticationHelpers, type: :service
+
   config.before eager_load: true do
     Rails.application.eager_load!
   end
