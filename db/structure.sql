@@ -63,6 +63,44 @@ CREATE SEQUENCE backup_codes_id_seq
 
 ALTER SEQUENCE backup_codes_id_seq OWNED BY backup_codes.id;
 
+CREATE TABLE data_type_rules (
+    id bigint NOT NULL,
+    data_type_id bigint NOT NULL,
+    variant integer NOT NULL,
+    config jsonb NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE data_type_rules_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE data_type_rules_id_seq OWNED BY data_type_rules.id;
+
+CREATE TABLE data_types (
+    id bigint NOT NULL,
+    namespace_id bigint,
+    identifier text NOT NULL,
+    variant integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    parent_type_id bigint,
+    CONSTRAINT check_3a7198812e CHECK ((char_length(identifier) <= 50))
+);
+
+CREATE SEQUENCE data_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE data_types_id_seq OWNED BY data_types.id;
+
 CREATE TABLE good_job_batches (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     created_at timestamp with time zone NOT NULL,
@@ -321,6 +359,25 @@ CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
 
+CREATE TABLE translations (
+    id bigint NOT NULL,
+    code text NOT NULL,
+    content text NOT NULL,
+    owner_type character varying NOT NULL,
+    owner_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE translations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE translations_id_seq OWNED BY translations.id;
+
 CREATE TABLE user_identities (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
@@ -389,6 +446,10 @@ ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_
 
 ALTER TABLE ONLY backup_codes ALTER COLUMN id SET DEFAULT nextval('backup_codes_id_seq'::regclass);
 
+ALTER TABLE ONLY data_type_rules ALTER COLUMN id SET DEFAULT nextval('data_type_rules_id_seq'::regclass);
+
+ALTER TABLE ONLY data_types ALTER COLUMN id SET DEFAULT nextval('data_types_id_seq'::regclass);
+
 ALTER TABLE ONLY namespace_licenses ALTER COLUMN id SET DEFAULT nextval('namespace_licenses_id_seq'::regclass);
 
 ALTER TABLE ONLY namespace_member_roles ALTER COLUMN id SET DEFAULT nextval('namespace_member_roles_id_seq'::regclass);
@@ -409,6 +470,8 @@ ALTER TABLE ONLY organizations ALTER COLUMN id SET DEFAULT nextval('organization
 
 ALTER TABLE ONLY runtimes ALTER COLUMN id SET DEFAULT nextval('runtimes_id_seq'::regclass);
 
+ALTER TABLE ONLY translations ALTER COLUMN id SET DEFAULT nextval('translations_id_seq'::regclass);
+
 ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_identities_id_seq'::regclass);
 
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
@@ -426,6 +489,12 @@ ALTER TABLE ONLY audit_events
 
 ALTER TABLE ONLY backup_codes
     ADD CONSTRAINT backup_codes_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY data_type_rules
+    ADD CONSTRAINT data_type_rules_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY data_types
+    ADD CONSTRAINT data_types_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY good_job_batches
     ADD CONSTRAINT good_job_batches_pkey PRIMARY KEY (id);
@@ -475,6 +544,9 @@ ALTER TABLE ONLY runtimes
 ALTER TABLE ONLY schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
 
+ALTER TABLE ONLY translations
+    ADD CONSTRAINT translations_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY user_identities
     ADD CONSTRAINT user_identities_pkey PRIMARY KEY (id);
 
@@ -493,6 +565,12 @@ CREATE UNIQUE INDEX index_application_settings_on_setting ON application_setting
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
 
 CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes USING btree (user_id, lower(token));
+
+CREATE INDEX index_data_type_rules_on_data_type_id ON data_type_rules USING btree (data_type_id);
+
+CREATE UNIQUE INDEX index_data_types_on_namespace_id_and_identifier ON data_types USING btree (namespace_id, identifier);
+
+CREATE INDEX index_data_types_on_parent_type_id ON data_types USING btree (parent_type_id);
 
 CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON good_job_executions USING btree (active_job_id, created_at);
 
@@ -552,6 +630,8 @@ CREATE INDEX index_runtimes_on_namespace_id ON runtimes USING btree (namespace_i
 
 CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
 
+CREATE INDEX index_translations_on_owner ON translations USING btree (owner_type, owner_id);
+
 CREATE UNIQUE INDEX index_user_identities_on_provider_id_and_identifier ON user_identities USING btree (provider_id, identifier);
 
 CREATE INDEX index_user_identities_on_user_id ON user_identities USING btree (user_id);
@@ -573,6 +653,9 @@ ALTER TABLE ONLY namespace_roles
 
 ALTER TABLE ONLY namespace_licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY data_types
+    ADD CONSTRAINT fk_rails_4434ad0b90 FOREIGN KEY (parent_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY backup_codes
     ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
@@ -597,6 +680,9 @@ ALTER TABLE ONLY namespace_member_roles
 
 ALTER TABLE ONLY namespace_role_abilities
     ADD CONSTRAINT fk_rails_6f3304b078 FOREIGN KEY (namespace_role_id) REFERENCES namespace_roles(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY data_type_rules
+    ADD CONSTRAINT fk_rails_7759633ff8 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT fk_rails_9fa262d742 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
