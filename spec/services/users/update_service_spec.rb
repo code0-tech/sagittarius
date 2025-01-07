@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Users::UpdateService do
-  subject(:service_response) { described_class.new(current_user, current_user, params).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), current_user, params).execute }
 
   shared_examples 'does not update' do
     it { is_expected.to be_error }
@@ -38,7 +38,7 @@ RSpec.describe Users::UpdateService do
     let(:current_user) { create(:user) }
 
     context 'when user tries to update admin status' do
-      subject(:service_response) { described_class.new(current_user, user, params).execute }
+      subject(:service_response) { described_class.new(create_authentication(current_user), user, params).execute }
 
       context 'when user is admin' do
         let(:params) do

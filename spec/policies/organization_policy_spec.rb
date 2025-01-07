@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe OrganizationPolicy do
-  subject { described_class.new(current_user, organization) }
+  subject { described_class.new(create_authentication(current_user), organization) }
 
   let(:current_user) { nil }
   let(:organization) { create(:organization) }

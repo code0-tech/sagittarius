@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe UserPolicy do
-  subject { described_class.new(current_user, user) }
+  subject { described_class.new(create_authentication(current_user), user) }
 
   let(:user) { create(:user) }
 

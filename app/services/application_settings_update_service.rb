@@ -3,15 +3,15 @@
 class ApplicationSettingsUpdateService
   include Sagittarius::Database::Transactional
 
-  attr_reader :current_user, :params
+  attr_reader :current_authentication, :params
 
-  def initialize(current_user, params)
-    @current_user = current_user
+  def initialize(current_authentication, params)
+    @current_authentication = current_authentication
     @params = params
   end
 
   def execute
-    unless Ability.allowed?(current_user, :update_application_setting)
+    unless Ability.allowed?(current_authentication, :update_application_setting)
       return ServiceResponse.error(message: 'Missing permissions', payload: :permission_missing)
     end
 
@@ -29,7 +29,7 @@ class ApplicationSettingsUpdateService
 
         AuditService.audit(
           :application_setting_updated,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: setting,
           details: { setting: setting.setting, value: setting.value },
           target: setting

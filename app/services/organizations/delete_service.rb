@@ -4,15 +4,15 @@ module Organizations
   class DeleteService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :organization
+    attr_reader :current_authentication, :organization
 
-    def initialize(current_user, organization)
-      @current_user = current_user
+    def initialize(current_authentication, organization)
+      @current_authentication = current_authentication
       @organization = organization
     end
 
     def execute
-      unless Ability.allowed?(current_user, :delete_organization, organization)
+      unless Ability.allowed?(current_authentication, :delete_organization, organization)
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 
@@ -26,7 +26,7 @@ module Organizations
 
         AuditService.audit(
           :organization_deleted,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: organization,
           details: {},
           target: organization.ensure_namespace

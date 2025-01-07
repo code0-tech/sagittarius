@@ -21,7 +21,7 @@ module Mutations
         end
 
         ::NamespaceLicenses::DeleteService.new(
-          current_user,
+          current_authentication,
           namespace_license: license
         ).execute.to_mutation_response(success_key: :namespace_license)
       end

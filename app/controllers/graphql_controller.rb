@@ -9,20 +9,19 @@ class GraphqlController < ApplicationController
   def execute
     authorization_token = request.headers['Authorization']
 
-    current_authorization = find_authorization(authorization_token)
+    current_authentication = find_authentication(authorization_token)
 
-    return head :unauthorized if authorization_token.present? == current_authorization.none?
-    return head :unauthorized if current_authorization.invalid?
-    return head :forbidden if !current_authorization.mutations_allowed? && mutation? && !anonymous_mutation?
+    return head :unauthorized if authorization_token.present? == current_authentication.none?
+    return head :unauthorized if current_authentication.invalid?
+    return head :forbidden if !current_authentication.mutations_allowed? && mutation? && !anonymous_mutation?
 
-    current_user = current_authorization.authorization&.user
+    current_user = current_authentication.authentication&.user
 
     variables = prepare_variables(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      current_user: current_user,
-      current_authorization: current_authorization.authorization,
+      current_authentication: current_authentication,
     }
 
     Sagittarius::Context.with_context(user: { id: current_user&.id, username: current_user&.username }) do
@@ -62,16 +61,16 @@ class GraphqlController < ApplicationController
     end
   end
 
-  def find_authorization(authorization)
-    return Authorization.new(:none, nil) if authorization.blank?
+  def find_authentication(authorization)
+    return Sagittarius::Authentication.new(:none, nil) if authorization.blank?
 
     token_type, token = authorization.split(' ', 2)
 
     case token_type
     when 'Session'
-      Authorization.new(:session, UserSession.find_by(token: token, active: true))
+      Sagittarius::Authentication.new(:session, UserSession.find_by(token: token, active: true))
     else
-      Authorization.new(:invalid, nil)
+      Sagittarius::Authentication.new(:invalid, nil)
     end
   end
 
@@ -89,23 +88,5 @@ class GraphqlController < ApplicationController
 
     mutation_name = selections.first.name
     %w[usersLogin usersRegister usersIdentityRegister usersIdentityLogin].include?(mutation_name)
-  end
-
-  Authorization = Struct.new(:type, :authorization) do
-    def mutations_allowed?
-      return true if session?
-
-      false
-    end
-
-    def invalid?
-      (authorization.nil? && !none?) || type == :invalid
-    end
-
-    %i[none session].each do |t|
-      define_method :"#{t}?" do
-        type == t
-      end
-    end
   end
 end

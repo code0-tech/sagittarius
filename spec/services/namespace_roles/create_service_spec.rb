@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe NamespaceRoles::CreateService do
-  subject(:service_response) { described_class.new(current_user, namespace, params).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), namespace, params).execute }
 
   let(:namespace) { create(:namespace) }
   let(:role_name) { generate(:role_name) }

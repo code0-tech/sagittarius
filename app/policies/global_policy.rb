@@ -2,7 +2,7 @@
 
 class GlobalPolicy < BasePolicy
   condition(:organization_creation_restricted) { ApplicationSetting.current[:organization_creation_restricted] }
-  condition(:admin) { @user&.admin }
+  condition(:admin) { user&.admin }
 
   rule { ~anonymous }.enable :create_organization
   rule { organization_creation_restricted & ~admin }.prevent :create_organization

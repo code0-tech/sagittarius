@@ -20,7 +20,7 @@ module Mutations
         return { runtime: nil, errors: [create_message_error('Invalid runtime')] } if runtime.nil?
 
         ::Runtimes::UpdateService.new(
-          current_user,
+          current_authentication,
           runtime,
           params
         ).execute.to_mutation_response(success_key: :runtime)

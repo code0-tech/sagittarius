@@ -4,16 +4,16 @@ module NamespaceMembers
   class InviteService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :namespace, :user
+    attr_reader :current_authentication, :namespace, :user
 
-    def initialize(current_user, namespace, user)
-      @current_user = current_user
+    def initialize(current_authentication, namespace, user)
+      @current_authentication = current_authentication
       @namespace = namespace
       @user = user
     end
 
     def execute
-      unless Ability.allowed?(current_user, :invite_member, namespace)
+      unless Ability.allowed?(current_authentication, :invite_member, namespace)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
@@ -29,7 +29,7 @@ module NamespaceMembers
 
         AuditService.audit(
           :namespace_member_invited,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: namespace_member,
           details: {},
           target: namespace

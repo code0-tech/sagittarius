@@ -4,16 +4,16 @@ module Runtimes
   class UpdateService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :runtime, :params
+    attr_reader :current_authentication, :runtime, :params
 
-    def initialize(current_user, runtime, params)
-      @current_user = current_user
+    def initialize(current_authentication, runtime, params)
+      @current_authentication = current_authentication
       @runtime = runtime
       @params = params
     end
 
     def execute
-      unless Ability.allowed?(current_user, :update_runtime, runtime.namespace || :global)
+      unless Ability.allowed?(current_authentication, :update_runtime, runtime.namespace || :global)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
@@ -28,7 +28,7 @@ module Runtimes
 
         AuditService.audit(
           :runtime_updated,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: runtime,
           target: runtime.namespace || AuditEvent::GLOBAL_TARGET,
           details: params

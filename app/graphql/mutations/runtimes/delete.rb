@@ -19,7 +19,7 @@ module Mutations
         end
 
         ::Runtimes::DeleteService.new(
-          current_user,
+          current_authentication,
           runtime
         ).execute.to_mutation_response(success_key: :runtime)
       end

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe NamespaceProjectPolicy do
-  subject { described_class.new(current_user, namespace_project) }
+  subject { described_class.new(create_authentication(current_user), namespace_project) }
 
   let(:current_user) { create(:user) }
   let(:namespace_project) { create(:namespace_project) }

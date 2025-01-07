@@ -5,11 +5,12 @@ module Users
     class LinkService < BaseService
       include Sagittarius::Database::Transactional
 
-      attr_reader :current_user, :provider_id, :args
+      attr_reader :current_authentication, :current_user, :provider_id, :args
 
-      def initialize(current_user, provider_id, args)
+      def initialize(current_authentication, provider_id, args)
         super()
-        @current_user = current_user
+        @current_authentication = current_authentication
+        @current_user = current_authentication.user
         @provider_id = provider_id
         @args = args
       end

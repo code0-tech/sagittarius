@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe CustomizablePermission do
-  subject { policy_class.new(current_user, namespace) }
+  subject { policy_class.new(create_authentication(current_user), namespace) }
 
   let(:policy_class) do
     Class.new(BasePolicy) do
@@ -48,7 +48,7 @@ RSpec.describe CustomizablePermission do
   end
 
   context 'when role is assigned to projects' do
-    subject { policy_class.new(current_user, project) }
+    subject { policy_class.new(create_authentication(current_user), project) }
 
     let(:policy_class) do
       Class.new(BasePolicy) do

@@ -9,7 +9,7 @@ Root Query type
 | Name | Type | Description |
 |------|------|-------------|
 | `applicationSettings` | [`ApplicationSettings`](../object/applicationsettings.md) | Get global application settings |
-| `currentAuthorization` | [`Authorization`](../union/authorization.md) | Get the currently logged in authorization |
+| `currentAuthentication` | [`Authentication`](../union/authentication.md) | Get the currently logged in authentication |
 | `currentUser` | [`User`](../object/user.md) | Get the currently logged in user |
 | `globalRuntimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Find runtimes |
 

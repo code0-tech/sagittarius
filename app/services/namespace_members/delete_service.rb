@@ -4,15 +4,15 @@ module NamespaceMembers
   class DeleteService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :namespace_member
+    attr_reader :current_authentication, :namespace_member
 
-    def initialize(current_user, namespace_member)
-      @current_user = current_user
+    def initialize(current_authentication, namespace_member)
+      @current_authentication = current_authentication
       @namespace_member = namespace_member
     end
 
     def execute
-      unless Ability.allowed?(current_user, :delete_member, namespace_member)
+      unless Ability.allowed?(current_authentication, :delete_member, namespace_member)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
@@ -28,7 +28,7 @@ module NamespaceMembers
 
         AuditService.audit(
           :namespace_member_deleted,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: namespace_member,
           details: {},
           target: namespace_member.namespace

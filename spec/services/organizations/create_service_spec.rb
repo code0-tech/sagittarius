@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Organizations::CreateService do
-  subject(:service_response) { described_class.new(current_user, **params).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), **params).execute }
 
   shared_examples 'does not create' do
     it { is_expected.to be_error }
@@ -62,8 +62,9 @@ RSpec.describe Organizations::CreateService do
 
     it 'adds ability to the current_user' do
       organization = service_response.payload.reload
-      expect(Ability.allowed?(current_user, :namespace_administrator, organization)).to be(true)
-      expect(Ability.allowed?(current_user, :delete_member, organization)).to be(true)
+      authentication = create_authentication(current_user)
+      expect(Ability.allowed?(authentication, :namespace_administrator, organization)).to be(true)
+      expect(Ability.allowed?(authentication, :delete_member, organization)).to be(true)
     end
 
     it 'creates ability' do

@@ -21,7 +21,7 @@ module Mutations
         end
 
         ::Runtimes::CreateService.new(
-          current_user,
+          current_authentication,
           namespace,
           name,
           description: description

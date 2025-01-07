@@ -21,7 +21,7 @@ module Mutations
         end
 
         response = ::Organizations::DeleteService.new(
-          current_user,
+          current_authentication,
           organization
         ).execute.to_mutation_response(success_key: :organization)
 

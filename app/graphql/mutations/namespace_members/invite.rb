@@ -19,7 +19,7 @@ module Mutations
         return { namespace_member: nil, errors: [create_message_error('Invalid user')] } if user.nil?
 
         ::NamespaceMembers::InviteService.new(
-          current_user,
+          current_authentication,
           namespace,
           user
         ).execute.to_mutation_response(success_key: :namespace_member)

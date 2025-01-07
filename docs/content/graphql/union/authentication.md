@@ -1,8 +1,8 @@
 ---
-title: Authorization
+title: Authentication
 ---
 
-Objects that can present an authorization
+Objects that can present an authentication
 
 ## Possible types
 

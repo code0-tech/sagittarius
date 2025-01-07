@@ -21,7 +21,7 @@ module Mutations
         end
 
         ::NamespaceRoles::UpdateService.new(
-          current_user,
+          current_authentication,
           namespace_role,
           params
         ).execute.to_mutation_response(success_key: :namespace_role)

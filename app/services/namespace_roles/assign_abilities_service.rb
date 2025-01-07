@@ -4,17 +4,17 @@ module NamespaceRoles
   class AssignAbilitiesService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :role, :abilities
+    attr_reader :current_authentication, :role, :abilities
 
-    def initialize(current_user, role, abilities)
-      @current_user = current_user
+    def initialize(current_authentication, role, abilities)
+      @current_authentication = current_authentication
       @role = role
       @abilities = abilities
     end
 
     def execute
       namespace = role.namespace
-      unless Ability.allowed?(current_user, :assign_role_abilities, namespace)
+      unless Ability.allowed?(current_authentication, :assign_role_abilities, namespace)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 
@@ -41,7 +41,7 @@ module NamespaceRoles
 
         AuditService.audit(
           :namespace_role_abilities_updated,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: role,
           details: {
             old_abilities: old_abilities_for_audit_event,

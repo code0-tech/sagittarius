@@ -3,7 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Runtimes::CreateService do
-  subject(:service_response) { described_class.new(current_user, namespace, name, **params).execute }
+  subject(:service_response) do
+    described_class.new(create_authentication(current_user), namespace, name, **params).execute
+  end
 
   let(:namespace) { nil }
   let(:name) { generate(:runtime_name) }

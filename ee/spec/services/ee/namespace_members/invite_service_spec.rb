@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe NamespaceMembers::InviteService do
-  subject(:service_response) { described_class.new(current_user, namespace, user).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), namespace, user).execute }
 
   let(:current_user) { create(:user) }
   let(:namespace) { create(:namespace) }

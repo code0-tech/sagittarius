@@ -14,8 +14,8 @@ module Types
     end
 
     # rubocop:disable GraphQL/ExtractType -- these are intentionally at the root
-    field :current_authorization, Types::AuthorizationType, null: true,
-                                                            description: 'Get the currently logged in authorization'
+    field :current_authentication, Types::AuthenticationType, null: true,
+                                                              description: 'Get the currently logged in authentication'
     field :current_user, Types::UserType, null: true, description: 'Get the currently logged in user'
     # rubocop:enable GraphQL/ExtractType
 
@@ -68,6 +68,14 @@ module Types
 
     def global_runtimes
       Runtime.where(namespace: nil)
+    end
+
+    def current_authentication
+      super.authentication
+    end
+
+    def current_user
+      current_authentication&.user
     end
   end
 end

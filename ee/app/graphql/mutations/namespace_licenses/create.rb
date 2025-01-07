@@ -20,7 +20,7 @@ module Mutations
         end
 
         ::NamespaceLicenses::CreateService.new(
-          current_user,
+          current_authentication,
           namespace: namespace,
           data: data
         ).execute.to_mutation_response(success_key: :namespace_license)

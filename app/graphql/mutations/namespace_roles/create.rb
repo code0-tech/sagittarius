@@ -17,7 +17,7 @@ module Mutations
         return { namespace_role: nil, errors: [create_message_error('Invalid namespace')] } if namespace.nil?
 
         ::NamespaceRoles::CreateService.new(
-          current_user,
+          current_authentication,
           namespace,
           params
         ).execute.to_mutation_response(success_key: :namespace_role)

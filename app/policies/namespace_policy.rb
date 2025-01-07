@@ -3,10 +3,10 @@
 class NamespacePolicy < BasePolicy
   include CustomizablePermission
 
-  condition(:is_member) { @subject.member?(@user) }
+  condition(:is_member) { subject.member?(user) }
 
-  condition(:is_user_namespace) { @subject.user_type? }
-  condition(:is_owner) { @subject.parent == @user }
+  condition(:is_user_namespace) { subject.user_type? }
+  condition(:is_owner) { subject.parent == user }
 
   rule { is_member }.enable :has_access
 

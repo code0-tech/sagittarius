@@ -5,7 +5,7 @@ class NamespaceProjectPolicy < BasePolicy
 
   namespace_resolver(&:namespace)
 
-  condition(:can_create_projects) { can?(:create_namespace_project, @subject.namespace) }
+  condition(:can_create_projects) { can?(:create_namespace_project, subject.namespace) }
 
   rule { can_create_projects }.enable :read_namespace_project
 

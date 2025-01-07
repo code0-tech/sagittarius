@@ -22,8 +22,8 @@ module Mutations
           null: false,
           description: 'Errors encountered during execution of the mutation.'
 
-    def current_user
-      context[:current_user]
+    def current_authentication
+      context[:current_authentication]
     end
 
     def create_message_error(message)

@@ -22,7 +22,7 @@ module Mutations
         return { user: nil, errors: [create_message_error('Invalid user')] } if user.nil?
 
         ::Users::UpdateService.new(
-          current_user,
+          current_authentication,
           user,
           params
         ).execute.to_mutation_response(success_key: :user)

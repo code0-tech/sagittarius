@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Users::LogoutService do
-  subject(:service_response) { described_class.new(current_user, user_session).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), user_session).execute }
 
   context 'when current_user can log out user_session' do
     let(:current_user) { create(:user) }

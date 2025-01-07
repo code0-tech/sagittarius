@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe GlobalPolicy do
-  subject { described_class.new(current_user, nil) }
+  subject { described_class.new(create_authentication(current_user), nil) }
 
   context 'when user is present' do
     let(:current_user) { create(:user) }

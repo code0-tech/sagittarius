@@ -22,7 +22,7 @@ module Mutations
         end
 
         ::NamespaceProjects::UpdateService.new(
-          current_user,
+          current_authentication,
           project,
           **params
         ).execute.to_mutation_response(success_key: :namespace_project)

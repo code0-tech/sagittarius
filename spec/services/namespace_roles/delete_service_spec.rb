@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe NamespaceRoles::DeleteService do
-  subject(:service_response) { described_class.new(current_user, namespace_role).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), namespace_role).execute }
 
   let!(:namespace_role) { create(:namespace_role) }
   let!(:admin_role) do

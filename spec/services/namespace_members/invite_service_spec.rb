@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe NamespaceMembers::InviteService do
-  subject(:service_response) { described_class.new(current_user, namespace, user).execute }
+  subject(:service_response) { described_class.new(create_authentication(current_user), namespace, user).execute }
 
   let(:namespace) { create(:namespace) }
   let(:user) { create(:user) }

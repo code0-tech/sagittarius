@@ -26,7 +26,7 @@ RSpec.describe SagittariusSchema.types['UserSession'] do
     let(:query) do
       <<~QUERY
         query {
-          currentAuthorization {
+          currentAuthentication {
             __typename
             ...on UserSession {
               id
@@ -40,9 +40,9 @@ RSpec.describe SagittariusSchema.types['UserSession'] do
     before { post_graphql query, headers: { authorization: "Session #{session.token}" } }
 
     it 'does not expose token' do
-      expect(graphql_data_at(:current_authorization, :__typename)).to eq('UserSession')
-      expect(graphql_data_at(:current_authorization, :id)).to eq(session.to_global_id.to_s)
-      expect(graphql_data_at(:current_authorization, :token)).to be_nil
+      expect(graphql_data_at(:current_authentication, :__typename)).to eq('UserSession')
+      expect(graphql_data_at(:current_authentication, :id)).to eq(session.to_global_id.to_s)
+      expect(graphql_data_at(:current_authentication, :token)).to be_nil
     end
   end
 end

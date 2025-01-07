@@ -4,26 +4,26 @@ module Users
   class UpdateService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_user, :user, :params
+    attr_reader :current_authentication, :user, :params
 
-    def initialize(current_user, user, params)
-      @current_user = current_user
+    def initialize(current_authentication, user, params)
+      @current_authentication = current_authentication
       @user = user
       @params = params
     end
 
     def execute
-      unless Ability.allowed?(current_user, :update_user, user)
+      unless Ability.allowed?(current_authentication, :update_user, user)
         return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
       end
 
       if params.key?(:admin)
-        unless current_user.admin?
+        unless current_authentication.user.admin?
           return ServiceResponse.error(message: 'Cannot modify users admin status because user isn`t admin',
                                        payload: :unmodifiable_field)
         end
 
-        if current_user == user
+        if current_authentication.user == user
           return ServiceResponse.error(message: 'Cannot modify own admin status', payload: :unmodifiable_field)
         end
       end
@@ -39,7 +39,7 @@ module Users
 
         AuditService.audit(
           :user_updated,
-          author_id: current_user.id,
+          author_id: current_authentication.user.id,
           entity: user,
           target: user,
           details: params

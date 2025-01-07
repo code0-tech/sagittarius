@@ -76,7 +76,7 @@ module Types
       subject = object.try(:declarative_policy_subject) || object
 
       authorize.all? do |ability|
-        Ability.allowed?(context[:current_user], ability, subject)
+        Ability.allowed?(context[:current_authentication], ability, subject)
       end
     end
 
@@ -87,12 +87,8 @@ module Types
       @authorize_args || (superclass.respond_to?(:authorize) ? superclass.authorize : [])
     end
 
-    def current_authorization
-      context[:current_authorization]
-    end
-
-    def current_user
-      context[:current_user]
+    def current_authentication
+      context[:current_authentication]
     end
   end
 end

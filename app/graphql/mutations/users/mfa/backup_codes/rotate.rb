@@ -11,7 +11,7 @@ module Mutations
 
           def resolve
             ::Users::Mfa::BackupCodes::RotateService.new(
-              current_user
+              current_authentication
             ).execute.to_mutation_response(success_key: :codes)
           end
         end
