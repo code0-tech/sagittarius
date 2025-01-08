@@ -14,7 +14,7 @@ include:
     - bundle install --jobs $(nproc)
 
 .rails:
-  image: ghcr.io/code0-tech/build-images/ruby-postgres:84.1-ruby-3.2.2-postgres-16.1
+  image: ghcr.io/code0-tech/build-images/ruby-postgres:95.1-ruby-3.2.2-postgres-16.1
   before_script:
     - source ~/.asdf/asdf.sh
     - bundle config build.pg --with-pg-config=$(asdf where postgres)/bin/pg_config
