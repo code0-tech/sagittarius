@@ -197,7 +197,7 @@ GEM
     psych (5.2.2)
       date
       stringio
-    puma (6.4.3)
+    puma (6.5.0)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.8.1)
