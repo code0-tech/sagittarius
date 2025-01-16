@@ -7,6 +7,8 @@ class CreateRuntimeParameterDefinitions < Sagittarius::Database::Migration[1.0]
       t.references :data_type, null: false, foreign_key: { on_delete: :restrict }
       t.text :name, null: false, limit: 50
 
+      t.timestamp_with_timezone :removed_at, null: true
+
       t.index %i[runtime_function_definition_id name], unique: true
 
       t.timestamps_with_timezone
