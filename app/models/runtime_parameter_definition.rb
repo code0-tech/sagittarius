@@ -5,6 +5,7 @@ class RuntimeParameterDefinition < ApplicationRecord
   belongs_to :data_type
 
   has_many :translations, class_name: 'Translation', as: :owner
+  has_many :parameter_definitions, inverse_of: :runtime_parameter_definition
 
   validates :runtime_name, length: { minimum: 3, maximum: 50 }, presence: true,
                            uniqueness: { case_sensitive: false, scope: :runtime_function_definition_id }

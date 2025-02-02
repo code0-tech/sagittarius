@@ -38,6 +38,14 @@ module RuntimeFunctionDefinitions
       db_object.parameters = update_parameters(runtime_function_definition.runtime_parameter_definitions,
                                                db_object.parameters, t)
       db_object.translations = update_translations(runtime_function_definition.name, db_object.translations)
+
+      if db_object.function_definitions.empty?
+        definition = FunctionDefinition.new
+        definition.translations = update_translations(runtime_function_definition.name, definition.translations)
+        definition.return_type = db_object.return_type
+
+        db_object.function_definitions << definition
+      end
       db_object.save
       db_object
     end
@@ -71,6 +79,14 @@ module RuntimeFunctionDefinitions
         db_param.runtime_name = real_param.runtime_name
         db_param.data_type = find_data_type(real_param.data_type_identifier, t)
         db_param.translations = update_translations(real_param.name, db_param.translations)
+
+        next unless db_param.parameter_definitions.empty?
+
+        definition = ParameterDefinition.new
+        definition.translations = update_translations(real_param.name, definition.translations)
+        definition.data_type = db_param.data_type
+
+        db_param.parameter_definitions << definition
       end
 
       db_parameters

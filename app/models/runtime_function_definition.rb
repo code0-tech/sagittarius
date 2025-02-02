@@ -4,6 +4,7 @@ class RuntimeFunctionDefinition < ApplicationRecord
   belongs_to :return_type, class_name: 'DataType', optional: true
   belongs_to :namespace
 
+  has_many :function_definitions, inverse_of: :runtime_function_definition
   has_many :parameters, class_name: 'RuntimeParameterDefinition', inverse_of: :runtime_function_definition
   has_many :translations, class_name: 'Translation', as: :owner
 
