@@ -47,7 +47,7 @@ ALTER SEQUENCE audit_events_id_seq OWNED BY audit_events.id;
 
 CREATE TABLE backup_codes (
     id bigint NOT NULL,
-    token text,
+    token text NOT NULL,
     user_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
@@ -336,7 +336,7 @@ ALTER SEQUENCE organizations_id_seq OWNED BY organizations.id;
 
 CREATE TABLE runtime_function_definitions (
     id bigint NOT NULL,
-    return_type_id bigint NOT NULL,
+    return_type_id bigint,
     namespace_id bigint NOT NULL,
     runtime_name text NOT NULL,
     created_at timestamp with time zone NOT NULL,
@@ -357,10 +357,11 @@ CREATE TABLE runtime_parameter_definitions (
     id bigint NOT NULL,
     runtime_function_definition_id bigint NOT NULL,
     data_type_id bigint NOT NULL,
-    name text NOT NULL,
+    runtime_name text NOT NULL,
+    removed_at timestamp with time zone,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_95aff0700e CHECK ((char_length(name) <= 50))
+    CONSTRAINT check_c1156ce358 CHECK ((char_length(runtime_name) <= 50))
 );
 
 CREATE SEQUENCE runtime_parameter_definitions_id_seq
@@ -610,13 +611,11 @@ CREATE UNIQUE INDEX idx_on_namespace_role_id_ability_a092da8841 ON namespace_rol
 
 CREATE UNIQUE INDEX idx_on_role_id_project_id_5d4b5917dc ON namespace_role_project_assignments USING btree (role_id, project_id);
 
-CREATE UNIQUE INDEX idx_on_runtime_function_definition_id_name_4860aebcbe ON runtime_parameter_definitions USING btree (runtime_function_definition_id, name);
+CREATE UNIQUE INDEX idx_on_runtime_function_definition_id_runtime_name_abb3bb31bc ON runtime_parameter_definitions USING btree (runtime_function_definition_id, runtime_name);
 
 CREATE UNIQUE INDEX index_application_settings_on_setting ON application_settings USING btree (setting);
 
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
-
-CREATE INDEX index_backup_codes_on_user_id ON backup_codes USING btree (user_id);
 
 CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes USING btree (user_id, lower(token));
 
@@ -694,6 +693,8 @@ CREATE UNIQUE INDEX index_user_identities_on_provider_id_and_identifier ON user_
 
 CREATE INDEX index_user_identities_on_user_id ON user_identities USING btree (user_id);
 
+CREATE UNIQUE INDEX index_user_identities_on_user_id_and_provider_id ON user_identities USING btree (user_id, provider_id);
+
 CREATE UNIQUE INDEX index_user_sessions_on_token ON user_sessions USING btree (token);
 
 CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_id);
@@ -717,7 +718,7 @@ ALTER TABLE ONLY data_types
     ADD CONSTRAINT fk_rails_4434ad0b90 FOREIGN KEY (parent_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY backup_codes
-    ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id);
+    ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_567f152a62 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;

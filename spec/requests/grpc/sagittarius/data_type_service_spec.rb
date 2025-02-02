@@ -19,7 +19,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
           rules: [
             {
               variant: :NUMBER_RANGE,
-              config: Google::Protobuf::Struct.from_hash(
+              config: Tucana::Shared::Struct.from_hash(
                 {
                   'min' => 1,
                 }
@@ -65,7 +65,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
             rules: [
               {
                 variant: :NUMBER_RANGE,
-                config: Google::Protobuf::Struct.from_hash(
+                config: Tucana::Shared::Struct.from_hash(
                   {
                     'max' => 9,
                   }
@@ -82,7 +82,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
             rules: [
               {
                 variant: :NUMBER_RANGE,
-                config: Google::Protobuf::Struct.from_hash(
+                config: Tucana::Shared::Struct.from_hash(
                   {
                     'min' => 1,
                   }

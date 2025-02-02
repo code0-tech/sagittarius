@@ -14,9 +14,10 @@ module RuntimeFunctionDefinitions
     def execute
       transactional do |t|
         runtime_function_definitions.each do |runtime_function_definition|
-          unless update_runtime_function_definition(runtime_function_definition, t)
+          response = update_runtime_function_definition(runtime_function_definition, t)
+          unless response.persisted?
             t.rollback_and_return! ServiceResponse.error(message: 'Failed to update runtime function definition',
-                                                         payload: runtime_function_definition.errors)
+                                                         payload: response.errors)
           end
         end
 
@@ -27,16 +28,18 @@ module RuntimeFunctionDefinitions
     protected
 
     def update_runtime_function_definition(runtime_function_definition, t)
-      db_object = RuntimeFunctionDefinition.find_or_initialize_by(namespace: current_runtime.namespace,
-                                                                  runtime_name: runtime_function_definition.runtime_name)
-      if runtime_function_definition.return_type_identifier.present?
-        db_object.return_type = find_data_type(runtime_function_definition.return_type_identifier, t)
-      else
-        db_object.return_type = nil
-      end
-      db_object.parameters = update_parameters(runtime_function_definition.runtime_parameter_definitions, db_object.parameters, t)
+      db_object = RuntimeFunctionDefinition.find_or_initialize_by(
+        namespace: current_runtime.namespace,
+        runtime_name: runtime_function_definition.runtime_name
+      )
+      db_object.return_type = if runtime_function_definition.return_type_identifier.present?
+                                find_data_type(runtime_function_definition.return_type_identifier, t)
+                              end
+      db_object.parameters = update_parameters(runtime_function_definition.runtime_parameter_definitions,
+                                               db_object.parameters, t)
       db_object.translations = update_translations(runtime_function_definition.name, db_object.translations)
       db_object.save
+      db_object
     end
 
     def find_data_type(identifier, t)
@@ -52,21 +55,21 @@ module RuntimeFunctionDefinitions
 
     def update_parameters(parameters, db_parameters, t)
       db_parameters.each do |db_param|
-        if parameters.find { |real_param| real_param.runtime_name == db_param.runtime_name }
-          db_param.removed_at = nil
-        else
-          db_param.removed_at = Time.zone.now
-        end
+        db_param.removed_at = if parameters.find { |real_param| real_param.runtime_name == db_param.runtime_name }
+                                nil
+                              else
+                                Time.zone.now
+                              end
       end
 
       parameters.each do |real_param|
-        db_param = db_parameters.find { |db_param| db_param.runtime_name == real_param.runtime_name }
+        db_param = db_parameters.find { |current_param| current_param.runtime_name == real_param.runtime_name }
         if db_param.nil?
           db_param = RuntimeParameterDefinition.new
           db_parameters << db_param
         end
         db_param.runtime_name = real_param.runtime_name
-        db_param.datatype = find_data_type(real_param.data_type_identifier, t)
+        db_param.data_type = find_data_type(real_param.data_type_identifier, t)
         db_param.translations = update_translations(real_param.name, db_param.translations)
       end
 

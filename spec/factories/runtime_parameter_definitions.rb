@@ -6,6 +6,6 @@ FactoryBot.define do
   factory :runtime_parameter_definition do
     runtime_function_definition
     data_type
-    name { generate(:runtime_parameter_definition_name) }
+    runtime_name { generate(:runtime_parameter_definition_name) }
   end
 end
