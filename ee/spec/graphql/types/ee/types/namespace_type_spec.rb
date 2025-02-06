@@ -9,6 +9,7 @@ RSpec.describe SagittariusSchema.types['Namespace'] do
       parent
       members
       roles
+      datatypes
       runtimes
       projects
       createdAt
