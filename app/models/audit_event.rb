@@ -30,6 +30,7 @@ class AuditEvent < ApplicationRecord
     user_updated: 26,
     user_identity_linked: 27,
     user_identity_unlinked: 28,
+    attachment_updated: 29,
   }.with_indifferent_access
 
   # rubocop:disable Lint/StructNewOverride

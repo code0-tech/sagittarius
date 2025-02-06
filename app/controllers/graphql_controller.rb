@@ -61,19 +61,6 @@ class GraphqlController < ApplicationController
     end
   end
 
-  def find_authentication(authorization)
-    return Sagittarius::Authentication.new(:none, nil) if authorization.blank?
-
-    token_type, token = authorization.split(' ', 2)
-
-    case token_type
-    when 'Session'
-      Sagittarius::Authentication.new(:session, UserSession.find_by(token: token, active: true))
-    else
-      Sagittarius::Authentication.new(:invalid, nil)
-    end
-  end
-
   def query(query_string = params[:query], operation_name = params[:operationName])
     @query ||= ::GraphQL::Query.new(SagittariusSchema, query_string, operation_name: operation_name)
   end

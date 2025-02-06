@@ -9,11 +9,13 @@ class UserPolicy < BasePolicy
   rule { user_is_admin }.policy do
     enable :update_user
     enable :read_user_identity
+    enable :update_attachment_avatar
   end
 
   rule { user_is_self }.policy do
     enable :read_user_identity
     enable :manage_mfa
     enable :update_user
+    enable :update_attachment_avatar
   end
 end

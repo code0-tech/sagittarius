@@ -2,6 +2,8 @@
 
 Rails.application.routes.draw do
   post '/graphql', to: 'graphql#execute'
+
+  post '/files/upload', to: 'files#upload'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /health/liveness that returns 200 if the app boots with no exceptions, otherwise 500.

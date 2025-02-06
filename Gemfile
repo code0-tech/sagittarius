@@ -85,3 +85,5 @@ gem 'code0-identities', '~> 0.0.1'
 
 gem 'pry', '~> 0.14.2'
 gem 'pry-byebug', '~> 3.10'
+
+gem 'image_processing', '>= 1.2'
