@@ -9,6 +9,7 @@ Represents a Namespace
 | Name | Type | Description |
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Namespace was created |
+| `datatypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | DataTypes of the namespace |
 | `id` | [`NamespaceID!`](../scalar/namespaceid.md) | Global ID of this Namespace |
 | `members` | [`NamespaceMemberConnection!`](../object/namespacememberconnection.md) | Members of the namespace |
 | `namespaceLicenses` | [`NamespaceLicenseConnection!`](../object/namespacelicenseconnection.md) | Licenses of the namespace |
