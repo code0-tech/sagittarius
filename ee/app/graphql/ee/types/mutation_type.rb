@@ -6,8 +6,8 @@ module EE
       extend ActiveSupport::Concern
 
       prepended do
-        mount_mutation Mutations::NamespaceLicenses::Create
-        mount_mutation Mutations::NamespaceLicenses::Delete
+        mount_mutation Mutations::Namespaces::Licenses::Create
+        mount_mutation Mutations::Namespaces::Licenses::Delete
       end
     end
   end
