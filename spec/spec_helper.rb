@@ -77,10 +77,10 @@ RSpec.configure do |config|
   require_relative '../lib/sagittarius/extensions'
   require_relative '../lib/sagittarius/utils'
 
-  base_glob = "{,#{Sagittarius::Extensions::AVAILABLE_EXTENSIONS.map { |ext| "#{ext}/" }.join(',')}}spec"
+  base_glob = "{,#{Sagittarius::Extensions::AVAILABLE_EXTENSIONS.map { |ext| "extensions/#{ext}/" }.join(',')}}spec"
   config.define_derived_metadata do |metadata|
     Sagittarius::Extensions::AVAILABLE_EXTENSIONS.each do |extension|
-      metadata[:extension] = extension if metadata[:file_path].start_with?("./#{extension}/")
+      metadata[:extension] = extension if metadata[:file_path].start_with?("./extensions/#{extension}/")
     end
 
     if File.fnmatch?("#{base_glob}/grpc/{,**/}*_spec.rb", metadata[:file_path].delete_prefix('./'),
@@ -101,7 +101,7 @@ RSpec.configure do |config|
 
   patterns = ['**{,/*/**}/*_spec.rb']
   Sagittarius::Extensions.active.each do |extension|
-    patterns << "../#{extension}/**{,/*/**}/*_spec.rb"
+    patterns << "../extensions/#{extension}/**{,/*/**}/*_spec.rb"
   end
 
   config.pattern = patterns.join(',')

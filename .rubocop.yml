@@ -41,9 +41,9 @@ RSpec/DescribeClass:
     - spec/graphql/**/*
     - spec/requests/graphql/**/*
     - spec/requests/grpc/**/*
-    - ee/spec/graphql/**/*
-    - ee/spec/requests/graphql/**/*
-    - ee/spec/requests/grpc/**/*
+    - extensions/ee/spec/graphql/**/*
+    - extensions/ee/spec/requests/graphql/**/*
+    - extensions/ee/spec/requests/grpc/**/*
 
 RSpec/ExampleLength:
   Enabled: false
