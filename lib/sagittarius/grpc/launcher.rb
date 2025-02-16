@@ -3,7 +3,7 @@
 module Sagittarius
   module Grpc
     class Launcher
-      include Sagittarius::Loggable
+      include Code0::ZeroTrack::Loggable
 
       HOST = '0.0.0.0:50051'
 

@@ -6,7 +6,7 @@ module RuboCop
       module Logs
         # Cop that checks if 'timestamps' method is called with timezone information.
         class RailsLogger < RuboCop::Cop::Base
-          MSG = 'Do not use `Rails.logger` directly, include `Sagittarius::Loggable` instead'
+          MSG = 'Do not use `Rails.logger` directly, include `Code0::ZeroTrack::Loggable` instead'
           LOG_METHODS = %i[debug error fatal info warn].freeze
           LOG_METHODS_PATTERN = LOG_METHODS.map(&:inspect).join(' ').freeze
 

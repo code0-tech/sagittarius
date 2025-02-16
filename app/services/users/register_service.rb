@@ -3,7 +3,7 @@
 module Users
   class RegisterService
     include Sagittarius::Database::Transactional
-    include Sagittarius::Loggable
+    include Code0::ZeroTrack::Loggable
 
     attr_reader :username, :email, :password
 

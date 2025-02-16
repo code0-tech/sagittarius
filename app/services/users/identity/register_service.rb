@@ -4,7 +4,7 @@ module Users
   module Identity
     class RegisterService < BaseService
       include Sagittarius::Database::Transactional
-      include Sagittarius::Loggable
+      include Code0::ZeroTrack::Loggable
 
       attr_reader :provider_id, :args
 
