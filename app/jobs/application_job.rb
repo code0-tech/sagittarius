@@ -13,14 +13,14 @@ class ApplicationJob < ActiveJob::Base
   before_enqueue do |job|
     next if job.arguments.first&.key?(:sagittarius_context)
 
-    job.arguments.unshift Sagittarius::Context.current.to_h.merge(sagittarius_context: true)
+    job.arguments.unshift Code0::ZeroTrack::Context.current.to_h.merge(sagittarius_context: true)
   end
 
   around_perform do |job, block|
     context = job.arguments.shift
     context.delete(:sagittarius_context)
-    source_application = context.fetch(Sagittarius::Context.log_key(:application), nil)
-    Sagittarius::Context.with_context(
+    source_application = context.fetch(Code0::ZeroTrack::Context.log_key(:application), nil)
+    Code0::ZeroTrack::Context.with_context(
       **context,
       application: 'good_job',
       source_application: source_application,

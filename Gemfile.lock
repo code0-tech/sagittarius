@@ -1,3 +1,11 @@
+PATH
+  remote: ../code0-zero_track
+  specs:
+    code0-zero_track (0.0.0)
+      rails (>= 8.0.1)
+      railties (>= 8.0.1)
+      zeitwerk (~> 2.7)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -358,6 +366,7 @@ DEPENDENCIES
   bootsnap
   code0-identities (~> 0.0.1)
   code0-license (~> 0.2.0)
+  code0-zero_track (= 0.0.0)!
   database_cleaner-active_record (~> 2.1)
   debug
   declarative_policy (~> 1.1)
@@ -392,4 +401,4 @@ RUBY VERSION
    ruby 3.2.2p53
 
 BUNDLED WITH
-   2.4.12
+   2.5.9

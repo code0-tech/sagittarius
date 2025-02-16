@@ -19,7 +19,7 @@ module Sagittarius
           data.merge!(message)
         end
 
-        data.merge!(Context.current.to_h)
+        data.merge!(Code0::ZeroTrack::Context.current.to_h)
       end
 
       def chomp(message)

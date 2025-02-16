@@ -9,7 +9,7 @@ module Sagittarius
         end
 
         def call(env)
-          Sagittarius::Context.with_context(ip_address: ip_address(env)) do
+          Code0::ZeroTrack::Context.with_context(ip_address: ip_address(env)) do
             @app.call env
           end
         end

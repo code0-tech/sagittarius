@@ -23,7 +23,7 @@ module Sagittarius
       delegate :debug?, :info?, :warn?, :error?, :fatal?, :formatter, :level, to: :@log
 
       def with_context(&block)
-        Context.with_context(class: @clazz, &block)
+        Code0::ZeroTrack::Context.with_context(class: @clazz, &block)
       end
 
       def debug(message)

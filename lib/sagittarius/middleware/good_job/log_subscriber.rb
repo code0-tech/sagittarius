@@ -127,7 +127,7 @@ module Sagittarius
         end
 
         def in_context(&block)
-          Sagittarius::Context.with_context(application: 'good_job', &block)
+          Code0::ZeroTrack::Context.with_context(application: 'good_job', &block)
         end
       end
     end

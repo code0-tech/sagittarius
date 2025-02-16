@@ -16,13 +16,13 @@ RSpec.describe Sagittarius::Loggable do
 
     it 'for instantiated class' do
       TestClass.new.logger.with_context do |context|
-        expect(context.to_h).to include(Sagittarius::Context.log_key(:class) => 'TestClass')
+        expect(context.to_h).to include(Code0::ZeroTrack::Context.log_key(:class) => 'TestClass')
       end
     end
 
     it 'when called on the class' do
       TestClass.logger.with_context do |context|
-        expect(context.to_h).to include(Sagittarius::Context.log_key(:class) => 'TestClass')
+        expect(context.to_h).to include(Code0::ZeroTrack::Context.log_key(:class) => 'TestClass')
       end
     end
   end
@@ -30,13 +30,13 @@ RSpec.describe Sagittarius::Loggable do
   context 'with anonymous class' do
     it 'for instantiated class' do
       clazz.new.logger.with_context do |context|
-        expect(context.to_h).to include(Sagittarius::Context.log_key(:class) => '<Anonymous>')
+        expect(context.to_h).to include(Code0::ZeroTrack::Context.log_key(:class) => '<Anonymous>')
       end
     end
 
     it 'when called on the class' do
       clazz.logger.with_context do |context|
-        expect(context.to_h).to include(Sagittarius::Context.log_key(:class) => '<Anonymous>')
+        expect(context.to_h).to include(Code0::ZeroTrack::Context.log_key(:class) => '<Anonymous>')
       end
     end
   end

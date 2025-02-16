@@ -24,7 +24,7 @@ class GraphqlController < ApplicationController
       current_authentication: current_authentication,
     }
 
-    Sagittarius::Context.with_context(user: { id: current_user&.id, username: current_user&.username }) do
+    Code0::ZeroTrack::Context.with_context(user: { id: current_user&.id, username: current_user&.username }) do
       result = SagittariusSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
       render json: result
     rescue StandardError => e
