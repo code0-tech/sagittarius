@@ -4,16 +4,13 @@ require 'rubocop_spec_helper'
 require_relative '../../../../../../tooling/rubocop/cop/sagittarius/migration/versioned_class'
 
 require 'active_record'
-Dir[File.join(__dir__, '..', '..', '..', '..', '..', '..',
-              'lib', 'sagittarius', 'database', 'migration_helpers', '*.rb')].each { |file| require file }
-
-require_relative '../../../../../../lib/sagittarius/database/migration'
+require 'code0/zero_track'
 
 RSpec.describe RuboCop::Cop::Sagittarius::Migration::VersionedClass do
   describe 'does not reference invalid migration versions' do
     described_class::ALLOWED_MIGRATION_VERSIONS.each do |range, version|
       it "in range #{range}" do
-        expect { Sagittarius::Database::Migration[version] }.not_to raise_error
+        expect { Code0::ZeroTrack::Database::Migration[version] }.not_to raise_error
       end
     end
   end
@@ -32,7 +29,7 @@ RSpec.describe RuboCop::Cop::Sagittarius::Migration::VersionedClass do
     it 'registers an offense when the "ActiveRecord::Migration" class is used' do
       expect_offense(<<~CODE)
         class Users < ActiveRecord::Migration[4.2]
-                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Don't use `ActiveRecord::Migration`. Use `Sagittarius::Database::Migration` instead.
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Don't use `ActiveRecord::Migration`. Use `Code0::ZeroTrack::Database::Migration` instead.
           def change
             create_table :users do |t|
               t.string :username, null: false
@@ -44,7 +41,7 @@ RSpec.describe RuboCop::Cop::Sagittarius::Migration::VersionedClass do
       CODE
 
       expect_correction(<<~CODE)
-        class Users < Sagittarius::Database::Migration[1.0]
+        class Users < Code0::ZeroTrack::Database::Migration[1.0]
           def change
             create_table :users do |t|
               t.string :username, null: false
@@ -56,10 +53,10 @@ RSpec.describe RuboCop::Cop::Sagittarius::Migration::VersionedClass do
       CODE
     end
 
-    it 'registers an offense when the wrong version of "Sagittarius::Database::Migration" is used' do
+    it 'registers an offense when the wrong version of "Code0::ZeroTrack::Database::Migration" is used' do
       expect_offense(<<~CODE)
-        class Users < Sagittarius::Database::Migration[1.1]
-                                                       ^^^ Don't use version `1.1` of `Sagittarius::Database::Migration`. Use version `1.0` instead.
+        class Users < Code0::ZeroTrack::Database::Migration[1.1]
+                                                            ^^^ Don't use version `1.1` of `Code0::ZeroTrack::Database::Migration`. Use version `1.0` instead.
           def change
             create_table :users do |t|
               t.string :username, null: false
@@ -71,7 +68,7 @@ RSpec.describe RuboCop::Cop::Sagittarius::Migration::VersionedClass do
       CODE
 
       expect_correction(<<~CODE)
-        class Users < Sagittarius::Database::Migration[1.0]
+        class Users < Code0::ZeroTrack::Database::Migration[1.0]
           def change
             create_table :users do |t|
               t.string :username, null: false
@@ -85,7 +82,7 @@ RSpec.describe RuboCop::Cop::Sagittarius::Migration::VersionedClass do
 
     it 'registers no offense when correct version is used' do
       expect_no_offenses(<<~CODE)
-        class Users < Sagittarius::Database::Migration[1.0]
+        class Users < Code0::ZeroTrack::Database::Migration[1.0]
           def change
             create_table :users do |t|
               t.string :username, null: false

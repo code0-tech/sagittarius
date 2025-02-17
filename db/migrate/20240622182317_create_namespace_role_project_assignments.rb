@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateNamespaceRoleProjectAssignments < Sagittarius::Database::Migration[1.0]
+class CreateNamespaceRoleProjectAssignments < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :namespace_role_project_assignments do |t|
       t.references :role, null: false, index: false, foreign_key: { to_table: :namespace_roles }

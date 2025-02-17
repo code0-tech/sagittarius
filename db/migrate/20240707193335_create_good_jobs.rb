@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateGoodJobs < Sagittarius::Database::Migration[1.0]
+class CreateGoodJobs < Code0::ZeroTrack::Database::Migration[1.0]
   # rubocop:disable Layout/LineLength -- this is a migration from good_job gem
   def change
     # Uncomment for Postgres v12 or earlier to enable gen_random_uuid() support
