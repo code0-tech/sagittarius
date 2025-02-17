@@ -10,11 +10,11 @@ module RuboCop
           include RuboCop::FileHelpers
           extend AutoCorrector
 
-          SAGITTARIUS_MIGRATION_CLASS = 'Sagittarius::Database::Migration'
+          MIGRATION_CLASS = 'Code0::ZeroTrack::Database::Migration'
 
           # rubocop:disable Layout/LineLength
-          MSG_WRONG_BASE_CLASS = "Don't use `%<base_class>s`. Use `#{SAGITTARIUS_MIGRATION_CLASS}` instead.".freeze
-          MSG_WRONG_VERSION = "Don't use version `%<current_version>s` of `#{SAGITTARIUS_MIGRATION_CLASS}`. Use version `%<allowed_version>s` instead.".freeze
+          MSG_WRONG_BASE_CLASS = "Don't use `%<base_class>s`. Use `#{MIGRATION_CLASS}` instead.".freeze
+          MSG_WRONG_VERSION = "Don't use version `%<current_version>s` of `#{MIGRATION_CLASS}`. Use version `%<allowed_version>s` instead.".freeze
           # rubocop:enable Layout/LineLength
 
           # rubocop:disable Style/NumericLiterals -- the ranges are dates, not numbers
@@ -26,19 +26,19 @@ module RuboCop
           def on_class(node)
             return unless in_migration?(node)
 
-            return on_sagittarius_migration(node) if sagittarius_migration?(node)
+            return on_zerotrack_migration(node) if zerotrack_migration?(node)
 
             add_offense(
               node.parent_class,
               message: format(MSG_WRONG_BASE_CLASS, base_class: superclass(node))
             ) do |corrector|
-              corrector.replace(node.parent_class, "#{SAGITTARIUS_MIGRATION_CLASS}[#{find_allowed_version(node)}]")
+              corrector.replace(node.parent_class, "#{MIGRATION_CLASS}[#{find_allowed_version(node)}]")
             end
           end
 
           private
 
-          def on_sagittarius_migration(node)
+          def on_zerotrack_migration(node)
             return unless wrong_migration_version?(node)
 
             current_version = get_migration_version(node)
@@ -54,8 +54,8 @@ module RuboCop
             end
           end
 
-          def sagittarius_migration?(node)
-            superclass(node) == SAGITTARIUS_MIGRATION_CLASS
+          def zerotrack_migration?(node)
+            superclass(node) == MIGRATION_CLASS
           end
 
           def superclass(class_node)
