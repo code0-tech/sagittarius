@@ -16,7 +16,7 @@ module Types
                                                                 description: 'Members of the namespace',
                                                                 extras: [:lookahead]
 
-    field :datatypes, Types::DataTypeType.connection_type, null: false, description: 'DataTypes of the namespace'
+    field :data_types, Types::DataTypeType.connection_type, null: false, description: 'DataTypes of the namespace'
     field :roles, Types::NamespaceRoleType.connection_type, null: false, description: 'Roles of the namespace'
     field :runtimes, Types::RuntimeType.connection_type, null: false, description: 'Runtime of the namespace'
 
