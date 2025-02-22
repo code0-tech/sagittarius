@@ -7,17 +7,17 @@ module Types
     include Sagittarius::Graphql::MountMutation
 
     mount_mutation Mutations::ApplicationSettings::Update
-    mount_mutation Mutations::NamespaceMembers::AssignRoles
-    mount_mutation Mutations::NamespaceMembers::Delete
-    mount_mutation Mutations::NamespaceMembers::Invite
-    mount_mutation Mutations::NamespaceProjects::Create
-    mount_mutation Mutations::NamespaceProjects::Update
-    mount_mutation Mutations::NamespaceProjects::Delete
-    mount_mutation Mutations::NamespaceRoles::AssignAbilities
-    mount_mutation Mutations::NamespaceRoles::AssignProjects
-    mount_mutation Mutations::NamespaceRoles::Create
-    mount_mutation Mutations::NamespaceRoles::Delete
-    mount_mutation Mutations::NamespaceRoles::Update
+    mount_mutation Mutations::Namespaces::Members::AssignRoles
+    mount_mutation Mutations::Namespaces::Members::Delete
+    mount_mutation Mutations::Namespaces::Members::Invite
+    mount_mutation Mutations::Namespaces::Projects::Create
+    mount_mutation Mutations::Namespaces::Projects::Update
+    mount_mutation Mutations::Namespaces::Projects::Delete
+    mount_mutation Mutations::Namespaces::Roles::AssignAbilities
+    mount_mutation Mutations::Namespaces::Roles::AssignProjects
+    mount_mutation Mutations::Namespaces::Roles::Create
+    mount_mutation Mutations::Namespaces::Roles::Delete
+    mount_mutation Mutations::Namespaces::Roles::Update
     mount_mutation Mutations::Organizations::Create
     mount_mutation Mutations::Organizations::Delete
     mount_mutation Mutations::Organizations::Update

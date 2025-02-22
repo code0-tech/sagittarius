@@ -63,7 +63,7 @@ module Sagittarius
     config.autoload_lib(ignore: %w[assets tasks])
 
     Sagittarius::Extensions.active.each do |extension|
-      config.eager_load_paths += Dir.glob("#{config.root}/#{extension}/app/*")
+      config.eager_load_paths += Dir.glob("#{config.root}/extensions/#{extension}/app/*")
     end
 
     # Configure active job to use good_job
