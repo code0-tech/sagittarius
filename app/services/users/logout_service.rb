@@ -2,7 +2,7 @@
 
 module Users
   class LogoutService
-    include Sagittarius::Loggable
+    include Code0::ZeroTrack::Loggable
 
     attr_reader :current_authentication, :user_session
 

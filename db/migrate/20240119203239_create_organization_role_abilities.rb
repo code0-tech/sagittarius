@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateOrganizationRoleAbilities < Sagittarius::Database::Migration[1.0]
+class CreateOrganizationRoleAbilities < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :organization_role_abilities do |t|
       t.references :organization_role, null: false, foreign_key: true

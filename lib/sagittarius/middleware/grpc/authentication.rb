@@ -10,7 +10,7 @@ module Sagittarius
 
           raise GRPC::Unauthenticated, 'No valid runtime token provided' if runtime.nil?
 
-          Sagittarius::Context.push(runtime: { id: runtime.id, namespace_id: runtime.namespace&.id })
+          Code0::ZeroTrack::Context.push(runtime: { id: runtime.id, namespace_id: runtime.namespace&.id })
 
           yield
         end

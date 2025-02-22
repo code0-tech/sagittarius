@@ -2,7 +2,7 @@
 
 module Sagittarius
   class Configuration
-    extend Sagittarius::Memoize
+    extend Code0::ZeroTrack::Memoize
 
     def self.config
       memoize(:config) do

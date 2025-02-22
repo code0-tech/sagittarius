@@ -6,7 +6,7 @@ module AuditService
   REQUIRED_EVENT_KEYS = %i[author_id entity_id entity_type details target_id target_type].freeze
 
   def audit(type, payload)
-    Sagittarius::Context.with_context do |context|
+    Code0::ZeroTrack::Context.with_context do |context|
       payload[:author_id] ||= context[:user][:id]
       payload[:ip_address] = context[:ip_address]
 

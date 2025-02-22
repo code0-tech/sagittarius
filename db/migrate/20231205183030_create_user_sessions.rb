@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateUserSessions < Sagittarius::Database::Migration[1.0]
+class CreateUserSessions < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :user_sessions do |t|
       t.references :user, null: false, foreign_key: { on_delete: :cascade }

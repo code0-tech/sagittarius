@@ -7,7 +7,7 @@ RSpec.describe RuboCop::Cop::Sagittarius::Logs::RailsLogger do
   described_class::LOG_METHODS.each do |method|
     it "flags the use of Rails.logger.#{method} with a constant receiver" do
       node = "Rails.logger.#{method}('some error')"
-      msg = 'Do not use `Rails.logger` directly, include `Sagittarius::Loggable` instead'
+      msg = 'Do not use `Rails.logger` directly, include `Code0::ZeroTrack::Loggable` instead'
 
       expect_offense(<<~CODE, node: node, msg: msg)
         %{node}

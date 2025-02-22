@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateAuditEvents < Sagittarius::Database::Migration[1.0]
+class CreateAuditEvents < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :audit_events do |t|
       t.references :author, null: false, foreign_key: { to_table: :users }

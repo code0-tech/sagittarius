@@ -4,7 +4,7 @@ module Sagittarius
   module Middleware
     module Grpc
       class Logger < Grpc::AllMethodServerInterceptor
-        include Sagittarius::Loggable
+        include Code0::ZeroTrack::Loggable
 
         CODES = %i[OK CANCELLED UNKNOWN INVALID_ARGUMENT DEADLINE_EXCEEDED NOT_FOUND ALREADY_EXISTS PERMISSION_DENIED
                    RESOURCE_EXHAUSTED FAILED_PRECONDITION ABORTED OUT_OF_RANGE UNIMPLEMENTED INTERNAL UNAVAILABLE

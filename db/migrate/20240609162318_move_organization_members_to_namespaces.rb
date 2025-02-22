@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class MoveOrganizationMembersToNamespaces < Sagittarius::Database::Migration[1.0]
+class MoveOrganizationMembersToNamespaces < Code0::ZeroTrack::Database::Migration[1.0]
   # rubocop:disable Rails/NotNullColumn -- backwards compatibility was intentionally ignored
   def change
     remove_index :organization_members, %i[organization_id user_id],

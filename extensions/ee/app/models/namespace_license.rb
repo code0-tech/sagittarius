@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NamespaceLicense < ApplicationRecord
-  include Sagittarius::Memoize
+  include Code0::ZeroTrack::Memoize
 
   belongs_to :namespace, inverse_of: :namespace_licenses
 
@@ -12,7 +12,7 @@ class NamespaceLicense < ApplicationRecord
   validate :validate_license
 
   class << self
-    include Sagittarius::Memoize
+    include Code0::ZeroTrack::Memoize
 
     def current(namespace)
       memoize(:current, reset_on_change: -> { namespace.id }) do
