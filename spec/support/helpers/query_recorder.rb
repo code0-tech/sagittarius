@@ -47,7 +47,7 @@ module ActiveRecord
       if @log_file
         @log_file.puts(msg)
       else
-        Rails.logger.debug(msg) # rubocop:disable Sagittarius/Logs/RailsLogger -- this is only used in tests
+        Rails.logger.debug(msg) # rubocop:disable Code0/ZeroTrack/Logs/RailsLogger -- this is only used in tests
       end
     end
 
