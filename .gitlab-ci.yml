@@ -147,9 +147,9 @@ boot:production-mode:
 
 boot:docker:
   stage: test
-  image: docker:27.5.1
+  image: docker:28.0.1
   services:
-    - docker:27.5.1-dind
+    - docker:28.0.1-dind
   parallel:
     matrix:
       - EDITION:
