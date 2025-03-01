@@ -131,7 +131,7 @@ GEM
     google-protobuf (3.25.5-x86_64-linux)
     googleapis-common-protos-types (1.16.0)
       google-protobuf (>= 3.18, < 5.a)
-    graphql (2.4.9)
+    graphql (2.4.11)
       base64
       fiber-storage
       logger
@@ -151,7 +151,7 @@ GEM
       reline (>= 0.4.2)
     json (2.9.1)
     language_server-protocol (3.17.0.4)
-    logger (1.6.5)
+    logger (1.6.6)
     lograge (0.14.0)
       actionpack (>= 4)
       activesupport (>= 4)
