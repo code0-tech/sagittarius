@@ -8,6 +8,10 @@ end
 
 Rails.logger.formatter = Code0::ZeroTrack::Logs::JsonFormatter::Tagged.new
 
+Rails.logger.broadcast_to ActiveSupport::Logger.new($stdout, formatter: Rails.logger.formatter) unless Rails.env.test?
+
+Rails.logger.level = Sagittarius::Configuration.config[:rails][:log_level]
+
 Rails.application.config.colorize_logging = Rails.const_defined? 'Console'
 
 module GrpcLogger
