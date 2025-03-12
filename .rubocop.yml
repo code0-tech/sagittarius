@@ -6,8 +6,28 @@ require:
   - rubocop-rspec
   - rubocop-rspec_rails
 
+inherit_gem:
+  code0-zero_track: rubocop/rubocop-config.yml
+
 AllCops:
   NewCops: enable
+
+Code0/ZeroTrack/Logs/RailsLogger:
+  Enabled: true
+
+Code0/ZeroTrack/Migration/CreateTableWithTimestamps:
+  Enabled: true
+
+Code0/ZeroTrack/Migration/Datetime:
+  Enabled: true
+
+Code0/ZeroTrack/Migration/Timestamps:
+  Enabled: true
+
+Code0/ZeroTrack/Migration/VersionedClass:
+  Enabled: true
+  AllowedVersions:
+    2023_11_29_17_37_16..: 1.0
 
 GraphQL/ExtractInputType:
   Enabled: false
@@ -41,9 +61,9 @@ RSpec/DescribeClass:
     - spec/graphql/**/*
     - spec/requests/graphql/**/*
     - spec/requests/grpc/**/*
-    - ee/spec/graphql/**/*
-    - ee/spec/requests/graphql/**/*
-    - ee/spec/requests/grpc/**/*
+    - extensions/ee/spec/graphql/**/*
+    - extensions/ee/spec/requests/graphql/**/*
+    - extensions/ee/spec/requests/grpc/**/*
 
 RSpec/ExampleLength:
   Enabled: false

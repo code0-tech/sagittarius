@@ -6,7 +6,7 @@ module Sagittarius
       class Context < Grpc::AllMethodServerInterceptor
         def execute(call:, **_, &block)
           correlation_id = call.metadata['correlation_id']
-          Sagittarius::Context.with_context(application: 'grpc', external_correlation_id: correlation_id, &block)
+          Code0::ZeroTrack::Context.with_context(application: 'grpc', external_correlation_id: correlation_id, &block)
         end
       end
     end

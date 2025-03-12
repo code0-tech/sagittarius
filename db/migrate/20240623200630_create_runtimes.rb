@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateRuntimes < Sagittarius::Database::Migration[1.0]
+class CreateRuntimes < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :runtimes do |t|
       t.text :name, null: false, limit: 50

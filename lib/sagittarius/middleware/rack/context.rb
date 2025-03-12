@@ -9,8 +9,8 @@ module Sagittarius
         end
 
         def call(env)
-          Sagittarius::Context.with_context(
-            Sagittarius::Context::CORRELATION_ID_KEY => correlation_id(env),
+          Code0::ZeroTrack::Context.with_context(
+            Code0::ZeroTrack::Context::CORRELATION_ID_KEY => correlation_id(env),
             application: 'puma'
           ) do |context|
             status, headers, response = @app.call env
@@ -26,7 +26,7 @@ module Sagittarius
         def context_to_json(context)
           context
             .to_h
-            .transform_keys { |k| k.delete_prefix("#{Sagittarius::Context::LOG_KEY}.") }
+            .transform_keys { |k| k.delete_prefix("#{Code0::ZeroTrack::Context::LOG_KEY}.") }
             .to_json
         end
       end

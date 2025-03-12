@@ -33,7 +33,7 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
   let(:interceptor) { described_class.new }
 
   around do |example|
-    Sagittarius::Context.with_context { example.run }
+    Code0::ZeroTrack::Context.with_context { example.run }
   end
 
   describe '#request_response' do
@@ -73,7 +73,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
       it do
         interceptor.request_response(request: request, call: call, method: method) {}
 
-        expect(Sagittarius::Context.current.to_h).to include('meta.runtime' => { id: runtime.id, namespace_id: nil })
+        expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
+                                                                                      namespace_id: nil })
       end
       # rubocop:enable Lint/EmptyBlock
     end
@@ -116,7 +117,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
       it do
         interceptor.server_streamer(request: request, call: call, method: method) {}
 
-        expect(Sagittarius::Context.current.to_h).to include('meta.runtime' => { id: runtime.id, namespace_id: nil })
+        expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
+                                                                                      namespace_id: nil })
       end
       # rubocop:enable Lint/EmptyBlock
     end
@@ -159,7 +161,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
       it do
         interceptor.client_streamer(call: call, method: method) {}
 
-        expect(Sagittarius::Context.current.to_h).to include('meta.runtime' => { id: runtime.id, namespace_id: nil })
+        expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
+                                                                                      namespace_id: nil })
       end
       # rubocop:enable Lint/EmptyBlock
     end
@@ -202,7 +205,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
       it do
         interceptor.bidi_streamer(request: request, call: call, method: method) {}
 
-        expect(Sagittarius::Context.current.to_h).to include('meta.runtime' => { id: runtime.id, namespace_id: nil })
+        expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
+                                                                                      namespace_id: nil })
       end
       # rubocop:enable Lint/EmptyBlock
     end

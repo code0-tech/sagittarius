@@ -3,14 +3,14 @@
 require_relative 'boot'
 
 require 'rails/all'
-require_relative '../lib/sagittarius/utils'
-require_relative '../lib/sagittarius/extensions'
-require_relative '../lib/sagittarius/memoize'
-require_relative '../lib/sagittarius/configuration'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+
+require_relative '../lib/sagittarius/utils'
+require_relative '../lib/sagittarius/extensions'
+require_relative '../lib/sagittarius/configuration'
 
 module Sagittarius
   class Application < Rails::Application
@@ -27,16 +27,16 @@ module Sagittarius
       :controller,
       :job,
       {
-        correlation_id: -> { Sagittarius::Context.correlation_id },
-        user_id: -> { Sagittarius::Context.current&.[](:user)&.[](:id) },
-        runtime_id: -> { Sagittarius::Context.current&.[](:runtime)&.[](:id) },
+        correlation_id: -> { Code0::ZeroTrack::Context.correlation_id },
+        user_id: -> { Code0::ZeroTrack::Context.current&.[](:user)&.[](:id) },
+        runtime_id: -> { Code0::ZeroTrack::Context.current&.[](:runtime)&.[](:id) },
         application: lambda {
                        if Rails.const_defined?('Console')
                          'console'
                        elsif GoodJob::CLI.within_exe?
                          'good_job'
                        else
-                         Sagittarius::Context.current&.[](:application) || 'unknown'
+                         Code0::ZeroTrack::Context.current&.[](:application) || 'unknown'
                        end
                      },
       }
@@ -63,7 +63,7 @@ module Sagittarius
     config.autoload_lib(ignore: %w[assets tasks])
 
     Sagittarius::Extensions.active.each do |extension|
-      config.eager_load_paths += Dir.glob("#{config.root}/#{extension}/app/*")
+      config.eager_load_paths += Dir.glob("#{config.root}/extensions/#{extension}/app/*")
     end
 
     # Configure active job to use good_job

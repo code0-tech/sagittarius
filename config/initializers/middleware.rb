@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/sagittarius/context'
 require_relative '../../lib/sagittarius/middleware/rack/context'
 require_relative '../../lib/sagittarius/middleware/rack/ip_address'
 

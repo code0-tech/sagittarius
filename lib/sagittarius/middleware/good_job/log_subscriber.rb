@@ -6,7 +6,7 @@ module Sagittarius
       module LogSubscriber
         extend ActiveSupport::Concern
 
-        include Sagittarius::Loggable
+        include Code0::ZeroTrack::Loggable
 
         def finished_timer_task(event)
           exception = event.payload[:error]
@@ -127,7 +127,7 @@ module Sagittarius
         end
 
         def in_context(&block)
-          Sagittarius::Context.with_context(application: 'good_job', &block)
+          Code0::ZeroTrack::Context.with_context(application: 'good_job', &block)
         end
       end
     end

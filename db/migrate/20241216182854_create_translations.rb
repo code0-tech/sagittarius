@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateTranslations < Sagittarius::Database::Migration[1.0]
+class CreateTranslations < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :translations do |t|
       t.text :code, null: false

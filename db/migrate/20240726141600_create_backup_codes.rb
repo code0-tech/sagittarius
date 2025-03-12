@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateBackupCodes < Sagittarius::Database::Migration[1.0]
+class CreateBackupCodes < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :backup_codes do |t|
       t.text :token, limit: 10, null: false

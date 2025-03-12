@@ -8,7 +8,7 @@ RSpec.describe Sagittarius::Middleware::Rack::Context do
   let(:metadata) { { 'user' => { 'id' => 1 } } }
   let(:header_metadata) do
     metadata.merge({
-                     Sagittarius::Context::CORRELATION_ID_KEY => correlation_id,
+                     Code0::ZeroTrack::Context::CORRELATION_ID_KEY => correlation_id,
                      'application' => 'puma',
                    })
   end
@@ -22,12 +22,12 @@ RSpec.describe Sagittarius::Middleware::Rack::Context do
 
   describe '#call' do
     it 'adds the correlation id from the request to the context' do
-      allow(Sagittarius::Context).to receive(:with_context)
+      allow(Code0::ZeroTrack::Context).to receive(:with_context)
 
       described_class.new(app).call(env)
 
-      expect(Sagittarius::Context).to have_received(:with_context).with(
-        a_hash_including(Sagittarius::Context::CORRELATION_ID_KEY => correlation_id)
+      expect(Code0::ZeroTrack::Context).to have_received(:with_context).with(
+        a_hash_including(Code0::ZeroTrack::Context::CORRELATION_ID_KEY => correlation_id)
       )
     end
 
@@ -40,7 +40,7 @@ RSpec.describe Sagittarius::Middleware::Rack::Context do
     end
 
     it 'injects meta headers' do
-      Sagittarius::Context.push(metadata)
+      Code0::ZeroTrack::Context.push(metadata)
 
       allow(app).to receive(:call).with(env).and_return([nil, {}, nil])
 
