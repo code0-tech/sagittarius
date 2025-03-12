@@ -28,6 +28,8 @@ class User < ApplicationRecord
 
   has_many :user_identities, inverse_of: :user
 
+  has_one_attached :avatar
+
   def mfa_enabled?
     totp_secret != nil
   end

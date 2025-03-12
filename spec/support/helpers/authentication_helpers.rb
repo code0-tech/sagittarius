@@ -18,4 +18,11 @@ module AuthenticationHelpers
 
     Sagittarius::Authentication.new(type, subject)
   end
+
+  def authorization_token(current_user)
+    session = UserSession.find_by(user: current_user, active: true)
+    session = create(:user_session, user: current_user) if session.nil?
+
+    session.token
+  end
 end
