@@ -25,6 +25,7 @@ module Sagittarius
             port: 3000,
             force_ssl: nil,
           },
+          log_level: 'info',
           db: {
             host: 'localhost',
             port: 5433,

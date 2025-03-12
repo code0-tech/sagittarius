@@ -1,5 +1,6 @@
 rails:
   threads: 3
+  log_level: info
   web:
     port: 3000
     force_ssl:
