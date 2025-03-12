@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module GraphqlHelpers
+  include AuthenticationHelpers
+
   def self.graphql_field_name(underscored_field_name)
     return underscored_field_name.to_s if underscored_field_name.start_with?('_')
 
@@ -64,13 +66,6 @@ module GraphqlHelpers
 
   def graphql_errors(body = parsed_response)
     body['errors']
-  end
-
-  def authorization_token(current_user)
-    session = UserSession.find_by(user: current_user, active: true)
-    session = create(:user_session, user: current_user) if session.nil?
-
-    session.token
   end
 
   def expect_graphql_errors_to_be_empty

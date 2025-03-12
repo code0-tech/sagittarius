@@ -2,7 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe FilesController do
+RSpec.describe 'Files' do
+  include AuthenticationHelpers
+
   let(:current_user) do
     create(:user)
   end
@@ -27,12 +29,5 @@ RSpec.describe FilesController do
     expect(current_user.avatar.attached?).to be(true)
     expect(response).to have_http_status(:ok)
     expect(ActiveStorage::Attachment.where(record: current_user, name: 'avatar')).to be_present
-  end
-
-  def authorization_token(current_user)
-    session = UserSession.find_by(user: current_user, active: true)
-    session = create(:user_session, user: current_user) if session.nil?
-
-    session.token
   end
 end

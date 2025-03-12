@@ -19,7 +19,10 @@ class FilesController < ApplicationController
 
     return render status: :bad_request, json: { message: res.message } if res.error?
 
-    render json: { url: Rails.application.routes.url_helpers.rails_storage_proxy_path(object.send(attachment_name)) }
+    attached_attachment = object.send(attachment_name)
+    return render json: { path: nil } if attached_attachment.blob.nil?
+
+    render json: { path: Rails.application.routes.url_helpers.rails_storage_proxy_path(attached_attachment) }
   end
 
   private

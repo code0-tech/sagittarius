@@ -4,7 +4,8 @@ CREATE TABLE active_storage_attachments (
     record_type character varying NOT NULL,
     record_id bigint NOT NULL,
     blob_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 CREATE SEQUENCE active_storage_attachments_id_seq
@@ -25,7 +26,8 @@ CREATE TABLE active_storage_blobs (
     service_name character varying NOT NULL,
     byte_size bigint NOT NULL,
     checksum character varying,
-    created_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 CREATE SEQUENCE active_storage_blobs_id_seq
@@ -40,7 +42,9 @@ ALTER SEQUENCE active_storage_blobs_id_seq OWNED BY active_storage_blobs.id;
 CREATE TABLE active_storage_variant_records (
     id bigint NOT NULL,
     blob_id bigint NOT NULL,
-    variation_digest character varying NOT NULL
+    variation_digest character varying NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 CREATE SEQUENCE active_storage_variant_records_id_seq

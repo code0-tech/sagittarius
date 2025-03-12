@@ -57,7 +57,8 @@ RSpec.describe Files::UploadService do
     it { expect(service_response.payload.reload).to be_valid }
 
     it do
-      expect(current_user.avatar.attached?).to be(false)
+      service_response
+      expect(current_user.avatar.attached?).to be(true)
     end
   end
 end

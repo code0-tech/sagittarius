@@ -28,6 +28,14 @@ module Files
 
       ServiceResponse.success(message: 'Failed to save object', payload: object.errors) unless object.save
 
+      AuditService.audit(
+        :attachment_updated,
+        author_id: current_authentication.user.id,
+        entity: object,
+        details: { attachment_name: attachment_name },
+        target: object
+      )
+
       ServiceResponse.success(message: 'Successfully attached', payload: object.send(attachment_name))
     end
   end
