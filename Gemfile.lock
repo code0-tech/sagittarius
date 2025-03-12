@@ -131,7 +131,7 @@ GEM
     google-protobuf (3.25.5-x86_64-linux)
     googleapis-common-protos-types (1.16.0)
       google-protobuf (>= 3.18, < 5.a)
-    graphql (2.4.11)
+    graphql (2.4.13)
       base64
       fiber-storage
       logger
