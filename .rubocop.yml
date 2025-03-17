@@ -1,6 +1,5 @@
 require:
   - ./tooling/rubocop/rubocop
-  - rubocop-factory_bot
   - rubocop-graphql
   - rubocop-rails
 
@@ -8,6 +7,7 @@ inherit_gem:
   code0-zero_track: rubocop/rubocop-config.yml
 
 plugins:
+  - rubocop-factory_bot
   - rubocop-rspec
   - rubocop-rspec_rails
 
