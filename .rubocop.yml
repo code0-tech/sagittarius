@@ -3,11 +3,13 @@ require:
   - rubocop-factory_bot
   - rubocop-graphql
   - rubocop-rails
-  - rubocop-rspec
-  - rubocop-rspec_rails
 
 inherit_gem:
   code0-zero_track: rubocop/rubocop-config.yml
+
+plugins:
+  - rubocop-rspec
+  - rubocop-rspec_rails
 
 AllCops:
   NewCops: enable
