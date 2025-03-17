@@ -15,9 +15,7 @@ Rails.logger.level = Sagittarius::Configuration.config[:rails][:log_level]
 Rails.application.config.colorize_logging = Rails.const_defined? 'Console'
 
 module GrpcLogger
-  def logger
-    Rails.logger
-  end
+  delegate :logger, to: :Rails
 end
 
 GRPC.extend GrpcLogger
