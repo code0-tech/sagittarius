@@ -671,6 +671,8 @@ CREATE INDEX index_good_jobs_on_batch_callback_id ON good_jobs USING btree (batc
 
 CREATE INDEX index_good_jobs_on_batch_id ON good_jobs USING btree (batch_id) WHERE (batch_id IS NOT NULL);
 
+CREATE INDEX index_good_jobs_on_concurrency_key_and_created_at ON good_jobs USING btree (concurrency_key, created_at);
+
 CREATE INDEX index_good_jobs_on_concurrency_key_when_unfinished ON good_jobs USING btree (concurrency_key) WHERE (finished_at IS NULL);
 
 CREATE INDEX index_good_jobs_on_cron_key_and_created_at_cond ON good_jobs USING btree (cron_key, created_at) WHERE (cron_key IS NOT NULL);
