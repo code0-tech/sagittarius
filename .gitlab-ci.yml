@@ -60,7 +60,7 @@ build-image:
           - ce
           - ee
   script:
-    - '[[ "$EDITION" = "ee" ]] || rm -rf ee/'
+    - '[[ "$EDITION" = "ee" ]] || rm -rf extensions/ee/'
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"ghcr.io\":{\"auth\":\"$(printf "%s:%s" "$" "${C0_GH_TOKEN}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - >-
@@ -81,7 +81,7 @@ rspec:
   variables:
     FPROF: '1'
   script:
-    - '[[ "$EDITION" = "ee" ]] || rm -rf ee/'
+    - '[[ "$EDITION" = "ee" ]] || rm -rf extensions/ee/'
     - bundle exec rspec --format doc --format RspecJunitFormatter --out rspec.xml | tee output || exit_code=$?
     - |
       echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
@@ -140,16 +140,16 @@ boot:production-mode:
     RAILS_ENV: production
     BUNDLE_WITHOUT: 'development:test'
   script:
-    - '[[ "$EDITION" = "ee" ]] || rm -rf ee/'
+    - '[[ "$EDITION" = "ee" ]] || rm -rf extensions/ee/'
     - bundle exec rake db:prepare db:seed_fu
     - bin/rails s &
     - curl --fail -sv --retry 20 --retry-delay 3 --retry-connrefused http://127.0.0.1:3000/health/liveness
 
 boot:docker:
   stage: test
-  image: docker:27.5.0
+  image: docker:28.0.1
   services:
-    - docker:27.5.0-dind
+    - docker:28.0.1-dind
   parallel:
     matrix:
       - EDITION:

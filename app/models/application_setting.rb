@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationSetting < ApplicationRecord
-  include Sagittarius::Loggable
+  include Code0::ZeroTrack::Loggable
 
   # Custom class used for policy association
   ApplicationSettings = Class.new(ActiveSupport::HashWithIndifferentAccess)

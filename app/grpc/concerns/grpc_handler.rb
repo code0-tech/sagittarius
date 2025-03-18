@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module GrpcHandler
-  include Sagittarius::Loggable
+  include Code0::ZeroTrack::Loggable
 
   def self.included(base)
     GrpcHandler.handlers << base

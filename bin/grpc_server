@@ -3,5 +3,4 @@
 
 require_relative '../config/environment'
 
-Rails.logger.broadcast_to ActiveSupport::Logger.new($stdout, formatter: Rails.logger.formatter)
 Sagittarius::Grpc::Launcher.new.run!

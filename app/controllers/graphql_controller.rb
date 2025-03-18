@@ -24,7 +24,7 @@ class GraphqlController < ApplicationController
       current_authentication: current_authentication,
     }
 
-    Sagittarius::Context.with_context(user: { id: current_user&.id, username: current_user&.username }) do
+    Code0::ZeroTrack::Context.with_context(user: { id: current_user&.id, username: current_user&.username }) do
       result = SagittariusSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
       render json: result
     rescue StandardError => e
@@ -58,19 +58,6 @@ class GraphqlController < ApplicationController
       {}
     else
       raise ArgumentError, "Unexpected parameter: #{variables_param}"
-    end
-  end
-
-  def find_authentication(authorization)
-    return Sagittarius::Authentication.new(:none, nil) if authorization.blank?
-
-    token_type, token = authorization.split(' ', 2)
-
-    case token_type
-    when 'Session'
-      Sagittarius::Authentication.new(:session, UserSession.find_by(token: token, active: true))
-    else
-      Sagittarius::Authentication.new(:invalid, nil)
     end
   end
 

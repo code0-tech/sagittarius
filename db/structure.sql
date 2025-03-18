@@ -1,3 +1,61 @@
+CREATE TABLE active_storage_attachments (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    record_type character varying NOT NULL,
+    record_id bigint NOT NULL,
+    blob_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE active_storage_attachments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE active_storage_attachments_id_seq OWNED BY active_storage_attachments.id;
+
+CREATE TABLE active_storage_blobs (
+    id bigint NOT NULL,
+    key character varying NOT NULL,
+    filename character varying NOT NULL,
+    content_type character varying,
+    metadata text,
+    service_name character varying NOT NULL,
+    byte_size bigint NOT NULL,
+    checksum character varying,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE active_storage_blobs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE active_storage_blobs_id_seq OWNED BY active_storage_blobs.id;
+
+CREATE TABLE active_storage_variant_records (
+    id bigint NOT NULL,
+    blob_id bigint NOT NULL,
+    variation_digest character varying NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE active_storage_variant_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE active_storage_variant_records_id_seq OWNED BY active_storage_variant_records.id;
+
 CREATE TABLE application_settings (
     id bigint NOT NULL,
     setting integer NOT NULL,
@@ -100,23 +158,6 @@ CREATE SEQUENCE data_types_id_seq
     CACHE 1;
 
 ALTER SEQUENCE data_types_id_seq OWNED BY data_types.id;
-
-CREATE TABLE function_definitions (
-    id bigint NOT NULL,
-    runtime_function_definition_id bigint NOT NULL,
-    return_type_id bigint,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE function_definitions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE function_definitions_id_seq OWNED BY function_definitions.id;
 
 CREATE TABLE good_job_batches (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
@@ -351,62 +392,6 @@ CREATE SEQUENCE organizations_id_seq
 
 ALTER SEQUENCE organizations_id_seq OWNED BY organizations.id;
 
-CREATE TABLE parameter_definitions (
-    id bigint NOT NULL,
-    runtime_parameter_definition_id bigint NOT NULL,
-    data_type_id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE parameter_definitions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE parameter_definitions_id_seq OWNED BY parameter_definitions.id;
-
-CREATE TABLE runtime_function_definitions (
-    id bigint NOT NULL,
-    return_type_id bigint,
-    namespace_id bigint NOT NULL,
-    runtime_name text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_fe8fff4f27 CHECK ((char_length(runtime_name) <= 50))
-);
-
-CREATE SEQUENCE runtime_function_definitions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE runtime_function_definitions_id_seq OWNED BY runtime_function_definitions.id;
-
-CREATE TABLE runtime_parameter_definitions (
-    id bigint NOT NULL,
-    runtime_function_definition_id bigint NOT NULL,
-    data_type_id bigint NOT NULL,
-    runtime_name text NOT NULL,
-    removed_at timestamp with time zone,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_c1156ce358 CHECK ((char_length(runtime_name) <= 50))
-);
-
-CREATE SEQUENCE runtime_parameter_definitions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE runtime_parameter_definitions_id_seq OWNED BY runtime_parameter_definitions.id;
-
 CREATE TABLE runtimes (
     id bigint NOT NULL,
     name text NOT NULL,
@@ -513,6 +498,12 @@ CREATE SEQUENCE users_id_seq
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
+ALTER TABLE ONLY active_storage_attachments ALTER COLUMN id SET DEFAULT nextval('active_storage_attachments_id_seq'::regclass);
+
+ALTER TABLE ONLY active_storage_blobs ALTER COLUMN id SET DEFAULT nextval('active_storage_blobs_id_seq'::regclass);
+
+ALTER TABLE ONLY active_storage_variant_records ALTER COLUMN id SET DEFAULT nextval('active_storage_variant_records_id_seq'::regclass);
+
 ALTER TABLE ONLY application_settings ALTER COLUMN id SET DEFAULT nextval('application_settings_id_seq'::regclass);
 
 ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_id_seq'::regclass);
@@ -522,8 +513,6 @@ ALTER TABLE ONLY backup_codes ALTER COLUMN id SET DEFAULT nextval('backup_codes_
 ALTER TABLE ONLY data_type_rules ALTER COLUMN id SET DEFAULT nextval('data_type_rules_id_seq'::regclass);
 
 ALTER TABLE ONLY data_types ALTER COLUMN id SET DEFAULT nextval('data_types_id_seq'::regclass);
-
-ALTER TABLE ONLY function_definitions ALTER COLUMN id SET DEFAULT nextval('function_definitions_id_seq'::regclass);
 
 ALTER TABLE ONLY namespace_licenses ALTER COLUMN id SET DEFAULT nextval('namespace_licenses_id_seq'::regclass);
 
@@ -543,12 +532,6 @@ ALTER TABLE ONLY namespaces ALTER COLUMN id SET DEFAULT nextval('namespaces_id_s
 
 ALTER TABLE ONLY organizations ALTER COLUMN id SET DEFAULT nextval('organizations_id_seq'::regclass);
 
-ALTER TABLE ONLY parameter_definitions ALTER COLUMN id SET DEFAULT nextval('parameter_definitions_id_seq'::regclass);
-
-ALTER TABLE ONLY runtime_function_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_function_definitions_id_seq'::regclass);
-
-ALTER TABLE ONLY runtime_parameter_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_parameter_definitions_id_seq'::regclass);
-
 ALTER TABLE ONLY runtimes ALTER COLUMN id SET DEFAULT nextval('runtimes_id_seq'::regclass);
 
 ALTER TABLE ONLY translations ALTER COLUMN id SET DEFAULT nextval('translations_id_seq'::regclass);
@@ -558,6 +541,15 @@ ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_ident
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+ALTER TABLE ONLY active_storage_attachments
+    ADD CONSTRAINT active_storage_attachments_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY active_storage_blobs
+    ADD CONSTRAINT active_storage_blobs_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY active_storage_variant_records
+    ADD CONSTRAINT active_storage_variant_records_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY application_settings
     ADD CONSTRAINT application_settings_pkey PRIMARY KEY (id);
@@ -576,9 +568,6 @@ ALTER TABLE ONLY data_type_rules
 
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT data_types_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY function_definitions
-    ADD CONSTRAINT function_definitions_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY good_job_batches
     ADD CONSTRAINT good_job_batches_pkey PRIMARY KEY (id);
@@ -622,15 +611,6 @@ ALTER TABLE ONLY namespaces
 ALTER TABLE ONLY organizations
     ADD CONSTRAINT organizations_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY parameter_definitions
-    ADD CONSTRAINT parameter_definitions_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY runtime_function_definitions
-    ADD CONSTRAINT runtime_function_definitions_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY runtime_parameter_definitions
-    ADD CONSTRAINT runtime_parameter_definitions_pkey PRIMARY KEY (id);
-
 ALTER TABLE ONLY runtimes
     ADD CONSTRAINT runtimes_pkey PRIMARY KEY (id);
 
@@ -649,13 +629,17 @@ ALTER TABLE ONLY user_sessions
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
-CREATE UNIQUE INDEX idx_on_namespace_id_runtime_name_dba40f4549 ON runtime_function_definitions USING btree (namespace_id, runtime_name);
-
 CREATE UNIQUE INDEX idx_on_namespace_role_id_ability_a092da8841 ON namespace_role_abilities USING btree (namespace_role_id, ability);
 
 CREATE UNIQUE INDEX idx_on_role_id_project_id_5d4b5917dc ON namespace_role_project_assignments USING btree (role_id, project_id);
 
-CREATE UNIQUE INDEX idx_on_runtime_function_definition_id_runtime_name_abb3bb31bc ON runtime_parameter_definitions USING btree (runtime_function_definition_id, runtime_name);
+CREATE INDEX index_active_storage_attachments_on_blob_id ON active_storage_attachments USING btree (blob_id);
+
+CREATE UNIQUE INDEX index_active_storage_attachments_uniqueness ON active_storage_attachments USING btree (record_type, record_id, name, blob_id);
+
+CREATE UNIQUE INDEX index_active_storage_blobs_on_key ON active_storage_blobs USING btree (key);
+
+CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON active_storage_variant_records USING btree (blob_id, variation_digest);
 
 CREATE UNIQUE INDEX index_application_settings_on_setting ON application_settings USING btree (setting);
 
@@ -668,10 +652,6 @@ CREATE INDEX index_data_type_rules_on_data_type_id ON data_type_rules USING btre
 CREATE UNIQUE INDEX index_data_types_on_namespace_id_and_identifier ON data_types USING btree (namespace_id, identifier);
 
 CREATE INDEX index_data_types_on_parent_type_id ON data_types USING btree (parent_type_id);
-
-CREATE INDEX index_function_definitions_on_return_type_id ON function_definitions USING btree (return_type_id);
-
-CREATE INDEX index_function_definitions_on_runtime_function_definition_id ON function_definitions USING btree (runtime_function_definition_id);
 
 CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON good_job_executions USING btree (active_job_id, created_at);
 
@@ -690,6 +670,8 @@ CREATE INDEX index_good_jobs_on_active_job_id_and_created_at ON good_jobs USING 
 CREATE INDEX index_good_jobs_on_batch_callback_id ON good_jobs USING btree (batch_callback_id) WHERE (batch_callback_id IS NOT NULL);
 
 CREATE INDEX index_good_jobs_on_batch_id ON good_jobs USING btree (batch_id) WHERE (batch_id IS NOT NULL);
+
+CREATE INDEX index_good_jobs_on_concurrency_key_and_created_at ON good_jobs USING btree (concurrency_key, created_at);
 
 CREATE INDEX index_good_jobs_on_concurrency_key_when_unfinished ON good_jobs USING btree (concurrency_key) WHERE (finished_at IS NULL);
 
@@ -727,14 +709,6 @@ CREATE UNIQUE INDEX index_namespaces_on_parent_id_and_parent_type ON namespaces 
 
 CREATE UNIQUE INDEX "index_organizations_on_LOWER_name" ON organizations USING btree (lower(name));
 
-CREATE INDEX index_parameter_definitions_on_data_type_id ON parameter_definitions USING btree (data_type_id);
-
-CREATE INDEX index_parameter_definitions_on_runtime_parameter_definition_id ON parameter_definitions USING btree (runtime_parameter_definition_id);
-
-CREATE INDEX index_runtime_function_definitions_on_return_type_id ON runtime_function_definitions USING btree (return_type_id);
-
-CREATE INDEX index_runtime_parameter_definitions_on_data_type_id ON runtime_parameter_definitions USING btree (data_type_id);
-
 CREATE INDEX index_runtimes_on_namespace_id ON runtimes USING btree (namespace_id);
 
 CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
@@ -757,26 +731,14 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(
 
 CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
 
-ALTER TABLE ONLY function_definitions
-    ADD CONSTRAINT fk_rails_0c2eb746ef FOREIGN KEY (return_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
-
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY runtime_parameter_definitions
-    ADD CONSTRAINT fk_rails_260318ad67 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY parameter_definitions
-    ADD CONSTRAINT fk_rails_3b02763f84 FOREIGN KEY (runtime_parameter_definition_id) REFERENCES runtime_parameter_definitions(id);
-
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT fk_rails_4434ad0b90 FOREIGN KEY (parent_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
-
-ALTER TABLE ONLY function_definitions
-    ADD CONSTRAINT fk_rails_48f4bbe3b6 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id);
 
 ALTER TABLE ONLY backup_codes
     ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
@@ -786,9 +748,6 @@ ALTER TABLE ONLY namespace_members
 
 ALTER TABLE ONLY namespace_member_roles
     ADD CONSTRAINT fk_rails_585a684166 FOREIGN KEY (role_id) REFERENCES namespace_roles(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY runtime_function_definitions
-    ADD CONSTRAINT fk_rails_5f0aa31141 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_role_project_assignments
     ADD CONSTRAINT fk_rails_623f8a5b72 FOREIGN KEY (role_id) REFERENCES namespace_roles(id);
@@ -805,11 +764,11 @@ ALTER TABLE ONLY namespace_member_roles
 ALTER TABLE ONLY namespace_role_abilities
     ADD CONSTRAINT fk_rails_6f3304b078 FOREIGN KEY (namespace_role_id) REFERENCES namespace_roles(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY runtime_function_definitions
-    ADD CONSTRAINT fk_rails_73ca8569ea FOREIGN KEY (return_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
-
 ALTER TABLE ONLY data_type_rules
     ADD CONSTRAINT fk_rails_7759633ff8 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY active_storage_variant_records
+    ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT fk_rails_9fa262d742 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
@@ -817,14 +776,11 @@ ALTER TABLE ONLY user_sessions
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY parameter_definitions
-    ADD CONSTRAINT fk_rails_ca0a397b6f FOREIGN KEY (data_type_id) REFERENCES data_types(id);
+ALTER TABLE ONLY active_storage_attachments
+    ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
 
 ALTER TABLE ONLY namespace_projects
     ADD CONSTRAINT fk_rails_d4f50e2f00 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY runtime_parameter_definitions
-    ADD CONSTRAINT fk_rails_e64f825793 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY runtimes
     ADD CONSTRAINT fk_rails_eeb42116cc FOREIGN KEY (namespace_id) REFERENCES namespaces(id);

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateDataTypes < Sagittarius::Database::Migration[1.0]
+class CreateDataTypes < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :data_types do |t|
       t.references :namespace, index: false

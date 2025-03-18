@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ChangeOrganizationMemberRolesFksToCascading < Sagittarius::Database::Migration[1.0]
+class ChangeOrganizationMemberRolesFksToCascading < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     remove_foreign_key :organization_member_roles, :organization_roles, column: :role_id
     add_foreign_key :organization_member_roles, :organization_roles, column: :role_id, on_delete: :cascade

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateOrganizationProjects < Sagittarius::Database::Migration[1.0]
+class CreateOrganizationProjects < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :organization_projects do |t|
       t.references :organization, null: false, foreign_key: { on_delete: :cascade }

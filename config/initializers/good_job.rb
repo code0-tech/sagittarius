@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.config.to_prepare do
-  if GoodJob::CLI.within_exe?
-    Rails.logger.broadcast_to ActiveSupport::Logger.new($stdout, formatter: Rails.logger.formatter)
-  end
-
   GoodJob::LogSubscriber.prepend Sagittarius::Middleware::GoodJob::LogSubscriber
   GoodJob::LogSubscriber.reset_logger
 

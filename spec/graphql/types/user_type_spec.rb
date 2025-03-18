@@ -13,6 +13,7 @@ RSpec.describe SagittariusSchema.types['User'] do
       lastname
       admin
       namespaceMemberships
+      avatarPath
       createdAt
       updatedAt
     ]

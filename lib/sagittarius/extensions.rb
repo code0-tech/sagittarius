@@ -18,7 +18,7 @@ module Sagittarius
 
     AVAILABLE_EXTENSIONS.each do |extension|
       define_method(:"#{extension}?") do
-        root.join(extension.to_s).exist? && !Utils.to_boolean(
+        root.join('extensions', extension.to_s).exist? && !Utils.to_boolean(
           ENV.fetch("SAGITTARIUS_DISABLE_#{extension.upcase}", 'false'), default: false
         )
       end

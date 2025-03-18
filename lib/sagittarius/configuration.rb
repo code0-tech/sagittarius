@@ -2,7 +2,7 @@
 
 module Sagittarius
   class Configuration
-    extend Sagittarius::Memoize
+    extend Code0::ZeroTrack::Memoize
 
     def self.config
       memoize(:config) do
@@ -25,6 +25,7 @@ module Sagittarius
             port: 3000,
             force_ssl: nil,
           },
+          log_level: 'info',
           db: {
             host: 'localhost',
             port: 5433,

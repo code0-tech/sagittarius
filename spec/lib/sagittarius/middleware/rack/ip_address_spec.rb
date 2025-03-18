@@ -15,11 +15,11 @@ RSpec.describe Sagittarius::Middleware::Rack::IpAddress do
 
   describe '#call' do
     it 'adds the ip from the request to the context' do
-      allow(Sagittarius::Context).to receive(:with_context)
+      allow(Code0::ZeroTrack::Context).to receive(:with_context)
 
       described_class.new(app).call(env)
 
-      expect(Sagittarius::Context).to have_received(:with_context).with(ip_address: ip)
+      expect(Code0::ZeroTrack::Context).to have_received(:with_context).with(ip_address: ip)
     end
 
     it 'calls the app' do

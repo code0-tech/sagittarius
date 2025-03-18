@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddJobsFinishedAtToGoodJobBatches < Sagittarius::Database::Migration[1.0]
+class AddJobsFinishedAtToGoodJobBatches < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     reversible do |dir|
       dir.up do

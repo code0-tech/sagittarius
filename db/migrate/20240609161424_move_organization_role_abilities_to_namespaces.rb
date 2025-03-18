@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class MoveOrganizationRoleAbilitiesToNamespaces < Sagittarius::Database::Migration[1.0]
+class MoveOrganizationRoleAbilitiesToNamespaces < Code0::ZeroTrack::Database::Migration[1.0]
   # rubocop:disable Rails/NotNullColumn -- backwards compatibility was intentionally ignored
   def change
     rename_table :organization_role_abilities, :namespace_role_abilities
