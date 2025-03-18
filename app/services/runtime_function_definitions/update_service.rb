@@ -37,11 +37,11 @@ module RuntimeFunctionDefinitions
                               end
       db_object.parameters = update_parameters(runtime_function_definition.runtime_parameter_definitions,
                                                db_object.parameters, t)
-      db_object.translations = update_translations(runtime_function_definition.name, db_object.translations)
+      db_object.names = update_translations(runtime_function_definition.name, db_object.names)
 
       if db_object.function_definitions.empty?
         definition = FunctionDefinition.new
-        definition.translations = update_translations(runtime_function_definition.name, definition.translations)
+        definition.names = update_translations(runtime_function_definition.name, definition.names)
         definition.return_type = db_object.return_type
 
         db_object.function_definitions << definition
@@ -78,12 +78,12 @@ module RuntimeFunctionDefinitions
         end
         db_param.runtime_name = real_param.runtime_name
         db_param.data_type = find_data_type(real_param.data_type_identifier, t)
-        db_param.translations = update_translations(real_param.name, db_param.translations)
+        db_param.names = update_translations(real_param.name, db_param.names)
 
         next unless db_param.parameter_definitions.empty?
 
         definition = ParameterDefinition.new
-        definition.translations = update_translations(real_param.name, definition.translations)
+        definition.names = update_translations(real_param.name, definition.names)
         definition.data_type = db_param.data_type
 
         db_param.parameter_definitions << definition
@@ -92,10 +92,10 @@ module RuntimeFunctionDefinitions
       db_parameters
     end
 
-    def update_translations(real_translations, db_translations)
-      db_translations = db_translations.first(real_translations.length)
+    def update_translations(real_translations, translation_relation)
+      db_translations = translation_relation.first(real_translations.length)
       real_translations.each_with_index do |translation, index|
-        db_translations[index] ||= Translation.new
+        db_translations[index] ||= translation_relation.build
         db_translations[index].assign_attributes(code: translation.code, content: translation.content)
       end
 

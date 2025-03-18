@@ -43,18 +43,18 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         function = RuntimeFunctionDefinition.last
         expect(function.runtime_name).to eq('runtime_function_id')
         expect(function.return_type.identifier).to eq(return_type.identifier)
-        expect(function.translations.first.content).to eq('Eine Funktion')
+        expect(function.names.first.content).to eq('Eine Funktion')
         parameter = function.parameters.first
         expect(parameter.data_type.identifier).to eq(parameter_type.identifier)
         expect(parameter.runtime_name).to eq('runtime_parameter_definition_id')
-        expect(parameter.translations.first.content).to eq('Ein Parameter')
+        expect(parameter.names.first.content).to eq('Ein Parameter')
 
         function_definition = FunctionDefinition.first
-        expect(function_definition.translations.first.content).to eq('Eine Funktion')
+        expect(function_definition.names.first.content).to eq('Eine Funktion')
         expect(function_definition.return_type.identifier).to eq(return_type.identifier)
         parameter = ParameterDefinition.first
         expect(parameter.data_type.identifier).to eq(parameter_type.identifier)
-        expect(parameter.translations.first.content).to eq('Ein Parameter')
+        expect(parameter.names.first.content).to eq('Ein Parameter')
       end
     end
 
@@ -67,7 +67,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         create(:runtime_function_definition,
                namespace: namespace,
                runtime_name: 'runtime_function_id',
-               translations: create(:translation, code: 'en_US', content: 'A Function'))
+               names: create(:translation, code: 'en_US', content: 'A Function'))
       end
 
       let(:runtime_functions) do
@@ -99,11 +99,11 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
 
         function = RuntimeFunctionDefinition.last
         expect(function.runtime_name).to eq('runtime_function_id')
-        expect(function.translations.first.content).to eq('Eine Funktion')
+        expect(function.names.first.content).to eq('Eine Funktion')
         parameter = function.parameters.first
         expect(parameter.data_type.identifier).to eq(data_type.identifier)
         expect(parameter.runtime_name).to eq('runtime_parameter_definition_id')
-        expect(parameter.translations.first.content).to eq('Ein Parameter')
+        expect(parameter.names.first.content).to eq('Ein Parameter')
 
         expect(FunctionDefinition.count).to eq(1)
         expect(ParameterDefinition.count).to eq(1)

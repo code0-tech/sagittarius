@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateRuntimeParameterDefinitions < Sagittarius::Database::Migration[1.0]
+class CreateRuntimeParameterDefinitions < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :runtime_parameter_definitions do |t|
       t.references :runtime_function_definition, index: false, null: false, foreign_key: { on_delete: :cascade }

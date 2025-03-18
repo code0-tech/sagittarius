@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateRuntimeFunctionDefinitions < Sagittarius::Database::Migration[1.0]
+class CreateRuntimeFunctionDefinitions < Code0::ZeroTrack::Database::Migration[1.0]
   def change
     create_table :runtime_function_definitions do |t|
       t.references :return_type, null: true, foreign_key: { to_table: :data_types, on_delete: :restrict }

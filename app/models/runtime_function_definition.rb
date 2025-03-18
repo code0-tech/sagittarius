@@ -6,7 +6,7 @@ class RuntimeFunctionDefinition < ApplicationRecord
 
   has_many :function_definitions, inverse_of: :runtime_function_definition
   has_many :parameters, class_name: 'RuntimeParameterDefinition', inverse_of: :runtime_function_definition
-  has_many :translations, class_name: 'Translation', as: :owner
+  has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
 
   validates :runtime_name, presence: true, length: { minimum: 3, maximum: 50 },
                            uniqueness: { case_sensitive: false, scope: :namespace_id }
