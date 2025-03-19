@@ -18,5 +18,7 @@ RSpec.describe RuntimeParameterDefinition do
   describe 'associations' do
     it { is_expected.to belong_to(:runtime_function_definition) }
     it { is_expected.to belong_to(:data_type) }
+    it { is_expected.to have_many(:parameter_definitions).inverse_of(:runtime_parameter_definition) }
+    it { is_expected.to have_many(:names).class_name('Translation').inverse_of(:owner) }
   end
 end
