@@ -5,5 +5,6 @@ FactoryBot.define do
     code { 'de_DE' }
     content { 'Text' }
     owner factory: :data_type
+    purpose { nil }
   end
 end

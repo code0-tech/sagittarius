@@ -5,4 +5,6 @@ class Translation < ApplicationRecord
 
   validates :code, presence: true
   validates :content, presence: true
+
+  scope :by_purpose, ->(purpose) { where(purpose: purpose) }
 end
