@@ -5,7 +5,7 @@ FactoryBot.define do
 
   factory :data_type do
     variant { :primitive }
-    namespace
+    runtime
     identifier { generate(:data_type_name) }
     parent_type { nil }
   end

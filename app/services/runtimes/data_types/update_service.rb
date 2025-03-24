@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Namespaces
+module Runtimes
   module DataTypes
     class UpdateService
       include Sagittarius::Database::Transactional
@@ -47,8 +47,7 @@ module Namespaces
       end
 
       def update_datatype(data_type, t)
-        db_object = DataType.find_or_initialize_by(namespace: current_runtime.namespace,
-                                                   identifier: data_type.identifier)
+        db_object = DataType.find_or_initialize_by(runtime: current_runtime, identifier: data_type.identifier)
         db_object.variant = data_type.variant.to_s.downcase
         if data_type.parent_type_identifier.present?
           db_object.parent_type = find_datatype(data_type.parent_type_identifier, t)
@@ -59,7 +58,7 @@ module Namespaces
       end
 
       def find_datatype(identifier, t)
-        data_type = DataType.find_by(namespace: [nil, current_runtime.namespace], identifier: identifier)
+        data_type = DataType.find_by(runtime: current_runtime, identifier: identifier)
 
         if data_type.nil?
           t.rollback_and_return! ServiceResponse.error(message: "Could not find datatype with identifier #{identifier}",
