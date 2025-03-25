@@ -9,6 +9,7 @@ Represents a runtime
 | Name | Type | Description |
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Runtime was created |
+| `dataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | DataTypes of the runtime |
 | `description` | [`String!`](../scalar/string.md) | The description for the runtime if present |
 | `id` | [`RuntimeID!`](../scalar/runtimeid.md) | Global ID of this Runtime |
 | `name` | [`String!`](../scalar/string.md) | The name for the runtime |
