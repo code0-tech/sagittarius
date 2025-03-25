@@ -41,7 +41,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
       expect(stub.update(message, authorization(runtime)).success).to be(true)
 
       data_type = DataType.last
-      expect(data_type.namespace).to eq(namespace)
+      expect(data_type.runtime).to eq(runtime)
       expect(data_type.variant).to eq('primitive')
       expect(data_type.identifier).to eq('positive_number')
       expect(data_type.translations.count).to eq(1)

@@ -12,7 +12,7 @@ class DataType < ApplicationRecord
   enum :variant, VARIANTS, prefix: :variant
 
   belongs_to :parent_type, class_name: 'DataType', inverse_of: :child_types, optional: true
-  belongs_to :namespace, inverse_of: :data_types, optional: true
+  belongs_to :runtime, inverse_of: :data_types
 
   has_many :child_types, class_name: 'DataType', inverse_of: :parent_type
   has_many :translations, class_name: 'Translation', as: :owner

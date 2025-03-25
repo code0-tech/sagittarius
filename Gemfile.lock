@@ -132,7 +132,7 @@ GEM
     google-protobuf (3.25.5-x86_64-linux)
     googleapis-common-protos-types (1.16.0)
       google-protobuf (>= 3.18, < 5.a)
-    graphql (2.4.14)
+    graphql (2.4.15)
       base64
       fiber-storage
       logger
@@ -145,8 +145,8 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
-    image_processing (1.13.0)
-      mini_magick (>= 4.9.5, < 5)
+    image_processing (1.14.0)
+      mini_magick (>= 4.9.5, < 6)
       ruby-vips (>= 2.0.17, < 3)
     io-console (0.8.0)
     irb (1.15.1)
@@ -313,8 +313,9 @@ GEM
     rubocop-factory_bot (2.27.1)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-graphql (1.5.4)
-      rubocop (>= 1.50, < 2)
+    rubocop-graphql (1.5.5)
+      lint_roller (~> 1.1)
+      rubocop (>= 1.72.1, < 2)
     rubocop-rails (2.30.3)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
