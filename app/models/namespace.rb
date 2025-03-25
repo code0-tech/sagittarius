@@ -12,8 +12,6 @@ class Namespace < ApplicationRecord
 
   has_many :runtimes, inverse_of: :namespace
 
-  has_many :data_types, inverse_of: :namespace
-
   def organization_type?
     parent_type == Organization.name
   end

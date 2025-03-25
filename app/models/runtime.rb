@@ -7,6 +7,8 @@ class Runtime < ApplicationRecord
 
   token_attr :token, prefix: 's_rt_', length: 48
 
+  has_many :data_types, inverse_of: :runtime
+
   validates :name, presence: true,
                    length: { minimum: 3, maximum: 50 },
                    allow_blank: false,

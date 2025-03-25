@@ -141,12 +141,12 @@ ALTER SEQUENCE data_type_rules_id_seq OWNED BY data_type_rules.id;
 
 CREATE TABLE data_types (
     id bigint NOT NULL,
-    namespace_id bigint,
     identifier text NOT NULL,
     variant integer NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     parent_type_id bigint,
+    runtime_id bigint NOT NULL,
     CONSTRAINT check_3a7198812e CHECK ((char_length(identifier) <= 50))
 );
 
@@ -649,9 +649,9 @@ CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes 
 
 CREATE INDEX index_data_type_rules_on_data_type_id ON data_type_rules USING btree (data_type_id);
 
-CREATE UNIQUE INDEX index_data_types_on_namespace_id_and_identifier ON data_types USING btree (namespace_id, identifier);
-
 CREATE INDEX index_data_types_on_parent_type_id ON data_types USING btree (parent_type_id);
+
+CREATE UNIQUE INDEX index_data_types_on_runtime_id_and_identifier ON data_types USING btree (runtime_id, identifier);
 
 CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON good_job_executions USING btree (active_job_id, created_at);
 
@@ -730,6 +730,9 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(ema
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
 
 CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
+
+ALTER TABLE ONLY data_types
+    ADD CONSTRAINT fk_rails_118c914ed0 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
