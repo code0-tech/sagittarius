@@ -6,7 +6,10 @@ class RuntimeFunctionHandler < Tucana::Sagittarius::RuntimeFunctionDefinitionSer
   def update(request, _call)
     current_runtime = Runtime.find(Code0::ZeroTrack::Context.current[:runtime][:id])
 
-    response = RuntimeFunctionDefinitions::UpdateService.new(current_runtime, request.runtime_functions).execute
+    response = Runtimes::RuntimeFunctionDefinitions::UpdateService.new(
+      current_runtime,
+      request.runtime_functions
+    ).execute
 
     Tucana::Sagittarius::RuntimeFunctionDefinitionUpdateResponse.new(success: response.success?)
   end

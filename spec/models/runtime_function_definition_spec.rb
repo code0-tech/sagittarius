@@ -9,12 +9,12 @@ RSpec.describe RuntimeFunctionDefinition do
     it { is_expected.to have_many(:parameters).inverse_of(:runtime_function_definition) }
 
     it { is_expected.to validate_presence_of(:runtime_name) }
-    it { is_expected.to validate_uniqueness_of(:runtime_name).case_insensitive.scoped_to(:namespace_id) }
+    it { is_expected.to validate_uniqueness_of(:runtime_name).case_insensitive.scoped_to(:runtime_id) }
     it { is_expected.to validate_length_of(:runtime_name).is_at_most(50) }
   end
 
   describe 'associations' do
-    it { is_expected.to belong_to(:namespace) }
+    it { is_expected.to belong_to(:runtime) }
 
     it do
       is_expected.to have_many(:parameters)

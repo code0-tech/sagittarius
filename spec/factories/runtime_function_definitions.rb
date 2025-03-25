@@ -6,6 +6,6 @@ FactoryBot.define do
   factory :runtime_function_definition do
     runtime_name { generate(:runtime_function_definition_name) }
     return_type factory: :data_type
-    namespace
+    runtime
   end
 end

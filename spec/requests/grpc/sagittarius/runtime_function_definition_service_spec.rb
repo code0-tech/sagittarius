@@ -9,10 +9,9 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
 
   describe 'Update' do
     context 'when create' do
-      let(:namespace) { create(:namespace) }
-      let(:runtime) { create(:runtime, namespace: namespace) }
-      let(:parameter_type) { create(:data_type, namespace: namespace) }
-      let(:return_type) { create(:data_type, namespace: namespace) }
+      let(:runtime) { create(:runtime) }
+      let(:parameter_type) { create(:data_type, runtime: runtime) }
+      let(:return_type) { create(:data_type, runtime: runtime) }
 
       let(:runtime_functions) do
         [
@@ -23,11 +22,13 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
             ],
             return_type_identifier: return_type.identifier,
             runtime_parameter_definitions: [
-              data_type_identifier: parameter_type.identifier,
-              runtime_name: 'runtime_parameter_definition_id',
-              name: [
-                { code: 'de_DE', content: 'Ein Parameter' }
-              ]
+              {
+                data_type_identifier: parameter_type.identifier,
+                runtime_name: 'runtime_parameter_definition_id',
+                name: [
+                  { code: 'de_DE', content: 'Ein Parameter' }
+                ],
+              }
             ],
           }
         ]
@@ -59,13 +60,12 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
     end
 
     context 'when update' do
-      let(:namespace) { create(:namespace) }
-      let(:runtime) { create(:runtime, namespace: namespace) }
-      let(:data_type) { create(:data_type, namespace: namespace) }
+      let(:runtime) { create(:runtime) }
+      let(:data_type) { create(:data_type, runtime: runtime) }
 
       let(:existing_runtime_function_definition) do
         create(:runtime_function_definition,
-               namespace: namespace,
+               runtime: runtime,
                runtime_name: 'runtime_function_id',
                names: create(:translation, code: 'en_US', content: 'A Function'))
       end
@@ -78,11 +78,13 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
               { code: 'de_DE', content: 'Eine Funktion' }
             ],
             runtime_parameter_definitions: [
-              data_type_identifier: data_type.identifier,
-              runtime_name: 'runtime_parameter_definition_id',
-              name: [
-                { code: 'de_DE', content: 'Ein Parameter' }
-              ]
+              {
+                data_type_identifier: data_type.identifier,
+                runtime_name: 'runtime_parameter_definition_id',
+                name: [
+                  { code: 'de_DE', content: 'Ein Parameter' }
+                ],
+              }
             ],
           }
         ]
@@ -107,6 +109,56 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
 
         expect(FunctionDefinition.count).to eq(1)
         expect(ParameterDefinition.count).to eq(1)
+      end
+    end
+
+    context 'when deleting' do
+      let(:runtime) { create(:runtime) }
+      let(:data_type) { create(:data_type, runtime: runtime) }
+
+      let!(:existing_runtime_function_definition) do
+        create(:runtime_function_definition, runtime: runtime)
+      end
+
+      let!(:existing_runtime_parameter_definition) do
+        create(:runtime_parameter_definition, runtime_function_definition: existing_runtime_function_definition)
+      end
+
+      let(:message) do
+        Tucana::Sagittarius::RuntimeFunctionDefinitionUpdateRequest.new(runtime_functions: runtime_functions)
+      end
+
+      describe 'parameter definitions' do
+        let(:runtime_functions) do
+          [
+            {
+              runtime_name: existing_runtime_function_definition.runtime_name,
+              name: [
+                { code: 'de_DE', content: 'Eine Funktion' }
+              ],
+              runtime_parameter_definitions: [],
+            }
+          ]
+        end
+
+        it 'marks them as removed' do
+          expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+          expect(existing_runtime_function_definition.reload.removed_at).not_to be_present
+          expect(existing_runtime_parameter_definition.reload.removed_at).to be_present
+        end
+      end
+
+      describe 'function definitions' do
+        let(:runtime_functions) do
+          []
+        end
+
+        it 'marks them as removed' do
+          expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+          expect(existing_runtime_function_definition.reload.removed_at).to be_present
+        end
       end
     end
   end
