@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+class RuntimeFunctionHandler < Tucana::Sagittarius::RuntimeFunctionDefinitionService::Service
+  include GrpcHandler
+
+  def update(request, _call)
+    current_runtime = Runtime.find(Code0::ZeroTrack::Context.current[:runtime][:id])
+
+    response = Runtimes::RuntimeFunctionDefinitions::UpdateService.new(
+      current_runtime,
+      request.runtime_functions
+    ).execute
+
+    Tucana::Sagittarius::RuntimeFunctionDefinitionUpdateResponse.new(success: response.success?)
+  end
+end
