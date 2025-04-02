@@ -14,6 +14,9 @@ module Runtimes
 
       def execute
         transactional do |t|
+          # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
+          DataType.where(runtime: current_runtime).update_all(removed_at: Time.zone.now)
+          # rubocop:enable Rails/SkipsModelValidations
           sort_data_types(data_types).each do |data_type|
             unless update_datatype(data_type, t)
               t.rollback_and_return! ServiceResponse.error(message: 'Failed to update data type',
@@ -48,6 +51,7 @@ module Runtimes
 
       def update_datatype(data_type, t)
         db_object = DataType.find_or_initialize_by(runtime: current_runtime, identifier: data_type.identifier)
+        db_object.removed_at = nil
         db_object.variant = data_type.variant.to_s.downcase
         if data_type.parent_type_identifier.present?
           db_object.parent_type = find_datatype(data_type.parent_type_identifier, t)
