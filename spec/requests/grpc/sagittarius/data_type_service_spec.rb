@@ -105,5 +105,16 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
         expect(small_positive_number.parent_type).to eq(positive_number)
       end
     end
+
+    context 'when removing datatypes' do
+      let!(:existing_data_type) { create(:data_type, runtime: runtime) }
+      let(:data_types) { [] }
+
+      it 'marks the datatype as removed' do
+        stub.update(message, authorization(runtime))
+
+        expect(existing_data_type.reload.removed_at).to be_present
+      end
+    end
   end
 end

@@ -147,6 +147,7 @@ CREATE TABLE data_types (
     updated_at timestamp with time zone NOT NULL,
     parent_type_id bigint,
     runtime_id bigint NOT NULL,
+    removed_at timestamp with time zone,
     CONSTRAINT check_3a7198812e CHECK ((char_length(identifier) <= 50))
 );
 
