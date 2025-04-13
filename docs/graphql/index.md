@@ -1,0 +1,7 @@
+---
+title: GraphQL Schema
+---
+
+The GraphQL Schema is documented on these pages.
+
+Entrypoint for all queries is the [`Query` type](../content/graphql/object/query.md).
