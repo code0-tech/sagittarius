@@ -2,6 +2,7 @@ stages:
   - lint
   - build
   - test
+  - publish
 
 include:
   - project: code0-tech/development/telescopium
@@ -183,3 +184,51 @@ boot:docker:
       --retry-delay 3
       --retry-connrefused
       http://sagittarius:3000/health/liveness
+
+npm-types:generate-graphql:
+  extends:
+    - .rails
+  stage: build
+  script:
+    - bundle exec rake graphql:schema:idl
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - tmp/schema.graphql
+      - tooling/graphql/types/
+
+.npm-types:publish-graphql:
+  image: node:22.14.0
+  needs:
+    - npm-types:generate-graphql
+  variables:
+    NODE_AUTH_TOKEN: $C0_NODE_AUTH_TOKEN
+    GIT_STRATEGY: empty
+  script:
+    - cd tooling/graphql/types
+    - npm ci
+    - npm run generate
+    - touch index.js
+    - npm version --git-tag-version false 0.0.0-$CI_COMMIT_SHA
+
+npm-types:publish-graphql-dry-run:
+  extends:
+    - .npm-types:publish-graphql
+  stage: test
+  script:
+    - !reference [.npm-types:publish-graphql, script]
+    - npm publish --dry-run
+  rules:
+    - if: $C0_GH_REF_NAME != "main"
+
+npm-types:publish-graphql:
+  extends:
+    - .npm-types:publish-graphql
+  stage: publish
+  script:
+    - !reference [ .npm-types:publish-graphql, script ]
+    - npm publish
+  rules:
+    - if: $C0_GH_REF_NAME == "main"
+      when: manual
+      allow_failure: true
