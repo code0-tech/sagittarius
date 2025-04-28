@@ -1,0 +1,32 @@
+{
+  "name": "@code0-tech/sagittarius-graphql-types",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "generate": "graphql-codegen --config codegen.yml"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/code0-tech/sagittarius.git"
+  },
+  "author": "",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/code0-tech/sagittarius/issues"
+  },
+  "homepage": "https://github.com/code0-tech/sagittarius#readme",
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.5",
+    "@graphql-codegen/typescript": "^4.1.5"
+  },
+  "files": [
+    "index.d.ts",
+    "index.js",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

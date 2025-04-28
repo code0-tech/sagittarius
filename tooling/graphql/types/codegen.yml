@@ -1,0 +1,10 @@
+# This configuration file tells GraphQL Code Generator how
+# to generate types based on our schema.
+schema: "../../../tmp/schema.graphql"
+generates:
+  # Specify where our generated types should live.
+  ./index.d.ts:
+    plugins:
+      - "typescript"
+    config:
+      declarationKind: 'interface'
