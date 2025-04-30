@@ -57,7 +57,7 @@ module Runtimes
           db_object.parent_type = find_datatype(data_type.parent_type_identifier, t)
         end
         db_object.rules = update_rules(data_type.rules, db_object)
-        db_object.translations = update_translations(data_type.name, db_object)
+        db_object.names = update_translations(data_type.name, db_object.names)
         db_object.save
       end
 
@@ -76,16 +76,16 @@ module Runtimes
         db_rules = data_type.rules.first(rules.length)
         rules.each_with_index do |rule, index|
           db_rules[index] ||= DataTypeRule.new
-          db_rules[index].assign_attributes(variant: rule.variant.to_s.downcase, config: rule.config.to_h)
+          db_rules[index].assign_attributes(variant: rule.variant.to_s.downcase, config: rule.rule_config.to_h)
         end
 
         db_rules
       end
 
-      def update_translations(translations, data_type)
-        db_translations = data_type.translations.first(translations.length)
+      def update_translations(translations, translation_relation)
+        db_translations = translation_relation.first(translations.length)
         translations.each_with_index do |translation, index|
-          db_translations[index] ||= Translation.new
+          db_translations[index] ||= translation_relation.build
           db_translations[index].assign_attributes(code: translation.code, content: translation.content)
         end
 

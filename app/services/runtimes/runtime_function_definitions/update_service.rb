@@ -43,10 +43,21 @@ module Runtimes
         db_object.parameters = update_parameters(runtime_function_definition.runtime_parameter_definitions,
                                                  db_object.parameters, t)
         db_object.names = update_translations(runtime_function_definition.name, db_object.names)
+        db_object.descriptions = update_translations(runtime_function_definition.description, db_object.descriptions)
+        db_object.documentations = update_translations(runtime_function_definition.documentation,
+                                                       db_object.documentations)
+        db_object.deprecation_messages = update_translations(runtime_function_definition.deprecation_message,
+                                                             db_object.deprecation_messages)
+
+        db_object.error_types = update_error_types(runtime_function_definition.error_type_identifiers, db_object, t)
 
         if db_object.function_definitions.empty?
           definition = FunctionDefinition.new
           definition.names = update_translations(runtime_function_definition.name, definition.names)
+          definition.descriptions = update_translations(runtime_function_definition.description,
+                                                        definition.descriptions)
+          definition.documentations = update_translations(runtime_function_definition.documentation,
+                                                          definition.documentations)
           definition.return_type = db_object.return_type
 
           db_object.function_definitions << definition
@@ -80,13 +91,21 @@ module Runtimes
           db_param.runtime_name = real_param.runtime_name
           db_param.removed_at = nil
           db_param.data_type = find_data_type(real_param.data_type_identifier, t)
+
           db_param.names = update_translations(real_param.name, db_param.names)
+          db_param.descriptions = update_translations(real_param.description, db_param.descriptions)
+          db_param.documentations = update_translations(real_param.documentation, db_param.documentations)
+
+          db_param.default_value = real_param.default_value&.to_ruby(true)
 
           next unless db_param.parameter_definitions.empty?
 
           definition = ParameterDefinition.new
           definition.names = update_translations(real_param.name, definition.names)
+          definition.descriptions = update_translations(real_param.description, definition.descriptions)
+          definition.documentations = update_translations(real_param.documentation, definition.documentations)
           definition.data_type = db_param.data_type
+          definition.default_value = db_param.default_value
 
           db_param.parameter_definitions << definition
         end
@@ -102,6 +121,16 @@ module Runtimes
         end
 
         db_translations
+      end
+
+      def update_error_types(real_error_type_identifiers, runtime_function_definition, t)
+        db_error_types = runtime_function_definition.error_types.first(real_error_type_identifiers.length)
+        real_error_type_identifiers.each_with_index do |error_type_identifier, index|
+          db_error_types[index] ||= runtime_function_definition.error_types.build
+          db_error_types[index].data_type = find_data_type(error_type_identifier, t)
+        end
+
+        db_error_types
       end
     end
   end

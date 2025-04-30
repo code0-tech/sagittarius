@@ -7,6 +7,8 @@ class DataType < ApplicationRecord
     object: 3,
     datatype: 4,
     array: 5,
+    generic: 6,
+    function: 7,
   }.with_indifferent_access
 
   enum :variant, VARIANTS, prefix: :variant
@@ -15,7 +17,7 @@ class DataType < ApplicationRecord
   belongs_to :runtime, inverse_of: :data_types
 
   has_many :child_types, class_name: 'DataType', inverse_of: :parent_type
-  has_many :translations, class_name: 'Translation', as: :owner
+  has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :rules, class_name: 'DataTypeRule', inverse_of: :data_type
 
   validates :variant, presence: true,

@@ -17,14 +17,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
             { code: 'de_DE', content: 'Positive Zahl' }
           ],
           rules: [
-            {
-              variant: :NUMBER_RANGE,
-              config: Tucana::Shared::Struct.from_hash(
-                {
-                  'min' => 1,
-                }
-              ),
-            }
+            Tucana::Shared::DataTypeRule.create(:number_range, { from: 1, to: 10 })
           ],
         }
       ]
@@ -44,12 +37,12 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
       expect(data_type.runtime).to eq(runtime)
       expect(data_type.variant).to eq('primitive')
       expect(data_type.identifier).to eq('positive_number')
-      expect(data_type.translations.count).to eq(1)
-      expect(data_type.translations.first.code).to eq('de_DE')
-      expect(data_type.translations.first.content).to eq('Positive Zahl')
+      expect(data_type.names.count).to eq(1)
+      expect(data_type.names.first.code).to eq('de_DE')
+      expect(data_type.names.first.content).to eq('Positive Zahl')
       expect(data_type.rules.count).to eq(1)
       expect(data_type.rules.first.variant).to eq('number_range')
-      expect(data_type.rules.first.config).to eq({ 'min' => 1 })
+      expect(data_type.rules.first.config).to eq({ 'from' => 1, 'to' => 10, 'steps' => 0 })
     end
 
     context 'with dependent data types' do
@@ -63,14 +56,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
             ],
             parent_type_identifier: 'positive_number',
             rules: [
-              {
-                variant: :NUMBER_RANGE,
-                config: Tucana::Shared::Struct.from_hash(
-                  {
-                    'max' => 9,
-                  }
-                ),
-              }
+              Tucana::Shared::DataTypeRule.create(:number_range, { from: 9 })
             ],
           },
           {
@@ -80,14 +66,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
               { code: 'de_DE', content: 'Positive Zahl' }
             ],
             rules: [
-              {
-                variant: :NUMBER_RANGE,
-                config: Tucana::Shared::Struct.from_hash(
-                  {
-                    'min' => 1,
-                  }
-                ),
-              }
+              Tucana::Shared::DataTypeRule.create(:number_range, { from: 1 })
             ],
           }
         ]
