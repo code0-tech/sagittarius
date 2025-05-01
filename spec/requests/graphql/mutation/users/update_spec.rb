@@ -53,6 +53,56 @@ RSpec.describe 'usersUpdate Mutation' do
     )
   end
 
+  context 'when updating mfa required fields' do
+    context 'when mfa is not provided' do
+      let(:current_user) { create(:user, :mfa_totp) }
+      let(:input) do
+        email = generate(:email)
+
+        {
+          userId: current_user.to_global_id.to_s,
+          email: email,
+        }
+      end
+
+      it 'returns an error' do
+        expect(graphql_data_at(:users_update, :user)).to be_nil
+        expect(graphql_data_at(:users_update, :errors)).to include({ 'message' => 'mfa_required' })
+      end
+    end
+
+    context 'when mfa is provided and valid' do
+      let(:current_user) { create(:user, :mfa_totp) }
+      let(:otp) { ROTP::TOTP.new(current_user.totp_secret).now }
+      let(:input) do
+        email = generate(:email)
+
+        {
+          userId: current_user.to_global_id.to_s,
+          email: email,
+          mfa: { type: 'TOTP', value: otp },
+        }
+      end
+
+      it 'updates the user' do
+        expect(graphql_data_at(:users_update, :user, :id)).to be_present
+        user = SagittariusSchema.object_from_id(graphql_data_at(:users_update, :user, :id))
+
+        expect(user.email).to eq(input[:email])
+
+        is_expected.to create_audit_event(
+          :user_updated,
+          author_id: current_user.id,
+          entity_id: user.id,
+          entity_type: 'User',
+          details: { email: input[:email], mfa_type: 'totp' },
+          target_id: user.id,
+          target_type: 'User'
+        )
+      end
+    end
+  end
+
   context 'when user name is taken' do
     let(:existing_user) { create(:user) }
     let(:input) do

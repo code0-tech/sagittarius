@@ -10,6 +10,10 @@ FactoryBot.define do
     email { generate(:email) }
     password { generate(:password) }
 
+    trait :mfa_totp do
+      totp_secret { ROTP::Base32.random }
+    end
+
     trait :admin do
       admin { true }
     end
