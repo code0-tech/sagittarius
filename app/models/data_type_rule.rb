@@ -2,7 +2,11 @@
 
 class DataTypeRule < ApplicationRecord
   VARIANTS = {
-    number_range: 1,
+    contains_key: 1,
+    contains_type: 2,
+    item_of_collection: 3,
+    number_range: 4,
+    regex: 5,
   }.with_indifferent_access
 
   enum :variant, VARIANTS, prefix: :types

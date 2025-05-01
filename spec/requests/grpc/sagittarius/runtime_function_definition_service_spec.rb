@@ -12,6 +12,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
       let(:runtime) { create(:runtime) }
       let(:parameter_type) { create(:data_type, runtime: runtime) }
       let(:return_type) { create(:data_type, runtime: runtime) }
+      let(:error_type) { create(:data_type, runtime: runtime) }
 
       let(:runtime_functions) do
         [
@@ -20,13 +21,30 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
             name: [
               { code: 'de_DE', content: 'Eine Funktion' }
             ],
+            description: [
+              { code: 'de_DE', content: 'Eine Funktionsbeschreibung' }
+            ],
+            documentation: [
+              { code: 'de_DE', content: 'Eine Funktionsdokumentation' }
+            ],
+            deprecation_message: [
+              { code: 'de_DE', content: 'Eine Deprecationsmeldung' }
+            ],
             return_type_identifier: return_type.identifier,
+            error_type_identifiers: [error_type.identifier],
             runtime_parameter_definitions: [
               {
                 data_type_identifier: parameter_type.identifier,
                 runtime_name: 'runtime_parameter_definition_id',
+                default_value: Tucana::Shared::Value.from_ruby({ 'key' => 'value' }),
                 name: [
                   { code: 'de_DE', content: 'Ein Parameter' }
+                ],
+                description: [
+                  { code: 'de_DE', content: 'Eine Parameterbeschreibung' }
+                ],
+                documentation: [
+                  { code: 'de_DE', content: 'Eine Parameterdokumentation' }
                 ],
               }
             ],
@@ -45,17 +63,29 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function.runtime_name).to eq('runtime_function_id')
         expect(function.return_type.identifier).to eq(return_type.identifier)
         expect(function.names.first.content).to eq('Eine Funktion')
+        expect(function.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
+        expect(function.documentations.first.content).to eq('Eine Funktionsdokumentation')
+        expect(function.deprecation_messages.first.content).to eq('Eine Deprecationsmeldung')
+        expect(function.error_types.first.data_type.identifier).to eq(error_type.identifier)
         parameter = function.parameters.first
         expect(parameter.data_type.identifier).to eq(parameter_type.identifier)
         expect(parameter.runtime_name).to eq('runtime_parameter_definition_id')
         expect(parameter.names.first.content).to eq('Ein Parameter')
+        expect(parameter.descriptions.first.content).to eq('Eine Parameterbeschreibung')
+        expect(parameter.documentations.first.content).to eq('Eine Parameterdokumentation')
+        expect(parameter.default_value).to eq({ 'key' => 'value' })
 
         function_definition = FunctionDefinition.first
         expect(function_definition.names.first.content).to eq('Eine Funktion')
+        expect(function_definition.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
+        expect(function_definition.documentations.first.content).to eq('Eine Funktionsdokumentation')
         expect(function_definition.return_type.identifier).to eq(return_type.identifier)
-        parameter = ParameterDefinition.first
-        expect(parameter.data_type.identifier).to eq(parameter_type.identifier)
-        expect(parameter.names.first.content).to eq('Ein Parameter')
+        parameter_definition = ParameterDefinition.first
+        expect(parameter_definition.data_type.identifier).to eq(parameter_type.identifier)
+        expect(parameter_definition.names.first.content).to eq('Ein Parameter')
+        expect(parameter_definition.descriptions.first.content).to eq('Eine Parameterbeschreibung')
+        expect(parameter_definition.documentations.first.content).to eq('Eine Parameterdokumentation')
+        expect(parameter_definition.default_value).to eq({ 'key' => 'value' })
       end
     end
 

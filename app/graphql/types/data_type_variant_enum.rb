@@ -9,5 +9,7 @@ module Types
     value :OBJECT, 'Represents an object', value: :object
     value :DATA_TYPE, 'Represents an data type containing a data type', value: :datatype
     value :ARRAY, 'Represents an array', value: :array
+    value :GENERIC, 'Represents a generic', value: :generic
+    value :FUNCTION, 'Represents a function', value: :function
   end
 end

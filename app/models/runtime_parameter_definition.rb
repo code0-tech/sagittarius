@@ -5,6 +5,9 @@ class RuntimeParameterDefinition < ApplicationRecord
   belongs_to :data_type
 
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_many :documentations, -> { by_purpose(:documentation) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+
   has_many :parameter_definitions, inverse_of: :runtime_parameter_definition
 
   validates :runtime_name, length: { minimum: 3, maximum: 50 }, presence: true,
