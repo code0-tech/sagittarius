@@ -33,7 +33,8 @@ RSpec.describe Users::UpdateService do
 
   context 'when user and params are valid' do
     let(:params) do
-      { username: generate(:username) }
+      { username: generate(:username),
+        password: generate(:password) }
     end
     let(:current_user) { create(:user) }
 
@@ -106,8 +107,10 @@ RSpec.describe Users::UpdateService do
 
     it 'updates user' do
       expect { service_response }.to change {
-                                       current_user.reload.username
-                                     }.from(current_user.username).to(params[:username])
+        current_user.reload.username
+      }.from(current_user.username).to(params[:username]).and change {
+                                                                current_user.reload.password
+                                                              }.from(current_user.password).to(params[:password])
     end
 
     it do
