@@ -42,7 +42,7 @@ module Users
           author_id: current_authentication.user.id,
           entity: user,
           target: user,
-          details: params
+          details: params.except(:password)
         )
 
         ServiceResponse.success(message: 'Updated user', payload: user)
