@@ -46,7 +46,7 @@ group :development, :test do
   gem 'shoulda-matchers', '~> 6.0'
 
   gem 'rspec_junit_formatter', '~> 0.6.0', require: false
-  gem 'rspec-parameterized', '~> 1.0'
+  gem 'rspec-parameterized', '~> 2.0'
 
   gem 'database_cleaner-active_record', '~> 2.1'
 
