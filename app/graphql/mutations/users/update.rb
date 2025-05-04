@@ -16,6 +16,10 @@ module Mutations
       argument :firstname, String, required: false, description: 'New firstname for the user.'
       argument :lastname, String, required: false, description: 'New lastname for the user.'
       argument :password, String, required: false, description: 'New password for the user.'
+      argument :password_repeat,
+               String,
+               required: false,
+               description: 'New password repeat for the user to check for typos, required if password is set.'
       argument :username, String, required: false, description: 'New username for the user.'
 
       argument :mfa, Types::Input::MfaInput, required: false, description: 'The data of the mfa validation'
@@ -24,6 +28,12 @@ module Mutations
         user = SagittariusSchema.object_from_id(user_id)
 
         return { user: nil, errors: [create_message_error('Invalid user')] } if user.nil?
+
+        if params[:password] != params[:password_repeat]
+          return { user: nil, errors: [create_message_error('Invalid password repeat')] }
+        end
+
+        params.delete(:password_repeat)
 
         ::Users::UpdateService.new(
           current_authentication,

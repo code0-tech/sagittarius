@@ -23,10 +23,12 @@ RSpec.describe 'usersRegister Mutation' do
   end
 
   let(:input) do
+    password = generate(:password)
     {
       username: generate(:username),
       email: generate(:email),
-      password: generate(:password),
+      password: password,
+      passwordRepeat: password,
     }
   end
 
@@ -53,10 +55,12 @@ RSpec.describe 'usersRegister Mutation' do
 
   context 'when the user details already exists' do
     let(:input) do
+      password = generate(:password)
       {
         username: generate(:username),
         email: generate(:email),
-        password: generate(:password),
+        password: password,
+        passwordRepeat: password,
       }
     end
 
@@ -71,12 +75,32 @@ RSpec.describe 'usersRegister Mutation' do
     end
   end
 
+  context 'when password != password_repeat' do
+    let(:input) do
+      {
+        username: generate(:username),
+        email: generate(:email),
+        password: generate(:password),
+        passwordRepeat: generate(:password),
+      }
+    end
+
+    it 'returns errors' do
+      expect(graphql_data_at(:users_register, :user_session)).not_to be_present
+
+      expect(graphql_data_at(:users_register, :errors)).to include(
+        { 'message' => 'Invalid password repeat' }
+      )
+    end
+  end
+
   context 'when input is invalid' do
     let(:input) do
       {
         username: '',
         email: '',
         password: '',
+        passwordRepeat: '',
       }
     end
 
