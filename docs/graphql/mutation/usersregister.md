@@ -11,6 +11,7 @@ Register a new user
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `email` | [`String!`](../scalar/string.md) | Email of the user |
 | `password` | [`String!`](../scalar/string.md) | Password of the user |
+| `passwordRepeat` | [`String!`](../scalar/string.md) | The repeated password of the user to check for typos |
 | `username` | [`String!`](../scalar/string.md) | Username of the user |
 
 ## Fields

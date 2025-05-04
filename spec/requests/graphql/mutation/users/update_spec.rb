@@ -53,6 +53,49 @@ RSpec.describe 'usersUpdate Mutation' do
     )
   end
 
+  context 'when updating password' do
+    context 'when password repeat is different' do
+      let(:input) do
+        {
+          userId: current_user.to_global_id.to_s,
+          password: generate(:password),
+          passwordRepeat: generate(:password),
+        }
+      end
+
+      it 'returns an error' do
+        expect(graphql_data_at(:users_update, :user)).to be_nil
+        expect(graphql_data_at(:users_update, :errors)).to include({ 'message' => 'Invalid password repeat' })
+      end
+    end
+
+    context 'when password repeat is the same' do
+      let(:input) do
+        password = generate(:password)
+        {
+          userId: current_user.to_global_id.to_s,
+          password: password,
+          passwordRepeat: password,
+        }
+      end
+
+      it 'updates the password' do
+        expect(graphql_data_at(:users_update, :user, :id)).to be_present
+        user = SagittariusSchema.object_from_id(graphql_data_at(:users_update, :user, :id))
+
+        is_expected.to create_audit_event(
+          :user_updated,
+          author_id: current_user.id,
+          entity_id: user.id,
+          entity_type: 'User',
+          details: {},
+          target_id: user.id,
+          target_type: 'User'
+        )
+      end
+    end
+  end
+
   context 'when updating mfa required fields' do
     context 'when mfa is not provided' do
       let(:current_user) { create(:user, :mfa_totp) }
