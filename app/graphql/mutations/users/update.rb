@@ -29,11 +29,9 @@ module Mutations
 
         return { user: nil, errors: [create_message_error('Invalid user')] } if user.nil?
 
-        if params[:password] != params[:password_repeat]
+        if params[:password] != params.delete(:password_repeat)
           return { user: nil, errors: [create_message_error('Invalid password repeat')] }
         end
-
-        params.delete(:password_repeat)
 
         ::Users::UpdateService.new(
           current_authentication,
