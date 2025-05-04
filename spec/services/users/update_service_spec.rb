@@ -3,7 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe Users::UpdateService do
-  subject(:service_response) { described_class.new(create_authentication(current_user), current_user, params).execute }
+  subject(:service_response) do
+    described_class.new(create_authentication(current_user), current_user, mfa, params).execute
+  end
+
+  let(:mfa) { nil }
 
   shared_examples 'does not update' do
     it { is_expected.to be_error }
@@ -39,7 +43,7 @@ RSpec.describe Users::UpdateService do
     let(:current_user) { create(:user) }
 
     context 'when user tries to update admin status' do
-      subject(:service_response) { described_class.new(create_authentication(current_user), user, params).execute }
+      subject(:service_response) { described_class.new(create_authentication(current_user), user, mfa, params).execute }
 
       context 'when user is admin' do
         let(:params) do
@@ -98,6 +102,98 @@ RSpec.describe Users::UpdateService do
 
         it do
           is_expected.not_to create_audit_event
+        end
+      end
+    end
+
+    context 'when updating mfa required fields' do
+      let(:params) do
+        { email: generate(:email) }
+      end
+      let(:current_user) { create(:user, :mfa_totp) }
+
+      context 'when mfa is provided' do
+        let(:otp) { ROTP::TOTP.new(current_user.totp_secret).now }
+        let(:mfa) do
+          { type: :totp, value: otp }
+        end
+
+        it { is_expected.to be_success }
+        it { expect(service_response.payload.reload).to be_valid }
+
+        it 'updates user' do
+          expect { service_response }.to change {
+            current_user.reload.email
+          }.from(current_user.email).to(params[:email])
+        end
+
+        it do
+          is_expected.to create_audit_event(
+            :user_updated,
+            author_id: current_user.id,
+            entity_type: 'User',
+            details: { email: params[:email], mfa_type: 'totp' },
+            target_type: 'User'
+          )
+        end
+      end
+
+      context 'when mfa is not provided' do
+        it 'requires mfa' do
+          expect(service_response.payload).to eq(:mfa_required)
+        end
+
+        it { is_expected.not_to be_success }
+
+        it 'does not update user' do
+          expect { service_response }.not_to change { current_user.reload.username }
+        end
+
+        it do
+          is_expected.not_to create_audit_event
+        end
+      end
+
+      context 'when mfa is invalid' do
+        let(:mfa) do
+          { type: :totp, value: '123456' }
+        end
+
+        it 'fails' do
+          expect(service_response.payload).to eq(:mfa_failed)
+        end
+
+        it { is_expected.not_to be_success }
+
+        it 'does not update user' do
+          expect { service_response }.not_to change { current_user.reload.email }
+        end
+
+        it do
+          is_expected.not_to create_audit_event
+        end
+      end
+
+      context 'when mfa is not activated and not provided' do
+        let(:current_user) { create(:user) }
+
+        it { is_expected.to be_success }
+        it { expect(service_response.payload.reload).to be_valid }
+
+        it 'updates user' do
+          expect { service_response }.to change {
+            current_user.reload.email
+          }.from(current_user.email).to(params[:email])
+        end
+
+        it do
+          is_expected.to create_audit_event(
+            :user_updated,
+            author_id: current_user.id,
+            entity_type: 'User',
+            details: { email: params[:email] },
+            target_type: 'User'
+          )
         end
       end
     end

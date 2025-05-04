@@ -7,17 +7,20 @@ module Mutations
 
       field :user, Types::UserType, null: true, description: 'The updated user.'
 
+      argument :user_id, Types::GlobalIdType[::User],
+               required: true,
+               description: 'ID of the user to update.'
+
       argument :admin, Boolean, required: false, description: 'New global admin status for the user.'
       argument :email, String, required: false, description: 'New email for the user.'
       argument :firstname, String, required: false, description: 'New firstname for the user.'
       argument :lastname, String, required: false, description: 'New lastname for the user.'
       argument :password, String, required: false, description: 'New password for the user.'
-      argument :user_id, Types::GlobalIdType[::User],
-               required: true,
-               description: 'ID of the user to update.'
       argument :username, String, required: false, description: 'New username for the user.'
 
-      def resolve(user_id:, **params)
+      argument :mfa, Types::Input::MfaInput, required: false, description: 'The data of the mfa validation'
+
+      def resolve(user_id:, mfa: nil, **params)
         user = SagittariusSchema.object_from_id(user_id)
 
         return { user: nil, errors: [create_message_error('Invalid user')] } if user.nil?
@@ -25,6 +28,7 @@ module Mutations
         ::Users::UpdateService.new(
           current_authentication,
           user,
+          mfa,
           params
         ).execute.to_mutation_response(success_key: :user)
       end

@@ -37,4 +37,22 @@ class User < ApplicationRecord
   def admin?
     admin
   end
+
+  def validate_mfa!(mfa)
+    mfa_passed = false
+    mfa_type = mfa&.[](:type)
+    mfa_value = mfa&.[](:value)
+
+    case mfa_type
+    when :backup_code
+      backup_code = BackupCode.where(user: self, token: mfa_value)
+      mfa_passed = backup_code.count.positive?
+      backup_code.delete_all
+      mfa_passed = false unless backup_code.count.zero?
+    when :totp
+      totp = ROTP::TOTP.new(totp_secret)
+      mfa_passed = totp.verify(mfa_value)
+    end
+    [mfa_passed, mfa_type]
+  end
 end

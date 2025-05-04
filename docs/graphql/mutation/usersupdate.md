@@ -13,6 +13,7 @@ Update an existing user.
 | `email` | [`String`](../scalar/string.md) | New email for the user. |
 | `firstname` | [`String`](../scalar/string.md) | New firstname for the user. |
 | `lastname` | [`String`](../scalar/string.md) | New lastname for the user. |
+| `mfa` | [`MfaInput`](../input_object/mfainput.md) | The data of the mfa validation |
 | `password` | [`String`](../scalar/string.md) | New password for the user. |
 | `userId` | [`UserID!`](../scalar/userid.md) | ID of the user to update. |
 | `username` | [`String`](../scalar/string.md) | New username for the user. |
