@@ -160,6 +160,46 @@ CREATE SEQUENCE data_types_id_seq
 
 ALTER SEQUENCE data_types_id_seq OWNED BY data_types.id;
 
+CREATE TABLE flow_type_settings (
+    id bigint NOT NULL,
+    flow_type_id bigint NOT NULL,
+    identifier text NOT NULL,
+    "unique" boolean DEFAULT false NOT NULL,
+    data_type_id bigint NOT NULL,
+    default_value jsonb,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE flow_type_settings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE flow_type_settings_id_seq OWNED BY flow_type_settings.id;
+
+CREATE TABLE flow_types (
+    id bigint NOT NULL,
+    runtime_id bigint NOT NULL,
+    identifier text NOT NULL,
+    input_type_id bigint,
+    return_type_id bigint,
+    editable boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE flow_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE flow_types_id_seq OWNED BY flow_types.id;
+
 CREATE TABLE function_definitions (
     id bigint NOT NULL,
     runtime_function_definition_id bigint NOT NULL,
@@ -609,6 +649,10 @@ ALTER TABLE ONLY data_type_rules ALTER COLUMN id SET DEFAULT nextval('data_type_
 
 ALTER TABLE ONLY data_types ALTER COLUMN id SET DEFAULT nextval('data_types_id_seq'::regclass);
 
+ALTER TABLE ONLY flow_type_settings ALTER COLUMN id SET DEFAULT nextval('flow_type_settings_id_seq'::regclass);
+
+ALTER TABLE ONLY flow_types ALTER COLUMN id SET DEFAULT nextval('flow_types_id_seq'::regclass);
+
 ALTER TABLE ONLY function_definitions ALTER COLUMN id SET DEFAULT nextval('function_definitions_id_seq'::regclass);
 
 ALTER TABLE ONLY namespace_licenses ALTER COLUMN id SET DEFAULT nextval('namespace_licenses_id_seq'::regclass);
@@ -673,6 +717,12 @@ ALTER TABLE ONLY data_type_rules
 
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT data_types_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY flow_type_settings
+    ADD CONSTRAINT flow_type_settings_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY flow_types
+    ADD CONSTRAINT flow_types_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT function_definitions_pkey PRIMARY KEY (id);
@@ -779,6 +829,16 @@ CREATE INDEX index_data_types_on_parent_type_id ON data_types USING btree (paren
 
 CREATE UNIQUE INDEX index_data_types_on_runtime_id_and_identifier ON data_types USING btree (runtime_id, identifier);
 
+CREATE INDEX index_flow_type_settings_on_data_type_id ON flow_type_settings USING btree (data_type_id);
+
+CREATE UNIQUE INDEX index_flow_type_settings_on_flow_type_id_and_identifier ON flow_type_settings USING btree (flow_type_id, identifier);
+
+CREATE INDEX index_flow_types_on_input_type_id ON flow_types USING btree (input_type_id);
+
+CREATE INDEX index_flow_types_on_return_type_id ON flow_types USING btree (return_type_id);
+
+CREATE UNIQUE INDEX index_flow_types_on_runtime_id_and_identifier ON flow_types USING btree (runtime_id, identifier);
+
 CREATE INDEX index_function_definitions_on_return_type_id ON function_definitions USING btree (return_type_id);
 
 CREATE INDEX index_function_definitions_on_runtime_function_definition_id ON function_definitions USING btree (runtime_function_definition_id);
@@ -869,6 +929,9 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(
 
 CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
 
+ALTER TABLE ONLY flow_types
+    ADD CONSTRAINT fk_rails_01f5c9215f FOREIGN KEY (input_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
+
 ALTER TABLE ONLY runtime_function_definition_error_types
     ADD CONSTRAINT fk_rails_070c5bfcf0 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
 
@@ -917,6 +980,9 @@ ALTER TABLE ONLY namespace_role_project_assignments
 ALTER TABLE ONLY user_identities
     ADD CONSTRAINT fk_rails_684b0e1ce0 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY flow_types
+    ADD CONSTRAINT fk_rails_687d671458 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY namespace_role_project_assignments
     ADD CONSTRAINT fk_rails_69066bda8f FOREIGN KEY (project_id) REFERENCES namespace_projects(id);
 
@@ -941,6 +1007,12 @@ ALTER TABLE ONLY user_sessions
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY flow_type_settings
+    ADD CONSTRAINT fk_rails_a1471d011d FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
+
+ALTER TABLE ONLY flow_types
+    ADD CONSTRAINT fk_rails_bead35b1a6 FOREIGN KEY (return_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
+
 ALTER TABLE ONLY active_storage_attachments
     ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
 
@@ -958,3 +1030,6 @@ ALTER TABLE ONLY runtimes
 
 ALTER TABLE ONLY audit_events
     ADD CONSTRAINT fk_rails_f64374fc56 FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY flow_type_settings
+    ADD CONSTRAINT fk_rails_f6af7d8edf FOREIGN KEY (flow_type_id) REFERENCES flow_types(id) ON DELETE CASCADE;
