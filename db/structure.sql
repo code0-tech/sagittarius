@@ -187,6 +187,7 @@ CREATE TABLE flow_types (
     input_type_id bigint,
     return_type_id bigint,
     editable boolean DEFAULT true NOT NULL,
+    removed_at timestamp with time zone,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
