@@ -42,6 +42,12 @@ module Types
 
     field :global_runtimes, Types::RuntimeType.connection_type, null: false, description: 'Find runtimes'
 
+    field :flow_types, Types::FlowTypeType.connection_type, null: false,
+                                                            description: 'Find flow types in a specifc runtime' do
+      argument :runtime_id, Types::GlobalIdType[::Runtime], required: true,
+                                                            description: 'GlobalID of the target runtime'
+    end
+
     def node(id:)
       context.schema.object_from_id(id, context)
     end
@@ -74,6 +80,13 @@ module Types
 
     def global_runtimes
       Runtime.where(namespace: nil)
+    end
+
+    def flow_types(runtime_id:)
+      runtime = Runtime.find_by(id: runtime_id.model_id)
+      return [] unless runtime
+
+      FlowType.where(runtime: runtime)
     end
 
     def current_authentication
