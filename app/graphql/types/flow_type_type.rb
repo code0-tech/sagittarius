@@ -9,8 +9,8 @@ module Types
     field :descriptions, Types::TranslationType.connection_type, null: true,
                                                                  description: 'Descriptions of the flow type'
     field :editable, Boolean, null: false, description: 'Editable status of the flow type'
-    field :flow_type_settings,
-          Types::FlowTypeSettingType.connection_type, null: true, description: 'Flow type settings of the flow type'
+    field :flow_type_settings, [Types::FlowTypeSettingType], null: false,
+                                                             description: 'Flow type settings of the flow type'
     field :identifier, String, null: false, description: 'Identifier of the flow type'
     field :input_type, Types::DataTypeType, null: true, description: 'Input type of the flow type'
     field :names, Types::TranslationType.connection_type, null: true, description: 'Names of the flow type'

@@ -22,6 +22,8 @@ class NamespacePolicy < BasePolicy
     enable :read_namespace_role
     enable :read_runtime
     enable :read_datatype
+    enable :read_flow_type
+    enable :read_flow_type_setting
   end
 
   namespace_resolver { |namespace| namespace }

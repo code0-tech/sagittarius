@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FlowType < ApplicationRecord
-  belongs_to :runtime
+  belongs_to :runtime, inverse_of: :flow_types
 
   belongs_to :input_type, class_name: 'DataType', optional: true
   belongs_to :return_type, class_name: 'DataType', optional: true

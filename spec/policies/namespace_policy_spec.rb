@@ -15,6 +15,8 @@ RSpec.describe NamespacePolicy do
     it { is_expected.to be_allowed(:read_namespace_member) }
     it { is_expected.to be_allowed(:read_namespace_member_role) }
     it { is_expected.to be_allowed(:read_namespace_role) }
+    it { is_expected.to be_allowed(:read_flow_type) }
+    it { is_expected.to be_allowed(:read_flow_type_setting) }
   end
 
   context 'when user is not member of the namespace' do
@@ -25,6 +27,8 @@ RSpec.describe NamespacePolicy do
     it { is_expected.not_to be_allowed(:read_namespace_member) }
     it { is_expected.not_to be_allowed(:read_namespace_member_role) }
     it { is_expected.not_to be_allowed(:read_namespace_role) }
+    it { is_expected.not_to be_allowed(:read_flow_type) }
+    it { is_expected.not_to be_allowed(:read_flow_type_setting) }
   end
 
   context 'when user is nil' do
@@ -35,5 +39,7 @@ RSpec.describe NamespacePolicy do
     it { is_expected.not_to be_allowed(:read_namespace_member) }
     it { is_expected.not_to be_allowed(:read_namespace_member_role) }
     it { is_expected.not_to be_allowed(:read_namespace_role) }
+    it { is_expected.not_to be_allowed(:read_flow_type) }
+    it { is_expected.not_to be_allowed(:read_flow_type_setting) }
   end
 end

@@ -26,20 +26,6 @@ Returns [`String!`](../scalar/string.md).
 |------|------|-------------|
 | `message` | [`String!`](../scalar/string.md) | String to echo as response |
 
-### flowTypes
-
-Find flow types in a specifc runtime
-
-Returns [`FlowTypeConnection!`](../object/flowtypeconnection.md).
-
-| Name | Type | Description |
-|------|------|-------------|
-| `after` | [`String`](../scalar/string.md) | Returns the elements in the list that come after the specified cursor. |
-| `before` | [`String`](../scalar/string.md) | Returns the elements in the list that come before the specified cursor. |
-| `first` | [`Int`](../scalar/int.md) | Returns the first _n_ elements from the list. |
-| `last` | [`Int`](../scalar/int.md) | Returns the last _n_ elements from the list. |
-| `runtimeId` | [`RuntimeID!`](../scalar/runtimeid.md) | GlobalID of the target runtime |
-
 ### namespace
 
 Find a namespace

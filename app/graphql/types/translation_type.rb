@@ -4,8 +4,6 @@ module Types
   class TranslationType < Types::BaseObject
     description 'Represents a translation'
 
-    authorize :read_translation
-
     field :code, String, null: false, description: 'Code of the translation'
     field :content, String, null: false, description: 'Content of the translation'
   end
