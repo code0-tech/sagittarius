@@ -9,6 +9,7 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
       namespace
       name
       dataTypes
+      flowTypes
       description
       token
       createdAt

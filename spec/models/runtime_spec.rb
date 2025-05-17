@@ -8,6 +8,7 @@ RSpec.describe Runtime do
   describe 'associations' do
     it { is_expected.to belong_to(:namespace).optional }
     it { is_expected.to have_many(:data_types).inverse_of(:runtime) }
+    it { is_expected.to have_many(:flow_types).inverse_of(:runtime) }
   end
 
   describe 'validations' do
