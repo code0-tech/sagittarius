@@ -10,6 +10,7 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
       name
       dataTypes
       description
+      status
       token
       createdAt
       updatedAt
