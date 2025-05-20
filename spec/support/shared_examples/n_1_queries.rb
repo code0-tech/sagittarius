@@ -28,7 +28,9 @@ end
 RSpec.shared_examples 'prevents N+1 queries (graphql)', type: :request do |**kwargs|
   include GraphqlHelpers
 
+  # rubocop:disable RSpec/IncludeExamples
   include_examples 'prevents N+1 queries', **kwargs do
+    # rubocop:enable RSpec/IncludeExamples
     let(:current_user) { nil }
     let(:variables) { {} }
     let(:action) do
