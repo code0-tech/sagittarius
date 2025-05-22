@@ -25,21 +25,33 @@ module Sagittarius
         GrpcHandler.register_on_server(@server)
       end
 
-      def run!
+      def run_server!
         load if @server.nil?
         logger.info('Running server')
         @server.run_till_terminated_or_interrupted(%w[QUIT INT TERM])
       end
 
+      def run_stream_listener!
+        GrpcStreamHandler.listen!
+      end
+
       def start
         load
-        @server_thread = Thread.new { run! }
+        @stream_thread = Thread.new { run_stream_listener! }
+        @server_thread = Thread.new { run_server! }
+      end
+
+      def start_blocking
+        start
+        @server_thread.join # Wait for the server thread to finish because the program would end otherwise
       end
 
       def stop
         @server.stop
         @server_thread.join
         @server_thread.terminate
+        @stream_thread.join
+        @stream_thread.terminate
       end
     end
   end
