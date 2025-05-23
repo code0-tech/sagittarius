@@ -26,29 +26,40 @@ module GrpcStreamHandler
     end
   end
 
+  def self.stop_listen!
+    logger.info(message: 'Stopping listener')
+    GrpcStreamHandler.exiting = true
+  end
+
   def self.listen!
-    conn = ActiveRecord::Base.connection.raw_connection
-    conn.exec('LISTEN grpc_streams')
+    ActiveRecord::Base.with_connection do |ar_conn|
+      conn = ar_conn.raw_connection
+      conn.exec('LISTEN grpc_streams')
 
-    logger.info(message: 'Listening for notifications on grpc_streams channel')
-    loop do
-      conn.wait_for_notify do |_, _, payload|
-        logger.info(message: 'Received notification', payload: payload)
-        class_name, method_name, runtime_id, encoded_data64 = payload.split(',')
+      logger.info(message: 'Listening for notifications on grpc_streams channel')
+      loop do
+        break if GrpcStreamHandler.exiting
 
-        clazz = class_name.constantize
-        method_name = method_name.to_sym
+        conn.wait_for_notify(1) do |_, _, payload|
+          logger.info(message: 'Received notification', payload: payload)
+          class_name, method_name, runtime_id, encoded_data64 = payload.split(',')
 
-        queues = GrpcStreamHandler.yielders.dig(clazz, method_name, runtime_id.to_i)
-        queues&.each do |queue|
-          data = Base64.decode64(encoded_data64)
-          decoded_data = clazz.decoders[method_name].call(data)
+          clazz = class_name.constantize
+          method_name = method_name.to_sym
 
-          queue << decoded_data
-        rescue StandardError => e
-          logger.error(message: 'Error while yielding data', error: e.message)
+          queues = GrpcStreamHandler.yielders.dig(clazz, method_name, runtime_id.to_i)
+          queues&.each do |queue|
+            data = Base64.decode64(encoded_data64)
+            decoded_data = clazz.decoders[method_name].call(data)
+
+            queue << decoded_data
+          rescue StandardError => e
+            logger.error(message: 'Error while yielding data', error: e.message)
+          end
         end
       end
+      conn.exec('UNLISTEN grpc_streams')
+      logger.info(message: 'Stopped listening for notifications on grpc_streams channel')
     end
   end
 
@@ -85,6 +96,7 @@ module GrpcStreamHandler
     enumerator
   end
 
-  mattr_accessor :yielders
+  mattr_accessor :yielders, :exiting
   GrpcStreamHandler.yielders = {}
+  GrpcStreamHandler.exiting = false
 end

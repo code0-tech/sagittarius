@@ -50,6 +50,8 @@ module Sagittarius
         @server.stop
         @server_thread.join
         @server_thread.terminate
+
+        GrpcStreamHandler.stop_listen!
         @stream_thread.join
         @stream_thread.terminate
       end
