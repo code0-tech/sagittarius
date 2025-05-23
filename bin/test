@@ -12,9 +12,16 @@ def main
   begin
     message = Tucana::Sagittarius::FlowLogonRequest.new
 
+    puts "Sending: #{message.inspect}"
+
     stub.update(message).each do |response|
       puts "Received: #{response.inspect}"
+
+      puts "Simulating exit"
+      exit
     end
+
+    puts "Done"
 
   rescue GRPC::BadStatus => e
     abort "ERROR: #{e.message}"
