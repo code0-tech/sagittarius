@@ -3,4 +3,4 @@
 
 require_relative '../config/environment'
 
-Sagittarius::Grpc::Launcher.new.run!
+Sagittarius::Grpc::Launcher.new.start_blocking
