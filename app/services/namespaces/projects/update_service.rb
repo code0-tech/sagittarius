@@ -27,6 +27,20 @@ module Namespaces
             )
           end
 
+          if params.key?(:primary_runtime)
+            runtime = params[:primary_runtime]
+
+            if runtime.namespace != namespace_project.namespace
+              return ServiceResponse.error(
+                message: 'Primary runtime must belong to the same namespace as the project',
+                payload: :invalid_primary_runtime
+              )
+            end
+
+            params[:primary_runtime_id] = runtime.id if runtime.is_a?(Runtime)
+            params.delete(:primary_runtime)
+          end
+
           AuditService.audit(
             :namespace_project_updated,
             author_id: current_authentication.user.id,

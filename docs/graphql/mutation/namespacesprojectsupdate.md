@@ -12,6 +12,7 @@ Updates a namespace project.
 | `description` | [`String`](../scalar/string.md) | Description for the updated project. |
 | `name` | [`String`](../scalar/string.md) | Name for the updated project. |
 | `namespaceProjectId` | [`NamespaceProjectID!`](../scalar/namespaceprojectid.md) | The id of the namespace project which will be updated |
+| `primaryRuntimeId` | [`RuntimeID`](../scalar/runtimeid.md) | The primary runtime for the updated project. |
 
 ## Fields
 
