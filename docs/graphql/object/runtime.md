@@ -11,6 +11,7 @@ Represents a runtime
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Runtime was created |
 | `dataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | DataTypes of the runtime |
 | `description` | [`String!`](../scalar/string.md) | The description for the runtime if present |
+| `flowTypes` | [`FlowTypeConnection!`](../object/flowtypeconnection.md) | FlowTypes of the runtime |
 | `id` | [`RuntimeID!`](../scalar/runtimeid.md) | Global ID of this Runtime |
 | `name` | [`String!`](../scalar/string.md) | The name for the runtime |
 | `namespace` | [`Namespace`](../object/namespace.md) | The parent namespace for the runtime |

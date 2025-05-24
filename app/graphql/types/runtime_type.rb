@@ -8,6 +8,7 @@ module Types
 
     field :data_types, Types::DataTypeType.connection_type, null: false, description: 'DataTypes of the runtime'
     field :description, String, null: false, description: 'The description for the runtime if present'
+    field :flow_types, Types::FlowTypeType.connection_type, null: false, description: 'FlowTypes of the runtime'
     field :name, String, null: false, description: 'The name for the runtime'
     field :namespace, Types::NamespaceType, null: true, description: 'The parent namespace for the runtime'
     field :token, String, null: true, description: 'Token belonging to the runtime, only present on creation'

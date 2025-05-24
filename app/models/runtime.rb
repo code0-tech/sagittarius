@@ -9,6 +9,8 @@ class Runtime < ApplicationRecord
 
   has_many :data_types, inverse_of: :runtime
 
+  has_many :flow_types, inverse_of: :runtime
+
   validates :name, presence: true,
                    length: { minimum: 3, maximum: 50 },
                    allow_blank: false,

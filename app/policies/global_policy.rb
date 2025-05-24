@@ -7,7 +7,11 @@ class GlobalPolicy < BasePolicy
   rule { ~anonymous }.enable :create_organization
   rule { organization_creation_restricted & ~admin }.prevent :create_organization
 
-  rule { ~anonymous }.enable :read_runtime
+  rule { ~anonymous }.policy do
+    enable :read_runtime
+    enable :read_flow_type
+    enable :read_flow_type_setting
+  end
 
   rule { admin }.policy do
     enable :read_application_setting
