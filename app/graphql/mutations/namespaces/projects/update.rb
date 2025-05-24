@@ -13,6 +13,8 @@ module Mutations
 
         argument :description, String, required: false, description: 'Description for the updated project.'
         argument :name, String, required: false, description: 'Name for the updated project.'
+        argument :primary_runtime_id, Types::GlobalIdType[::Runtime],
+                 required: false, description: 'The primary runtime for the updated project.'
 
         def resolve(namespace_project_id:, **params)
           project = SagittariusSchema.object_from_id(namespace_project_id)
@@ -20,6 +22,16 @@ module Mutations
           if project.nil?
             return { organization_project: nil,
                      errors: [create_message_error('Invalid project')] }
+          end
+
+          if params.key?(:primary_runtime_id)
+            primary_runtime = SagittariusSchema.object_from_id(params[:primary_runtime_id])
+            if primary_runtime.nil?
+              return { namespace_project: nil, errors: [create_message_error('Could not find runtime')] }
+            end
+
+            params[:primary_runtime] = primary_runtime
+            params.delete(:primary_runtime_id)
           end
 
           ::Namespaces::Projects::UpdateService.new(
