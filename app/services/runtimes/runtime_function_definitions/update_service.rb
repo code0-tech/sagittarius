@@ -38,7 +38,8 @@ module Runtimes
         )
         db_object.removed_at = nil
         db_object.return_type = if runtime_function_definition.return_type_identifier.present?
-                                  find_data_type(runtime_function_definition.return_type_identifier, t)
+                                  find_data_type_identifier(runtime_function_definition.return_type_identifier,
+                                                            runtime_function_definition.generic_mappers, t)
                                 end
         db_object.parameters = update_parameters(runtime_function_definition.runtime_parameter_definitions,
                                                  db_object.parameters, t)
@@ -66,6 +67,32 @@ module Runtimes
         db_object
       end
 
+      # These mappers can be either generic mappers or generic function mappers.
+      def find_data_type_identifier(identifier, _generic_mappers, t)
+        if identifier.data_type_identifier.present?
+          data_type_identifier = DataTypeIdentifier.find_by(data_type: find_data_type(identifier.data_type_identifier,
+                                                                                      t))
+
+          if data_type_identifier.nil?
+            t.rollback_and_return! ServiceResponse.error(
+              message: "Could not find datatype identifier with identifier #{identifier}",
+              payload: :no_datatype_identifier_for_identifier
+            )
+          end
+
+          return data_type_identifier
+        end
+        if identifier.generic_type.present?
+          return find_data_type_identifier(identifier.generic_type.identifier, identifier.generic_type.generic_mappers,
+                                           t)
+        end
+        if identifier.generic_key.present?
+          return DataTypeIdentifier.find_or_create_by(runtime: current_runtime, generic_key: identifier.generic_key)
+        end
+
+        raise ArgumentError, "Invalid identifier: #{identifier.inspect}"
+      end
+
       def find_data_type(identifier, t)
         data_type = DataType.find_by(runtime: current_runtime, identifier: identifier)
 
@@ -90,7 +117,7 @@ module Runtimes
           end
           db_param.runtime_name = real_param.runtime_name
           db_param.removed_at = nil
-          db_param.data_type = find_data_type(real_param.data_type_identifier, t)
+          db_param.data_type = find_data_type_identifier(real_param.data_type_identifier, [], t)
 
           db_param.names = update_translations(real_param.name, db_param.names)
           db_param.descriptions = update_translations(real_param.description, db_param.descriptions)
