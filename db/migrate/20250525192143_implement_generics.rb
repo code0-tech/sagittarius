@@ -1,0 +1,86 @@
+# frozen_string_literal: true
+
+class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
+  def change
+    # See:
+    # https://github.com/code0-tech/tucana/pull/93
+
+    add_column :data_types, :generic_keys, 'text[]', null: false, default: []
+
+    create_table :data_type_identifiers do |t|
+      # One of them needs to be set
+      t.text :generic_key, null: true
+      t.references :data_type, null: true, foreign_key: { to_table: :data_types, on_delete: :restrict }
+
+      t.timestamps_with_timezone
+    end
+
+    create_table :generic_types do |t|
+      t.references :data_type_identifier, null: false,
+                                          foreign_key: { to_table: :data_type_identifiers, on_delete: :cascade }
+
+      t.timestamps_with_timezone
+    end
+
+    create_table :generic_mappers do |t|
+      t.text :target, null: false
+      # One of them needs to be set
+      t.text :generic_key, null: true
+      t.references :data_type_identifier, null: true,
+                                          foreign_key: { to_table: :data_type_identifiers, on_delete: :cascade }
+
+      t.check_constraint '(num_nonnulls(generic_key, data_type_identifier_id) = 1)',
+                         name: check_constraint_name(:generic_mappers, :source, :one_of)
+
+      t.references :generic_type, null: false, foreign_key: { to_table: :generic_types, on_delete: :cascade }
+
+      t.timestamps_with_timezone
+    end
+
+    add_reference :data_type_identifiers, :generic_type, null: true,
+                                                         foreign_key: { to_table: :generic_types, on_delete: :cascade }
+
+    add_check_constraint :data_type_identifiers, '(num_nonnulls(generic_key, data_type_id, generic_type_id) = 1)',
+                         name: check_constraint_name(:data_type_identifiers, :type, :one_of)
+
+    create_table :function_generic_mappers do |t|
+      t.references :data_type_identifier, null: true,
+                                          foreign_key: { to_table: :data_type_identifiers, on_delete: :cascade }
+      t.text :generic_key, null: true
+
+      t.text :target, null: false
+      t.text :parameter_id, null: true
+
+      t.check_constraint '(num_nonnulls(generic_key, data_type_identifier_id) = 1)',
+                         name: check_constraint_name(:function_generic_mappers, :source, :one_of)
+
+      t.references :runtime_function_definition, null: true,
+                                                 foreign_key: { to_table: :runtime_function_definitions,
+                                                                on_delete: :cascade }
+
+      t.timestamps_with_timezone
+    end
+
+    remove_column :runtime_function_definitions, :return_type_id
+    add_reference :runtime_function_definitions, :return_type,
+                  foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
+
+    add_column :runtime_function_definitions, :generic_keys, 'text[]', null: false, default: []
+
+    remove_column :runtime_parameter_definitions, :data_type_id
+    add_reference :runtime_parameter_definitions, :data_type,
+                  foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
+
+    remove_column :parameter_definitions, :data_type_id
+    add_reference :parameter_definitions, :data_type,
+                  foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
+
+    # remove_column :runtime_function_definition_error_types, :data_type_id
+    # add_reference :runtime_function_definition_error_types, :data_type,
+    #                           foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: false
+
+    remove_column :function_definitions, :return_type_id
+    add_reference :function_definitions, :return_type,
+                  foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
+  end
+end
