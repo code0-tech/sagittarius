@@ -3,7 +3,8 @@
 FactoryBot.define do
   factory :function_generic_mapper do
     target { nil }
-    runtime_parameter_definition { nil }
-    source { nil }
+    parameter_id { nil }
+    generic_key { nil }
+    data_type_identifier { nil }
   end
 end

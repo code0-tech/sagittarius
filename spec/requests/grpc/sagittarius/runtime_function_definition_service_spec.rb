@@ -10,14 +10,8 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
   describe 'Update' do
     context 'when create' do
       let(:runtime) { create(:runtime) }
-      let!(:parameter_type) do
-        create(:data_type_identifier, runtime: runtime, data_type: create(:data_type, runtime: runtime))
-      end
-
-      let!(:generic_type) do
-        create(:generic_type, runtime: runtime, data_type: create(:data_type, runtime: runtime))
-      end
-      let!(:return_type) { create(:data_type_identifier, runtime: runtime, generic_type: generic_type.reload).reload }
+      let(:parameter_type) { create(:data_type_identifier, data_type: create(:data_type, runtime: runtime)) }
+      let(:return_type) { create(:data_type_identifier, data_type: create(:data_type, runtime: runtime)) }
       let(:error_type) { create(:data_type, runtime: runtime) }
 
       let(:runtime_functions) do
@@ -37,18 +31,8 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
               { code: 'de_DE', content: 'Eine Deprecationsmeldung' }
             ],
             return_type_identifier: {
-              generic_type: {
-                data_type_identifier: return_type.generic_type.data_type.identifier,
-                generic_mappers: [{ source: { generic_key: 'T' }, target: 'V' }],
-              },
+              data_type_identifier: return_type.data_type.identifier,
             },
-            generic_mappers: [
-              {
-                source: { generic_key: 'X' },
-                target: 'Y',
-                parameter_id: 'some_id',
-              }
-            ],
             error_type_identifiers: [error_type.identifier],
             runtime_parameter_definitions: [
               {
@@ -79,16 +63,9 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
       it 'creates a correct functions' do
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-        expect(GenericMapper.count).to eq(1)
-        expect(GenericMapper.last.source.generic_key).to eq('T')
-        expect(GenericMapper.last.target).to eq('V')
-
-        expect(GenericType.count).to eq(1)
-
         function = RuntimeFunctionDefinition.last
         expect(function.runtime_name).to eq('runtime_function_id')
-        expect(function.return_type.generic_type.reload.data_type.identifier)
-          .to eq(return_type.generic_type.data_type.identifier)
+        expect(function.return_type.data_type.identifier).to eq(return_type.data_type.identifier)
         expect(function.names.first.content).to eq('Eine Funktion')
         expect(function.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function.documentations.first.content).to eq('Eine Funktionsdokumentation')
@@ -106,27 +83,19 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function_definition.names.first.content).to eq('Eine Funktion')
         expect(function_definition.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function_definition.documentations.first.content).to eq('Eine Funktionsdokumentation')
-        expect(function_definition.return_type.generic_type.reload.data_type.identifier)
-          .to eq(return_type.generic_type.data_type.identifier)
+        expect(function_definition.return_type.data_type.identifier).to eq(return_type.data_type.identifier)
         parameter_definition = ParameterDefinition.first
         expect(parameter_definition.data_type.data_type.identifier).to eq(parameter_type.data_type.identifier)
         expect(parameter_definition.names.first.content).to eq('Ein Parameter')
         expect(parameter_definition.descriptions.first.content).to eq('Eine Parameterbeschreibung')
         expect(parameter_definition.documentations.first.content).to eq('Eine Parameterdokumentation')
         expect(parameter_definition.default_value).to eq({ 'key' => 'value' })
-
-        expect(FunctionGenericMapper.count).to eq(1)
-        expect(FunctionGenericMapper.last.source.generic_key).to eq('X')
-        expect(FunctionGenericMapper.last.target).to eq('Y')
-        expect(FunctionGenericMapper.last.parameter_id).to eq('some_id')
       end
     end
 
     context 'when update' do
       let(:runtime) { create(:runtime) }
-      let(:data_type) do
-        create(:data_type_identifier, runtime: runtime, data_type: create(:data_type, runtime: runtime))
-      end
+      let(:data_type) { create(:data_type_identifier, data_type: create(:data_type, runtime: runtime)) }
 
       let(:existing_runtime_function_definition) do
         create(:runtime_function_definition,
@@ -188,9 +157,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
       end
 
       let!(:existing_runtime_parameter_definition) do
-        create(:runtime_parameter_definition, data_type: create(:data_type_identifier,
-                                                                runtime: runtime,
-                                                                data_type: create(:data_type, runtime: runtime)),
+        create(:runtime_parameter_definition, data_type: create(:data_type_identifier, data_type: create(:data_type)),
                                               runtime_function_definition: existing_runtime_function_definition)
       end
 
