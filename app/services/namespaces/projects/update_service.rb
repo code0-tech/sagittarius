@@ -18,6 +18,8 @@ module Namespaces
           return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
         end
 
+        params[:primary_runtime_id] = params.delete(:primary_runtime)&.id if params.key?(:primary_runtime)
+
         transactional do |t|
           success = namespace_project.update(params)
           unless success
@@ -25,20 +27,6 @@ module Namespaces
               message: 'Failed to update namespace project',
               payload: namespace_project.errors
             )
-          end
-
-          if params.key?(:primary_runtime)
-            runtime = params[:primary_runtime]
-
-            if runtime.namespace != namespace_project.namespace
-              return ServiceResponse.error(
-                message: 'Primary runtime must belong to the same namespace as the project',
-                payload: :invalid_primary_runtime
-              )
-            end
-
-            params[:primary_runtime_id] = runtime.id if runtime.is_a?(Runtime)
-            params.delete(:primary_runtime)
           end
 
           AuditService.audit(

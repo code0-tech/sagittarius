@@ -19,6 +19,15 @@ class NamespaceProject < ApplicationRecord
 
   before_validation :strip_whitespace
 
+  validate :validate_primary_runtime, if: :primary_runtime_changed?
+
+  def validate_primary_runtime
+    return if primary_runtime&.namespace.nil?
+    return if primary_runtime.namespace == namespace
+
+    errors.add(:primary_runtime, :invalid_namespace, message: 'must belong to the same namespace as the project')
+  end
+
   private
 
   def strip_whitespace

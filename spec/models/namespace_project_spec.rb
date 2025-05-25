@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe NamespaceProject do
-  subject { create(:namespace_project) }
+  subject(:project) { create(:namespace_project) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:namespace).required }
@@ -25,5 +25,18 @@ RSpec.describe NamespaceProject do
     it { is_expected.to allow_value(' ').for(:description) }
     it { is_expected.to allow_value('').for(:description) }
     it { is_expected.not_to allow_value(nil).for(:description) }
+
+    it 'detects invalid primary runtime namespace' do
+      runtime = create(:runtime, namespace: create(:namespace))
+      project.primary_runtime = runtime
+      is_expected.not_to be_valid
+      expect(project.errors[:primary_runtime]).to include('must belong to the same namespace as the project')
+    end
+
+    it 'allows primary runtime namespace to be nil' do
+      runtime = create(:runtime, namespace: nil)
+      project.primary_runtime = runtime
+      is_expected.to be_valid
+    end
   end
 end

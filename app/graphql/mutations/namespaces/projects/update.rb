@@ -24,15 +24,7 @@ module Mutations
                      errors: [create_message_error('Invalid project')] }
           end
 
-          if params.key?(:primary_runtime_id)
-            primary_runtime = SagittariusSchema.object_from_id(params[:primary_runtime_id])
-            if primary_runtime.nil?
-              return { namespace_project: nil, errors: [create_message_error('Could not find runtime')] }
-            end
-
-            params[:primary_runtime] = primary_runtime
-            params.delete(:primary_runtime_id)
-          end
+          params[:primary_runtime_id] = params[:primary_runtime_id]&.model_id if params.key?(:primary_runtime_id)
 
           ::Namespaces::Projects::UpdateService.new(
             current_authentication,
