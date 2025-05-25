@@ -9,6 +9,7 @@ class NamespaceProjectPolicy < BasePolicy
 
   rule { can_create_projects }.enable :read_namespace_project
 
+  customizable_permission :assign_project_runtimes
   customizable_permission :read_namespace_project
   customizable_permission :update_namespace_project
   customizable_permission :delete_namespace_project

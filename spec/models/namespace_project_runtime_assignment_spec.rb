@@ -13,5 +13,4 @@ RSpec.describe NamespaceProjectRuntimeAssignment do
   describe 'validations' do
     it { is_expected.to validate_uniqueness_of(:runtime).scoped_to(:namespace_project_id) }
   end
-
 end

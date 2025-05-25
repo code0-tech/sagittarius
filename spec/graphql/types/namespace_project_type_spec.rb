@@ -9,6 +9,7 @@ RSpec.describe SagittariusSchema.types['NamespaceProject'] do
       name
       description
       namespace
+      runtimes
       created_at
       updated_at
     ]

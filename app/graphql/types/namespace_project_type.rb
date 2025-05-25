@@ -8,6 +8,7 @@ module Types
 
     field :description, String, null: false, description: 'Description of the project'
     field :name, String, null: false, description: 'Name of the project'
+    field :runtimes, Types::RuntimeType.connection_type, null: false, description: 'Runtimes assigned to this project'
 
     field :namespace, Types::NamespaceType, null: false,
                                             description: 'The namespace where this project belongs to'
