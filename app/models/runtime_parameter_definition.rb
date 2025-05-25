@@ -2,7 +2,7 @@
 
 class RuntimeParameterDefinition < ApplicationRecord
   belongs_to :runtime_function_definition, inverse_of: :parameters
-  belongs_to :data_type
+  belongs_to :data_type, class_name: 'DataTypeIdentifier'
 
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner

@@ -10,8 +10,8 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
   describe 'Update' do
     context 'when create' do
       let(:runtime) { create(:runtime) }
-      let(:parameter_type) { create(:data_type, runtime: runtime) }
-      let(:return_type) { create(:data_type, runtime: runtime) }
+      let(:parameter_type) { create(:data_type_identifier, data_type: create(:data_type, runtime: runtime)) }
+      let(:return_type) { create(:data_type_identifier, data_type: create(:data_type, runtime: runtime)) }
       let(:error_type) { create(:data_type, runtime: runtime) }
 
       let(:runtime_functions) do
@@ -30,11 +30,15 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
             deprecation_message: [
               { code: 'de_DE', content: 'Eine Deprecationsmeldung' }
             ],
-            return_type_identifier: return_type.identifier,
+            return_type_identifier: {
+              data_type_identifier: return_type.data_type.identifier,
+            },
             error_type_identifiers: [error_type.identifier],
             runtime_parameter_definitions: [
               {
-                data_type_identifier: parameter_type.identifier,
+                data_type_identifier: {
+                  data_type_identifier: parameter_type.data_type.identifier,
+                },
                 runtime_name: 'runtime_parameter_definition_id',
                 default_value: Tucana::Shared::Value.from_ruby({ 'key' => 'value' }),
                 name: [
@@ -61,14 +65,14 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
 
         function = RuntimeFunctionDefinition.last
         expect(function.runtime_name).to eq('runtime_function_id')
-        expect(function.return_type.identifier).to eq(return_type.identifier)
+        expect(function.return_type.data_type.identifier).to eq(return_type.data_type.identifier)
         expect(function.names.first.content).to eq('Eine Funktion')
         expect(function.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function.documentations.first.content).to eq('Eine Funktionsdokumentation')
         expect(function.deprecation_messages.first.content).to eq('Eine Deprecationsmeldung')
         expect(function.error_types.first.data_type.identifier).to eq(error_type.identifier)
         parameter = function.parameters.first
-        expect(parameter.data_type.identifier).to eq(parameter_type.identifier)
+        expect(parameter.data_type.data_type.identifier).to eq(parameter_type.data_type.identifier)
         expect(parameter.runtime_name).to eq('runtime_parameter_definition_id')
         expect(parameter.names.first.content).to eq('Ein Parameter')
         expect(parameter.descriptions.first.content).to eq('Eine Parameterbeschreibung')
@@ -79,9 +83,9 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function_definition.names.first.content).to eq('Eine Funktion')
         expect(function_definition.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function_definition.documentations.first.content).to eq('Eine Funktionsdokumentation')
-        expect(function_definition.return_type.identifier).to eq(return_type.identifier)
+        expect(function_definition.return_type.data_type.identifier).to eq(return_type.data_type.identifier)
         parameter_definition = ParameterDefinition.first
-        expect(parameter_definition.data_type.identifier).to eq(parameter_type.identifier)
+        expect(parameter_definition.data_type.data_type.identifier).to eq(parameter_type.data_type.identifier)
         expect(parameter_definition.names.first.content).to eq('Ein Parameter')
         expect(parameter_definition.descriptions.first.content).to eq('Eine Parameterbeschreibung')
         expect(parameter_definition.documentations.first.content).to eq('Eine Parameterdokumentation')
@@ -91,7 +95,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
 
     context 'when update' do
       let(:runtime) { create(:runtime) }
-      let(:data_type) { create(:data_type, runtime: runtime) }
+      let(:data_type) { create(:data_type_identifier, data_type: create(:data_type, runtime: runtime)) }
 
       let(:existing_runtime_function_definition) do
         create(:runtime_function_definition,
@@ -109,7 +113,9 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
             ],
             runtime_parameter_definitions: [
               {
-                data_type_identifier: data_type.identifier,
+                data_type_identifier: {
+                  data_type_identifier: data_type.data_type.identifier,
+                },
                 runtime_name: 'runtime_parameter_definition_id',
                 name: [
                   { code: 'de_DE', content: 'Ein Parameter' }
@@ -133,7 +139,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function.runtime_name).to eq('runtime_function_id')
         expect(function.names.first.content).to eq('Eine Funktion')
         parameter = function.parameters.first
-        expect(parameter.data_type.identifier).to eq(data_type.identifier)
+        expect(parameter.data_type.data_type.identifier).to eq(data_type.data_type.identifier)
         expect(parameter.runtime_name).to eq('runtime_parameter_definition_id')
         expect(parameter.names.first.content).to eq('Ein Parameter')
 
@@ -151,7 +157,8 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
       end
 
       let!(:existing_runtime_parameter_definition) do
-        create(:runtime_parameter_definition, runtime_function_definition: existing_runtime_function_definition)
+        create(:runtime_parameter_definition, data_type: create(:data_type_identifier, data_type: create(:data_type)),
+                                              runtime_function_definition: existing_runtime_function_definition)
       end
 
       let(:message) do

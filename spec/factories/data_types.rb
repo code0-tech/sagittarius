@@ -8,5 +8,6 @@ FactoryBot.define do
     runtime
     identifier { generate(:data_type_name) }
     parent_type { nil }
+    generic_keys { [] }
   end
 end

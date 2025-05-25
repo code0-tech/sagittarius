@@ -19,6 +19,7 @@ class DataType < ApplicationRecord
   has_many :child_types, class_name: 'DataType', inverse_of: :parent_type
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :rules, class_name: 'DataTypeRule', inverse_of: :data_type
+  has_many :data_type_identifiers, class_name: 'DataTypeIdentifier', inverse_of: :data_type
 
   validates :variant, presence: true,
                       inclusion: {
