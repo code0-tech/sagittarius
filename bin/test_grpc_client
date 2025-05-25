@@ -6,8 +6,8 @@ require 'tucana'
 Tucana.load_protocol(:sagittarius)
 
 def main
-  id = ARGV.size > 0 ?  ARGV[0] : '1'
-  hostname = ARGV.size > 1 ?  ARGV[1] : 'localhost:50051'
+  id = ARGV.size > 0 ? ARGV[0] : '1'
+  hostname = ARGV.size > 1 ? ARGV[1] : 'localhost:50051'
   stub = Tucana::Sagittarius::FlowService::Stub.new(hostname, :this_channel_is_insecure)
   begin
     message = Tucana::Sagittarius::FlowLogonRequest.new
@@ -17,7 +17,7 @@ def main
     stub.update(message).each do |response|
       puts "Received: #{response.inspect}"
 
-      puts "Simulating exit"
+      puts "Simulating connection abort"
       exit
     end
 

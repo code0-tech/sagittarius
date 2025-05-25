@@ -23,6 +23,10 @@ module GrpcStreamHandler
         ActiveRecord::Base.connection.raw_connection
                           .exec("NOTIFY grpc_streams, '#{self.class},#{method},#{runtime_id},#{encoded_data64}'")
       end
+      define_method("end_#{method}") do |runtime_id|
+        ActiveRecord::Base.connection.raw_connection
+                          .exec("NOTIFY grpc_streams, '#{self.class},#{method},#{runtime_id},end'")
+      end
     end
   end
 
@@ -47,11 +51,15 @@ module GrpcStreamHandler
           clazz = class_name.constantize
           method_name = method_name.to_sym
 
-          queues = GrpcStreamHandler.yielders.dig(clazz, method_name, runtime_id.to_i)
-          queues&.each do |queue|
+          if encoded_data64 == 'end'
+            decoded_data = :end
+          else
             data = Base64.decode64(encoded_data64)
             decoded_data = clazz.decoders[method_name].call(data)
+          end
 
+          queues = GrpcStreamHandler.yielders.dig(clazz, method_name, runtime_id.to_i)
+          queues&.each do |queue|
             queue << decoded_data
           rescue StandardError => e
             logger.error(message: 'Error while yielding data', error: e.message)
@@ -77,12 +85,14 @@ module GrpcStreamHandler
         begin
           y << item
         rescue GRPC::Core::CallError
-          logger.info(message: 'Stream was closed (probably)')
-          clazz.send("#{method}_died", runtime_id)
+          logger.info(message: 'Stream was closed from client side (probably)')
+          clazz.try("#{method}_died", runtime_id)
 
           raise
         end
       end
+      logger.info(message: 'Stream was closed from server side')
+      clazz.try("#{method}_died", runtime_id)
     end
 
     GrpcStreamHandler.yielders[clazz] ||= {}
@@ -91,7 +101,7 @@ module GrpcStreamHandler
 
     GrpcStreamHandler.yielders[clazz][method][runtime_id] << queue
 
-    clazz.send("#{method}_started", runtime_id)
+    clazz.try("#{method}_started", runtime_id)
 
     enumerator
   end
