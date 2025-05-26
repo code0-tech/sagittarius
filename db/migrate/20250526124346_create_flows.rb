@@ -17,15 +17,15 @@ class CreateFlows < Code0::ZeroTrack::Database::Migration[1.0]
       t.integer :array_index, null: true
 
       t.references :reference_value, null: false, foreign_key: { to_table: :reference_values,
-                                                                 on_delete: :cascade }
+                                                                 on_delete: :restrict }
 
       t.timestamps_with_timezone
     end
 
     create_table :node_functions do |t|
       t.references :runtime_function, null: false, foreign_key: { to_table: :runtime_function_definitions,
-                                                                  on_delete: :cascade }
-      t.references :next_node, null: true, foreign_key: { to_table: :node_functions, on_delete: :cascade }
+                                                                  on_delete: :restrict }
+      t.references :next_node, null: true, foreign_key: { to_table: :node_functions, on_delete: :restrict }
 
       t.timestamps_with_timezone
     end
@@ -38,7 +38,7 @@ class CreateFlows < Code0::ZeroTrack::Database::Migration[1.0]
       t.references :reference_value, null: true, foreign_key: { to_table: :reference_values,
                                                                 on_delete: :restrict }
       t.references :function_value, null: true, foreign_key: { to_table: :node_functions,
-                                                               on_delete: :cascade }
+                                                               on_delete: :restrict }
 
       t.check_constraint '(num_nonnulls(literal_value, reference_value_id, function_value_id) = 1)',
                          name: check_constraint_name(:node_parameters, :value, :one_of)
