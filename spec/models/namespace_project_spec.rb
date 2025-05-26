@@ -14,6 +14,7 @@ RSpec.describe NamespaceProject do
                                                .through(:role_assignments)
                                                .source(:project)
                                                .inverse_of(:assigned_projects)
+      is_expected.to have_many(:flows).class_name('Flow').inverse_of(:project)
     end
   end
 

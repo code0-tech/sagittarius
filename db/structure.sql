@@ -595,6 +595,8 @@ CREATE TABLE node_parameters (
     literal_value jsonb,
     reference_value_id bigint,
     function_value_id bigint,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
     CONSTRAINT check_fdac0ea550 CHECK ((num_nonnulls(literal_value, reference_value_id, function_value_id) = 1))
 );
 
