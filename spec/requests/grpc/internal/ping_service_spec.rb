@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe 'sagittarius.PingService', :need_grpc_server do
   include GrpcHelpers
 
