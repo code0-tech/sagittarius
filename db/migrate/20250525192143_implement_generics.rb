@@ -8,20 +8,20 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
     add_column :data_types, :generic_keys, 'text[]', null: false, default: []
 
     create_table :data_type_identifiers do |t|
-      # One of them needs to be set
+      # One of them needs to be set will be enforced later
       t.text :generic_key, null: true
       t.references :data_type, null: true, foreign_key: { to_table: :data_types, on_delete: :restrict }
-      # Unsure if restrict is correct here
-      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :restrict }
+
+      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :cascade }
 
       t.timestamps_with_timezone
     end
 
     create_table :generic_types do |t|
       t.references :data_type_identifier, null: false,
-                                          foreign_key: { to_table: :data_type_identifiers, on_delete: :cascade }
-      # Unsure if restrict is correct here
-      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :restrict }
+                                          foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }
+
+      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :cascade }
 
       t.timestamps_with_timezone
     end
@@ -31,14 +31,14 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
       # One of them needs to be set
       t.text :generic_key, null: true
       t.references :data_type_identifier, null: true,
-                                          foreign_key: { to_table: :data_type_identifiers, on_delete: :cascade }
+                                          foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }
 
       t.check_constraint '(num_nonnulls(generic_key, data_type_identifier_id) = 1)',
                          name: check_constraint_name(:generic_mappers, :source, :one_of)
 
-      t.references :generic_type, null: true, foreign_key: { to_table: :generic_types, on_delete: :cascade }
+      t.references :generic_type, null: true, foreign_key: { to_table: :generic_types, on_delete: :restrict }
       # Unsure if restrict is correct here
-      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :restrict }
+      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :cascade }
 
       t.timestamps_with_timezone
     end
@@ -51,7 +51,7 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
 
     create_table :function_generic_mappers do |t|
       t.references :data_type_identifier, null: true,
-                                          foreign_key: { to_table: :data_type_identifiers, on_delete: :cascade }
+                                          foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }
       t.text :generic_key, null: true
 
       t.check_constraint '(num_nonnulls(generic_key, data_type_identifier_id) = 1)',
@@ -62,13 +62,13 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
 
       t.references :runtime_parameter_definition, null: true,
                                                   foreign_key: { to_table: :runtime_parameter_definitions,
-                                                                 on_delete: :cascade }
+                                                                 on_delete: :restrict }
 
       t.references :runtime_function_definition, null: true,
                                                  foreign_key: { to_table: :runtime_function_definitions,
-                                                                on_delete: :cascade }
+                                                                on_delete: :restrict }
       # Unsure if restrict is correct here
-      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :restrict }
+      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :cascade }
 
       t.timestamps_with_timezone
     end
