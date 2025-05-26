@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 module Namespaces
   module Projects
     module Flows
       class ValidationService
-
         include Sagittarius::Database::Transactional
 
         attr_reader :current_authentication, :flow
