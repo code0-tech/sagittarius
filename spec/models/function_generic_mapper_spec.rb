@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe FunctionGenericMapper do
   describe 'associations' do
     it { is_expected.to belong_to(:data_type_identifier).optional }
+    it { is_expected.to belong_to(:runtime_parameter_definition).optional }
 
     it {
       is_expected.to belong_to(:runtime_function_definition).class_name('RuntimeFunctionDefinition')

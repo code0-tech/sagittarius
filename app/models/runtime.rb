@@ -10,6 +10,9 @@ class Runtime < ApplicationRecord
   enum :status, { disconnected: 0, connected: 1 }, default: :disconnected
 
   has_many :data_types, inverse_of: :runtime
+  has_many :data_type_identifiers, inverse_of: :runtime
+  has_many :generic_types, inverse_of: :runtime
+  has_many :generic_mappers, inverse_of: :runtime
 
   has_many :flow_types, inverse_of: :runtime
 
