@@ -125,6 +125,7 @@ CREATE TABLE data_type_identifiers (
     id bigint NOT NULL,
     generic_key text,
     data_type_id bigint,
+    runtime_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     generic_type_id bigint,
@@ -244,7 +245,9 @@ CREATE TABLE function_generic_mappers (
     generic_key text,
     target text NOT NULL,
     parameter_id text,
+    runtime_parameter_definition_id bigint,
     runtime_function_definition_id bigint,
+    runtime_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     CONSTRAINT check_8b2921e4ae CHECK ((num_nonnulls(generic_key, data_type_identifier_id) = 1))
@@ -264,7 +267,8 @@ CREATE TABLE generic_mappers (
     target text NOT NULL,
     generic_key text,
     data_type_identifier_id bigint,
-    generic_type_id bigint NOT NULL,
+    generic_type_id bigint,
+    runtime_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     CONSTRAINT check_48eccc6485 CHECK ((num_nonnulls(generic_key, data_type_identifier_id) = 1))
@@ -282,6 +286,7 @@ ALTER SEQUENCE generic_mappers_id_seq OWNED BY generic_mappers.id;
 CREATE TABLE generic_types (
     id bigint NOT NULL,
     data_type_identifier_id bigint NOT NULL,
+    runtime_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
@@ -911,6 +916,8 @@ CREATE UNIQUE INDEX idx_on_runtime_function_definition_id_runtime_name_abb3bb31b
 
 CREATE UNIQUE INDEX idx_on_runtime_id_runtime_name_de2ab1bfc0 ON runtime_function_definitions USING btree (runtime_id, runtime_name);
 
+CREATE INDEX idx_on_runtime_parameter_definition_id_3cbdb30381 ON function_generic_mappers USING btree (runtime_parameter_definition_id);
+
 CREATE INDEX index_active_storage_attachments_on_blob_id ON active_storage_attachments USING btree (blob_id);
 
 CREATE UNIQUE INDEX index_active_storage_attachments_uniqueness ON active_storage_attachments USING btree (record_type, record_id, name, blob_id);
@@ -928,6 +935,8 @@ CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes 
 CREATE INDEX index_data_type_identifiers_on_data_type_id ON data_type_identifiers USING btree (data_type_id);
 
 CREATE INDEX index_data_type_identifiers_on_generic_type_id ON data_type_identifiers USING btree (generic_type_id);
+
+CREATE INDEX index_data_type_identifiers_on_runtime_id ON data_type_identifiers USING btree (runtime_id);
 
 CREATE INDEX index_data_type_rules_on_data_type_id ON data_type_rules USING btree (data_type_id);
 
@@ -951,11 +960,17 @@ CREATE INDEX index_function_definitions_on_runtime_function_definition_id ON fun
 
 CREATE INDEX index_function_generic_mappers_on_data_type_identifier_id ON function_generic_mappers USING btree (data_type_identifier_id);
 
+CREATE INDEX index_function_generic_mappers_on_runtime_id ON function_generic_mappers USING btree (runtime_id);
+
 CREATE INDEX index_generic_mappers_on_data_type_identifier_id ON generic_mappers USING btree (data_type_identifier_id);
 
 CREATE INDEX index_generic_mappers_on_generic_type_id ON generic_mappers USING btree (generic_type_id);
 
+CREATE INDEX index_generic_mappers_on_runtime_id ON generic_mappers USING btree (runtime_id);
+
 CREATE INDEX index_generic_types_on_data_type_identifier_id ON generic_types USING btree (data_type_identifier_id);
+
+CREATE INDEX index_generic_types_on_runtime_id ON generic_types USING btree (runtime_id);
 
 CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON good_job_executions USING btree (active_job_id, created_at);
 
@@ -1058,8 +1073,14 @@ ALTER TABLE ONLY data_types
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY generic_types
+    ADD CONSTRAINT fk_rails_20f4bf6b34 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
+
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT fk_rails_260318ad67 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY function_generic_mappers
+    ADD CONSTRAINT fk_rails_26b6470eba FOREIGN KEY (runtime_parameter_definition_id) REFERENCES runtime_parameter_definitions(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY generic_types
     ADD CONSTRAINT fk_rails_29b2651173 FOREIGN KEY (data_type_identifier_id) REFERENCES data_type_identifiers(id) ON DELETE CASCADE;
@@ -1081,6 +1102,9 @@ ALTER TABLE ONLY data_type_identifiers
 
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT fk_rails_4434ad0b90 FOREIGN KEY (parent_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
+
+ALTER TABLE ONLY function_generic_mappers
+    ADD CONSTRAINT fk_rails_4593a9a9b6 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT fk_rails_48f4bbe3b6 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
@@ -1124,6 +1148,9 @@ ALTER TABLE ONLY runtime_function_definitions
 ALTER TABLE ONLY data_type_rules
     ADD CONSTRAINT fk_rails_7759633ff8 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY data_type_identifiers
+    ADD CONSTRAINT fk_rails_8d8385e8ec FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
+
 ALTER TABLE ONLY active_storage_variant_records
     ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
 
@@ -1144,6 +1171,9 @@ ALTER TABLE ONLY flow_types
 
 ALTER TABLE ONLY active_storage_attachments
     ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
+
+ALTER TABLE ONLY generic_mappers
+    ADD CONSTRAINT fk_rails_c7984c8a7a FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT fk_rails_ca0a397b6f FOREIGN KEY (data_type_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
