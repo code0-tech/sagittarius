@@ -58,6 +58,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
             rules: [
               Tucana::Shared::DataTypeRule.create(:number_range, { from: 9 })
             ],
+            generic_keys: ['T'],
           },
           {
             variant: :PRIMITIVE,
@@ -80,6 +81,8 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
 
         expect(positive_number).to be_present
         expect(small_positive_number).to be_present
+        expect(positive_number.generic_keys).to be_empty
+        expect(small_positive_number.generic_keys).to eq(['T'])
 
         expect(small_positive_number.parent_type).to eq(positive_number)
       end
