@@ -11,6 +11,8 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
       # One of them needs to be set
       t.text :generic_key, null: true
       t.references :data_type, null: true, foreign_key: { to_table: :data_types, on_delete: :restrict }
+      # Unsure if restrict is correct here
+      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :restrict }
 
       t.timestamps_with_timezone
     end
@@ -18,6 +20,8 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
     create_table :generic_types do |t|
       t.references :data_type_identifier, null: false,
                                           foreign_key: { to_table: :data_type_identifiers, on_delete: :cascade }
+      # Unsure if restrict is correct here
+      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :restrict }
 
       t.timestamps_with_timezone
     end
@@ -32,7 +36,9 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
       t.check_constraint '(num_nonnulls(generic_key, data_type_identifier_id) = 1)',
                          name: check_constraint_name(:generic_mappers, :source, :one_of)
 
-      t.references :generic_type, null: false, foreign_key: { to_table: :generic_types, on_delete: :cascade }
+      t.references :generic_type, null: true, foreign_key: { to_table: :generic_types, on_delete: :cascade }
+      # Unsure if restrict is correct here
+      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :restrict }
 
       t.timestamps_with_timezone
     end
@@ -48,15 +54,21 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
                                           foreign_key: { to_table: :data_type_identifiers, on_delete: :cascade }
       t.text :generic_key, null: true
 
+      t.check_constraint '(num_nonnulls(generic_key, data_type_identifier_id) = 1)',
+                         name: check_constraint_name(:function_generic_mappers, :source, :one_of)
+
       t.text :target, null: false
       t.text :parameter_id, null: true
 
-      t.check_constraint '(num_nonnulls(generic_key, data_type_identifier_id) = 1)',
-                         name: check_constraint_name(:function_generic_mappers, :source, :one_of)
+      t.references :runtime_parameter_definition, null: true,
+                                                  foreign_key: { to_table: :runtime_parameter_definitions,
+                                                                 on_delete: :cascade }
 
       t.references :runtime_function_definition, null: true,
                                                  foreign_key: { to_table: :runtime_function_definitions,
                                                                 on_delete: :cascade }
+      # Unsure if restrict is correct here
+      t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :restrict }
 
       t.timestamps_with_timezone
     end
@@ -74,10 +86,6 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
     remove_column :parameter_definitions, :data_type_id
     add_reference :parameter_definitions, :data_type,
                   foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
-
-    # remove_column :runtime_function_definition_error_types, :data_type_id
-    # add_reference :runtime_function_definition_error_types, :data_type,
-    #                           foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: false
 
     remove_column :function_definitions, :return_type_id
     add_reference :function_definitions, :return_type,

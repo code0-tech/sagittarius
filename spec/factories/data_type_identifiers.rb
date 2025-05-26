@@ -5,5 +5,6 @@ FactoryBot.define do
     generic_key { nil }
     data_type { nil }
     generic_type { nil }
+    runtime
   end
 end

@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :generic_mapper do
+    runtime
     target { nil }
     generic_key { nil }
     data_type_identifier { nil }
