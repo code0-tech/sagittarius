@@ -33,7 +33,7 @@ module Namespaces
               entity: namespace_project,
               target: flow,
               details: {
-                **flow.attributes
+                **flow.attributes,
               }
             )
 
