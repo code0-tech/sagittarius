@@ -44,7 +44,7 @@ module Namespaces
               target: flow,
               details: {
                 old_flow: old_flow.attributes,
-                new_flow: new_flow.attributes
+                new_flow: new_flow.attributes,
               }
             )
 
