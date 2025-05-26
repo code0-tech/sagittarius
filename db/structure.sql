@@ -1355,7 +1355,7 @@ ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT fk_rails_73ca8569ea FOREIGN KEY (return_type_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY node_parameters
-    ADD CONSTRAINT fk_rails_74b7800b37 FOREIGN KEY (function_value_id) REFERENCES node_functions(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_74b7800b37 FOREIGN KEY (function_value_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY data_type_rules
     ADD CONSTRAINT fk_rails_7759633ff8 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
@@ -1364,7 +1364,7 @@ ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_7de9ce6578 FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY node_functions
-    ADD CONSTRAINT fk_rails_8953e1d86a FOREIGN KEY (runtime_function_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_8953e1d86a FOREIGN KEY (runtime_function_id) REFERENCES runtime_function_definitions(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY flow_settings
     ADD CONSTRAINT fk_rails_8c9f4f986e FOREIGN KEY (definition_id) REFERENCES flow_setting_definitions(id) ON DELETE CASCADE;
@@ -1373,7 +1373,7 @@ ALTER TABLE ONLY data_type_identifiers
     ADD CONSTRAINT fk_rails_8d8385e8ec FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY reference_paths
-    ADD CONSTRAINT fk_rails_92e51047ea FOREIGN KEY (reference_value_id) REFERENCES reference_values(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_92e51047ea FOREIGN KEY (reference_value_id) REFERENCES reference_values(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY active_storage_variant_records
     ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
@@ -1436,4 +1436,4 @@ ALTER TABLE ONLY flow_type_settings
     ADD CONSTRAINT fk_rails_f6af7d8edf FOREIGN KEY (flow_type_id) REFERENCES flow_types(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY node_functions
-    ADD CONSTRAINT fk_rails_fbc91a3407 FOREIGN KEY (next_node_id) REFERENCES node_functions(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_fbc91a3407 FOREIGN KEY (next_node_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
