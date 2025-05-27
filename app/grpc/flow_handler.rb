@@ -10,6 +10,18 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
     runtime = Runtime.find(runtime_id)
     runtime.connected!
     runtime.save
+
+    flows = NamespaceProject.where(id: runtime.projects.ids).flat_map do |project|
+      project.flows.map(&:to_grpc)
+    end
+
+    send_update(
+      Tucana::Sagittarius::FlowResponse.new(
+        flows: Tucana::Shared::Flows.new(
+          flows: flows
+        )
+      )
+    )
   end
 
   def self.update_died(runtime_id)
