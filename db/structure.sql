@@ -535,6 +535,7 @@ CREATE TABLE runtimes (
     namespace_id bigint,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
     CONSTRAINT check_090cd49d30 CHECK ((char_length(name) <= 50)),
     CONSTRAINT check_f3c2ba8db3 CHECK ((char_length(description) <= 500))
 );
