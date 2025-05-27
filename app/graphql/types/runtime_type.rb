@@ -11,7 +11,10 @@ module Types
     field :flow_types, Types::FlowTypeType.connection_type, null: false, description: 'FlowTypes of the runtime'
     field :name, String, null: false, description: 'The name for the runtime'
     field :namespace, Types::NamespaceType, null: true, description: 'The parent namespace for the runtime'
+    field :projects, Types::NamespaceProjectType.connection_type, null: false,
+                                                                  description: 'Projects associated with the runtime'
     field :status, Types::RuntimeStatusType, null: false, description: 'The status of the runtime'
+
     field :token, String, null: true, description: 'Token belonging to the runtime, only present on creation'
 
     id_field Runtime

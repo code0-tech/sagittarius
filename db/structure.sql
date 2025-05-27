@@ -346,6 +346,23 @@ CREATE SEQUENCE namespace_members_id_seq
 
 ALTER SEQUENCE namespace_members_id_seq OWNED BY namespace_members.id;
 
+CREATE TABLE namespace_project_runtime_assignments (
+    id bigint NOT NULL,
+    runtime_id bigint NOT NULL,
+    namespace_project_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE namespace_project_runtime_assignments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE namespace_project_runtime_assignments_id_seq OWNED BY namespace_project_runtime_assignments.id;
+
 CREATE TABLE namespace_projects (
     id bigint NOT NULL,
     name text NOT NULL,
@@ -663,6 +680,8 @@ ALTER TABLE ONLY namespace_member_roles ALTER COLUMN id SET DEFAULT nextval('nam
 
 ALTER TABLE ONLY namespace_members ALTER COLUMN id SET DEFAULT nextval('namespace_members_id_seq'::regclass);
 
+ALTER TABLE ONLY namespace_project_runtime_assignments ALTER COLUMN id SET DEFAULT nextval('namespace_project_runtime_assignments_id_seq'::regclass);
+
 ALTER TABLE ONLY namespace_projects ALTER COLUMN id SET DEFAULT nextval('namespace_projects_id_seq'::regclass);
 
 ALTER TABLE ONLY namespace_role_abilities ALTER COLUMN id SET DEFAULT nextval('namespace_role_abilities_id_seq'::regclass);
@@ -753,6 +772,9 @@ ALTER TABLE ONLY namespace_member_roles
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT namespace_members_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY namespace_project_runtime_assignments
+    ADD CONSTRAINT namespace_project_runtime_assignments_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY namespace_projects
     ADD CONSTRAINT namespace_projects_pkey PRIMARY KEY (id);
 
@@ -808,6 +830,8 @@ CREATE UNIQUE INDEX idx_on_role_id_project_id_5d4b5917dc ON namespace_role_proje
 CREATE UNIQUE INDEX idx_on_runtime_function_definition_id_data_type_id_b6aa8fe066 ON runtime_function_definition_error_types USING btree (runtime_function_definition_id, data_type_id);
 
 CREATE UNIQUE INDEX idx_on_runtime_function_definition_id_runtime_name_abb3bb31bc ON runtime_parameter_definitions USING btree (runtime_function_definition_id, runtime_name);
+
+CREATE UNIQUE INDEX idx_on_runtime_id_namespace_project_id_bc3c86cc70 ON namespace_project_runtime_assignments USING btree (runtime_id, namespace_project_id);
 
 CREATE UNIQUE INDEX idx_on_runtime_id_runtime_name_de2ab1bfc0 ON runtime_function_definitions USING btree (runtime_id, runtime_name);
 
@@ -1015,8 +1039,14 @@ ALTER TABLE ONLY flow_type_settings
 ALTER TABLE ONLY flow_types
     ADD CONSTRAINT fk_rails_bead35b1a6 FOREIGN KEY (return_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
+ALTER TABLE ONLY namespace_project_runtime_assignments
+    ADD CONSTRAINT fk_rails_c019e5b233 FOREIGN KEY (namespace_project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY active_storage_attachments
     ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
+
+ALTER TABLE ONLY namespace_project_runtime_assignments
+    ADD CONSTRAINT fk_rails_c640af2146 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT fk_rails_ca0a397b6f FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
