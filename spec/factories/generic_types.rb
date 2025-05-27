@@ -4,6 +4,6 @@ FactoryBot.define do
   factory :generic_type do
     runtime
     generic_mappers { [] }
-    data_type_identifier { nil }
+    data_type
   end
 end
