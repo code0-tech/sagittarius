@@ -12,7 +12,7 @@ module GrpcStreamHandler
         create_enumerator(self.class, method, current_runtime_id, call.instance_variable_get(:@wrapped))
       end
 
-      define_method("send_#{method}") do |grpc_object, runtime_id|
+      define_singleton_method("send_#{method}") do |grpc_object, runtime_id|
         logger.info(message: 'Sending data', runtime_id: runtime_id, method: method)
 
         encoded_data = self.class.encoders[method].call(grpc_object)
@@ -23,7 +23,7 @@ module GrpcStreamHandler
         ActiveRecord::Base.connection.raw_connection
                           .exec("NOTIFY grpc_streams, '#{self.class},#{method},#{runtime_id},#{encoded_data64}'")
       end
-      define_method("end_#{method}") do |runtime_id|
+      define_singleton_method("end_#{method}") do |runtime_id|
         ActiveRecord::Base.connection.raw_connection
                           .exec("NOTIFY grpc_streams, '#{self.class},#{method},#{runtime_id},end'")
       end

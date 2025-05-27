@@ -51,7 +51,7 @@ module Runtimes
                                                              db_object.deprecation_messages)
 
         db_object.error_types = update_error_types(runtime_function_definition.error_type_identifiers, db_object, t)
-        db_object.generic_mappers = update_mappers(runtime_function_definition.generic_mappers, db_object)
+        db_object.generic_mappers = update_mappers(runtime_function_definition.generic_mappers, db_object, t)
 
         if db_object.function_definitions.empty?
           definition = FunctionDefinition.new
@@ -69,23 +69,20 @@ module Runtimes
       end
 
       # These mappers can be either generic mappers or generic function mappers.
-      def update_mappers(generic_mappers, runtime_function_definition = nil)
+      def update_mappers(generic_mappers, runtime_function_definition, t)
         generic_mappers.to_a.map do |generic_mapper|
           if generic_mapper.is_a? Tucana::Shared::GenericMapper
             mapper = GenericMapper.create_or_find_by(runtime: current_runtime,
                                                      target: generic_mapper.target,
-                                                     generic_key: generic_mapper.generic_key,
-                                                     data_type_identifier:
-                                                       (generic_mapper.generic_key.nil? ? data_type_identifier : nil))
-
+                                                     source: find_data_type_identifier(generic_mapper.source,
+                                                                                       generic_mappers, t))
           end
           if generic_mapper.is_a? Tucana::Shared::FunctionGenericMapper
             mapper = FunctionGenericMapper.create_or_find_by(
               runtime_id: current_runtime.id,
               runtime_function_definition: runtime_function_definition,
-              data_type_identifier: (generic_mapper.generic_key.nil? ? data_type_identifier : nil),
+              source: find_data_type_identifier(generic_mapper.source, generic_mappers, t),
               target: generic_mapper.target,
-              generic_key: generic_mapper.generic_key,
               parameter_id: generic_mapper.parameter_id
             )
           end
@@ -110,16 +107,16 @@ module Runtimes
           identifier.generic_type.generic_mappers.each do |generic_mapper|
             arr << generic_mapper
           end
-          data_type_identifier = find_data_type_identifier(identifier.generic_type.data_type_identifier, arr, t)
+          data_type = find_data_type(identifier.generic_type.data_type_identifier, t)
 
           generic_type = GenericType.find_by(
             runtime_id: current_runtime.id,
-            data_type_identifier_id: data_type_identifier.id
+            data_type: data_type
           )
           if generic_type.nil?
             generic_type = GenericType.create(
               runtime_id: current_runtime.id,
-              data_type_identifier_id: data_type_identifier.id
+              data_type: data_type
             )
           end
 
@@ -130,7 +127,8 @@ module Runtimes
             )
           end
 
-          generic_type.assign_attributes(generic_mappers: update_mappers(identifier.generic_type.generic_mappers))
+          generic_type.assign_attributes(generic_mappers: update_mappers(identifier.generic_type.generic_mappers, nil,
+                                                                         t))
 
           return create_data_type_identifier(t, generic_type_id: generic_type.id)
         end

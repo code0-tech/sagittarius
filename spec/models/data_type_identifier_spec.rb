@@ -8,18 +8,17 @@ RSpec.describe DataTypeIdentifier do
     it { is_expected.to belong_to(:data_type).optional }
     it { is_expected.to belong_to(:generic_type).optional }
     it { is_expected.to belong_to(:runtime) }
-    it { is_expected.to have_many(:generic_types) }
-    it { is_expected.to have_many(:generic_mappers) }
+    it { is_expected.to have_many(:generic_mappers).inverse_of(:source) }
+    it { is_expected.to have_many(:function_generic_mappers).inverse_of(:source) }
   end
 
   describe 'validations' do
     it 'is valid with exactly one of generic_key, data_type_id, or generic_type_id' do
       expect(build(:data_type_identifier, generic_key: 'key')).to be_valid
       expect(build(:data_type_identifier, data_type: create(:data_type))).to be_valid
+      generic_type = create(:generic_type, data_type: create(:data_type))
       expect(build(:data_type_identifier,
-                   generic_type: create(:generic_type,
-                                        data_type_identifier: create(:data_type_identifier,
-                                                                     generic_key: 'x')))).to be_valid
+                   generic_type: generic_type)).to be_valid
     end
 
     it 'is invalid when none of generic_key, data_type_id, or generic_type_id are set' do

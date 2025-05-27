@@ -7,6 +7,23 @@ class NodeParameter < ApplicationRecord
 
   validate :only_one_value_present
 
+  def to_grpc
+    param = Tucana::Shared::NodeParameter.new(
+      database_id: id,
+      runtime_parameter_id: runtime_parameter&.identifier
+    )
+
+    if literal_value.present?
+      param.literal_value = Tucana::Shared::Value.from_ruby(literal_value)
+    elsif reference_value.present?
+      param.reference_value = reference_value.to_grpc
+    elsif function_value.present?
+      param.function_value = function_value.to_grpc
+    end
+
+    param
+  end
+
   private
 
   def only_one_value_present
