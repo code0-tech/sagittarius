@@ -40,10 +40,10 @@ module Namespaces
             AuditService.audit(
               :flow_created,
               author_id: current_authentication.user.id,
-              entity: namespace_project,
-              target: flow,
+              entity: flow,
+              target: namespace_project,
               details: {
-                **params,
+                **flow.attributes.except('created_at', 'updated_at'),
               }
             )
 
