@@ -15,13 +15,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
       end
 
       let!(:generic_type) do
-        create(:generic_type,
-               runtime: runtime,
-               data_type_identifier:
-                 create(:data_type_identifier,
-                        runtime: runtime,
-                        data_type: create(:data_type,
-                                          runtime: runtime).reload).reload).reload
+        create(:generic_type, runtime: runtime, data_type: create(:data_type, runtime: runtime))
       end
       let!(:return_type) { create(:data_type_identifier, runtime: runtime, generic_type: generic_type.reload).reload }
       let(:error_type) { create(:data_type, runtime: runtime) }
@@ -44,16 +38,13 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
             ],
             return_type_identifier: {
               generic_type: {
-                data_type_identifier: { # Without reloads it just fails
-                  data_type_identifier: return_type.reload.generic_type
-                                                   .reload.data_type_identifier.reload.data_type.reload.identifier,
-                },
-                generic_mappers: [{ generic_key: 'T', target: 'V' }],
+                data_type_identifier: return_type.generic_type.data_type.identifier,
+                generic_mappers: [{ source: { generic_key: 'T' }, target: 'V' }],
               },
             },
             generic_mappers: [
               {
-                generic_key: 'X',
+                source: { generic_key: 'X' },
                 target: 'Y',
                 parameter_id: 'some_id',
               }
@@ -89,15 +80,15 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
         expect(GenericMapper.count).to eq(1)
-        expect(GenericMapper.last.generic_key).to eq('T')
+        expect(GenericMapper.last.source.generic_key).to eq('T')
         expect(GenericMapper.last.target).to eq('V')
 
         expect(GenericType.count).to eq(1)
 
         function = RuntimeFunctionDefinition.last
         expect(function.runtime_name).to eq('runtime_function_id')
-        expect(function.return_type.generic_type.reload.data_type_identifier.data_type.identifier)
-          .to eq(return_type.generic_type.data_type_identifier.data_type.identifier)
+        expect(function.return_type.generic_type.reload.data_type.identifier)
+          .to eq(return_type.generic_type.data_type.identifier)
         expect(function.names.first.content).to eq('Eine Funktion')
         expect(function.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function.documentations.first.content).to eq('Eine Funktionsdokumentation')
@@ -115,8 +106,8 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function_definition.names.first.content).to eq('Eine Funktion')
         expect(function_definition.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function_definition.documentations.first.content).to eq('Eine Funktionsdokumentation')
-        expect(function_definition.return_type.generic_type.reload.data_type_identifier.data_type.identifier)
-          .to eq(return_type.generic_type.data_type_identifier.data_type.identifier)
+        expect(function_definition.return_type.generic_type.reload.data_type.identifier)
+          .to eq(return_type.generic_type.data_type.identifier)
         parameter_definition = ParameterDefinition.first
         expect(parameter_definition.data_type.data_type.identifier).to eq(parameter_type.data_type.identifier)
         expect(parameter_definition.names.first.content).to eq('Ein Parameter')
@@ -125,7 +116,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(parameter_definition.default_value).to eq({ 'key' => 'value' })
 
         expect(FunctionGenericMapper.count).to eq(1)
-        expect(FunctionGenericMapper.last.generic_key).to eq('X')
+        expect(FunctionGenericMapper.last.source.generic_key).to eq('X')
         expect(FunctionGenericMapper.last.target).to eq('Y')
         expect(FunctionGenericMapper.last.parameter_id).to eq('some_id')
       end
