@@ -13,4 +13,6 @@ class NamespaceProjectPolicy < BasePolicy
   customizable_permission :update_namespace_project
   customizable_permission :delete_namespace_project
   customizable_permission :create_flows
+  customizable_permission :update_flows
+  customizable_permission :delete_flows
 end

@@ -3,7 +3,7 @@
 module Namespaces
   module Projects
     module Flows
-      class CreateService
+      class DeleteService
         include Sagittarius::Database::Transactional
 
         attr_reader :current_authentication, :flow
@@ -14,12 +14,13 @@ module Namespaces
         end
 
         def execute
-          unless Ability.allowed?(current_authentication, :delete_flows, namespace_project)
+          unless Ability.allowed?(current_authentication, :delete_flows, flow.project)
             return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
           end
 
           transactional do |t|
-            flow = flow.delete
+            flow.delete
+
             if flow.persisted?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Failed to delete flow',
@@ -30,10 +31,10 @@ module Namespaces
             AuditService.audit(
               :flow_deleted,
               author_id: current_authentication.user.id,
-              entity: namespace_project,
-              target: flow,
+              entity: flow,
+              target: flow.project,
               details: {
-                **flow.attributes,
+                **flow.attributes.except('created_at', 'updated_at'),
               }
             )
 
