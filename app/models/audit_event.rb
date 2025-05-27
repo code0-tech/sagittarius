@@ -33,6 +33,8 @@ class AuditEvent < ApplicationRecord
     attachment_updated: 29,
     project_runtimes_assigned: 30,
     flow_created: 31,
+    flow_updated: 32,
+    flow_deleted: 33,
   }.with_indifferent_access
 
   # rubocop:disable Lint/StructNewOverride
