@@ -11,6 +11,8 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
       dataTypes
       flowTypes
       description
+      projects
+      status
       token
       createdAt
       updatedAt

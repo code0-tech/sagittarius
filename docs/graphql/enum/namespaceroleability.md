@@ -7,6 +7,7 @@ Represents abilities that can be granted to roles in namespaces.
 | Value | Description |
 |-------|-------------|
 | `ASSIGN_MEMBER_ROLES` | Allows to change the roles of a namespace member |
+| `ASSIGN_PROJECT_RUNTIMES` | Allows to assign runtimes to a project in the namespace |
 | `ASSIGN_ROLE_ABILITIES` | Allows to change the abilities of a namespace role |
 | `ASSIGN_ROLE_PROJECTS` | Allows to change the assigned projects of a namespace role |
 | `CREATE_NAMESPACE_LICENSE` | Allows to create a license for the namespace |

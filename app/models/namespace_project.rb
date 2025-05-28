@@ -4,6 +4,9 @@ class NamespaceProject < ApplicationRecord
   belongs_to :namespace, inverse_of: :projects
   belongs_to :primary_runtime, class_name: 'Runtime', optional: true
 
+  has_many :runtime_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :namespace_project
+  has_many :runtimes, through: :runtime_assignments, inverse_of: :projects
+
   has_many :role_assignments, class_name: 'NamespaceRoleProjectAssignment',
                               inverse_of: :project
   has_many :assigned_roles, class_name: 'NamespaceRole', through: :role_assignments,

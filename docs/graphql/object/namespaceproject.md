@@ -14,5 +14,6 @@ Represents a namespace project
 | `name` | [`String!`](../scalar/string.md) | Name of the project |
 | `namespace` | [`Namespace!`](../object/namespace.md) | The namespace where this project belongs to |
 | `primaryRuntime` | [`Runtime`](../object/runtime.md) | The primary runtime for the project |
+| `runtimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Runtimes assigned to this project |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceProject was last updated |
 

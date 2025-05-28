@@ -7,6 +7,11 @@ class Runtime < ApplicationRecord
 
   token_attr :token, prefix: 's_rt_', length: 48
 
+  enum :status, { disconnected: 0, connected: 1 }, default: :disconnected
+
+  has_many :project_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :runtime
+  has_many :projects, class_name: 'NamespaceProject', through: :project_assignments, inverse_of: :runtimes
+
   has_many :data_types, inverse_of: :runtime
 
   has_many :flow_types, inverse_of: :runtime

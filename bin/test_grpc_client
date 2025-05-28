@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require 'grpc'
+require 'tucana'
+
+Tucana.load_protocol(:sagittarius)
+
+def main
+  token = ARGV.size > 0 ? ARGV[0] : 'no-token-set'
+  hostname = ARGV.size > 1 ? ARGV[1] : 'localhost:50051'
+  stub = Tucana::Sagittarius::FlowService::Stub.new(hostname, :this_channel_is_insecure)
+  begin
+    message = Tucana::Sagittarius::FlowLogonRequest.new
+
+    puts "Sending: #{message.inspect}"
+
+    stub.update(message, {
+      metadata: {
+        authorization: token
+      }
+    }).each do |response|
+      puts "Received: #{response.inspect}"
+
+      puts "Simulating connection abort"
+      exit
+    end
+
+    puts "Done"
+
+  rescue GRPC::BadStatus => e
+    abort "ERROR: #{e.message}"
+  end
+end
+
+main
