@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class FlowHandler < Tucana::Sagittarius::FlowService::Service
+  include Code0::ZeroTrack::Loggable
   include GrpcHandler
   include GrpcStreamHandler
 
