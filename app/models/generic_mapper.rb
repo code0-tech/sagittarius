@@ -7,6 +7,4 @@ class GenericMapper < ApplicationRecord
   belongs_to :runtime_parameter_definition, optional: true, inverse_of: :generic_mappers
 
   validates :target, presence: true
-
-
 end

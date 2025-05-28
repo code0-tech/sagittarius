@@ -6,5 +6,4 @@ class GenericType < ApplicationRecord
 
   has_many :generic_mappers, inverse_of: :generic_type
   has_many :data_type_identifiers, class_name: 'DataTypeIdentifier', inverse_of: :generic_type
-
 end
