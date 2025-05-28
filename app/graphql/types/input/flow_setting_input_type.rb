@@ -5,7 +5,10 @@ module Types
     class FlowSettingInputType < Types::BaseInputObject
       description 'Input type for flow settings'
 
-      argument :value, GraphQL::Types::JSON, required: true,
+      argument :flow_setting_id, String, required: true,
+                                              description: 'The identifier of the flow setting'
+
+      argument :object, GraphQL::Types::JSON, required: true,
                                              description: 'The value of the flow setting'
     end
   end

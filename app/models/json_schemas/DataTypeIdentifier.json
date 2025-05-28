@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://example.com/schemas/DataTypeIdentifier.json",
+  "title": "DataTypeIdentifier",
+  "type": "object",
+  "oneOf": [
+    {
+      "required": ["data_type_identifier"],
+      "properties": {
+        "data_type_identifier": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "required": ["generic_type"],
+      "properties": {
+        "generic_type": {
+          "$ref": "GenericType.json"
+        }
+      }
+    },
+    {
+      "required": ["generic_key"],
+      "properties": {
+        "generic_key": {
+          "type": "string"
+        }
+      }
+    }
+  ]
+}

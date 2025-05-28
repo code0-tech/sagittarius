@@ -8,5 +8,5 @@ Input type for Node parameter
 
 | Name | Type | Description |
 |------|------|-------------|
-| `definition` | [`NodeParameterDefinitionInput!`](../input_object/nodeparameterdefinitioninput.md) | The definition of the parameter |
+| `runtimeParameterDefinitionId` | [`RuntimeParameterDefinitionID!`](../scalar/runtimeparameterdefinitionid.md) | The identifier of the Runtime Parameter Definition |
 | `value` | [`NodeParameterValueInput`](../input_object/nodeparametervalueinput.md) | The value of the parameter |

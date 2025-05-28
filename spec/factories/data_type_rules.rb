@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :data_type_rule do
     data_type
-    variant { 1 }
-    config { {} }
+    variant { :regex }
+    config { { pattern: '.*' } }
   end
 end

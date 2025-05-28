@@ -6,6 +6,21 @@ class NodeFunction < ApplicationRecord
 
   has_many :node_parameters, inverse_of: :function_value
 
+
+  validate :validate_recursion, if: :next_node_changed?
+
+  def validate_recursion
+    current_node = self
+    until current_node.next_node.nil?
+      current_node = current_node.next_node
+
+      if current_node == self
+        errors.add(:next_node, :recursion)
+        break
+      end
+    end
+  end
+
   def to_grpc
     Tucana::NodeFunction.new(
       data_base_id: id,
