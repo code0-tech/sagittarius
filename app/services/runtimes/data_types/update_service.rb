@@ -63,7 +63,7 @@ module Runtimes
       end
 
       def find_datatype(identifier, t)
-        data_type = DataType.find_by(runtime: current_runtime, identifier: identifier)
+        data_type = DataType.find_or_initialize_by(runtime: current_runtime, identifier: identifier)
 
         if data_type.nil?
           t.rollback_and_return! ServiceResponse.error(message: "Could not find datatype with identifier #{identifier}",
