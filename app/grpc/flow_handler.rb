@@ -11,8 +11,13 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
     runtime.connected!
     runtime.save
 
-    flows = NamespaceProject.where(id: runtime.projects.ids).flat_map do |project|
-      project.flows.map(&:to_grpc)
+    logger.info(message: 'Runtime connected', runtime_id: runtime.id)
+
+    flows = []
+    runtime.projects.each do |project|
+      project.flows.each do |flow|
+        flows << flow.to_grpc
+      end
     end
 
     send_update(
@@ -20,7 +25,8 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
         flows: Tucana::Shared::Flows.new(
           flows: flows
         )
-      )
+      ),
+      runtime.id
     )
   end
 

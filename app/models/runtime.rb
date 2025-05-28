@@ -10,7 +10,8 @@ class Runtime < ApplicationRecord
   enum :status, { disconnected: 0, connected: 1 }, default: :disconnected
 
   has_many :project_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :runtime
-  has_many :projects, class_name: 'NamespaceProject', through: :project_assignments, inverse_of: :runtimes
+  has_many :projects, class_name: 'NamespaceProject', through: :project_assignments, source: :namespace_project,
+           inverse_of: :runtimes
 
   has_many :data_types, inverse_of: :runtime
   has_many :data_type_identifiers, inverse_of: :runtime

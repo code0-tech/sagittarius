@@ -12,6 +12,8 @@ RSpec.describe Runtime do
     it { is_expected.to have_many(:generic_types).inverse_of(:runtime) }
     it { is_expected.to have_many(:generic_mappers).inverse_of(:runtime) }
     it { is_expected.to have_many(:flow_types).inverse_of(:runtime) }
+    it { is_expected.to have_many(:project_assignments).class_name('NamespaceProjectRuntimeAssignment').inverse_of(:runtime) }
+    it { is_expected.to have_many(:projects).class_name('NamespaceProject').through(:project_assignments).inverse_of(:runtimes) }
   end
 
   describe 'validations' do
