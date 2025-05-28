@@ -51,9 +51,9 @@ class CreateFlows < Code0::ZeroTrack::Database::Migration[1.0]
                                                          on_delete: :cascade }
       t.references :flow_type, null: false, foreign_key: { to_table: :flow_types, on_delete: :cascade }
 
-      t.references :input_type_identifier, null: true, foreign_key: { to_table: :data_type_identifiers,
+      t.references :input_type, null: true, foreign_key: { to_table: :data_types,
                                                                       on_delete: :restrict }
-      t.references :return_type_identifier, null: true, foreign_key: { to_table: :data_type_identifiers,
+      t.references :return_type, null: true, foreign_key: { to_table: :data_types,
                                                                        on_delete: :restrict }
 
       t.references :starting_node, null: false, foreign_key: { to_table: :node_functions, on_delete: :restrict }
