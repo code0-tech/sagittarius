@@ -12,6 +12,7 @@ module Types
 
     field :namespace, Types::NamespaceType, null: false,
                                             description: 'The namespace where this project belongs to'
+    field :primary_runtime, Types::RuntimeType, null: true, description: 'The primary runtime for the project'
 
     id_field NamespaceProject
     timestamps

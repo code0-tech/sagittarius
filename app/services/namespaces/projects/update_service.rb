@@ -18,6 +18,8 @@ module Namespaces
           return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
         end
 
+        params[:primary_runtime_id] = params.delete(:primary_runtime)&.id if params.key?(:primary_runtime)
+
         transactional do |t|
           success = namespace_project.update(params)
           unless success

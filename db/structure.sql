@@ -370,6 +370,7 @@ CREATE TABLE namespace_projects (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     namespace_id bigint NOT NULL,
+    primary_runtime_id bigint,
     CONSTRAINT check_09e881e641 CHECK ((char_length(name) <= 50)),
     CONSTRAINT check_a77bf7c685 CHECK ((char_length(description) <= 500))
 );
@@ -917,6 +918,8 @@ CREATE INDEX index_namespace_members_on_user_id ON namespace_members USING btree
 
 CREATE INDEX index_namespace_projects_on_namespace_id ON namespace_projects USING btree (namespace_id);
 
+CREATE INDEX index_namespace_projects_on_primary_runtime_id ON namespace_projects USING btree (primary_runtime_id);
+
 CREATE INDEX index_namespace_role_project_assignments_on_project_id ON namespace_role_project_assignments USING btree (project_id);
 
 CREATE UNIQUE INDEX "index_namespace_roles_on_namespace_id_LOWER_name" ON namespace_roles USING btree (namespace_id, lower(name));
@@ -1023,6 +1026,9 @@ ALTER TABLE ONLY runtime_function_definitions
 
 ALTER TABLE ONLY data_type_rules
     ADD CONSTRAINT fk_rails_7759633ff8 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY namespace_projects
+    ADD CONSTRAINT fk_rails_79012c5895 FOREIGN KEY (primary_runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY active_storage_variant_records
     ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
