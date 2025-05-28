@@ -13,12 +13,14 @@ module GrpcStreamHandler
       end
 
       define_singleton_method("send_#{method}") do |grpc_object, runtime_id|
-        GrpcStreamHandler.logger.info(message: 'Sending data', runtime_id: runtime_id, method: method, grpc_object: grpc_object)
+        GrpcStreamHandler.logger.info(message: 'Sending data', runtime_id: runtime_id, method: method,
+                                      grpc_object: grpc_object)
 
         encoded_data = send('encoders')[method].call(grpc_object)
         encoded_data64 = Base64.encode64(encoded_data)
 
-        GrpcStreamHandler.logger.info(message: 'Encoded data', runtime_id: runtime_id, method: method, encoded_data: encoded_data64)
+        GrpcStreamHandler.logger.info(message: 'Encoded data', runtime_id: runtime_id, method: method,
+                                      encoded_data: encoded_data64)
 
         ActiveRecord::Base.connection.raw_connection
                           .exec("NOTIFY grpc_streams, '#{self},#{method},#{runtime_id},#{encoded_data64}'")
