@@ -182,27 +182,10 @@ CREATE SEQUENCE data_types_id_seq
 
 ALTER SEQUENCE data_types_id_seq OWNED BY data_types.id;
 
-CREATE TABLE flow_setting_definitions (
-    id bigint NOT NULL,
-    identifier text NOT NULL,
-    key text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE flow_setting_definitions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE flow_setting_definitions_id_seq OWNED BY flow_setting_definitions.id;
-
 CREATE TABLE flow_settings (
     id bigint NOT NULL,
     flow_id bigint,
-    definition_id bigint NOT NULL,
+    flow_setting_id text NOT NULL,
     object jsonb NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
@@ -862,8 +845,6 @@ ALTER TABLE ONLY data_type_rules ALTER COLUMN id SET DEFAULT nextval('data_type_
 
 ALTER TABLE ONLY data_types ALTER COLUMN id SET DEFAULT nextval('data_types_id_seq'::regclass);
 
-ALTER TABLE ONLY flow_setting_definitions ALTER COLUMN id SET DEFAULT nextval('flow_setting_definitions_id_seq'::regclass);
-
 ALTER TABLE ONLY flow_settings ALTER COLUMN id SET DEFAULT nextval('flow_settings_id_seq'::regclass);
 
 ALTER TABLE ONLY flow_type_settings ALTER COLUMN id SET DEFAULT nextval('flow_type_settings_id_seq'::regclass);
@@ -953,9 +934,6 @@ ALTER TABLE ONLY data_type_rules
 
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT data_types_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY flow_setting_definitions
-    ADD CONSTRAINT flow_setting_definitions_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY flow_settings
     ADD CONSTRAINT flow_settings_pkey PRIMARY KEY (id);
@@ -1106,8 +1084,6 @@ CREATE INDEX index_data_types_on_flows_id ON data_types USING btree (flows_id);
 CREATE INDEX index_data_types_on_parent_type_id ON data_types USING btree (parent_type_id);
 
 CREATE UNIQUE INDEX index_data_types_on_runtime_id_and_identifier ON data_types USING btree (runtime_id, identifier);
-
-CREATE INDEX index_flow_settings_on_definition_id ON flow_settings USING btree (definition_id);
 
 CREATE INDEX index_flow_settings_on_flow_id ON flow_settings USING btree (flow_id);
 
@@ -1356,9 +1332,6 @@ ALTER TABLE ONLY flows
 
 ALTER TABLE ONLY node_functions
     ADD CONSTRAINT fk_rails_8953e1d86a FOREIGN KEY (runtime_function_id) REFERENCES runtime_function_definitions(id) ON DELETE RESTRICT;
-
-ALTER TABLE ONLY flow_settings
-    ADD CONSTRAINT fk_rails_8c9f4f986e FOREIGN KEY (definition_id) REFERENCES flow_setting_definitions(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY data_type_identifiers
     ADD CONSTRAINT fk_rails_8d8385e8ec FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;

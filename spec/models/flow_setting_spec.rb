@@ -7,6 +7,5 @@ RSpec.describe FlowSetting do
 
   describe 'associations' do
     it { is_expected.to belong_to(:flow).optional }
-    it { is_expected.to belong_to(:definition).class_name('FlowSettingDefinition') }
   end
 end

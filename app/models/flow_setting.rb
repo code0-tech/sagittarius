@@ -2,11 +2,11 @@
 
 class FlowSetting < ApplicationRecord
   belongs_to :flow, optional: true
-  belongs_to :definition, class_name: 'FlowSettingDefinition'
 
   def to_grpc
     Tucana::Shared::FlowSetting.new(
-      definition: definition.to_grpc,
+      database_id: id,
+      flow_setting_id: flow_setting_id,
       object: Tucana::Shared::Struct.from_ruby(object)
     )
   end
