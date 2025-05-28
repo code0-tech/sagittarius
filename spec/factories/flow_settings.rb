@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :flow_setting do
     flow
-    definition factory: %i[flow_setting_definition]
+    flow_setting_id { 'default' }
     object { { enabled: true } }
   end
 end

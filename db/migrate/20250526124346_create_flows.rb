@@ -52,9 +52,9 @@ class CreateFlows < Code0::ZeroTrack::Database::Migration[1.0]
       t.references :flow_type, null: false, foreign_key: { to_table: :flow_types, on_delete: :cascade }
 
       t.references :input_type, null: true, foreign_key: { to_table: :data_types,
-                                                                      on_delete: :restrict }
+                                                           on_delete: :restrict }
       t.references :return_type, null: true, foreign_key: { to_table: :data_types,
-                                                                       on_delete: :restrict }
+                                                            on_delete: :restrict }
 
       t.references :starting_node, null: false, foreign_key: { to_table: :node_functions, on_delete: :restrict }
 
@@ -63,17 +63,10 @@ class CreateFlows < Code0::ZeroTrack::Database::Migration[1.0]
 
     add_reference :data_types, :flows, null: true, foreign_key: { to_table: :flows, on_delete: :restrict }
 
-    create_table :flow_setting_definitions do |t|
-      t.text :identifier, null: false
-      t.text :key, null: false
-
-      t.timestamps_with_timezone
-    end
-
     create_table :flow_settings do |t|
       t.references :flow, null: true, foreign_key: { to_table: :flows, on_delete: :cascade }
 
-      t.references :definition, null: false, foreign_key: { to_table: :flow_setting_definitions, on_delete: :cascade }
+      t.text :flow_setting_id, null: false
       t.jsonb :object, null: false
 
       t.timestamps_with_timezone
