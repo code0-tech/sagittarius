@@ -18,7 +18,7 @@ module Namespaces
             end
 
             def execute
-              logger.debug("Validating data type: #{data_type.name} for flow: #{flow.id}")
+              logger.debug("Validating data type: #{data_type.id} for flow: #{flow.id}")
 
               transactional do |t|
                 if data_type.invalid?
@@ -62,7 +62,7 @@ module Namespaces
 
                 data_type.rules.each do |rule|
                   logger.debug("Validating data type rule: #{rule.id} for data type: #{data_type.id}")
-                  ::DataTypeRuleValidationService.new(
+                  DataTypeRuleValidationService.new(
                     current_authentication,
                     flow,
                     data_type,
@@ -71,6 +71,7 @@ module Namespaces
                 end
 
                 logger.debug(message: "Data type is valid", flow: flow.id, data_type: data_type.id)
+                nil
               end
             end
           end

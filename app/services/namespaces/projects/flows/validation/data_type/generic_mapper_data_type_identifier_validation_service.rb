@@ -9,28 +9,28 @@ module Namespaces
             include Code0::ZeroTrack::Loggable
             include Sagittarius::Database::Transactional
 
-            attr_reader :current_authentication, :flow, :parameter, :mapper, :source
+            attr_reader :current_authentication, :flow, :parameter, :mapper, :data_type_identifier
 
-            def initialize(current_authentication, flow, parameter, mapper, source)
+            def initialize(current_authentication, flow, parameter, mapper, data_type_identifier)
               @current_authentication = current_authentication
               @flow = flow
               @parameter = parameter
               @mapper = mapper
-              @source = source
+              @data_type_identifier = data_type_identifier
             end
 
             def execute
-              logger.debug("Validating flow_type: #{data_type_identifier.inspect} for flow: #{flow.id}")
+              logger.debug("Validating generic_mapper: #{mapper.inspect}, source for flow: #{flow.id}")
 
               transactional do |t|
                 ::GenericDataTypeIdentifierValidationService.new(
                   current_authentication,
                   flow,
-                  source
+                  data_type_identifier
                 ).execute
 
-                if source.generic_key.present?
-                  unless parameter.function_value.runtime_function_definition.generic_keys.has?(source.generic_key)
+                if data_type_identifier.generic_key.present?
+                  unless parameter.function_value.runtime_function_definition.generic_keys.has?(data_type_identifier.generic_key)
                     t.rollback_and_return!(
                       ServiceResponse.error(
                         message: "Generic type #{parameter.generic_type.data_type.id} does not have a generic key for source #{source.generic_key}",
@@ -40,15 +40,15 @@ module Namespaces
                   end
                   return
                 end
-                if source.data_type.present?
+                if data_type_identifier.data_type.present?
                   DataTypeValidationService.new(
                     current_authentication,
                     flow,
-                    source.data_type
+                    data_type_identifier.data_type
                   ).execute
                   return
                 end
-                if source.generic_type.present?
+                if data_type_identifier.generic_type.present?
                   ::NodeFunction::GenericTypeValidationService.new(
                     current_authentication,
                     flow,

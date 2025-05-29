@@ -21,7 +21,7 @@ module Namespaces
             def execute
               logger.debug("Validating data type rule #{rule.id}")
 
-              transaction do |t|
+              transactional do |t|
                 if rule.invalid?
                   logger.debug(message: "Data type rule validation (model) failed",
                                flow: flow.id,

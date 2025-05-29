@@ -1,0 +1,108 @@
+require 'rails_helper'
+
+RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
+  include_context 'mocked service class instances'
+
+  let(:all_service_expectations) do
+    # Default case
+    {
+      Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 0,
+      Namespaces::Projects::Flows::Validation::FlowSettingValidationService => 0,
+      Namespaces::Projects::Flows::Validation::NodeFunction::NodeFunctionValidationService => 1,
+      Namespaces::Projects::Flows::Validation::FlowTypeValidationService => 1
+    }
+  end
+  let(:mocked_service_expectations) { all_service_expectations }
+
+  let(:default_payload) { flow }
+
+  subject(:service_response) { described_class.new(create_authentication(current_user), flow).execute }
+
+  let(:current_user) { create(:user) }
+  let(:runtime) { create(:runtime) }
+  let(:namespace_project) { create(:namespace_project).tap { |np| np.primary_runtime = runtime } }
+  let(:flow) { create(:flow, project: namespace_project) }
+
+  context 'when primary runtime is set and return and input and settings empty' do
+    it { is_expected.to be_success }
+    it { expect(service_response.payload).to eq(flow) }
+  end
+
+  context 'when input type is set' do
+    before do
+      flow.update!(input_type: create(:data_type))
+    end
+    let(:mocked_service_expectations) do
+      {
+        **all_service_expectations,
+        Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 1,
+      }
+    end
+    it { is_expected.to be_success }
+    it { expect(service_response.payload).to eq(flow) }
+  end
+
+  context 'when return type is set' do
+    before do
+      flow.update!(return_type: create(:data_type))
+    end
+    let(:mocked_service_expectations) do
+      {
+        **all_service_expectations,
+        Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 1,
+      }
+    end
+    it { is_expected.to be_success }
+    it { expect(service_response.payload).to eq(flow) }
+  end
+
+  context 'when return type and input type is set' do
+    before do
+      flow.update!(return_type: create(:data_type), input_type: create(:data_type))
+    end
+    let(:mocked_service_expectations) do
+      {
+        **all_service_expectations,
+        Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 2,
+      }
+    end
+    it { is_expected.to be_success }
+    it { expect(service_response.payload).to eq(flow) }
+  end
+
+  context 'when flow settings are set' do
+    let(:amount_of_flow_settings) { SecureRandom.random_number(5) + 1 }
+    before do
+      flow.flow_settings = Array.new(amount_of_flow_settings) { create(:flow_setting, flow: flow) }
+      flow.save!
+    end
+    let(:mocked_service_expectations) do
+      {
+        **all_service_expectations,
+        Namespaces::Projects::Flows::Validation::FlowSettingValidationService => amount_of_flow_settings,
+      }
+    end
+    it { is_expected.to be_success }
+    it { expect(service_response.payload).to eq(flow) }
+  end
+
+  context 'when primary runtime is not set' do
+    before do
+      namespace_project.update!(primary_runtime: nil)
+    end
+
+    let(:mocked_service_expectations) do
+      {
+        Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 0,
+        Namespaces::Projects::Flows::Validation::FlowSettingValidationService => 0,
+        Namespaces::Projects::Flows::Validation::NodeFunction::NodeFunctionValidationService => 0,
+        Namespaces::Projects::Flows::Validation::FlowTypeValidationService => 0
+      }
+    end
+
+    it 'returns an error' do
+      expect(service_response).to be_error
+      expect(service_response.payload).to eq(:no_primary_runtime)
+    end
+  end
+end

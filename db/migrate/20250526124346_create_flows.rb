@@ -33,6 +33,7 @@ class CreateFlows < Code0::ZeroTrack::Database::Migration[1.0]
     create_table :node_parameters do |t|
       t.references :runtime_parameter, null: false, foreign_key: { to_table: :runtime_parameter_definitions,
                                                                    on_delete: :cascade }
+      t.references :node_function, null: false, foreign_key: { to_table: :node_functions, on_delete: :cascade }
 
       t.jsonb :literal_value, null: true
       t.references :reference_value, null: true, foreign_key: { to_table: :reference_values,

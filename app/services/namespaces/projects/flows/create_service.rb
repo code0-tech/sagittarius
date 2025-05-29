@@ -44,7 +44,7 @@ module Namespaces
               )
             end
 
-            res = ValidationService.new(current_authentication, flow).execute
+            res = Validation::ValidationService.new(current_authentication, flow).execute
 
             if res.error?
               t.rollback_and_return! ServiceResponse.error(

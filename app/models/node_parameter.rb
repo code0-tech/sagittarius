@@ -3,7 +3,8 @@
 class NodeParameter < ApplicationRecord
   belongs_to :runtime_parameter, class_name: 'RuntimeParameterDefinition'
   belongs_to :reference_value, optional: true
-  belongs_to :function_value, class_name: 'NodeFunction', optional: true
+  belongs_to :function_value, class_name: 'NodeFunction', optional: true, inverse_of: :node_parameter_values
+  belongs_to :node_function, class_name: 'NodeFunction', inverse_of: :node_parameters
 
   validate :only_one_value_present
 

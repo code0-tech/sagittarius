@@ -8,5 +8,5 @@ Input type for flow settings
 
 | Name | Type | Description |
 |------|------|-------------|
-| `flowSettingId` | [`String!`](../scalar/string.md) | The identifier of the flow setting |
+| `flowSettingId` | [`String!`](../scalar/string.md) | The identifier (not database id) of the flow setting |
 | `object` | [`JSON!`](../scalar/json.md) | The value of the flow setting |

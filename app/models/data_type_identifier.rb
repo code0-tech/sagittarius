@@ -2,12 +2,11 @@
 
 class DataTypeIdentifier < ApplicationRecord
   belongs_to :data_type, optional: true, inverse_of: :data_type_identifiers
-  belongs_to :generic_type, optional: true, inverse_of: :data_type_identifier
+  belongs_to :generic_type, optional: true, inverse_of: :data_type_identifiers
   belongs_to :runtime, inverse_of: :data_type_identifiers
 
-  has_many :generic_types, inverse_of: :data_type_identifier
-  has_many :generic_mappers, inverse_of: :data_type_identifier
-  has_many :function_generic_mappers, class_name: 'GenericMapper', inverse_of: :data_type_identifier
+  has_many :generic_mappers, inverse_of: :source
+  has_many :function_generic_mappers, class_name: 'FunctionGenericMapper', inverse_of: :source
 
   validate :exactly_one_of_generic_key_data_type_id_generic_type_id
 

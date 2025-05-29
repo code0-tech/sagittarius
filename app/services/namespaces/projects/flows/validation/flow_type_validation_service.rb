@@ -29,7 +29,6 @@ module Namespaces
                 )
               end
             end
-
           end
         end
       end

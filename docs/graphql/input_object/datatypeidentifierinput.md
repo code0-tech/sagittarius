@@ -8,6 +8,6 @@ Input type for data type identifier
 
 | Name | Type | Description |
 |------|------|-------------|
-| `dataTypeIdentifier` | [`String`](../scalar/string.md) | Data type ID |
+| `dataTypeId` | [`DataTypeIdentifierID`](../scalar/datatypeidentifierid.md) | Data type ID |
 | `genericKey` | [`String`](../scalar/string.md) | Generic key value |
 | `genericType` | [`GenericTypeInput`](../input_object/generictypeinput.md) | Generic type information |

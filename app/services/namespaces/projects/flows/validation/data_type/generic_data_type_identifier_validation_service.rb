@@ -33,6 +33,13 @@ module Namespaces
                     )
                   )
                 end
+                if data_type_identifier.data_type.present?
+                  DataTypeValidationService.new(
+                    current_authentication,
+                    flow,
+                    data_type_identifier.data_type
+                  ).execute
+                end
                 if data_type_identifier.runtime != flow.project.primary_runtime
                   logger.debug(message: "Data type identifier runtime mismatch",
                                primary_runtime: flow.project.primary_runtime.id,
@@ -46,9 +53,6 @@ module Namespaces
                     )
                   )
                 end
-
-
-
               end
             end
           end

@@ -8,5 +8,5 @@ Input type for generic type operations.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `dataType` | [`DataTypeTypeInput!`](../input_object/datatypetypeinput.md) | The data type associated with this generic type. |
+| `dataTypeId` | [`DataTypeID!`](../scalar/datatypeid.md) | The data type associated with this generic type. |
 | `genericMappers` | [`[GenericMapperInput!]!`](../input_object/genericmapperinput.md) | The mappers associated with this generic type. |

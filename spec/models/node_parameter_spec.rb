@@ -12,7 +12,8 @@ RSpec.describe NodeParameter do
   describe 'associations' do
     it { is_expected.to belong_to(:runtime_parameter).class_name('RuntimeParameterDefinition') }
     it { is_expected.to belong_to(:reference_value).optional }
-    it { is_expected.to belong_to(:function_value).class_name('NodeFunction').optional }
+    it { is_expected.to belong_to(:function_value).class_name('NodeFunction').inverse_of(:node_parameter_values).optional }
+    it { is_expected.to belong_to(:node_function).class_name('NodeFunction').inverse_of(:node_parameters) }
   end
 
   describe 'validations' do
