@@ -280,14 +280,16 @@ ALTER SEQUENCE function_definitions_id_seq OWNED BY function_definitions.id;
 
 CREATE TABLE function_generic_mappers (
     id bigint NOT NULL,
-    source_id bigint,
+    data_type_identifier_id bigint,
+    generic_key text,
     target text NOT NULL,
     parameter_id text,
     runtime_parameter_definition_id bigint,
     runtime_function_definition_id bigint,
     runtime_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT check_8b2921e4ae CHECK ((num_nonnulls(generic_key, data_type_identifier_id) = 1))
 );
 
 CREATE SEQUENCE function_generic_mappers_id_seq
@@ -301,12 +303,14 @@ ALTER SEQUENCE function_generic_mappers_id_seq OWNED BY function_generic_mappers
 
 CREATE TABLE generic_mappers (
     id bigint NOT NULL,
-    runtime_id bigint NOT NULL,
     target text NOT NULL,
-    source_id bigint NOT NULL,
+    generic_key text,
+    data_type_identifier_id bigint,
     generic_type_id bigint,
+    runtime_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT check_48eccc6485 CHECK ((num_nonnulls(generic_key, data_type_identifier_id) = 1))
 );
 
 CREATE SEQUENCE generic_mappers_id_seq
@@ -320,8 +324,8 @@ ALTER SEQUENCE generic_mappers_id_seq OWNED BY generic_mappers.id;
 
 CREATE TABLE generic_types (
     id bigint NOT NULL,
+    data_type_identifier_id bigint NOT NULL,
     runtime_id bigint NOT NULL,
-    data_type_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
@@ -1136,17 +1140,17 @@ CREATE INDEX index_function_definitions_on_return_type_id ON function_definition
 
 CREATE INDEX index_function_definitions_on_runtime_function_definition_id ON function_definitions USING btree (runtime_function_definition_id);
 
+CREATE INDEX index_function_generic_mappers_on_data_type_identifier_id ON function_generic_mappers USING btree (data_type_identifier_id);
+
 CREATE INDEX index_function_generic_mappers_on_runtime_id ON function_generic_mappers USING btree (runtime_id);
 
-CREATE INDEX index_function_generic_mappers_on_source_id ON function_generic_mappers USING btree (source_id);
+CREATE INDEX index_generic_mappers_on_data_type_identifier_id ON generic_mappers USING btree (data_type_identifier_id);
 
 CREATE INDEX index_generic_mappers_on_generic_type_id ON generic_mappers USING btree (generic_type_id);
 
 CREATE INDEX index_generic_mappers_on_runtime_id ON generic_mappers USING btree (runtime_id);
 
-CREATE INDEX index_generic_mappers_on_source_id ON generic_mappers USING btree (source_id);
-
-CREATE INDEX index_generic_types_on_data_type_id ON generic_types USING btree (data_type_id);
+CREATE INDEX index_generic_types_on_data_type_identifier_id ON generic_types USING btree (data_type_identifier_id);
 
 CREATE INDEX index_generic_types_on_runtime_id ON generic_types USING btree (runtime_id);
 
@@ -1271,19 +1275,19 @@ ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY generic_types
-    ADD CONSTRAINT fk_rails_20f4bf6b34 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_20f4bf6b34 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT fk_rails_260318ad67 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY function_generic_mappers
-    ADD CONSTRAINT fk_rails_26b6470eba FOREIGN KEY (runtime_parameter_definition_id) REFERENCES runtime_parameter_definitions(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_26b6470eba FOREIGN KEY (runtime_parameter_definition_id) REFERENCES runtime_parameter_definitions(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY generic_types
-    ADD CONSTRAINT fk_rails_275446d9e6 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_29b2651173 FOREIGN KEY (data_type_identifier_id) REFERENCES data_type_identifiers(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY generic_mappers
-    ADD CONSTRAINT fk_rails_2adace81b8 FOREIGN KEY (source_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_31f6eb3ef3 FOREIGN KEY (data_type_identifier_id) REFERENCES data_type_identifiers(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
@@ -1301,7 +1305,7 @@ ALTER TABLE ONLY data_types
     ADD CONSTRAINT fk_rails_4434ad0b90 FOREIGN KEY (parent_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY function_generic_mappers
-    ADD CONSTRAINT fk_rails_4593a9a9b6 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_4593a9a9b6 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT fk_rails_48f4bbe3b6 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
@@ -1364,7 +1368,7 @@ ALTER TABLE ONLY node_functions
     ADD CONSTRAINT fk_rails_8953e1d86a FOREIGN KEY (runtime_function_id) REFERENCES runtime_function_definitions(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY data_type_identifiers
-    ADD CONSTRAINT fk_rails_8d8385e8ec FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_8d8385e8ec FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_8f97500cd4 FOREIGN KEY (return_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
@@ -1376,7 +1380,7 @@ ALTER TABLE ONLY active_storage_variant_records
     ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
 
 ALTER TABLE ONLY function_generic_mappers
-    ADD CONSTRAINT fk_rails_9f59fae6ab FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_9f59fae6ab FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT fk_rails_9fa262d742 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
@@ -1396,9 +1400,6 @@ ALTER TABLE ONLY reference_values
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_bb587eff6a FOREIGN KEY (input_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
-ALTER TABLE ONLY function_generic_mappers
-    ADD CONSTRAINT fk_rails_be1833ba72 FOREIGN KEY (source_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
-
 ALTER TABLE ONLY flow_types
     ADD CONSTRAINT fk_rails_bead35b1a6 FOREIGN KEY (return_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
@@ -1412,7 +1413,7 @@ ALTER TABLE ONLY namespace_project_runtime_assignments
     ADD CONSTRAINT fk_rails_c640af2146 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY generic_mappers
-    ADD CONSTRAINT fk_rails_c7984c8a7a FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_c7984c8a7a FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT fk_rails_ca0a397b6f FOREIGN KEY (data_type_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
@@ -1427,13 +1428,16 @@ ALTER TABLE ONLY flow_settings
     ADD CONSTRAINT fk_rails_da3b2fb3c5 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY generic_mappers
-    ADD CONSTRAINT fk_rails_e0d918961b FOREIGN KEY (generic_type_id) REFERENCES generic_types(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_e0d918961b FOREIGN KEY (generic_type_id) REFERENCES generic_types(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT fk_rails_e64f825793 FOREIGN KEY (data_type_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY runtimes
     ADD CONSTRAINT fk_rails_eeb42116cc FOREIGN KEY (namespace_id) REFERENCES namespaces(id);
+
+ALTER TABLE ONLY function_generic_mappers
+    ADD CONSTRAINT fk_rails_f32ba64eee FOREIGN KEY (data_type_identifier_id) REFERENCES data_type_identifiers(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY audit_events
     ADD CONSTRAINT fk_rails_f64374fc56 FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL;
