@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DataTypeRule do
-  subject { create(:data_type_rule) }
+  subject(:rule) { create(:data_type_rule) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:data_type).inverse_of(:rules) }
@@ -13,109 +13,118 @@ RSpec.describe DataTypeRule do
     it { is_expected.to allow_values(*described_class::VARIANTS.keys).for(:variant) }
 
     context 'when variant is contains_key' do
-      before { subject.variant = :contains_key }
+      before { rule.variant = :contains_key }
 
-      context 'validates config with DataTypeContainsKeyRuleConfig schema' do
+      context 'when validating config with DataTypeContainsKeyRuleConfig schema' do
         it 'is correct' do
-          subject.config = {
-            key: "id",
+          rule.config = {
+            key: 'id',
             data_type_identifier: {
-              data_type_identifier: "User"
-            }
+              data_type_identifier: 'User',
+            },
           }
-          expect(subject).to be_valid
+          is_expected.to be_valid
         end
-        it 'is incorrect' do
-          subject.config = {
+
+        it 'when its incorrect' do
+          rule.config = {
             data_type_identifier: {
-              data_type_identifier: "User"
-            }
+              data_type_identifier: 'User',
+            },
           }
-          expect(subject).not_to be_valid
+          is_expected.not_to be_valid
         end
       end
     end
+
     context 'when variant is contains_type' do
-      before { subject.variant = :contains_type }
+      before { rule.variant = :contains_type }
 
-      context 'is correct' do
-        it 'validates config with DataTypeContainsTypeRuleConfig schema' do
-          subject.config = {
+      context 'when its correct' do
+        it 'when validating config with DataTypeContainsTypeRuleConfig schema' do
+          rule.config = {
             data_type_identifier: {
-              data_type_identifier: "User"
-            }
+              data_type_identifier: 'User',
+            },
           }
-          expect(subject).to be_valid
+          is_expected.to be_valid
         end
       end
-      context 'is incorrect' do
-        it 'validates config with DataTypeContainsTypeRuleConfig schema' do
-          subject.config = {
-            key: "id"
+
+      context 'when its incorrect' do
+        it 'when validating config with DataTypeContainsTypeRuleConfig schema' do
+          rule.config = {
+            key: 'id',
           }
-          expect(subject).not_to be_valid
+          is_expected.not_to be_valid
         end
       end
     end
+
     context 'when variant is item_of_collection' do
-      before { subject.variant = :item_of_collection }
+      before { rule.variant = :item_of_collection }
 
-      context 'validates config with DataTypeItemOfCollectionRuleConfig schema' do
+      context 'when validating config with DataTypeItemOfCollectionRuleConfig schema' do
         it 'is correct' do
-          subject.config = {
-            "items": [
-              ["a", 1, true, {"key": "value"}],
-              {"test": 2},
+          rule.config = {
+            items: [
+              ['a', 1, true, { key: 'value' }],
+              { test: 2 },
               []
-            ]
+            ],
           }
-          expect(subject).to be_valid
+          is_expected.to be_valid
         end
-        it 'is incorrect' do
-          subject.config = {
-            key: "id"
+
+        it 'when its incorrect' do
+          rule.config = {
+            key: 'id',
           }
-          expect(subject).not_to be_valid
+          is_expected.not_to be_valid
         end
       end
     end
-    context 'when variant is number_range' do
-      before { subject.variant = :number_range }
 
-      context 'validates config with DataTypeNumberRangeRuleConfig schema' do
+    context 'when variant is number_range' do
+      before { rule.variant = :number_range }
+
+      context 'when validating config with DataTypeNumberRangeRuleConfig schema' do
         it 'is correct' do
-          subject.config = {
+          rule.config = {
             from: 1,
             to: 10,
-            steps: 1
+            steps: 1,
           }
-          expect(subject).to be_valid
+          is_expected.to be_valid
         end
-        it 'is incorrect' do
-          subject.config = {
-            from: "one",
+
+        it 'when its incorrect' do
+          rule.config = {
+            from: 'one',
             to: 10,
-            steps: 1
+            steps: 1,
           }
-          expect(subject).not_to be_valid
+          is_expected.not_to be_valid
         end
       end
     end
-    context 'when variant is regex' do
-      before { subject.variant = :regex }
 
-      context 'validates config with DataTypeRegexRuleConfig schema' do
+    context 'when variant is regex' do
+      before { rule.variant = :regex }
+
+      context 'when validating config with DataTypeRegexRuleConfig schema' do
         it 'is correct' do
-          subject.config = {
-            pattern: '.*'
+          rule.config = {
+            pattern: '.*',
           }
-          expect(subject).to be_valid
+          is_expected.to be_valid
         end
-        it 'is incorrect' do
-          subject.config = {
-            pattern: 1234
+
+        it 'when its incorrect' do
+          rule.config = {
+            pattern: 1234,
           }
-          expect(subject).not_to be_valid
+          is_expected.not_to be_valid
         end
       end
     end

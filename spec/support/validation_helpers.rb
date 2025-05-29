@@ -1,4 +1,6 @@
-RSpec.shared_context 'mocked service class instances' do
+# frozen_string_literal: true
+
+RSpec.shared_context 'with mocked services' do
   let(:service_instances) do
     mocked_service_expectations.keys.index_with do |klass|
       instance_double(klass, execute: default_execute_response)

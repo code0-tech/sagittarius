@@ -19,7 +19,7 @@ module Namespaces
             end
 
             def execute
-              transactional do |t|
+              transactional do |_t|
                 ::DataType::DataTypeValidationService.new(
                   current_authentication,
                   flow,
@@ -27,7 +27,8 @@ module Namespaces
                 ).execute
 
                 identifier.data_type.generic_mappers.each do |generic_mapper|
-                  logger.debug("Validating generic mapper: #{generic_mapper.id} for data type identifier: #{identifier.id}")
+                  logger.debug("Validating generic mapper: #{generic_mapper.id}" \
+                               "for data type identifier: #{identifier.id}")
                   ::DataType::GenericMapperValidationService.new(
                     current_authentication,
                     flow,

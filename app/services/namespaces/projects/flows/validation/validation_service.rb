@@ -15,7 +15,7 @@ module Namespaces
           end
 
           def execute
-            transactional do |t|
+            transactional do |_t|
               primary_runtime = flow.project.primary_runtime
               if primary_runtime.nil?
                 return ServiceResponse.error(

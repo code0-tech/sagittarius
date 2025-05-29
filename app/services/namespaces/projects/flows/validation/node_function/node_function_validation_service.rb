@@ -22,7 +22,7 @@ module Namespaces
 
               transactional do |t|
                 if node_function.invalid?
-                  logger.debug(message: "Node function validation failed",
+                  logger.debug(message: 'Node function validation failed',
                                errors: node_function.errors.full_messages)
                   t.rollback_and_return!(
                     ServiceResponse.error(
@@ -42,9 +42,10 @@ module Namespaces
                 end
 
                 node_function.runtime_function.tap do |runtime_function|
-                  logger.debug("Validating runtime function: #{runtime_function.id} for node function: #{node_function.id}")
+                  logger
+                    .debug("Validating runtime function: #{runtime_function.id} for node function: #{node_function.id}")
                   if runtime_function.runtime != flow.project.primary_runtime
-                    logger.debug(message: "Runtime function runtime mismatch",
+                    logger.debug(message: 'Runtime function runtime mismatch',
                                  primary_runtime: flow.project.primary_runtime.id,
                                  given_runtime: runtime_function.runtime.id,
                                  flow: flow.id,
@@ -63,7 +64,7 @@ module Namespaces
                   logger.debug("Validating node parameter: #{parameter.id} for function: #{node_function.id}")
 
                   if parameter.runtime_parameter != node_function.runtime_function
-                    logger.debug(message: "Node parameter does not match its function",
+                    logger.debug(message: 'Node parameter does not match its function',
                                  node_function: node_function.id,
                                  runtime_parameter: parameter.runtime_parameter.id,
                                  flow: flow.id)

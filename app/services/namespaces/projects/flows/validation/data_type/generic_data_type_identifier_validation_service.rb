@@ -22,7 +22,7 @@ module Namespaces
 
               transactional do |t|
                 if data_type_identifier.invalid?
-                  logger.debug(message: "Data type identifier validation failed",
+                  logger.debug(message: 'Data type identifier validation failed',
                                flow: flow.id,
                                data_type_identifier: data_type_identifier.id,
                                errors: data_type_identifier.errors.full_messages)
@@ -41,7 +41,7 @@ module Namespaces
                   ).execute
                 end
                 if data_type_identifier.runtime != flow.project.primary_runtime
-                  logger.debug(message: "Data type identifier runtime mismatch",
+                  logger.debug(message: 'Data type identifier runtime mismatch',
                                primary_runtime: flow.project.primary_runtime.id,
                                given_runtime: data_type_identifier.runtime.id,
                                flow: flow.id,

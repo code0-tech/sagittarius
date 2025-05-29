@@ -28,7 +28,8 @@ module Namespaces
                 unless parameter.generic_type.data_type.generic_keys.has?(target)
                   t.rollback_and_return!(
                     ServiceResponse.error(
-                      message: "Generic type #{parameter.generic_type.data_type.id} does not have a generic key for target #{target}",
+                      message: "Generic type #{parameter.generic_type.data_type.id} " \
+                               "does not have a generic key for target #{target}",
                       payload: :generic_key_not_found
                     )
                   )
@@ -41,7 +42,6 @@ module Namespaces
                   generic_mapper,
                   generic_mapper.source
                 ).execute
-
               end
 
               ServiceResponse.success(message: 'Node function generic mapper validation passed')

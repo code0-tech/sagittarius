@@ -1,7 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
-  include_context 'mocked service class instances'
+  subject(:service_response) { described_class.new(create_authentication(current_user), flow).execute }
+
+  include_context 'with mocked services'
 
   let(:all_service_expectations) do
     # Default case
@@ -9,14 +13,12 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
       Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 0,
       Namespaces::Projects::Flows::Validation::FlowSettingValidationService => 0,
       Namespaces::Projects::Flows::Validation::NodeFunction::NodeFunctionValidationService => 1,
-      Namespaces::Projects::Flows::Validation::FlowTypeValidationService => 1
+      Namespaces::Projects::Flows::Validation::FlowTypeValidationService => 1,
     }
   end
   let(:mocked_service_expectations) { all_service_expectations }
 
   let(:default_payload) { flow }
-
-  subject(:service_response) { described_class.new(create_authentication(current_user), flow).execute }
 
   let(:current_user) { create(:user) }
   let(:runtime) { create(:runtime) }
@@ -32,12 +34,14 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
     before do
       flow.update!(input_type: create(:data_type))
     end
+
     let(:mocked_service_expectations) do
       {
         **all_service_expectations,
         Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 1,
       }
     end
+
     it { is_expected.to be_success }
     it { expect(service_response.payload).to eq(flow) }
   end
@@ -46,12 +50,14 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
     before do
       flow.update!(return_type: create(:data_type))
     end
+
     let(:mocked_service_expectations) do
       {
         **all_service_expectations,
         Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 1,
       }
     end
+
     it { is_expected.to be_success }
     it { expect(service_response.payload).to eq(flow) }
   end
@@ -60,28 +66,32 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
     before do
       flow.update!(return_type: create(:data_type), input_type: create(:data_type))
     end
+
     let(:mocked_service_expectations) do
       {
         **all_service_expectations,
         Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 2,
       }
     end
+
     it { is_expected.to be_success }
     it { expect(service_response.payload).to eq(flow) }
   end
 
   context 'when flow settings are set' do
     let(:amount_of_flow_settings) { SecureRandom.random_number(5) + 1 }
-    before do
-      flow.flow_settings = Array.new(amount_of_flow_settings) { create(:flow_setting, flow: flow) }
-      flow.save!
-    end
     let(:mocked_service_expectations) do
       {
         **all_service_expectations,
         Namespaces::Projects::Flows::Validation::FlowSettingValidationService => amount_of_flow_settings,
       }
     end
+
+    before do
+      flow.flow_settings = Array.new(amount_of_flow_settings) { create(:flow_setting, flow: flow) }
+      flow.save!
+    end
+
     it { is_expected.to be_success }
     it { expect(service_response.payload).to eq(flow) }
   end
@@ -96,7 +106,7 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
         Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService => 0,
         Namespaces::Projects::Flows::Validation::FlowSettingValidationService => 0,
         Namespaces::Projects::Flows::Validation::NodeFunction::NodeFunctionValidationService => 0,
-        Namespaces::Projects::Flows::Validation::FlowTypeValidationService => 0
+        Namespaces::Projects::Flows::Validation::FlowTypeValidationService => 0,
       }
     end
 

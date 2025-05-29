@@ -23,7 +23,7 @@ module Namespaces
 
               transactional do |t|
                 if parameter.invalid?
-                  logger.debug(message: "Node parameter validation failed",
+                  logger.debug(message: 'Node parameter validation failed',
                                errors: parameter.errors.full_messages)
                   t.rollback_and_return!(
                     ServiceResponse.error(
@@ -32,9 +32,8 @@ module Namespaces
                     )
                   )
                 end
-                if parameter.literal_value.present?
-                  return
-                end
+                return if parameter.literal_value.present?
+
                 if parameter.reference_value.present?
                   ReferenceValueValidationService.new(
                     current_authentication,
@@ -44,7 +43,8 @@ module Namespaces
                   return
                 end
                 if parameter.function_value.present?
-                  logger.debug("Validating function value: #{parameter.function_value.id} for node parameter: #{parameter.id}")
+                  logger.debug("Validating function value:
+                    #{parameter.function_value.id} for node parameter: #{parameter.id}")
                   NodeFunctionValidationService.new(
                     current_authentication,
                     flow,

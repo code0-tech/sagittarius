@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Namespaces::Projects::Flows::Validation::DataType::DataTypeRuleValidationService do
-
   subject(:service_response) { described_class.new(create_authentication(current_user), flow, data_type, rule).execute }
 
   let(:current_user) { create(:user) }
@@ -12,7 +13,7 @@ RSpec.describe Namespaces::Projects::Flows::Validation::DataType::DataTypeRuleVa
   let(:rule) { create(:data_type_rule, data_type: data_type, variant: :regex, config: { pattern: '.*' }) }
 
   context 'when rule is valid' do
-    it { expect(service_response).to eq(nil) }
+    it { expect(service_response).to be_nil }
   end
 
   context 'when rule is invalid' do
@@ -20,7 +21,7 @@ RSpec.describe Namespaces::Projects::Flows::Validation::DataType::DataTypeRuleVa
 
     it 'returns an error message' do
       expect(service_response).to be_error
-      expect(rule.errors.full_messages).to include("Config is not a valid JSON schema")
+      expect(rule.errors.full_messages).to include('Config is not a valid JSON schema')
     end
   end
 end

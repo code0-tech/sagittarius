@@ -22,14 +22,14 @@ module Namespaces
 
               transactional do |t|
                 if data_type.invalid?
-                  logger.debug(message: "Data type validation failed",
+                  logger.debug(message: 'Data type validation failed',
                                flow: flow.id,
                                data_type: data_type.id,
                                errors: data_type.errors.full_messages)
                   t.rollback_and_return!(
                     ServiceResponse.error(
                       message: 'Data type is invalid',
-                      payload: data_type.errors,
+                      payload: data_type.errors
                     )
                   )
                 end
@@ -37,12 +37,11 @@ module Namespaces
                 primary_runtime = flow.project.primary_runtime
 
                 if primary_runtime != data_type.runtime
-                  logger.debug(message: "Data type runtime mismatch",
+                  logger.debug(message: 'Data type runtime mismatch',
                                primary_runtime: primary_runtime.id,
                                given_runtime: data_type.runtime.id,
                                flow: flow.id,
-                               data_type: data_type.id
-                  )
+                               data_type: data_type.id)
                   t.rollback_and_return!(
                     ServiceResponse.error(
                       message: 'Data type runtime does not match the primary runtime of the project',
@@ -70,7 +69,7 @@ module Namespaces
                   ).execute
                 end
 
-                logger.debug(message: "Data type is valid", flow: flow.id, data_type: data_type.id)
+                logger.debug(message: 'Data type is valid', flow: flow.id, data_type: data_type.id)
                 nil
               end
             end

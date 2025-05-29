@@ -17,7 +17,7 @@ module Sagittarius
 
         @base_directory = options.delete(:base_directory) || BASE_DIRECTORY
 
-        super(options)
+        super
       end
 
       def validate_each(record, attribute, value)
@@ -25,7 +25,7 @@ module Sagittarius
         value = JSON.parse(value.to_s) if options[:parse_json] == true && !value.nil?
 
         if options[:detail_errors]
-          JSON::Validator.validate(schema,value).each do |error|
+          JSON::Validator.validate(schema, value).each do |error|
             message = format_error_message(error)
             record.errors.add(attribute, message)
           end
@@ -56,7 +56,7 @@ module Sagittarius
       end
 
       def valid_schema?(value)
-        JSON::Validator.validate(schema_path, value, :validate_schema => true)
+        JSON::Validator.validate(schema_path, value, validate_schema: true)
       end
 
       def schema_path

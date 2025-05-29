@@ -22,14 +22,15 @@ module Namespaces
           transactional do |t|
             settings = []
             params[:settings].each do |graphql_setting|
-              setting = FlowSetting.new(flow_setting_id: graphql_setting.flow_setting_id, object: graphql_setting.object)
-              unless setting.valid?
-                t.rollback_and_return! ServiceResponse.error(
-                  message: 'Invalid flow setting',
-                  payload: setting.errors
-                )
-                settings << setting
-              end
+              setting = FlowSetting.new(flow_setting_id: graphql_setting.flow_setting_id,
+                                        object: graphql_setting.object)
+              next if setting.valid?
+
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Invalid flow setting',
+                payload: setting.errors
+              )
+              settings << setting
             end
             params[:settings] = settings
 
@@ -88,33 +89,29 @@ module Namespaces
             if parameter.literal_value.present?
               params << NodeParameter.create(
                 runtime_parameter: runtime_parameter,
-                literal_value: parameter.literal_value,
+                literal_value: parameter.literal_value
               )
               next
             end
             if parameter.function_value.present?
               params << NodeParameter.create(
                 runtime_parameter: runtime_parameter,
-                function_value: create_node_function(parameter.function_value, t),
+                function_value: create_node_function(parameter.function_value, t)
               )
               next
             end
-            if parameter.reference_value.present?
-              identifier = parameter.reference_value.data_type_identifier
+            next if parameter.reference_value.blank?
 
-              ReferenceValue.create(
-                reference_value_id: parameter.reference_value.reference_value_id,
-                data_type_identifier: get_data_type_identifier(identifier),
-              )
-            end
+            identifier = parameter.reference_value.data_type_identifier
 
+            ReferenceValue.create(
+              reference_value_id: parameter.reference_value.reference_value_id,
+              data_type_identifier: get_data_type_identifier(identifier)
+            )
           end
 
           next_node = nil
-          if node_function.next_node.present?
-            next_node = create_node_function(node_function.next_node, t)
-          end
-
+          next_node = create_node_function(node_function.next_node, t) if node_function.next_node.present?
 
           NodeFunction.create(
             next_node: next_node,
@@ -126,9 +123,7 @@ module Namespaces
         private
 
         def get_data_type_identifier(identifier)
-          if identifier.generic_key.present?
-            return DataTypeIdentifier.create(generic_key: identifier.generic_key)
-          end
+          return DataTypeIdentifier.create(generic_key: identifier.generic_key) if identifier.generic_key.present?
 
           if identifier.generic_type.present?
             data_type = SagittariusSchema.object_from_id(identifier.generic_type.data_type_id)
@@ -142,9 +137,9 @@ module Namespaces
             return DataTypeIdentifier.create(generic_type: GenericType.create(data_type: data_type, mappers: mappers))
           end
 
-          if identifier.data_type_id.present?
-            return DataTypeIdentifier.create(data_type: SagittariusSchema.object_from_id(identifier.data_type_id))
-          end
+          return if identifier.data_type_id.blank?
+
+          DataTypeIdentifier.create(data_type: SagittariusSchema.object_from_id(identifier.data_type_id))
         end
       end
     end

@@ -23,7 +23,7 @@ module Namespaces
 
               transactional do |t|
                 if rule.invalid?
-                  logger.debug(message: "Data type rule validation (model) failed",
+                  logger.debug(message: 'Data type rule validation (model) failed',
                                flow: flow.id,
                                data_type: data_type.id,
                                rule: rule.id,

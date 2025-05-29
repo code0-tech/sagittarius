@@ -30,7 +30,6 @@ module Namespaces
             end
 
             # Maybe something in the future we will validate the setting object but currently its not typed
-
           end
         end
       end

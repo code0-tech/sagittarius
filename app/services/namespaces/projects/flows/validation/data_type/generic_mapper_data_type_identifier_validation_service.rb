@@ -30,10 +30,12 @@ module Namespaces
                 ).execute
 
                 if data_type_identifier.generic_key.present?
-                  unless parameter.function_value.runtime_function_definition.generic_keys.has?(data_type_identifier.generic_key)
+                  unless parameter.function_value.runtime_function_definition
+                                  .generic_keys.has?(data_type_identifier.generic_key)
                     t.rollback_and_return!(
                       ServiceResponse.error(
-                        message: "Generic type #{parameter.generic_type.data_type.id} does not have a generic key for source #{source.generic_key}",
+                        message: "Generic type #{parameter.generic_type.data_type.id} " \
+                                 "does not have a generic key for source #{source.generic_key}",
                         payload: :generic_key_not_found
                       )
                     )

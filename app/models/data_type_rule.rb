@@ -14,18 +14,37 @@ class DataTypeRule < ApplicationRecord
   belongs_to :data_type, inverse_of: :rules
 
   validates :variant, presence: true,
-            inclusion: {
-              in: VARIANTS.keys.map(&:to_s),
-            }
+                      inclusion: {
+                        in: VARIANTS.keys.map(&:to_s),
+                      }
 
-  validates :config, if: :variant_contains_key?, 'sagittarius/validators/json_schema': { filename: 'data_types/DataTypeContainsKeyRuleConfig', hash_conversion: true }
+  validates :config, if: :variant_contains_key?,
+                     'sagittarius/validators/json_schema': {
+                       filename: 'data_types/DataTypeContainsKeyRuleConfig',
+                       hash_conversion: true,
+                     }
 
-  validates :config, if: :variant_contains_type?, 'sagittarius/validators/json_schema': { filename: 'data_types/DataTypeContainsTypeRuleConfig', hash_conversion: true }
+  validates :config, if: :variant_contains_type?,
+                     'sagittarius/validators/json_schema': {
+                       filename: 'data_types/DataTypeContainsTypeRuleConfig',
+                       hash_conversion: true,
+                     }
 
-  validates :config, if: :variant_item_of_collection?, 'sagittarius/validators/json_schema': { filename: 'data_types/DataTypeItemOfCollectionRuleConfig', hash_conversion: true }
+  validates :config, if: :variant_item_of_collection?,
+                     'sagittarius/validators/json_schema': {
+                       filename: 'data_types/DataTypeItemOfCollectionRuleConfig',
+                       hash_conversion: true,
+                     }
 
-  validates :config, if: :variant_number_range?, 'sagittarius/validators/json_schema': { filename: 'data_types/DataTypeNumberRangeRuleConfig', hash_conversion: true }
+  validates :config, if: :variant_number_range?,
+                     'sagittarius/validators/json_schema': {
+                       filename: 'data_types/DataTypeNumberRangeRuleConfig',
+                       hash_conversion: true,
+                     }
 
-  validates :config, if: :variant_regex?, 'sagittarius/validators/json_schema': { filename: 'data_types/DataTypeRegexRuleConfig', hash_conversion: true }
-
+  validates :config, if: :variant_regex?,
+                     'sagittarius/validators/json_schema': {
+                       filename: 'data_types/DataTypeRegexRuleConfig',
+                       hash_conversion: true,
+                     }
 end

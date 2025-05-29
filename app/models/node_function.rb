@@ -7,7 +7,6 @@ class NodeFunction < ApplicationRecord
   has_many :node_parameter_values, class_name: 'NodeParameter', inverse_of: :function_value
   has_many :node_parameters, class_name: 'NodeParameter', inverse_of: :node_function
 
-
   validate :validate_recursion, if: :next_node_changed?
 
   def validate_recursion

@@ -9,33 +9,25 @@ module Mutations
 
           field :flow, Types::FlowType, null: true, description: 'The newly created flow.'
 
-          argument :project_id, Types::GlobalIdType[NamespaceProject], required: true,
-                   description: 'The ID of the project to which the flow belongs to'
+          argument :project_id, Types::GlobalIdType[NamespaceProject],
+                   required: true, description: 'The ID of the project to which the flow belongs to'
 
-          argument :flow, Types::Input::FlowInputType
+          argument :flow, Types::Input::FlowInputType, description: 'The flow to create', required: true
 
           def resolve(project_id:, flow:, **params)
             project = SagittariusSchema.object_from_id(project_id)
 
-            if project.nil?
-              return error('Invalid project id')
-            end
+            return error('Invalid project id') if project.nil?
 
             input_type = SagittariusSchema.object_from_id(flow.input_type)
 
-            if input_type.nil?
-              return error('Invalid input type id')
-            end
+            return error('Invalid input type id') if input_type.nil?
 
             return_type = SagittariusSchema.object_from_id(flow.return_type)
-            if return_type.nil?
-              return error('Invalid return type id')
-            end
+            return error('Invalid return type id') if return_type.nil?
 
             flow_type = SagittariusSchema.object_from_id(flow.flow_type)
-            if flow_type.nil?
-              return error('Invalid flow type id')
-            end
+            return error('Invalid flow type id') if flow_type.nil?
 
             Namespaces::Projects::Flows::CreateService.new(
               create_authentication(context[:current_user]),
@@ -47,13 +39,13 @@ module Mutations
                 starting_node: params[:starting_node],
                 settings: params[:settings] || [],
               }
-            ).execute.to_mutation_response(success_key: :flow);
+            ).execute.to_mutation_response(success_key: :flow)
           end
 
           def error(message)
             {
               flow: nil,
-              errors: [create_message_error(message)]
+              errors: [create_message_error(message)],
             }
           end
         end

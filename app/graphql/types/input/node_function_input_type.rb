@@ -9,9 +9,9 @@ module Types
                required: true, description: 'The identifier of the Runtime Function Definition'
 
       argument :next_node, Types::Input::NodeFunctionInputType, required: false,
-                                                         description: 'The next Node Function in the flow'
+                                                                description: 'The next Node Function in the flow'
       argument :parameters, [Types::Input::NodeParameterInputType], required: true,
-                                                             description: 'The parameters of the Node Function'
+                                                                    description: 'The parameters of the Node Function'
     end
   end
 end

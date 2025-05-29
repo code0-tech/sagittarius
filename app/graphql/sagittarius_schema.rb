@@ -52,14 +52,6 @@ class SagittariusSchema < GraphQL::Schema
     nil
   end
 
-  def self.object_from_id_or_error(global_id)
-    obj = object_from_id(global_id)
-    if obj.nil?
-
-    end
-    obj
-  end
-
   # rubocop:enable Lint/UnusedMethodArgument
 end
 # rubocop:enable GraphQL/MaxDepthSchema
