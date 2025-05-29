@@ -41,6 +41,15 @@ module Namespaces
                     flow,
                     parameter.reference_value
                   ).execute
+                  return
+                end
+                if parameter.function_value.present?
+                  logger.debug("Validating function value: #{parameter.function_value.id} for node parameter: #{parameter.id}")
+                  NodeFunctionValidationService.new(
+                    current_authentication,
+                    flow,
+                    parameter.function_value
+                  ).execute
                 end
               end
             end

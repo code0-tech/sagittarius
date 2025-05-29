@@ -27,26 +27,30 @@ module Namespaces
               # ---
               # Input Type Validation
               # ---
-              Namespaces::Projects::Flows::Validation::DataTypeValidationService(
-                current_authentication,
-                flow,
-                flow.input_type
-              ).execute
+              if flow.input_type.present?
+                Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService.new(
+                  current_authentication,
+                  flow,
+                  flow.input_type
+                ).execute
+              end
 
               # ---
               # Return Type Validation
               # ---
-              Namespaces::Projects::Flows::Validation::DataTypeValidationService(
-                current_authentication,
-                flow,
-                flow.return_type
-              ).execute
+              if flow.return_type.present?
+                Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService.new(
+                  current_authentication,
+                  flow,
+                  flow.return_type
+                ).execute
+              end
 
               # ---
               # Setting
               # ---
               flow.flow_settings.each do |setting|
-                Namespaces::Projects::Flows::Validation::FlowSettingValidationService(
+                Namespaces::Projects::Flows::Validation::FlowSettingValidationService.new(
                   current_authentication,
                   flow,
                   setting
@@ -56,10 +60,19 @@ module Namespaces
               # ---
               # Starting node
               # ---
-              Namespaces::Projects::Flows::Validation::NodeFunctionValidationService(
+              Namespaces::Projects::Flows::Validation::NodeFunction::NodeFunctionValidationService.new(
                 current_authentication,
                 flow,
                 flow.starting_node
+              ).execute
+
+              # ---
+              # Flow Type
+              # ---
+              FlowTypeValidationService.new(
+                current_authentication,
+                flow,
+                flow.flow_type
               ).execute
 
               ServiceResponse.success(message: 'Validation service executed successfully', payload: flow)

@@ -18,7 +18,7 @@ module Namespaces
             end
 
             def execute
-              logger.debug("Validating data type: #{data_type.name} for flow: #{flow.name}")
+              logger.debug("Validating data type: #{data_type.name} for flow: #{flow.id}")
 
               transactional do |t|
                 if data_type.invalid?

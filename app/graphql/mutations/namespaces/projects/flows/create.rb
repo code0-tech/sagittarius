@@ -15,9 +15,6 @@ module Mutations
           argument :flow, Types::Input::FlowInputType
 
           def resolve(project_id:, flow:, **params)
-            create_params = {}
-
-
             project = SagittariusSchema.object_from_id(project_id)
 
             if project.nil?
@@ -30,11 +27,27 @@ module Mutations
               return error('Invalid input type id')
             end
 
+            return_type = SagittariusSchema.object_from_id(flow.return_type)
+            if return_type.nil?
+              return error('Invalid return type id')
+            end
 
+            flow_type = SagittariusSchema.object_from_id(flow.flow_type)
+            if flow_type.nil?
+              return error('Invalid flow type id')
+            end
 
-
-
-
+            Namespaces::Projects::Flows::CreateService.new(
+              create_authentication(context[:current_user]),
+              namespace_project: project,
+              params: {
+                return_type: return_type,
+                input_type: input_type,
+                flow_type: flow_type,
+                starting_node: params[:starting_node],
+                settings: params[:settings] || [],
+              }
+            ).execute.to_mutation_response(success_key: :flow);
           end
 
           def error(message)

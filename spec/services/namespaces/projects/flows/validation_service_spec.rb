@@ -7,7 +7,9 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
 
   let(:runtime) { create(:runtime) }
   let(:namespace_project) { create(:namespace_project).tap { |np| np.update(primary_runtime: runtime) } }
-  let(:starting_node) { create(:node_function, runtime_function_definition: create(:runtime_function_definition, runtime: runtime)) }
+  let(:starting_node) { create(:node_function,
+                               runtime_function: create(:runtime_function_definition, runtime: runtime)
+  ) }
   let(:flow_type) { create(:flow_type, runtime: runtime) }
   let(:flow) { create(:flow, project: namespace_project, flow_type: flow_type, starting_node: starting_node) }
 
