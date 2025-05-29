@@ -14,5 +14,44 @@ services:
     ports:
       - "5433:5432"
 
+  valkey:
+    image: valkey/valkey:8.1-alpine
+    profiles:
+      - runtime
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    profiles:
+      - runtime
+    restart: unless-stopped
+
+  aquila:
+    image: ghcr.io/code0-tech/reticulum/ci-builds/aquila:1843593485
+    profiles:
+      - runtime
+    environment:
+      MODE: dynamic
+      ENVIRONMENT: development
+      REDIS_URL: redis://valkey:6379
+      BACKEND_URL: http://sagittarius-grpc:50051
+      RUNTIME_TOKEN: development_runtime_token
+    restart: unless-stopped
+
+  sagittarius-grpc:
+    image: ruby:3.2.2
+    profiles:
+      - sagittarius-grpc
+    volumes:
+      - ./:/sagittarius
+      - ./tooling/dev-environment/sagittarius.yml:/sagittarius/config/sagittarius.yml
+    command: |
+      sh -c "
+        cd /sagittarius &&
+        bundle install &&
+        bin/grpc_server
+      "
+
+
 volumes:
   database:

@@ -1,0 +1,5 @@
+rails:
+  log_level: debug
+  db:
+    host: postgres
+    port: 5432
