@@ -15,24 +15,22 @@ const schema: Schema = JSON.parse(schemaData);
 const globalIds = schema.data.__schema.types
   .filter(type => type.kind === 'SCALAR' && type.name.endsWith('ID'))
 
-const scalarConfig = {
-  scalars: {
-    JSON: {
-      input: 'any',
-      output: 'any',
-    },
-    Time: {
-      input: 'string',
-      output: 'string',
-    }
+const scalars = {
+  JSON: {
+    input: 'any',
+    output: 'any',
+  },
+  Time: {
+    input: 'string',
+    output: 'string',
   }
 }
 
 
 globalIds.forEach(type => {
-  const typeConfig = `\`gid://sagittarius/${type.name}/\${number}\``
+  const typeConfig = `\`gid://sagittarius/${type.name.replace(/ID$/, '')}/\${number}\``
 
-  scalarConfig.scalars[type.name] = {
+  scalars[type.name] = {
     input: typeConfig,
     output: typeConfig,
   };
@@ -47,7 +45,7 @@ const config: CodegenConfig = {
         "typescript"
       ],
       config: {
-        ...scalarConfig,
+        scalars,
         strictScalars: true,
         declarationKind: 'interface',
       }
