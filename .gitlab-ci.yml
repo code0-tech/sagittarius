@@ -197,6 +197,7 @@ npm-types:generate-graphql:
       - tmp/schema.graphql
       - tmp/schema.json
       - tooling/graphql/types/
+      
 
 .npm-types:publish-graphql:
   image: node:22.16.0
@@ -219,8 +220,13 @@ npm-types:publish-graphql-dry-run:
   script:
     - !reference [.npm-types:publish-graphql, script]
     - npm publish --dry-run
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - tooling/graphql/types/index.d.ts
   rules:
     - if: $C0_GH_REF_NAME != "main"
+
 
 npm-types:publish-graphql:
   extends:
