@@ -25,25 +25,26 @@ module Namespaces
                 target = generic_mapper.target
 
                 # Validate the target the identifier gets validated later
-                unless parameter.generic_type.data_type.generic_keys.has?(target)
+                unless parameter.node_function.runtime_function.generic_keys.include?(target)
                   t.rollback_and_return!(
                     ServiceResponse.error(
-                      message: "Generic type #{parameter.generic_type.data_type.id} " \
+                      message: "Runtime function definition #{parameter.node_function.runtime_function} " \
                                "does not have a generic key for target #{target}",
                       payload: :generic_key_not_found
                     )
                   )
                 end
 
-                ::DataType::DataTypeIdentifierValidationService.new(
-                  current_authentication,
-                  flow,
-                  parameter.node_function,
-                  generic_mapper.source
-                ).execute
+                generic_mapper.sources.each do |source|
+                  Namespaces::Projects::Flows::Validation::DataType::DataTypeIdentifierValidationService.new(
+                    current_authentication,
+                    flow,
+                    parameter.node_function,
+                    source
+                  ).execute
+                end
               end
-
-              ServiceResponse.success(message: 'Node function generic mapper validation passed')
+              nil
             end
           end
         end

@@ -13,10 +13,9 @@ class DataType < ApplicationRecord
 
   enum :variant, VARIANTS, prefix: :variant
 
-  belongs_to :parent_type, class_name: 'DataType', inverse_of: :child_types, optional: true
+  belongs_to :parent_type, class_name: 'DataTypeIdentifier', inverse_of: :child_types, optional: true
   belongs_to :runtime, inverse_of: :data_types
 
-  has_many :child_types, class_name: 'DataType', inverse_of: :parent_type
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :rules, class_name: 'DataTypeRule', inverse_of: :data_type
   has_many :data_type_identifiers, class_name: 'DataTypeIdentifier', inverse_of: :data_type
@@ -31,8 +30,8 @@ class DataType < ApplicationRecord
 
   def validate_recursion
     current_type = self
-    until current_type.parent_type.nil?
-      current_type = current_type.parent_type
+    until current_type.parent_type&.data_type.nil?
+      current_type = current_type.parent_type&.data_type
 
       if current_type == self
         errors.add(:parent_type, :recursion)

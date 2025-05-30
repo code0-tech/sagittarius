@@ -2,9 +2,11 @@
 
 class GenericMapper < ApplicationRecord
   belongs_to :generic_type, inverse_of: :generic_mappers, optional: true
-  belongs_to :source, class_name: 'DataTypeIdentifier', inverse_of: :generic_mappers
   belongs_to :runtime, inverse_of: :generic_mappers
   belongs_to :runtime_parameter_definition, optional: true, inverse_of: :generic_mappers
+
+  has_many :sources, class_name: 'DataTypeIdentifier', inverse_of: :generic_mapper
+  has_many :generic_combination_strategies, class_name: 'GenericCombinationStrategy', inverse_of: :generic_mapper
 
   validates :target, presence: true
 

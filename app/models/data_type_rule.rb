@@ -7,6 +7,8 @@ class DataTypeRule < ApplicationRecord
     item_of_collection: 3,
     number_range: 4,
     regex: 5,
+    return_type: 6,
+    input_type: 7,
   }.with_indifferent_access
 
   enum :variant, VARIANTS, prefix: :variant
@@ -45,6 +47,18 @@ class DataTypeRule < ApplicationRecord
   validates :config, if: :variant_regex?,
                      'sagittarius/validators/json_schema': {
                        filename: 'data_types/DataTypeRegexRuleConfig',
+                       hash_conversion: true,
+                     }
+
+  validates :config, if: :variant_return_type?,
+                     'sagittarius/validators/json_schema': {
+                       filename: 'data_types/ReturnTypeRuleConfig',
+                       hash_conversion: true,
+                     }
+
+  validates :config, if: :variant_input_type?,
+                     'sagittarius/validators/json_schema': {
+                       filename: 'data_types/InputTypeRuleConfig',
                        hash_conversion: true,
                      }
 end

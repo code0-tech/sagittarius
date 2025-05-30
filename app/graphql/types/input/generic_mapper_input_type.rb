@@ -5,7 +5,7 @@ module Types
     class GenericMapperInputType < Types::BaseInputObject
       description 'Input type for generic mappers'
 
-      argument :source, Types::Input::DataTypeIdentifierInputType,
+      argument :sources, [Types::Input::DataTypeIdentifierInputType],
                required: true, description: 'The source data type identifier for the mapper'
 
       argument :target, String,

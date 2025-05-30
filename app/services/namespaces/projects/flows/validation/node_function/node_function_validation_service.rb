@@ -31,6 +31,14 @@ module Namespaces
                     )
                   )
                 end
+                if node_function.runtime_function.runtime != flow.project.primary_runtime
+                  t.rollback_and_return!(
+                    ServiceResponse.error(
+                      message: 'Node function runtime does not match the primary runtime of the project',
+                      payload: :runtime_mismatch
+                    )
+                  )
+                end
 
                 node_function.next_node&.tap do |next_node|
                   logger.debug("Validating next node function: #{next_node.id} for flow: #{flow.id}")

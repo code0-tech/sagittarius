@@ -52,9 +52,10 @@ module Namespaces
 
                 data_type.parent_type&.tap do |parent_type|
                   logger.debug("Validating parent type: #{parent_type.id} for data type: #{data_type.id}")
-                  DataTypeValidationService.new(
+                  DataTypeIdentifierValidationService.new(
                     current_authentication,
                     flow,
+                    nil,
                     parent_type
                   ).execute
                 end

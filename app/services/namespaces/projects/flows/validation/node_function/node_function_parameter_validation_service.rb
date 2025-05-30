@@ -32,6 +32,15 @@ module Namespaces
                     )
                   )
                 end
+                if parameter.runtime_parameter.runtime != flow.project.primary_runtime
+                  t.rollback_and_return!(
+                    ServiceResponse.error(
+                      message: 'Node parameter runtime does not match the primary runtime of the project',
+                      payload: :runtime_mismatch
+                    )
+                  )
+                end
+
                 return if parameter.literal_value.present?
 
                 if parameter.reference_value.present?

@@ -28,7 +28,6 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
       t.references :runtime, null: false, foreign_key: { to_table: :runtimes, on_delete: :cascade }
 
       t.text :target, null: false
-      t.references :source, null: false, foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }
       t.references :generic_type, null: true, foreign_key: { to_table: :generic_types, on_delete: :restrict }
 
       t.timestamps_with_timezone
@@ -41,9 +40,6 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
                          name: check_constraint_name(:data_type_identifiers, :type, :one_of)
 
     create_table :function_generic_mappers do |t|
-      t.references :source, null: true,
-                            foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }
-
       t.text :target, null: false
       t.text :parameter_id, null: true
 
@@ -79,5 +75,17 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
     remove_reference :function_definitions, :return_type, foreign_key: { to_table: :data_types, on_delete: :restrict }
     add_reference :function_definitions, :return_type,
                   foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
+
+    remove_reference :data_types, :parent_type
+    add_reference :data_types, :parent_type, null: true,
+                                             foreign_key: { to_table: :data_type_identifiers,
+                                                            on_delete: :restrict }
+
+    add_reference :data_type_identifiers, :generic_mapper, null: true,
+                                                           foreign_key: { to_table: :generic_mappers,
+                                                                          on_delete: :restrict }
+    add_reference :data_type_identifiers, :function_generic_mapper, null: true,
+                                                                    foreign_key: { to_table: :function_generic_mappers,
+                                                                                   on_delete: :restrict }
   end
 end

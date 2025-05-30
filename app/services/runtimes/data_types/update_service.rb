@@ -49,12 +49,13 @@ module Runtimes
         sorted_types + unsorted_types # any unsorted types also need to be processed. They might still fail validations
       end
 
-      def update_datatype(data_type, t)
+      def update_datatype(data_type, _t)
         db_object = DataType.find_or_initialize_by(runtime: current_runtime, identifier: data_type.identifier)
         db_object.removed_at = nil
         db_object.variant = data_type.variant.to_s.downcase
         if data_type.parent_type_identifier.present?
-          db_object.parent_type = find_datatype(data_type.parent_type_identifier, t)
+          # db_object.parent_type = find_datatype(data_type.parent_type_identifier, t)
+          # TODO: wait for parenttype get properly introduced in grpc
         end
         db_object.rules = update_rules(data_type.rules, db_object)
         db_object.names = update_translations(data_type.name, db_object.names)

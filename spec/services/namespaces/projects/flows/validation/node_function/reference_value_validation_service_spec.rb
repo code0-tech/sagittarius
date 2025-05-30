@@ -63,12 +63,12 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
            tertiary_level: tertiary_level)
   end
 
-  context 'with horizontal reference' do
+  context 'with secondary level' do
     let(:secondary_level) { 0 }
 
     it { expect(service_response).to be_nil }
 
-    context 'with horizontal reference out of bounds' do
+    context 'with secondary level out of bounds' do
       let(:secondary_level) { 2 }
 
       it { expect(service_response).to be_error }
