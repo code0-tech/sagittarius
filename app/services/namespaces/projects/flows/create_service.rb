@@ -134,7 +134,7 @@ module Namespaces
             mappers = identifier.generic_type.mappers.map do |mapper|
               GenericMapper.create(
                 generic_mapper_id: mapper.generic_mapper_id,
-                sources: mapper.sources,
+                source: mapper.source,
                 target: mapper.target
               )
             end

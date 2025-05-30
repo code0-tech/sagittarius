@@ -11,5 +11,10 @@ RSpec.describe FunctionDefinition do
     it { is_expected.to have_many(:names).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:descriptions).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:documentations).class_name('Translation').inverse_of(:owner) }
+
+    it {
+      is_expected.to have_many(:generic_combination_strategies)
+        .class_name('GenericCombinationStrategy').inverse_of(:function_generic_mapper)
+    }
   end
 end

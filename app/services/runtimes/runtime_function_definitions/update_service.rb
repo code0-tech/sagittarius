@@ -74,7 +74,7 @@ module Runtimes
           if generic_mapper.is_a? Tucana::Shared::GenericMapper
             mapper = GenericMapper.create_or_find_by(runtime: current_runtime,
                                                      target: generic_mapper.target,
-                                                     sources: generic_mapper.sources.map do |source|
+                                                     source: generic_mapper.source.map do |source|
                                                        find_data_type_identifier(source, generic_mappers, t)
                                                      end)
           end
@@ -82,7 +82,7 @@ module Runtimes
             mapper = FunctionGenericMapper.create_or_find_by(
               runtime_id: current_runtime.id,
               runtime_function_definition: runtime_function_definition,
-              sources: generic_mapper.sources.map { |source| find_data_type_identifier(source, generic_mappers, t) },
+              source: generic_mapper.source.map { |source| find_data_type_identifier(source, generic_mappers, t) },
               target: generic_mapper.target,
               parameter_id: generic_mapper.parameter_id
             )
@@ -98,16 +98,12 @@ module Runtimes
         end
       end
 
-      def find_data_type_identifier(identifier, generic_mappers, t)
+      def find_data_type_identifier(identifier, _generic_mappers, t)
         if identifier.data_type_identifier.present?
           return create_data_type_identifier(t, data_type_id: find_data_type(identifier.data_type_identifier, t).id)
         end
 
         if identifier.generic_type.present?
-          arr = generic_mappers.to_a
-          identifier.generic_type.generic_mappers.each do |generic_mapper|
-            arr << generic_mapper
-          end
           data_type = find_data_type(identifier.generic_type.data_type_identifier, t)
 
           generic_type = GenericType.find_by(

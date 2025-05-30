@@ -4,8 +4,12 @@ class CreateGenericCombinationStrategies < Code0::ZeroTrack::Database::Migration
   def change
     create_table :generic_combination_strategies do |t|
       t.integer :type
-      t.references :generic_mapper, null: false, foreign_key: {
+      t.references :generic_mapper, null: true, foreign_key: {
         to_table: :generic_mappers,
+        on_delete: :cascade,
+      }
+      t.references :function_generic_mapper, null: true, foreign_key: {
+        to_table: :function_generic_mappers,
         on_delete: :cascade,
       }
 

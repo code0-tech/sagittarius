@@ -45,7 +45,7 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::GenericMap
     create(:data_type_identifier, generic_key: 'T', runtime: runtime)
   end
   let(:generic_mapper) do
-    create(:generic_mapper, sources: [data_type_identifier], target: 'T')
+    create(:generic_mapper, source: [data_type_identifier], target: 'T')
   end
 
   context 'when generic mapper points to a existing generic_key' do

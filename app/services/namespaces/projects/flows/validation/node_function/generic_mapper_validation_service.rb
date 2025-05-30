@@ -35,7 +35,11 @@ module Namespaces
                   )
                 end
 
-                generic_mapper.sources.each do |source|
+                generic_mapper.generic_combination_strategies.each do |_strategy|
+                  # TODO: idk
+                end
+
+                generic_mapper.source.each do |source|
                   Namespaces::Projects::Flows::Validation::DataType::DataTypeIdentifierValidationService.new(
                     current_authentication,
                     flow,

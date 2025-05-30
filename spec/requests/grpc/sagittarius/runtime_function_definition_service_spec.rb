@@ -81,7 +81,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
         expect(GenericMapper.count).to eq(1)
-        expect(GenericMapper.last.sources.first.generic_key).to eq('T')
+        expect(GenericMapper.last.source.first.generic_key).to eq('T')
         expect(GenericMapper.last.target).to eq('V')
 
         expect(GenericType.count).to eq(1)
@@ -117,7 +117,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(parameter_definition.default_value).to eq({ 'key' => 'value' })
 
         expect(FunctionGenericMapper.count).to eq(1)
-        expect(FunctionGenericMapper.last.sources.first.generic_key).to eq('X')
+        expect(FunctionGenericMapper.last.source.first.generic_key).to eq('X')
         expect(FunctionGenericMapper.last.target).to eq('Y')
         expect(FunctionGenericMapper.last.parameter_id).to eq('some_id')
       end
