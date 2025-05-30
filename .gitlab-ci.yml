@@ -190,11 +190,12 @@ npm-types:generate-graphql:
     - .rails
   stage: build
   script:
-    - bundle exec rake graphql:schema:idl
+    - bundle exec rake graphql:schema:dump
   artifacts:
     expire_in: 7 days
     paths:
       - tmp/schema.graphql
+      - tmp/schema.json
       - tooling/graphql/types/
 
 .npm-types:publish-graphql:
