@@ -48,6 +48,7 @@
 *.njsproj
 *.sln
 *.sw?
+**/*Zone.Identifier
 
 ################
 ##
