@@ -23,10 +23,10 @@ module Namespaces
                 ::DataType::DataTypeValidationService.new(
                   current_authentication,
                   flow,
-                  identifier.data_type
+                  generic_type.data_type
                 ).execute
 
-                identifier.data_type.generic_mappers.each do |generic_mapper|
+                generic_type.generic_mappers.each do |generic_mapper|
                   logger.debug("Validating generic mapper: #{generic_mapper.id}" \
                                "for data type identifier: #{identifier.id}")
                   ::DataType::GenericMapperValidationService.new(

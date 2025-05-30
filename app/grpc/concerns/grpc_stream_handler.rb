@@ -27,7 +27,7 @@ module GrpcStreamHandler
       end
       define_singleton_method("end_#{method}") do |runtime_id|
         ActiveRecord::Base.connection.raw_connection
-                          .exec("NOTIFY grpc_streams, '#{self.class},#{method},#{runtime_id},end'")
+                          .exec("NOTIFY grpc_streams, '#{self},#{method},#{runtime_id},end'")
       end
     end
   end

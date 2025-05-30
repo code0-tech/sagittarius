@@ -115,4 +115,24 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
       expect(service_response.payload).to eq(:no_primary_runtime)
     end
   end
+
+  # Some random examples to ensure the service works as expected
+  context 'with real unmocked examples' do
+    let(:runtime) { create(:runtime) }
+    let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
+    let(:starting_node) do
+      create(:node_function, runtime_function: create(:runtime_function_definition, runtime: runtime))
+    end
+    let(:flow) do
+      create(:flow, project: namespace_project, flow_type: create(:flow_type, runtime: runtime),
+                    starting_node: starting_node)
+    end
+
+    context 'with simplest flow' do
+      let(:all_service_expectations) { {} }
+
+      it { is_expected.to be_success }
+      it { expect(service_response.payload).to eq(flow) }
+    end
+  end
 end

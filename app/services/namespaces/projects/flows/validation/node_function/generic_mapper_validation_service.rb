@@ -19,12 +19,12 @@ module Namespaces
             end
 
             def execute
-              logger.debug("Validating node function: #{parameter.inspect} for flow: #{flow.id}")
+              logger.debug("Validating generic mapper: #{generic_mapper.inspect} for flow: #{flow.id}")
 
               transactional do |t|
                 target = generic_mapper.target
 
-                # Validate the target
+                # Validate the target the identifier gets validated later
                 unless parameter.generic_type.data_type.generic_keys.has?(target)
                   t.rollback_and_return!(
                     ServiceResponse.error(
@@ -35,11 +35,10 @@ module Namespaces
                   )
                 end
 
-                ::DataType::GenericMapperDataTypeIdentifierValidationService.new(
+                ::DataType::DataTypeIdentifierValidationService.new(
                   current_authentication,
                   flow,
-                  parameter,
-                  generic_mapper,
+                  parameter.node_function,
                   generic_mapper.source
                 ).execute
               end

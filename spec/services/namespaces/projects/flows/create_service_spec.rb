@@ -7,9 +7,14 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
     described_class.new(create_authentication(current_user), namespace_project: namespace_project, **params).execute
   end
 
-  let(:namespace_project) { create(:namespace_project) }
-  let(:starting_node) { create(:node_function) }
-  let(:params) { { project: namespace_project, flow_type: create(:flow_type), starting_node: starting_node } }
+  let(:runtime) { create(:runtime) }
+  let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
+  let(:starting_node) do
+    create(:node_function, runtime_function: create(:runtime_function_definition, runtime: runtime))
+  end
+  let(:params) do
+    { project: namespace_project, flow_type: create(:flow_type, runtime: runtime), starting_node: starting_node }
+  end
 
   shared_examples 'does not create' do
     it { is_expected.to be_error }

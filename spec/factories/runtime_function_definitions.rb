@@ -7,5 +7,6 @@ FactoryBot.define do
     runtime_name { generate(:runtime_function_definition_name) }
     return_type { nil }
     runtime
+    generic_keys { [] }
   end
 end

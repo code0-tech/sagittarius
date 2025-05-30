@@ -9,7 +9,7 @@ Creates a new flow.
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `flow` | [`FlowInput!`](../input_object/flowinput.md) |  |
+| `flow` | [`FlowInput!`](../input_object/flowinput.md) | The flow to create |
 | `projectId` | [`NamespaceProjectID!`](../scalar/namespaceprojectid.md) | The ID of the project to which the flow belongs to |
 
 ## Fields

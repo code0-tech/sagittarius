@@ -21,21 +21,25 @@ module Namespaces
 
           transactional do |t|
             settings = []
-            params[:settings].each do |graphql_setting|
-              setting = FlowSetting.new(flow_setting_id: graphql_setting.flow_setting_id,
-                                        object: graphql_setting.object)
-              next if setting.valid?
+            if params.key?(:settings)
+              params[:settings].each do |graphql_setting|
+                setting = FlowSetting.new(flow_setting_id: graphql_setting.flow_setting_id,
+                                          object: graphql_setting.object)
+                next if setting.valid?
 
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Invalid flow setting',
-                payload: setting.errors
-              )
-              settings << setting
+                t.rollback_and_return! ServiceResponse.error(
+                  message: 'Invalid flow setting',
+                  payload: setting.errors
+                )
+                settings << setting
+              end
+              params[:settings] = settings
             end
-            params[:settings] = settings
 
-            node = create_node_function(params[:starting_node], t)
-            params[:starting_node] = node
+            if params.key?(:starting_node) && params[:starting_node].is_a?(Types::Input::NodeFunctionInputType)
+              node = create_node_function(params[:starting_node], t)
+              params[:starting_node] = node
+            end
 
             flow = Flow.create(project: namespace_project, **params)
             unless flow.persisted?

@@ -5,20 +5,21 @@ module Namespaces
     module Flows
       module Validation
         module DataType
-          class GenericDataTypeIdentifierValidationService
+          class DataTypeIdentifierValidationService
             include Code0::ZeroTrack::Loggable
             include Sagittarius::Database::Transactional
 
-            attr_reader :current_authentication, :flow, :data_type_identifier
+            attr_reader :current_authentication, :flow, :node, :data_type_identifier
 
-            def initialize(current_authentication, flow, data_type_identifier)
+            def initialize(current_authentication, flow, node, data_type_identifier)
               @current_authentication = current_authentication
               @flow = flow
+              @node = node
               @data_type_identifier = data_type_identifier
             end
 
             def execute
-              logger.debug("Validating flow_type: #{data_type_identifier.inspect} for flow: #{flow.id}")
+              logger.debug("Validating data_type_identifier: #{data_type_identifier.id} for flow: #{flow.id}")
 
               transactional do |t|
                 if data_type_identifier.invalid?
@@ -33,13 +34,6 @@ module Namespaces
                     )
                   )
                 end
-                if data_type_identifier.data_type.present?
-                  DataTypeValidationService.new(
-                    current_authentication,
-                    flow,
-                    data_type_identifier.data_type
-                  ).execute
-                end
                 if data_type_identifier.runtime != flow.project.primary_runtime
                   logger.debug(message: 'Data type identifier runtime mismatch',
                                primary_runtime: flow.project.primary_runtime.id,
@@ -53,6 +47,33 @@ module Namespaces
                     )
                   )
                 end
+
+                if data_type_identifier.generic_key.present?
+                  unless node.runtime_function.generic_keys.include?(data_type_identifier.generic_key)
+                    t.rollback_and_return!(
+                      ServiceResponse.error(
+                        message: "Data type identifier #{data_type_identifier.id} " \
+                                 'does not have a generic key which exists in the node function ' \
+                                 "#{node.runtime_function.generic_keys}",
+                        payload: :generic_key_not_found
+                      )
+                    )
+                  end
+                elsif data_type_identifier.generic_type.present?
+                  ::NodeFunction::GenericTypeValidationService.new(
+                    current_authentication,
+                    flow,
+                    data_type_identifier.generic_type
+                  ).execute
+                elsif data_type_identifier.data_type.present?
+                  DataTypeValidationService.new(
+                    current_authentication,
+                    flow,
+                    data_type_identifier.data_type
+                  ).execute
+                end
+
+                nil
               end
             end
           end

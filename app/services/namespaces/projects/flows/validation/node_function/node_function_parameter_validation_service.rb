@@ -38,6 +38,7 @@ module Namespaces
                   ReferenceValueValidationService.new(
                     current_authentication,
                     flow,
+                    parameter.node_function,
                     parameter.reference_value
                   ).execute
                   return
