@@ -198,7 +198,7 @@ npm-types:generate-graphql:
       - tooling/graphql/types/
 
 .npm-types:publish-graphql:
-  image: node:22.15.1
+  image: node:22.16.0
   needs:
     - npm-types:generate-graphql
   variables:
