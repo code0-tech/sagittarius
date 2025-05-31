@@ -18,6 +18,9 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
               id
               parameters {
                 count
+                nodes {
+                  id
+                }
               }
             }
             settings {
@@ -74,6 +77,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
   context 'when user has the permission' do
     before do
       stub_allowed_ability(NamespaceProjectPolicy, :create_flows, user: current_user, subject: project)
+      stub_allowed_ability(NamespaceProjectPolicy, :read_flow, user: current_user, subject: project)
     end
 
     it 'creates namespace project' do

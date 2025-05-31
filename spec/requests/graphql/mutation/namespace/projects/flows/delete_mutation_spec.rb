@@ -36,9 +36,9 @@ RSpec.describe 'namespacesProjectsFlowsDelete Mutation' do
   context 'when user has permission' do
     before do
       stub_allowed_ability(NamespaceProjectPolicy, :delete_flows, user: current_user,
-                                                                            subject: namespace_project)
+                                                                  subject: namespace_project)
       stub_allowed_ability(NamespaceProjectPolicy, :read_flow, user: current_user,
-                           subject: namespace_project)
+                                                               subject: namespace_project)
     end
 
     it 'deletes flow' do
@@ -71,7 +71,8 @@ RSpec.describe 'namespacesProjectsFlowsDelete Mutation' do
       mutate!
 
       expect(graphql_data_at(:namespaces_projects_flows_delete, :flow)).to be_nil
-      expect(graphql_data_at(:namespaces_projects_flows_delete, :errors)).to include({ 'message' => 'missing_permission' })
+      expect(graphql_data_at(:namespaces_projects_flows_delete,
+                             :errors)).to include({ 'message' => 'missing_permission' })
     end
   end
 end
