@@ -19,39 +19,42 @@ services:
     profiles:
       - runtime
     restart: unless-stopped
+    ports:
+      - "6380:6379"
 
   rabbitmq:
     image: rabbitmq:4.1-management-alpine
     profiles:
       - runtime
     restart: unless-stopped
+    ports:
+      - "5673:5672"
 
   aquila:
     image: ghcr.io/code0-tech/reticulum/ci-builds/aquila:1843593485
     profiles:
       - runtime
+    network_mode: host
     environment:
       MODE: dynamic
       ENVIRONMENT: development
-      REDIS_URL: redis://valkey:6379
-      BACKEND_URL: http://sagittarius-grpc:50051
+      REDIS_URL: redis://localhost:6380
+      BACKEND_URL: http://localhost:50051
       RUNTIME_TOKEN: development_runtime_token
     restart: unless-stopped
 
-  sagittarius-grpc:
-    image: ruby:3.2.2
+  draco-rest:
+    image: ghcr.io/code0-tech/reticulum/ci-builds/draco:1843593485-rest
     profiles:
-      - sagittarius-grpc
-    volumes:
-      - ./:/sagittarius
-      - ./tooling/dev-environment/sagittarius.yml:/sagittarius/config/sagittarius.yml
-    command: |
-      sh -c "
-        cd /sagittarius &&
-        bundle install &&
-        bin/grpc_server
-      "
-
+      - runtime
+    network_mode: host
+    environment:
+      PORT: "8081"
+      REDIS_URL: redis://localhost:6380
+      RABBITMQ_URL: amqp://localhost:5673
+      AQUIlA_URL: http://localhost:8083
+      IS_STATIC: "false"
+    restart: unless-stopped
 
 volumes:
   database:
