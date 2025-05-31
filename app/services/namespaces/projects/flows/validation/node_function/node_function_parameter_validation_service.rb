@@ -32,7 +32,7 @@ module Namespaces
                     )
                   )
                 end
-                if parameter.runtime_parameter.runtime != flow.project.primary_runtime
+                if parameter.runtime_parameter.runtime_function_definition.runtime != flow.project.primary_runtime
                   t.rollback_and_return!(
                     ServiceResponse.error(
                       message: 'Node parameter runtime does not match the primary runtime of the project',

@@ -21,19 +21,20 @@ module Namespaces
 
           transactional do |t|
             settings = []
-            if params.key?(:settings)
-              params[:settings].each do |graphql_setting|
+            if params.key?(:flow_settings)
+              params[:flow_settings].each do |graphql_setting|
                 setting = FlowSetting.new(flow_setting_id: graphql_setting.flow_setting_id,
                                           object: graphql_setting.object)
-                next if setting.valid?
+                if setting.invalid?
+                  t.rollback_and_return! ServiceResponse.error(
+                    message: 'Invalid flow setting',
+                    payload: setting.errors
+                  )
+                end
 
-                t.rollback_and_return! ServiceResponse.error(
-                  message: 'Invalid flow setting',
-                  payload: setting.errors
-                )
                 settings << setting
               end
-              params[:settings] = settings
+              params[:flow_settings] = settings
             end
 
             if params.key?(:starting_node) && params[:starting_node].is_a?(Types::Input::NodeFunctionInputType)
@@ -68,7 +69,7 @@ module Namespaces
               }
             )
 
-            ServiceResponse.success(message: 'Created new project', payload: flow)
+            ServiceResponse.success(message: 'Created new flow', payload: flow)
           end
         end
 
@@ -90,26 +91,26 @@ module Namespaces
                 payload: :invalid_runtime_parameter_id
               )
             end
-            if parameter.literal_value.present?
-              params << NodeParameter.create(
-                runtime_parameter: runtime_parameter,
-                literal_value: parameter.literal_value
-              )
-              next
-            end
-            if parameter.function_value.present?
-              params << NodeParameter.create(
-                runtime_parameter: runtime_parameter,
-                function_value: create_node_function(parameter.function_value, t)
-              )
-              next
-            end
-            next if parameter.reference_value.blank?
 
-            identifier = parameter.reference_value.data_type_identifier
+            if parameter.value.literal_value.present?
+              params << NodeParameter.create(
+                runtime_parameter: runtime_parameter,
+                literal_value: parameter.value.literal_value
+              )
+              next
+            end
+            if parameter.value.function_value.present?
+              params << NodeParameter.create(
+                runtime_parameter: runtime_parameter,
+                function_value: create_node_function(parameter.value.function_value, t)
+              )
+              next
+            end
+
+            identifier = parameter.value.reference_value.data_type_identifier
 
             ReferenceValue.create(
-              reference_value_id: parameter.reference_value.reference_value_id,
+              reference_value_id: parameter.value.reference_value.reference_value_id,
               data_type_identifier: get_data_type_identifier(identifier)
             )
           end
@@ -119,8 +120,8 @@ module Namespaces
 
           NodeFunction.create(
             next_node: next_node,
-            runtime_function_definition: runtime_function_definition,
-            parameters: params
+            runtime_function: runtime_function_definition,
+            node_parameters: params
           )
         end
 
