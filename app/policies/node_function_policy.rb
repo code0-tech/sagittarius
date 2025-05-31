@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 class NodeFunctionPolicy < BasePolicy
-  delegate { subject.runtime_function }
+  delegate { subject.resolve_flow }
 end

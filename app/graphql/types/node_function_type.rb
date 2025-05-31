@@ -4,8 +4,7 @@ module Types
   class NodeFunctionType < Types::BaseObject
     description 'Represents a Node Function'
 
-    # authorize :read_flow TODO problem is node function doesnt have access to the project, only the runtime
-    # see NodeFunctionPolicy
+    authorize :read_flow
 
     field :next_node, Types::NodeFunctionType, null: true, description: 'The next Node Function in the flow'
     field :parameters, Types::NodeParameterType.connection_type, null: false, method: :node_parameters,

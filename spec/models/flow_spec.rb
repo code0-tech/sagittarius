@@ -11,5 +11,7 @@ RSpec.describe Flow do
     it { is_expected.to belong_to(:starting_node).class_name('NodeFunction') }
     it { is_expected.to belong_to(:input_type).class_name('DataType').optional }
     it { is_expected.to belong_to(:return_type).class_name('DataType').optional }
+
+    it { is_expected.to have_many(:flow_settings) }
   end
 end
