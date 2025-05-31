@@ -8,5 +8,6 @@ FactoryBot.define do
     return_type { nil }
     runtime
     generic_keys { [] }
+    parameters { [] }
   end
 end

@@ -27,6 +27,8 @@ class NamespaceRoleAbility < ApplicationRecord
     assign_project_runtimes: { db: 23, description: 'Allows to assign runtimes to a project in the namespace' },
     create_flows: { db: 24, description: 'Allows to create flows in a namespace project' },
     delete_flows: { db: 25, description: 'Allows to delete flows in a namespace project' },
+    read_flow: { db: 26, description: 'Allows to read flows in the project' },
+    update_flows: { db: 27, description: 'Allows to update flows in the project' },
   }.with_indifferent_access
   enum :ability, ABILITIES.transform_values { |v| v[:db] }, prefix: :can
 

@@ -71,7 +71,7 @@ module Namespaces
                 node_function.node_parameters.each do |parameter|
                   logger.debug("Validating node parameter: #{parameter.id} for function: #{node_function.id}")
 
-                  if parameter.runtime_parameter != node_function.runtime_function
+                  if parameter.runtime_parameter.runtime_function_definition != node_function.runtime_function
                     logger.debug(message: 'Node parameter does not match its function',
                                  node_function: node_function.id,
                                  runtime_parameter: parameter.runtime_parameter.id,
@@ -84,7 +84,7 @@ module Namespaces
                     )
                   end
 
-                  ::NodeFunctionParameterValidationService.new(
+                  NodeFunctionParameterValidationService.new(
                     current_authentication,
                     flow,
                     node_function,
