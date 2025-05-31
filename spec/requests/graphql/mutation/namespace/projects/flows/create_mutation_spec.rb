@@ -17,16 +17,11 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
             startingNode {
               id
               parameters {
-                nodes {
-                  id
-                  runtimeParameter {
-                    id
-                  }
-                  value
-                }
+                count
               }
             }
             settings {
+              flowSettingId
               id
               value
             }
@@ -76,22 +71,20 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
   let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
 
-  context 'when user is a member of the namespace' do
+  context 'when user has the permission' do
     before do
       stub_allowed_ability(NamespaceProjectPolicy, :create_flows, user: current_user, subject: project)
-      stub_allowed_ability(NamespaceProjectPolicy, :read_flow, user: current_user, subject: project)
     end
 
     it 'creates namespace project' do
       mutate!
-
-      p parsed_response
 
       created_flow_id = graphql_data_at(:namespaces_projects_flows_create, :flow, :id)
       expect(created_flow_id).to be_present
       flow = SagittariusSchema.object_from_id(created_flow_id)
 
       expect(graphql_data_at(:namespaces_projects_flows_create, :flow, :settings).size).to eq(1)
+      expect(graphql_data_at(:namespaces_projects_flows_create, :flow, :starting_node, :parameters, :count)).to eq(1)
 
       expect(flow).to be_present
       expect(project.flows).to include(flow)
@@ -107,6 +100,16 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
         target_id: project.id,
         target_type: 'NamespaceProject'
       )
+    end
+  end
+
+  context 'when user does not have the permission' do
+    it 'returns an error' do
+      mutate!
+
+      expect(graphql_data_at(:namespaces_projects_flows_create, :errors)).to be_present
+      expect(graphql_data_at(:namespaces_projects_flows_create, :flow)).to be_nil
+      expect(graphql_data_at(:namespaces_projects_flows_create, :errors).first['message']).to eq('missing_permission')
     end
   end
 end
