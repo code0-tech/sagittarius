@@ -20,10 +20,7 @@ class NamespacePolicy < BasePolicy
     enable :read_namespace_member
     enable :read_namespace_member_role
     enable :read_namespace_role
-    enable :read_runtime
-    enable :read_datatype
-    enable :read_flow_type
-    enable :read_flow_type_setting
+    enable :read_flow
   end
 
   namespace_resolver { |namespace| namespace }
