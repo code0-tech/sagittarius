@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://example.com/schemas/GenericMapper.json",
+  "title": "GenericMapper",
+  "type": "object",
+  "required": ["source", "target"],
+  "properties": {
+    "source": {
+      "$ref": "DataTypeIdentifier.json"
+    },
+    "target": {
+      "type": "string"
+    }
+  }
+}

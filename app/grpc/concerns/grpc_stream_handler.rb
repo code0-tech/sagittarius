@@ -12,20 +12,22 @@ module GrpcStreamHandler
         create_enumerator(self.class, method, current_runtime_id, call.instance_variable_get(:@wrapped))
       end
 
-      define_method("send_#{method}") do |grpc_object, runtime_id|
-        logger.info(message: 'Sending data', runtime_id: runtime_id, method: method)
+      define_singleton_method("send_#{method}") do |grpc_object, runtime_id|
+        GrpcStreamHandler.logger.info(message: 'Sending data', runtime_id: runtime_id, method: method,
+                                      grpc_object: grpc_object)
 
-        encoded_data = self.class.encoders[method].call(grpc_object)
+        encoded_data = send('encoders')[method].call(grpc_object)
         encoded_data64 = Base64.encode64(encoded_data)
 
-        logger.info(message: 'Encoded data', runtime_id: runtime_id, method: method, encoded_data: encoded_data64)
+        GrpcStreamHandler.logger.info(message: 'Encoded data', runtime_id: runtime_id, method: method,
+                                      encoded_data: encoded_data64)
 
         ActiveRecord::Base.connection.raw_connection
-                          .exec("NOTIFY grpc_streams, '#{self.class},#{method},#{runtime_id},#{encoded_data64}'")
+                          .exec("NOTIFY grpc_streams, '#{self},#{method},#{runtime_id},#{encoded_data64}'")
       end
-      define_method("end_#{method}") do |runtime_id|
+      define_singleton_method("end_#{method}") do |runtime_id|
         ActiveRecord::Base.connection.raw_connection
-                          .exec("NOTIFY grpc_streams, '#{self.class},#{method},#{runtime_id},end'")
+                          .exec("NOTIFY grpc_streams, '#{self},#{method},#{runtime_id},end'")
       end
     end
   end
@@ -55,7 +57,7 @@ module GrpcStreamHandler
             decoded_data = :end
           else
             data = Base64.decode64(encoded_data64)
-            decoded_data = clazz.decoders[method_name].call(data)
+            decoded_data = clazz.send('decoders')[method_name].call(data)
           end
 
           queues = GrpcStreamHandler.yielders.dig(clazz, method_name, runtime_id.to_i)

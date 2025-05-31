@@ -22,6 +22,8 @@ RSpec.describe RuntimeFunctionDefinition do
         .inverse_of(:runtime_function_definition)
     end
 
+    it { is_expected.to have_many(:generic_mappers).inverse_of(:runtime_function_definition) }
+
     it { is_expected.to have_many(:names).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:descriptions).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:documentations).class_name('Translation').inverse_of(:owner) }

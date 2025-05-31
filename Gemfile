@@ -79,7 +79,7 @@ gem 'good_job', '~> 4.0'
 gem 'rotp'
 
 gem 'grpc', '~> 1.67'
-gem 'tucana', '0.0.25'
+gem 'tucana', '0.0.30'
 
 gem 'code0-identities', '~> 0.0.1'
 
@@ -89,3 +89,5 @@ gem 'pry-byebug', '~> 3.10'
 gem 'code0-zero_track', '0.0.4'
 
 gem 'image_processing', '>= 1.2'
+
+gem 'json-schema', '~> 5.1'

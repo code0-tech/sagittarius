@@ -38,7 +38,8 @@ module Runtimes
         )
         db_object.removed_at = nil
         db_object.return_type = if runtime_function_definition.return_type_identifier.present?
-                                  find_data_type(runtime_function_definition.return_type_identifier, t)
+                                  find_data_type_identifier(runtime_function_definition.return_type_identifier,
+                                                            runtime_function_definition.generic_mappers, t)
                                 end
         db_object.parameters = update_parameters(runtime_function_definition.runtime_parameter_definitions,
                                                  db_object.parameters, t)
@@ -50,6 +51,7 @@ module Runtimes
                                                              db_object.deprecation_messages)
 
         db_object.error_types = update_error_types(runtime_function_definition.error_type_identifiers, db_object, t)
+        db_object.generic_mappers = update_mappers(runtime_function_definition.generic_mappers, db_object, t)
 
         if db_object.function_definitions.empty?
           definition = FunctionDefinition.new
@@ -64,6 +66,88 @@ module Runtimes
         end
         db_object.save
         db_object
+      end
+
+      # These mappers can be either generic mappers or generic function mappers.
+      def update_mappers(generic_mappers, runtime_function_definition, t)
+        generic_mappers.to_a.map do |generic_mapper|
+          if generic_mapper.is_a? Tucana::Shared::GenericMapper
+            mapper = GenericMapper.create_or_find_by(runtime: current_runtime,
+                                                     target: generic_mapper.target,
+                                                     source: generic_mapper.source.map do |source|
+                                                       find_data_type_identifier(source, generic_mappers, t)
+                                                     end)
+          end
+          if generic_mapper.is_a? Tucana::Shared::FunctionGenericMapper
+            mapper = FunctionGenericMapper.create_or_find_by(
+              runtime_id: current_runtime.id,
+              runtime_function_definition: runtime_function_definition,
+              source: generic_mapper.source.map { |source| find_data_type_identifier(source, generic_mappers, t) },
+              target: generic_mapper.target,
+              parameter_id: generic_mapper.parameter_id
+            )
+          end
+
+          if mapper.nil? || !mapper.save
+            t.rollback_and_return! ServiceResponse.error(
+              message: "Could not find or create generic mapper (#{generic_mapper})",
+              payload: :error_creating_generic_mapper
+            )
+          end
+          mapper
+        end
+      end
+
+      def find_data_type_identifier(identifier, _generic_mappers, t)
+        if identifier.data_type_identifier.present?
+          return create_data_type_identifier(t, data_type_id: find_data_type(identifier.data_type_identifier, t).id)
+        end
+
+        if identifier.generic_type.present?
+          data_type = find_data_type(identifier.generic_type.data_type_identifier, t)
+
+          generic_type = GenericType.find_by(
+            runtime_id: current_runtime.id,
+            data_type: data_type
+          )
+          if generic_type.nil?
+            generic_type = GenericType.create(
+              runtime_id: current_runtime.id,
+              data_type: data_type
+            )
+          end
+
+          if generic_type.nil?
+            t.rollback_and_return! ServiceResponse.error(
+              message: "Could not find generic type with identifier #{identifier.generic_type.data_type_identifier}",
+              payload: :no_generic_type_for_identifier
+            )
+          end
+
+          generic_type.assign_attributes(generic_mappers: update_mappers(identifier.generic_type.generic_mappers, nil,
+                                                                         t))
+
+          return create_data_type_identifier(t, generic_type_id: generic_type.id)
+        end
+        return create_data_type_identifier(t, generic_key: identifier.generic_key) if identifier.generic_key.present?
+
+        raise ArgumentError, "Invalid identifier: #{identifier.inspect}"
+      end
+
+      def create_data_type_identifier(t, **kwargs)
+        data_type_identifier = DataTypeIdentifier.find_by(runtime_id: current_runtime.id, **kwargs)
+        if data_type_identifier.nil?
+          data_type_identifier = DataTypeIdentifier.create_or_find_by(runtime_id: current_runtime.id, **kwargs)
+        end
+
+        if data_type_identifier.nil?
+          t.rollback_and_return! ServiceResponse.error(
+            message: "Could not find datatype identifier with #{kwargs}",
+            payload: :no_datatype_identifier_for_generic_key
+          )
+        end
+
+        data_type_identifier
       end
 
       def find_data_type(identifier, t)
@@ -90,7 +174,7 @@ module Runtimes
           end
           db_param.runtime_name = real_param.runtime_name
           db_param.removed_at = nil
-          db_param.data_type = find_data_type(real_param.data_type_identifier, t)
+          db_param.data_type = find_data_type_identifier(real_param.data_type_identifier, [], t)
 
           db_param.names = update_translations(real_param.name, db_param.names)
           db_param.descriptions = update_translations(real_param.description, db_param.descriptions)

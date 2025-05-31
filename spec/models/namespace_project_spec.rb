@@ -9,11 +9,19 @@ RSpec.describe NamespaceProject do
     it { is_expected.to belong_to(:namespace).required }
     it { is_expected.to have_many(:role_assignments).class_name('NamespaceRoleProjectAssignment').inverse_of(:project) }
 
+    it {
+      is_expected.to have_many(:runtime_assignments).class_name('NamespaceProjectRuntimeAssignment')
+                                                    .inverse_of(:namespace_project)
+    }
+
+    it { is_expected.to have_many(:runtimes).through(:runtime_assignments).inverse_of(:projects) }
+
     it do
       is_expected.to have_many(:assigned_roles).class_name('NamespaceRole')
                                                .through(:role_assignments)
                                                .source(:project)
                                                .inverse_of(:assigned_projects)
+      is_expected.to have_many(:flows).class_name('Flow').inverse_of(:project)
     end
   end
 
