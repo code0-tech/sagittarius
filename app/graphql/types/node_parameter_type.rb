@@ -6,15 +6,9 @@ module Types
 
     authorize :read_flow
 
-    field :definition, Types::NodeParameterDefinitionType, null: false, description: 'The definition of the parameter'
+    field :runtime_parameter, Types::RuntimeParameterDefinitionType, null: false,
+                                                                     description: 'The definition of the parameter'
     field :value, Types::NodeParameterValueType, null: true, description: 'The value of the parameter'
-
-    def definition
-      {
-        parameter_id: '',
-        runtime_parameter_id: object.runtime_function.runtime_name,
-      }
-    end
 
     def value
       if object.literal_value.present?
