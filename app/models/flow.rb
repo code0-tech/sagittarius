@@ -14,7 +14,7 @@ class Flow < ApplicationRecord
       flow_id: id,
       project_id: project.id,
       type: flow_type.identifier,
-      data_types: [], # TODO
+      data_types: [], # TODO: when data types are creatable
       input_type_identifier: input_type&.identifier,
       return_type_identifier: return_type&.identifier,
       settings: flow_settings.map(&:to_grpc),
