@@ -11,7 +11,7 @@ class NodeParameter < ApplicationRecord
   def to_grpc
     param = Tucana::Shared::NodeParameter.new(
       database_id: id,
-      runtime_parameter_id: runtime_parameter.runtime_name,
+      runtime_parameter_id: runtime_parameter.runtime_name
     )
 
     if literal_value.present?
