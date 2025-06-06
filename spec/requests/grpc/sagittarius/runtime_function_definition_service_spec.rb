@@ -56,7 +56,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
                 data_type_identifier: {
                   data_type_identifier: parameter_type.data_type.identifier,
                 },
-                runtime_name: 'runtime_parameter_definition_id',
+                runtime_name: 'some_id',
                 default_value: Tucana::Shared::Value.from_ruby({ 'key' => 'value' }),
                 name: [
                   { code: 'de_DE', content: 'Ein Parameter' }
@@ -97,7 +97,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function.error_types.first.data_type.identifier).to eq(error_type.identifier)
         parameter = function.parameters.first
         expect(parameter.data_type.data_type.identifier).to eq(parameter_type.data_type.identifier)
-        expect(parameter.runtime_name).to eq('runtime_parameter_definition_id')
+        expect(parameter.runtime_name).to eq('some_id')
         expect(parameter.names.first.content).to eq('Ein Parameter')
         expect(parameter.descriptions.first.content).to eq('Eine Parameterbeschreibung')
         expect(parameter.documentations.first.content).to eq('Eine Parameterdokumentation')
@@ -119,7 +119,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(FunctionGenericMapper.count).to eq(1)
         expect(FunctionGenericMapper.last.source.first.generic_key).to eq('X')
         expect(FunctionGenericMapper.last.target).to eq('Y')
-        expect(FunctionGenericMapper.last.parameter_id).to eq('some_id')
+        expect(FunctionGenericMapper.last.runtime_parameter_definition.runtime_name).to eq('some_id')
       end
     end
 

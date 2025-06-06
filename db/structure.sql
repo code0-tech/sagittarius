@@ -283,7 +283,6 @@ ALTER SEQUENCE function_definitions_id_seq OWNED BY function_definitions.id;
 CREATE TABLE function_generic_mappers (
     id bigint NOT NULL,
     target text NOT NULL,
-    parameter_id text,
     runtime_parameter_definition_id bigint,
     runtime_function_definition_id bigint,
     runtime_id bigint NOT NULL,

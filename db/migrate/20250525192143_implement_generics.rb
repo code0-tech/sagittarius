@@ -41,8 +41,6 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
 
     create_table :function_generic_mappers do |t|
       t.text :target, null: false
-      t.text :parameter_id, null: true
-
       t.references :runtime_parameter_definition, null: true,
                                                   foreign_key: { to_table: :runtime_parameter_definitions,
                                                                  on_delete: :restrict }

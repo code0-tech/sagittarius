@@ -37,12 +37,12 @@ module Runtimes
           runtime_name: runtime_function_definition.runtime_name
         )
         db_object.removed_at = nil
+        db_object.parameters = update_parameters(db_object, runtime_function_definition.runtime_parameter_definitions,
+                                                 db_object.parameters, t)
         db_object.return_type = if runtime_function_definition.return_type_identifier.present?
                                   find_data_type_identifier(runtime_function_definition.return_type_identifier,
                                                             runtime_function_definition.generic_mappers, t)
                                 end
-        db_object.parameters = update_parameters(runtime_function_definition.runtime_parameter_definitions,
-                                                 db_object.parameters, t)
         db_object.names = update_translations(runtime_function_definition.name, db_object.names)
         db_object.descriptions = update_translations(runtime_function_definition.description, db_object.descriptions)
         db_object.documentations = update_translations(runtime_function_definition.documentation,
@@ -79,12 +79,14 @@ module Runtimes
                                                      end)
           end
           if generic_mapper.is_a? Tucana::Shared::FunctionGenericMapper
+            parameter = RuntimeParameterDefinition.find_by(runtime_name: generic_mapper.parameter_id,
+                                                           runtime_function_definition: runtime_function_definition)
             mapper = FunctionGenericMapper.create_or_find_by(
               runtime_id: current_runtime.id,
               runtime_function_definition: runtime_function_definition,
               source: generic_mapper.source.map { |source| find_data_type_identifier(source, generic_mappers, t) },
               target: generic_mapper.target,
-              parameter_id: generic_mapper.parameter_id
+              runtime_parameter_definition: parameter
             )
           end
 
@@ -161,7 +163,7 @@ module Runtimes
         data_type
       end
 
-      def update_parameters(parameters, db_parameters, t)
+      def update_parameters(runtime_function_definition, parameters, db_parameters, t)
         # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
         db_parameters.update_all(removed_at: Time.zone.now)
         # rubocop:enable Rails/SkipsModelValidations
@@ -172,6 +174,7 @@ module Runtimes
             db_param = RuntimeParameterDefinition.new
             db_parameters << db_param
           end
+          db_param.runtime_function_definition = runtime_function_definition
           db_param.runtime_name = real_param.runtime_name
           db_param.removed_at = nil
           db_param.data_type = find_data_type_identifier(real_param.data_type_identifier, [], t)
@@ -181,6 +184,8 @@ module Runtimes
           db_param.documentations = update_translations(real_param.documentation, db_param.documentations)
 
           db_param.default_value = real_param.default_value&.to_ruby(true)
+
+          db_param.save
 
           next unless db_param.parameter_definitions.empty?
 
