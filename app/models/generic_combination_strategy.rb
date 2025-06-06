@@ -10,4 +10,9 @@ class GenericCombinationStrategy < ApplicationRecord
   belongs_to :function_generic_mapper, optional: true, inverse_of: :generic_combination_strategies
 
   enum :type, TYPES, prefix: :type
+
+  validates :type, presence: true,
+            inclusion: {
+              in: TYPES.keys.map(&:to_s),
+            }
 end
