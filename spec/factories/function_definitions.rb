@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :function_definition do
-    return_type factory: :data_type
+    return_type { nil }
     runtime_function_definition
   end
 end

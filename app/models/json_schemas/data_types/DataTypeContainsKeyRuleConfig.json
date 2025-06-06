@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://example.com/schemas/DataTypeContainsKeyRuleConfig.json",
+  "title": "DataTypeContainsKeyRuleConfig",
+  "type": "object",
+  "required": ["key", "data_type_identifier"],
+  "properties": {
+    "key": {
+      "type": "string"
+    },
+    "data_type_identifier": {
+      "$ref": "../DataTypeIdentifier.json"
+    }
+  }
+}

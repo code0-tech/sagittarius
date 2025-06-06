@@ -51,6 +51,7 @@ class SagittariusSchema < GraphQL::Schema
   rescue ActiveRecord::RecordNotFound
     nil
   end
+
   # rubocop:enable Lint/UnusedMethodArgument
 end
 # rubocop:enable GraphQL/MaxDepthSchema
