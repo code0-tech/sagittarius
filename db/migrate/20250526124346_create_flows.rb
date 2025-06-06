@@ -37,7 +37,7 @@ class CreateFlows < Code0::ZeroTrack::Database::Migration[1.0]
 
       t.jsonb :literal_value, null: true
       t.references :reference_value, null: true, foreign_key: { to_table: :reference_values,
-                                                                on_delete: :restrict }
+                                                                on_delete: :cascade }
       t.references :function_value, null: true, foreign_key: { to_table: :node_functions,
                                                                on_delete: :restrict }
 
@@ -62,10 +62,8 @@ class CreateFlows < Code0::ZeroTrack::Database::Migration[1.0]
       t.timestamps_with_timezone
     end
 
-    add_reference :data_types, :flows, null: true, foreign_key: { to_table: :flows, on_delete: :restrict }
-
     create_table :flow_settings do |t|
-      t.references :flow, null: true, foreign_key: { to_table: :flows, on_delete: :cascade }
+      t.references :flow, null: false, foreign_key: { to_table: :flows, on_delete: :cascade }
 
       t.text :flow_setting_id, null: false
       t.jsonb :object, null: false

@@ -89,9 +89,9 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
 
     add_reference :data_type_identifiers, :generic_mapper, null: true,
                                                            foreign_key: { to_table: :generic_mappers,
-                                                                          on_delete: :restrict }
+                                                                          on_delete: :cascade }
     add_reference :data_type_identifiers, :function_generic_mapper, null: true,
                                                                     foreign_key: { to_table: :function_generic_mappers,
-                                                                                   on_delete: :restrict }
+                                                                                   on_delete: :cascade }
   end
 end
