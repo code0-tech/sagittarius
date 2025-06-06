@@ -31,7 +31,7 @@ class NodeParameter < ApplicationRecord
     values = [literal_value.present?, reference_value.present?, function_value.present?]
     return if values.count(true) == 1
 
-    errors.add(:base,
+    errors.add(:value,
                'Exactly one of literal_value, reference_value, or function_value must be present')
   end
 end
