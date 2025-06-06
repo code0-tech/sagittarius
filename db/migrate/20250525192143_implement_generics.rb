@@ -74,7 +74,10 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
     add_reference :function_definitions, :return_type,
                   foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
 
-    remove_reference :data_types, :parent_type
+    remove_reference :data_types, :parent_type,
+                     null: true,
+                     foreign_key: { to_table: :data_types, on_delete: :restrict }
+
     add_reference :data_types, :parent_type, null: true,
                                              foreign_key: { to_table: :data_type_identifiers,
                                                             on_delete: :restrict }
