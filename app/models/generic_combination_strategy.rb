@@ -12,7 +12,7 @@ class GenericCombinationStrategy < ApplicationRecord
   enum :type, TYPES, prefix: :type
 
   validates :type, presence: true,
-            inclusion: {
-              in: TYPES.keys.map(&:to_s),
-            }
+                   inclusion: {
+                     in: TYPES.keys.map(&:to_s),
+                   }
 end

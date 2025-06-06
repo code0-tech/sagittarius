@@ -27,7 +27,7 @@ RSpec.describe NodeParameter do
                                                                data_type: create(:data_type_identifier,
                                                                                  data_type: create(:data_type))))
       expect(param).not_to be_valid
-      expect(param.errors[:base])
+      expect(param.errors[:value])
         .to include('Exactly one of literal_value, reference_value, or function_value must be present')
     end
   end
