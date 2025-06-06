@@ -26,6 +26,8 @@ class DataType < ApplicationRecord
                         in: VARIANTS.keys.map(&:to_s),
                       }
 
+  validate :generic_keys_length
+
   validate :validate_recursion, if: :parent_type_changed?
 
   def validate_recursion
@@ -38,5 +40,10 @@ class DataType < ApplicationRecord
         break
       end
     end
+  end
+
+  def generic_keys_length
+    errors.add(:generic_keys, 'each key must be 50 characters or fewer') if generic_keys.any? { |key| key.length > 50 }
+    errors.add(:generic_keys, 'must be 30 or fewer') if generic_keys.size > 30
   end
 end

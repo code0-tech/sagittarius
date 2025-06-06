@@ -6,6 +6,11 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
     # https://github.com/code0-tech/tucana/pull/93
 
     add_column :data_types, :generic_keys, 'text[]', null: false, default: []
+    add_check_constraint :data_types,
+                         "NOT EXISTS (
+     SELECT 1 FROM unnest(generic_keys) AS key
+     WHERE length(key) > 50
+   )", name: 'generic_keys_max_length'
 
     create_table :data_type_identifiers do |t|
       # One of them needs to be set will be enforced later
@@ -60,6 +65,12 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
                   foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
 
     add_column :runtime_function_definitions, :generic_keys, 'text[]', null: false, default: []
+
+    add_check_constraint :runtime_function_definitions,
+                         "NOT EXISTS (
+     SELECT 1 FROM unnest(generic_keys) AS key
+     WHERE length(key) > 50
+   )", name: 'generic_keys_max_length'
 
     remove_reference :runtime_parameter_definitions, :data_type,
                      foreign_key: { to_table: :data_types, on_delete: :restrict }

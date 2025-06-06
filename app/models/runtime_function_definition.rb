@@ -19,4 +19,12 @@ class RuntimeFunctionDefinition < ApplicationRecord
   validates :runtime_name, presence: true,
                            length: { minimum: 3, maximum: 50 },
                            uniqueness: { case_sensitive: false, scope: :runtime_id }
+
+  validate :generic_keys_length
+
+  def generic_keys_length
+    errors.add(:generic_keys, 'each key must be 50 characters or fewer') if generic_keys.any? { |key| key.length > 50 }
+    errors.add(:generic_keys, 'must be 30 or fewer') if generic_keys.size > 30
+  end
+
 end

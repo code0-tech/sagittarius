@@ -15,6 +15,16 @@ RSpec.describe DataType do
   describe 'validations' do
     it { is_expected.to allow_values(*described_class::VARIANTS.keys).for(:variant) }
 
+    context 'when generic keys are too long' do
+      let(:data_type) { build(:data_type, generic_keys: Array.new(31, 'a' * 51)) } # 31 keys, each 51 characters long
+
+      it 'is expected to be invalid' do
+        expect(data_type).not_to be_valid
+        expect(data_type.errors[:generic_keys]).to include('each key must be 50 characters or fewer')
+        expect(data_type.errors[:generic_keys]).to include('must be 30 or fewer')
+      end
+    end
+
     it 'detects recursions' do
       dt1 = create(:data_type)
       dt2 = create(:data_type, parent_type: create(:data_type_identifier, data_type: dt1))
