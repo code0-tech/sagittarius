@@ -337,7 +337,6 @@ ALTER SEQUENCE generic_mappers_id_seq OWNED BY generic_mappers.id;
 
 CREATE TABLE generic_types (
     id bigint NOT NULL,
-    runtime_id bigint NOT NULL,
     data_type_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
@@ -1175,8 +1174,6 @@ CREATE INDEX index_generic_mappers_on_runtime_id ON generic_mappers USING btree 
 
 CREATE INDEX index_generic_types_on_data_type_id ON generic_types USING btree (data_type_id);
 
-CREATE INDEX index_generic_types_on_runtime_id ON generic_types USING btree (runtime_id);
-
 CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON good_job_executions USING btree (active_job_id, created_at);
 
 CREATE INDEX index_good_job_executions_on_process_id_and_created_at ON good_job_executions USING btree (process_id, created_at);
@@ -1307,9 +1304,6 @@ ALTER TABLE ONLY generic_combination_strategies
 
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY generic_types
-    ADD CONSTRAINT fk_rails_20f4bf6b34 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT fk_rails_260318ad67 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;

@@ -69,7 +69,6 @@ module Runtimes
           data_type = find_datatype(identifier.generic_type.data_type_identifier, t)
 
           generic_type = GenericType.find_by(
-            runtime_id: current_runtime.id,
             data_type: data_type
           )
           if generic_type.nil?

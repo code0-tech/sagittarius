@@ -15,7 +15,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
       end
 
       let!(:generic_type) do
-        create(:generic_type, runtime: runtime, data_type: create(:data_type, runtime: runtime))
+        create(:generic_type, data_type: create(:data_type, runtime: runtime))
       end
       let!(:return_type) { create(:data_type_identifier, runtime: runtime, generic_type: generic_type.reload).reload }
       let(:error_type) { create(:data_type, runtime: runtime) }
