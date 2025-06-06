@@ -54,6 +54,7 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
     end
 
     remove_reference :runtime_function_definitions, :return_type,
+                     null: true,
                      foreign_key: { to_table: :data_types, on_delete: :restrict }
     add_reference :runtime_function_definitions, :return_type,
                   foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
@@ -61,15 +62,20 @@ class ImplementGenerics < Code0::ZeroTrack::Database::Migration[1.0]
     add_column :runtime_function_definitions, :generic_keys, 'text[]', null: false, default: []
 
     remove_reference :runtime_parameter_definitions, :data_type,
+                     null: true,
                      foreign_key: { to_table: :data_types, on_delete: :restrict }
     add_reference :runtime_parameter_definitions, :data_type,
                   foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
 
-    remove_reference :parameter_definitions, :data_type, foreign_key: { to_table: :data_types, on_delete: :restrict }
+    remove_reference :parameter_definitions, :data_type,
+                     null: true,
+                     foreign_key: { to_table: :data_types, on_delete: :restrict }
     add_reference :parameter_definitions, :data_type,
                   foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
 
-    remove_reference :function_definitions, :return_type, foreign_key: { to_table: :data_types, on_delete: :restrict }
+    remove_reference :function_definitions, :return_type,
+                     null: true,
+                     foreign_key: { to_table: :data_types, on_delete: :restrict }
     add_reference :function_definitions, :return_type,
                   foreign_key: { to_table: :data_type_identifiers, on_delete: :restrict }, null: true
 
