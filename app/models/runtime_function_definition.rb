@@ -26,5 +26,4 @@ class RuntimeFunctionDefinition < ApplicationRecord
     errors.add(:generic_keys, 'each key must be 50 characters or fewer') if generic_keys.any? { |key| key.length > 50 }
     errors.add(:generic_keys, 'must be 30 or fewer') if generic_keys.size > 30
   end
-
 end

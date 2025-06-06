@@ -27,8 +27,7 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::GenericMap
                     data_type: create(:data_type_identifier,
                                       generic_type: create(:generic_type,
                                                            data_type: create(:data_type),
-                                                           generic_mappers: [generic_mapper]
-                                      ))),
+                                                           generic_mappers: [generic_mapper]))),
            literal_value: nil,
            function_value: create(:node_function))
   end
