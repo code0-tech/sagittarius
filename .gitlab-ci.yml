@@ -34,12 +34,14 @@ rubocop:
     - .bundle
   stage: lint
   script:
-    - bundle exec rubocop | tee output || exit_code=$?
+    - rubocop_exit_code=0; git_exit_code=0
+    - bundle exec rubocop -A | tee output || rubocop_exit_code=$?
+    - git diff --exit-code || git_exit_code=$?
     - |
       echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
       grep -E '[[:digit:]] files inspected, ' output
       echo -e "\e[0Ksection_end:`date +%s`:glpa_summary\r\e[0K"
-      exit $exit_code
+      exit $(($rubocop_exit_code + $git_exit_code))
 
 graphql_docs:
   extends:
