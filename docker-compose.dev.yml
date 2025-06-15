@@ -29,9 +29,10 @@ services:
     restart: unless-stopped
     ports:
       - "5673:5672"
+      - "15673:15672"
 
   aquila:
-    image: ghcr.io/code0-tech/reticulum/ci-builds/aquila:1843593485
+    image: ghcr.io/code0-tech/reticulum/ci-builds/aquila:1869897590
     profiles:
       - runtime
     network_mode: host
@@ -44,7 +45,7 @@ services:
     restart: unless-stopped
 
   draco-rest:
-    image: ghcr.io/code0-tech/reticulum/ci-builds/draco:1843593485-rest
+    image: ghcr.io/code0-tech/reticulum/ci-builds/draco:1869897590-rest
     profiles:
       - runtime
     network_mode: host
@@ -54,6 +55,18 @@ services:
       RABBITMQ_URL: amqp://localhost:5673
       AQUIlA_URL: http://localhost:8083
       IS_STATIC: "false"
+    restart: unless-stopped
+
+  taurus:
+    image: ghcr.io/code0-tech/reticulum/ci-builds/taurus:1869897590
+    profiles:
+      - runtime
+    network_mode: host
+    environment:
+      ENVIRONMENT: "development"
+      MODE: "dynamic"
+      RABBITMQ_URL: "amqp://localhost:5673"
+      AQUILA_URL: "http://localhost:8083"
     restart: unless-stopped
 
 volumes:
