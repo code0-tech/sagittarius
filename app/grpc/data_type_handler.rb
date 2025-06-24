@@ -9,7 +9,7 @@ class DataTypeHandler < Tucana::Sagittarius::DataTypeService::Service
 
     response = Runtimes::DataTypes::UpdateService.new(current_runtime, request.data_types).execute
 
-    logger.info(message: 'Data types updated', runtime_id: current_runtime.id, response: response)
+    logger.info(message: 'Data types updated', runtime_id: current_runtime.id, response: response.to_h)
 
     Tucana::Sagittarius::DataTypeUpdateResponse.new(success: response.success?)
   end
