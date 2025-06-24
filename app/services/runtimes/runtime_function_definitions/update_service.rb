@@ -184,7 +184,12 @@ module Runtimes
 
           db_param.default_value = real_param.default_value&.to_ruby(true)
 
-          db_param.save
+          unless db_param.save
+            t.rollback_and_return! ServiceResponse.error(
+              message: "Could not save runtime parameter definition",
+              payload: db_param.errors
+            )
+          end
 
           next unless db_param.parameter_definitions.empty?
 
