@@ -14,7 +14,7 @@ Represents a DataType
 | `identifier` | [`String!`](../scalar/string.md) | The identifier scoped to the namespace |
 | `name` | [`TranslationConnection!`](../object/translationconnection.md) | Names of the flow type setting |
 | `namespace` | [`Namespace`](../object/namespace.md) | The namespace where this datatype belongs to |
-| `parent` | [`DataTypeIdentifier`](../union/datatypeidentifier.md) | The parent datatype |
+| `parent` | [`DataTypeIdentifier`](../object/datatypeidentifier.md) | The parent datatype |
 | `rules` | [`DataTypeRuleConnection!`](../object/datatyperuleconnection.md) | Rules of the datatype |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this DataType was last updated |
 | `variant` | [`DataTypeVariant!`](../enum/datatypevariant.md) | The type of the datatype |

@@ -13,5 +13,8 @@ module Types
     field :identifier, String, null: false, description: 'Identifier of the flow type setting'
     field :names, Types::TranslationType.connection_type, null: false, description: 'Names of the flow type setting'
     field :unique, Boolean, null: false, description: 'Unique status of the flow type setting'
+
+    id_field FlowTypeSetting
+    timestamps
   end
 end

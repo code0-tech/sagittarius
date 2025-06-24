@@ -5,7 +5,7 @@ module Types
     class ContainsTypeConfigType < Types::BaseObject
       description 'Represents a rule that can be applied to a data type.'
 
-      authorize :read_flow
+      authorize :read_datatype
 
       field :data_type_identifier, Types::DataTypeIdentifierType,
             null: false, description: 'The identifier of the data type this rule belongs to'

@@ -11,17 +11,17 @@ module Types
       def self.resolve_type(object, _context)
         case object[:variant]
         when :contains_key
-          Types::DataTypeRuleContainsKeyType
+          Types::DataTypeRules::ContainsKeyConfigType
         when :contains_type
-          Types::DataTypeRuleContainsTypeType
+          Types::DataTypeRules::ContainsTypeConfigType
         when :number_range
-          Types::DataTypeRuleNumberRangeType
+          Types::DataTypeRules::NumberRangeConfigType
         when :item_of_collection
-          Types::DataTypeRuleItemOfCollectionType
+          Types::DataTypeRules::ItemOfCollectionConfigType
         when :regex
-          Types::DataTypeRuleRegexType
+          Types::DataTypeRules::RegexConfigType
         else
-          raise GraphQL::ExecutionError, "Unknown data type rule variant: #{object.variant}"
+          raise GraphQL::ExecutionError, "Unknown data type rule variant: #{object[:variant]}"
         end
       end
     end

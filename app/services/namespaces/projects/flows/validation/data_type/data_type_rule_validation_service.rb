@@ -19,7 +19,7 @@ module Namespaces
             end
 
             def execute
-              logger.debug(message: "Validating data type rule", rule_id: rule.id)
+              logger.debug(message: 'Validating data type rule', rule_id: rule.id)
 
               transactional do |t|
                 if rule.invalid?

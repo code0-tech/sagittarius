@@ -28,10 +28,17 @@ class ServiceResponse
   delegate :[], to: :to_h
 
   def to_h
-    (payload || {}).merge(
+    if payload.respond_to? :merge
+      return payload.merge(
+        status: status,
+        message: message
+      )
+    end
+    {
+      payload: payload,
       status: status,
-      message: message
-    )
+      message: message,
+    }
   end
 
   def to_mutation_response(success_key: :object)

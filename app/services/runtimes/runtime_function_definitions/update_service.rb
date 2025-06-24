@@ -186,7 +186,7 @@ module Runtimes
 
           unless db_param.save
             t.rollback_and_return! ServiceResponse.error(
-              message: "Could not save runtime parameter definition",
+              message: 'Could not save runtime parameter definition',
               payload: db_param.errors
             )
           end

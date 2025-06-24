@@ -5,7 +5,7 @@ module Types
     class NumberRangeConfigType < Types::BaseObject
       description 'Represents a rule that can be applied to a data type.'
 
-      authorize :read_flow
+      authorize :read_datatype
 
       field :from, Integer, null: false,
                             description: 'The minimum value of the range'
