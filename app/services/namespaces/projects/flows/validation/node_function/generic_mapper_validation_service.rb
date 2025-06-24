@@ -36,7 +36,7 @@ module Namespaces
                 end
 
                 generic_mapper.generic_combination_strategies.each do |_strategy|
-                  # TODO: idk
+                  # https://github.com/code0-tech/sagittarius/issues/509
                 end
 
                 generic_mapper.source.each do |source|
