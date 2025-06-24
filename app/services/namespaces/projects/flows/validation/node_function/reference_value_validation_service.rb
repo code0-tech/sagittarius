@@ -104,7 +104,7 @@ module Namespaces
                   )
                 end
 
-                # TODO: verify reference paths
+                # https://github.com/code0-tech/sagittarius/issues/508
               end
             end
           end
