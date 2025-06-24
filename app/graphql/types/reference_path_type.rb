@@ -6,7 +6,7 @@ module Types
 
     authorize :read_flow
 
-    field :array_index, Integer, null: true, description: 'TODO'
+    field :array_index, Integer, null: true, description: 'The array index of the referenced data by the path'
     field :path, String, null: true, description: 'The path to the reference in the flow'
 
     id_field ReferencePath
