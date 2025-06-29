@@ -12,11 +12,7 @@ module Types
     field :settings, [Types::FlowSettingType], null: true, method: :flow_settings,
                                                description: 'The settings of the flow'
     field :starting_node, Types::NodeFunctionType, null: false, description: 'The starting node of the flow'
-    field :type, String, null: false, description: 'The identifier of the flow type' # identifier of the flow_type
-
-    def type
-      object.flow_type.identifier
-    end
+    field :type, Types::FlowTypeType, null: false, description: 'The flow type of the flow', method: :flow_type
 
     id_field Flow
     timestamps

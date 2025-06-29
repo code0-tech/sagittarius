@@ -10,6 +10,7 @@ module Types
     field :config, Types::DataTypeRules::ConfigType, null: false,
                                                      description: 'The configuration of the rule'
 
+    id_field ::DataTypeRule
     timestamps
 
     def config

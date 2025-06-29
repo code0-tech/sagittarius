@@ -11,6 +11,9 @@ RSpec.describe SagittariusSchema.types['FlowTypeSetting'] do
       data_type
       names
       descriptions
+      id
+      created_at
+      updated_at
     ]
   end
 

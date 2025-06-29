@@ -1,23 +1,18 @@
 # frozen_string_literal: true
 
 module Types
-  class DataTypeIdentifierType < Types::BaseUnion
+  class DataTypeIdentifierType < Types::BaseObject
     description 'Represents a data type identifier.'
 
-    possible_types Types::GenericTypeType, Types::DataTypeType, Types::GenericKeyType,
-                   description: 'The identifier can be a generic type, a data type, or a generic key.'
+    field :data_type, Types::DataTypeType, null: true, description: 'The data type of the data type identifier.'
 
-    def self.resolve_type(object, _context)
-      case object
-      when GenericType
-        Types::GenericTypeType
-      when DataType
-        Types::DataTypeType
-      when GenericKey
-        Types::GenericKeyType
-      else
-        raise "Unexpected value type: #{object.class}"
-      end
-    end
+    # rubocop:disable GraphQL/ExtractType -- generic_key and generic_type don't have anything in common
+    field :generic_key, String, null: true, description: 'The generic key of the data type identifier.'
+    field :generic_type, Types::GenericTypeType, null: true,
+                                                 description: 'The generic type of the data type identifier.'
+    # rubocop:enable GraphQL/ExtractType
+
+    id_field DataTypeIdentifier
+    timestamps
   end
 end

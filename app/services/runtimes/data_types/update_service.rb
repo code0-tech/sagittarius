@@ -62,11 +62,11 @@ module Runtimes
 
       def find_data_type_identifier(identifier, t)
         if identifier.data_type_identifier.present?
-          return create_data_type_identifier(t, data_type_id: find_datatype(identifier.data_type_identifier, t).id)
+          return create_data_type_identifier(t, data_type_id: find_data_type(identifier.data_type_identifier, t).id)
         end
 
         if identifier.generic_type.present?
-          data_type = find_datatype(identifier.generic_type.data_type_identifier, t)
+          data_type = find_data_type(identifier.generic_type.data_type_identifier, t)
 
           generic_type = GenericType.find_by(
             data_type: data_type
@@ -111,8 +111,8 @@ module Runtimes
         data_type_identifier
       end
 
-      def find_datatype(identifier, t)
-        data_type = DataType.find_or_initialize_by(runtime: current_runtime, identifier: identifier)
+      def find_data_type(identifier, t)
+        data_type = DataType.find_by(runtime: current_runtime, identifier: identifier)
 
         if data_type.nil?
           t.rollback_and_return! ServiceResponse.error(message: "Could not find datatype with identifier #{identifier}",

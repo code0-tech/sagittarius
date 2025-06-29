@@ -8,5 +8,5 @@ Represents a rule that can be applied to a data type.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `dataTypeIdentifier` | [`DataTypeIdentifier!`](../union/datatypeidentifier.md) | The identifier of the data type this rule belongs to |
+| `dataTypeIdentifier` | [`DataTypeIdentifier!`](../object/datatypeidentifier.md) | The identifier of the data type this rule belongs to |
 

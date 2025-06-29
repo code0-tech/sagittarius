@@ -38,7 +38,7 @@ module Namespaces
               }
             )
 
-            ServiceResponse.success(message: 'Created new project', payload: flow)
+            ServiceResponse.success(message: 'Deleted flow', payload: flow)
           end
         end
       end
