@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class FlowHandler < Tucana::Sagittarius::FlowService::Service
+  include Code0::ZeroTrack::Loggable
   include GrpcHandler
   include GrpcStreamHandler
 
@@ -10,6 +11,24 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
     runtime = Runtime.find(runtime_id)
     runtime.connected!
     runtime.save
+
+    logger.info(message: 'Runtime connected', runtime_id: runtime.id)
+
+    flows = []
+    runtime.projects.each do |project|
+      project.flows.each do |flow|
+        flows << flow.to_grpc
+      end
+    end
+
+    send_update(
+      Tucana::Sagittarius::FlowResponse.new(
+        flows: Tucana::Shared::Flows.new(
+          flows: flows
+        )
+      ),
+      runtime.id
+    )
   end
 
   def self.update_died(runtime_id)

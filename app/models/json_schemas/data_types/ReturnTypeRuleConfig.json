@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://example.com/schemas/ReturnTypeRuleConfig.json",
+  "title": "ReturnTypeRuleConfig",
+  "type": "object",
+  "required": ["data_type_identifier"],
+  "properties": {
+    "data_type_identifier": {
+      "$ref": "../DataTypeIdentifier.json"
+    }
+  }
+}

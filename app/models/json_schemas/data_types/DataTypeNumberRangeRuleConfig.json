@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DataTypeNumberRangeRuleConfig",
+  "type": "object",
+  "required": ["from", "to"],
+  "properties": {
+    "from": { "type": "integer" },
+    "to": { "type": "integer" },
+    "steps": { "type": "integer" }
+  }
+}

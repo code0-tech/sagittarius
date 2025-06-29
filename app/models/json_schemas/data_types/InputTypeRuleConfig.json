@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://example.com/schemas/InputTypesRuleConfig.json",
+  "title": "InputTypesRuleConfig",
+  "type": "object",
+  "properties": {
+    "input_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["data_type_identifier", "input_identifier"],
+        "properties": {
+          "data_type_identifier": {
+            "$ref": "../DataTypeIdentifier.json"
+          },
+          "input_identifier": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

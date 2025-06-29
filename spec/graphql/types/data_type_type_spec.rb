@@ -9,6 +9,10 @@ RSpec.describe SagittariusSchema.types['DataType'] do
       identifier
       variant
       id
+      rules
+      name
+      parent
+      genericKeys
       createdAt
       updatedAt
     ]
