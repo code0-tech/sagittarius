@@ -22,7 +22,7 @@ module Mutations
 
             ::Namespaces::Projects::Flows::DeleteService.new(
               current_authentication,
-              flow
+              flow: flow
             ).execute.to_mutation_response(success_key: :flow)
           end
         end
