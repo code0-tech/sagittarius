@@ -24,7 +24,6 @@ Represents abilities that can be granted to roles in namespaces.
 | `DELETE_RUNTIME` | Allows to delete a runtime |
 | `INVITE_MEMBER` | Allows to invite new members to a namespace |
 | `NAMESPACE_ADMINISTRATOR` | Allows to perform any action in the namespace |
-| `READ_FLOW` | Allows to read flows in the project |
 | `READ_NAMESPACE_LICENSE` | Allows to read the license of the namespace |
 | `READ_NAMESPACE_PROJECT` | Allows to read the project of the namespace |
 | `ROTATE_RUNTIME_TOKEN` | Allows to regenerate a runtime token |
