@@ -41,9 +41,9 @@ class NodeFunction < ApplicationRecord
   end
 
   def to_grpc
-    Tucana::NodeFunction.new(
-      data_base_id: id,
-      runtime_function: runtime_function.to_grpc,
+    Tucana::Shared::NodeFunction.new(
+      database_id: id,
+      runtime_function_id: runtime_function.runtime_name,
       parameters: node_parameters.map(&:to_grpc),
       next_node: next_node&.to_grpc
     )

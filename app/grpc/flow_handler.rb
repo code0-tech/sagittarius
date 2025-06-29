@@ -21,6 +21,8 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
       end
     end
 
+    # TODO: Add check to check for primary runtime conflicts
+
     send_update(
       Tucana::Sagittarius::FlowResponse.new(
         flows: Tucana::Shared::Flows.new(
