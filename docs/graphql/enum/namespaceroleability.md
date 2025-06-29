@@ -10,12 +10,12 @@ Represents abilities that can be granted to roles in namespaces.
 | `ASSIGN_PROJECT_RUNTIMES` | Allows to assign runtimes to a project in the namespace |
 | `ASSIGN_ROLE_ABILITIES` | Allows to change the abilities of a namespace role |
 | `ASSIGN_ROLE_PROJECTS` | Allows to change the assigned projects of a namespace role |
-| `CREATE_FLOWS` | Allows to create flows in the project |
+| `CREATE_FLOWS` | Allows to create flows in a namespace project |
 | `CREATE_NAMESPACE_LICENSE` | Allows to create a license for the namespace |
 | `CREATE_NAMESPACE_PROJECT` | Allows to create a project in the namespace |
 | `CREATE_NAMESPACE_ROLE` | Allows the creation of roles in a namespace |
 | `CREATE_RUNTIME` | Allows to create a runtime globally or for the namespace |
-| `DELETE_FLOWS` | Allows to delete flows in the project |
+| `DELETE_FLOWS` | Allows to delete flows in a namespace project |
 | `DELETE_MEMBER` | Allows to remove members of a namespace |
 | `DELETE_NAMESPACE_LICENSE` | Allows to delete the license of the namespace |
 | `DELETE_NAMESPACE_PROJECT` | Allows to delete the project of the namespace |
