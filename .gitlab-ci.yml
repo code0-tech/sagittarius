@@ -99,13 +99,14 @@ db:rollback-and-migrate:
   extends:
     - .rails
   stage: test
-  allow_failure: true
+  allow_failure:
+    exit_codes: 10
   script:
     - bundle exec rake db:create db:schema:load
     - bundle exec rake db:migrate VERSION=20231203194307
     - bundle exec rake db:migrate
     - git add db
-    - git diff --exit-code --staged
+    - git diff --exit-code --staged || exit 10
 
 boot:production-mode:
   extends:
