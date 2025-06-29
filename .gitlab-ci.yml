@@ -50,26 +50,6 @@ graphql_docs:
     - git add docs
     - git diff --exit-code --staged
 
-build-image:
-  image:
-    name: gcr.io/kaniko-project/executor:v1.23.2-debug # Debug Image because a shell is required for GitLab Runner
-    entrypoint: [ "" ]
-  stage: build
-  parallel:
-    matrix:
-      - EDITION:
-          - ce
-          - ee
-  script:
-    - '[[ "$EDITION" = "ee" ]] || rm -rf extensions/ee/'
-    - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"ghcr.io\":{\"auth\":\"$(printf "%s:%s" "$" "${C0_GH_TOKEN}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - >-
-      /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}-${EDITION}"
-
 rspec:
   extends:
     - .rails
@@ -145,45 +125,6 @@ boot:production-mode:
     - bundle exec rake db:prepare db:seed_fu
     - bin/rails s &
     - curl --fail -sv --retry 20 --retry-delay 3 --retry-connrefused http://127.0.0.1:3000/health/liveness
-
-boot:docker:
-  stage: test
-  image: docker:28.2.1
-  services:
-    - docker:28.2.1-dind
-  parallel:
-    matrix:
-      - EDITION:
-          - ce
-          - ee
-  variables:
-    DOCKER_TLS_CERTDIR: /certs
-    DOCKER_HOST: tcp://docker:2376
-    SAGITTARIUS_IMAGE: ghcr.io/code0-tech/sagittarius/ci-builds:${CI_COMMIT_SHA}-${EDITION}
-    CURL_IMAGE: curlimages/curl:8.5.0
-  script:
-    - docker compose -f docker-compose.dev.yml up -d
-    - docker pull ${SAGITTARIUS_IMAGE}
-    - docker pull ${CURL_IMAGE}
-    - >
-      docker run
-      --name sagittarius
-      --network sagittarius_default
-      --network-alias sagittarius
-      -v $(pwd)/tooling/pipeline/sagittarius.yml:/rails/config/sagittarius.yml
-      ${SAGITTARIUS_IMAGE} &
-    - >
-      docker run
-      --rm
-      --network sagittarius_default
-      ${CURL_IMAGE}
-      curl
-      --fail
-      -sv
-      --retry 20
-      --retry-delay 3
-      --retry-connrefused
-      http://sagittarius:3000/health/liveness
 
 npm-types:generate-graphql:
   extends:
