@@ -36,31 +36,20 @@ RSpec.describe Flow do
       grpc_object = flow.to_grpc
 
       expect(grpc_object.to_h).to eq({
-                                       data_types: [],
                                        flow_id: flow.id,
                                        project_id: flow.project.id,
                                        type: flow.flow_type.identifier,
-                                       input_type_identifier: flow.input_type&.identifier || '',
-                                       return_type_identifier: flow.return_type&.identifier || '',
                                        starting_node: {
                                          database_id: flow.starting_node.id,
-                                         next_node: nil,
                                          runtime_function_id: flow.starting_node.runtime_function.runtime_name,
                                          parameters: [
                                            {
                                              database_id: flow.starting_node.node_parameters.first.id,
                                              runtime_parameter_id:
                                                flow.starting_node.node_parameters.first.runtime_parameter.runtime_name,
-                                             function_value: nil,
                                              literal_value: {
-                                               bool_value: false,
-                                               list_value: nil,
-                                               null_value: :NULL_VALUE,
-                                               number_value: 0.0,
                                                string_value: flow.starting_node.node_parameters.first.literal_value,
-                                               struct_value: nil,
                                              },
-                                             reference_value: nil,
                                            }
                                          ],
                                        },
@@ -70,12 +59,7 @@ RSpec.describe Flow do
                                          object: {
                                            fields: {
                                              'some_key' => {
-                                               bool_value: false,
-                                               list_value: nil,
-                                               null_value: :NULL_VALUE,
-                                               number_value: 0.0,
                                                string_value: flow.flow_settings.first.object['some_key'],
-                                               struct_value: nil,
                                              },
                                            },
                                          }
