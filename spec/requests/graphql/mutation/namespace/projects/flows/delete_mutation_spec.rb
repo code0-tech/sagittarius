@@ -35,10 +35,12 @@ RSpec.describe 'namespacesProjectsFlowsDelete Mutation' do
 
   context 'when user has permission' do
     before do
-      stub_allowed_ability(NamespaceProjectPolicy, :delete_flows, user: current_user,
-                                                                  subject: namespace_project)
-      stub_allowed_ability(NamespaceProjectPolicy, :read_flow, user: current_user,
-                                                               subject: namespace_project)
+      namespace_role = create(:namespace_role, namespace: namespace_project.namespace).tap do |role|
+        create(:namespace_role_ability, namespace_role: role, ability: :delete_flows)
+        create(:namespace_role_ability, namespace_role: role, ability: :read_namespace_project)
+      end
+      namespace_member = create(:namespace_member, namespace: namespace_project.namespace, user: current_user)
+      create(:namespace_member_role, role: namespace_role, member: namespace_member)
     end
 
     it 'deletes flow' do

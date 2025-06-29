@@ -76,8 +76,12 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
 
   context 'when user has the permission' do
     before do
-      stub_allowed_ability(NamespaceProjectPolicy, :create_flows, user: current_user, subject: project)
-      stub_allowed_ability(NamespaceProjectPolicy, :read_flow, user: current_user, subject: project)
+      namespace_role = create(:namespace_role, namespace: project.namespace).tap do |role|
+        create(:namespace_role_ability, namespace_role: role, ability: :create_flows)
+        create(:namespace_role_ability, namespace_role: role, ability: :read_namespace_project)
+      end
+      namespace_member = create(:namespace_member, namespace: project.namespace, user: current_user)
+      create(:namespace_member_role, role: namespace_role, member: namespace_member)
     end
 
     it 'creates namespace project' do
