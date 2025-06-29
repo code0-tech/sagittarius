@@ -9,7 +9,7 @@ class NamespaceProjectPolicy < BasePolicy
 
   rule { can_create_projects }.enable :read_namespace_project
 
-  rule { can?(:has_access) }.policy do
+  rule { can?(:read_namespace_project) }.policy do
     enable :read_flow
   end
 
@@ -17,7 +17,6 @@ class NamespaceProjectPolicy < BasePolicy
   customizable_permission :read_namespace_project
   customizable_permission :update_namespace_project
   customizable_permission :delete_namespace_project
-  customizable_permission :read_flow
   customizable_permission :create_flows
   customizable_permission :update_flows
   customizable_permission :delete_flows
