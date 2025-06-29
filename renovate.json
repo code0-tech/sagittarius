@@ -1,9 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":assignee(Taucher2003)",
-    ":label(dependencies)"
+    "github>code0-tech/monoceros//renovate/global.json5",
+    ":assignee(Taucher2003)"
   ],
   "rangeStrategy": "update-lockfile",
   "packageRules": [
