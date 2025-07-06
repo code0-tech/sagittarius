@@ -3,4 +3,24 @@
 
 require_relative '../config/environment'
 
-Sagittarius::Grpc::Launcher.new.start_blocking
+launcher = Sagittarius::Grpc::Launcher.new
+
+stop_signals = %w[QUIT INT TERM]
+stop_read, stop_write = IO.pipe
+
+stop_signals.each do |signal|
+  Signal.trap(signal) do
+    stop_write.puts(signal)
+  end
+end
+
+launcher.start
+
+while (readable_io = IO.select([stop_read]))
+  signal = readable_io.first[0].gets.strip
+
+  if stop_signals.include?(signal)
+    launcher.stop
+    break
+  end
+end

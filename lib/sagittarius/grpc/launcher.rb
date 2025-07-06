@@ -7,7 +7,7 @@ module Sagittarius
 
       HOST = '0.0.0.0:50051'
 
-      def load
+      def create_server
         @server = GRPC::RpcServer.new(interceptors: [
           Sagittarius::Middleware::Grpc::Context.new,
           Sagittarius::Middleware::Grpc::Logger.new,
@@ -26,9 +26,9 @@ module Sagittarius
       end
 
       def run_server!
-        load if @server.nil?
+        create_server if @server.nil?
         logger.info('Running server')
-        @server.run_till_terminated_or_interrupted(%w[QUIT INT TERM])
+        @server.run_till_terminated_or_interrupted([])
       end
 
       def run_stream_listener!
@@ -36,14 +36,9 @@ module Sagittarius
       end
 
       def start
-        load
+        create_server
         @stream_thread = Thread.new { run_stream_listener! }
         @server_thread = Thread.new { run_server! }
-      end
-
-      def start_blocking
-        start
-        @server_thread.join # Wait for the server thread to finish because the program would end otherwise
       end
 
       def stop
