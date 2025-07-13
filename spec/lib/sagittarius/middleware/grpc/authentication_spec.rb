@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'google/protobuf/well_known_types'
+require 'grpc/health/v1/health_services_pb'
 
 RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
   let(:rpc_class) do
@@ -45,11 +46,20 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
         end.to raise_error(GRPC::Unauthenticated)
       end
       # rubocop:enable Lint/EmptyBlock
+
+      context 'when anonymous service is called' do
+        let(:service_class) { Grpc::Health::V1::Health::Service }
+        let(:method) { service_class.new.method(:check) }
+
+        it do
+          expect { |b| interceptor.request_response(request: request, call: call, method: method, &b) }.to yield_control
+        end
+      end
     end
 
     context 'when invalid authentication is passed' do
       let(:metadata) do
-        { authorization: 'token' }
+        { 'authorization' => 'token' }
       end
 
       # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
@@ -59,6 +69,19 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
         end.to raise_error(GRPC::Unauthenticated)
       end
       # rubocop:enable Lint/EmptyBlock
+
+      context 'when anonymous service is called' do
+        let(:service_class) { Grpc::Health::V1::Health::Service }
+        let(:method) { service_class.new.method(:check) }
+
+        # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+        it do
+          expect do
+            interceptor.request_response(request: request, call: call, method: method) {}
+          end.to raise_error(GRPC::Unauthenticated)
+        end
+        # rubocop:enable Lint/EmptyBlock
+      end
     end
 
     context 'when valid authentication is passed' do
@@ -77,6 +100,15 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
                                                                                       namespace_id: nil })
       end
       # rubocop:enable Lint/EmptyBlock
+
+      context 'when anonymous service is called' do
+        let(:service_class) { Grpc::Health::V1::Health::Service }
+        let(:method) { service_class.new.method(:check) }
+
+        it do
+          expect { |b| interceptor.request_response(request: request, call: call, method: method, &b) }.to yield_control
+        end
+      end
     end
   end
 
@@ -93,7 +125,7 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
 
     context 'when invalid authentication is passed' do
       let(:metadata) do
-        { authorization: 'token' }
+        { 'authorization' => 'token' }
       end
 
       # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
@@ -137,7 +169,7 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
 
     context 'when invalid authentication is passed' do
       let(:metadata) do
-        { authorization: 'token' }
+        { 'authorization' => 'token' }
       end
 
       # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
@@ -181,7 +213,7 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
 
     context 'when invalid authentication is passed' do
       let(:metadata) do
-        { authorization: 'token' }
+        { 'authorization' => 'token' }
       end
 
       # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
