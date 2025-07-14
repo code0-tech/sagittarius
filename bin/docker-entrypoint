@@ -1,7 +1,10 @@
 #!/bin/bash -e
 
 if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
-  # prepare database
+  SAGITTARIUS_PREPARE_DATABASE="true"
+fi
+
+if [ "${SAGITTARIUS_PREPARE_DATABASE}" == "true" ]; then
   bundle exec rake db:prepare
   FILTER=01_application_settings bundle exec rake db:seed_fu
 fi
