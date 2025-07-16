@@ -4,13 +4,17 @@ module Sagittarius
   module Middleware
     module Grpc
       class Authentication < Grpc::AllMethodServerInterceptor
-        def execute(call:, **_)
+        ANONYMOUS_SERVICES = %w[grpc.health.v1.Health].freeze
+
+        def execute(call:, method:, **_)
           authorization_token = call.metadata['authorization']
-          runtime = Runtime.find_by(token: authorization_token)
+          runtime = Runtime.find_by(token: authorization_token) if authorization_token.present?
 
-          raise GRPC::Unauthenticated, 'No valid runtime token provided' if runtime.nil?
-
-          Code0::ZeroTrack::Context.push(runtime: { id: runtime.id, namespace_id: runtime.namespace&.id })
+          if runtime.present?
+            Code0::ZeroTrack::Context.push(runtime: { id: runtime.id, namespace_id: runtime.namespace&.id })
+          elsif ANONYMOUS_SERVICES.exclude?(method.owner.service_name) || authorization_token.present?
+            raise GRPC::Unauthenticated, 'No valid runtime token provided' if runtime.nil?
+          end
 
           yield
         end
