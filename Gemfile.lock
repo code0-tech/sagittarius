@@ -118,8 +118,7 @@ GEM
     factory_bot_rails (6.5.0)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
-    ffi (1.17.1-x86_64-linux-gnu)
-    ffi (1.17.1-x86_64-linux-musl)
+    ffi (1.17.1)
     fiber-storage (0.1.2)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
@@ -133,10 +132,7 @@ GEM
       fugit (>= 1.11.0)
       railties (>= 6.1.0)
       thor (>= 1.0.0)
-    google-protobuf (4.31.1-x86_64-linux-gnu)
-      bigdecimal
-      rake (>= 13)
-    google-protobuf (4.31.1-x86_64-linux-musl)
+    google-protobuf (4.31.1)
       bigdecimal
       rake (>= 13)
     googleapis-common-protos-types (1.16.0)
@@ -145,7 +141,7 @@ GEM
       base64
       fiber-storage
       logger
-    grpc (1.67.0-x86_64-linux)
+    grpc (1.67.0)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     httparty (0.22.0)
@@ -186,6 +182,7 @@ GEM
     method_source (1.1.0)
     mini_magick (4.13.2)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.9)
     minitest (5.25.5)
     msgpack (1.7.5)
     multi_xml (0.7.1)
@@ -200,9 +197,8 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.18.8-x86_64-linux-gnu)
-      racc (~> 1.4)
-    nokogiri (1.18.8-x86_64-linux-musl)
+    nokogiri (1.18.8)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     parallel (1.27.0)
     parser (3.3.8.0)
@@ -389,8 +385,7 @@ GEM
     zeitwerk (2.7.3)
 
 PLATFORMS
-  x86_64-linux-gnu
-  x86_64-linux-musl
+  ruby
 
 DEPENDENCIES
   bcrypt (~> 3.1.7)
