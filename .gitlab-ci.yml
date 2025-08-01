@@ -70,11 +70,11 @@ rspec:
       echo "Test summary available at https://gitlab.com/code0-tech/development/sagittarius/-/pipelines/$CI_PIPELINE_ID/test_report"
       grep 'Finished in ' output
       grep -E '[[:digit:]]+ examples, ' output
-      grep -o -E '[[:digit:]]+ / [[:digit:]]+ LOC \(.*\) covered.' output
+      grep -m 1 -E 'Line Coverage:' output
       grep 'Time spent in factories' output
       echo -e "\e[0Ksection_end:`date +%s`:glpa_summary\r\e[0K"
       exit $exit_code
-  coverage: '/LOC \((\d+\.\d+%)\) covered.$/'
+  coverage: '/Line Coverage:\s\d+\.\d+%/'
   artifacts:
     expire_in: 7 days
     paths:
