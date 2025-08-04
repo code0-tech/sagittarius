@@ -142,7 +142,7 @@ npm-types:generate-graphql:
 
 
 .npm-types:publish-graphql:
-  image: node:22.17.1
+  image: node:22.18.0
   needs:
     - npm-types:generate-graphql
   variables:
