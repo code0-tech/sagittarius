@@ -6,6 +6,10 @@ module Types
 
     authorize :read_flow
 
+    field :function_definitions, Types::FunctionDefinitionType.connection_type,
+          null: true,
+          description: 'Function definitions of the Node Function'
+
     id_field RuntimeParameterDefinition
     timestamps
   end
