@@ -9,6 +9,7 @@ Represents a Node Function definition
 | Name | Type | Description |
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeFunctionDefinition was created |
+| `functionDefinitions` | [`FunctionDefinitionConnection`](../object/functiondefinitionconnection.md) | Function definitions of the Node Function |
 | `id` | [`RuntimeParameterDefinitionID!`](../scalar/runtimeparameterdefinitionid.md) | Global ID of this RuntimeFunctionDefinition |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeFunctionDefinition was last updated |
 
