@@ -645,7 +645,8 @@ CREATE TABLE parameter_definitions (
     default_value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    data_type_id bigint
+    data_type_id bigint,
+    function_definition_id bigint NOT NULL
 );
 
 CREATE SEQUENCE parameter_definitions_id_seq
@@ -1243,6 +1244,8 @@ CREATE UNIQUE INDEX "index_organizations_on_LOWER_name" ON organizations USING b
 
 CREATE INDEX index_parameter_definitions_on_data_type_id ON parameter_definitions USING btree (data_type_id);
 
+CREATE INDEX index_parameter_definitions_on_function_definition_id ON parameter_definitions USING btree (function_definition_id);
+
 CREATE INDEX index_parameter_definitions_on_runtime_parameter_definition_id ON parameter_definitions USING btree (runtime_parameter_definition_id);
 
 CREATE INDEX index_reference_paths_on_reference_value_id ON reference_paths USING btree (reference_value_id);
@@ -1295,6 +1298,9 @@ ALTER TABLE ONLY node_parameters
 
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT fk_rails_118c914ed0 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY parameter_definitions
+    ADD CONSTRAINT fk_rails_18c14268dd FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY generic_combination_strategies
     ADD CONSTRAINT fk_rails_1f88a2577e FOREIGN KEY (generic_mapper_id) REFERENCES generic_mappers(id) ON DELETE CASCADE;

@@ -37,8 +37,6 @@ module Runtimes
           runtime_name: runtime_function_definition.runtime_name
         )
         db_object.removed_at = nil
-        db_object.parameters = update_parameters(db_object, runtime_function_definition.runtime_parameter_definitions,
-                                                 db_object.parameters, t)
         db_object.return_type = if runtime_function_definition.return_type_identifier.present?
                                   find_data_type_identifier(runtime_function_definition.return_type_identifier,
                                                             runtime_function_definition.generic_mappers, t)
@@ -51,7 +49,6 @@ module Runtimes
                                                              db_object.deprecation_messages)
 
         db_object.error_types = update_error_types(runtime_function_definition.error_type_identifiers, db_object, t)
-        db_object.generic_mappers = update_mappers(runtime_function_definition.generic_mappers, db_object, t)
 
         if db_object.function_definitions.empty?
           definition = FunctionDefinition.new
@@ -64,6 +61,11 @@ module Runtimes
 
           db_object.function_definitions << definition
         end
+
+        db_object.parameters = update_parameters(db_object, runtime_function_definition.runtime_parameter_definitions,
+                                                 db_object.parameters, t)
+        db_object.generic_mappers = update_mappers(runtime_function_definition.generic_mappers, db_object, t)
+
         db_object.save
         db_object
       end
@@ -199,6 +201,7 @@ module Runtimes
           definition.documentations = update_translations(real_param.documentation, definition.documentations)
           definition.data_type = db_param.data_type
           definition.default_value = db_param.default_value
+          definition.function_definition = runtime_function_definition.function_definitions.first
 
           db_param.parameter_definitions << definition
         end
