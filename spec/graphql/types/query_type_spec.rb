@@ -15,6 +15,8 @@ RSpec.describe SagittariusSchema.types['Query'] do
       namespace
       node
       nodes
+      flow
+      flows
     ]
   end
 
