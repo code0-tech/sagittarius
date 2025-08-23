@@ -4,6 +4,14 @@ module Types
   class QueryType < Types::BaseObject
     description 'Root Query type'
 
+    field :flow, Types::FlowType, null: true, description: 'Fetches an flow given by its ID' do
+      argument :id, ID, required: true, description: 'Id of the flow'
+    end
+
+    field :flows, [Types::FlowType], null: true, description: 'Fetches all flows in a specific project' do
+      argument :project_id, Types::GlobalIdType[::NamespaceProject], required: true, description: 'Id of the project'
+    end
+
     field :node, Types::NodeType, null: true, description: 'Fetches an object given its ID' do
       argument :id, ID, required: true, description: 'ID of the object'
     end
@@ -41,6 +49,16 @@ module Types
     field :users, Types::UserType.connection_type, null: false, description: 'Find users'
 
     field :global_runtimes, Types::RuntimeType.connection_type, null: false, description: 'Find runtimes'
+
+    def flows(project_id:)
+      organization = context.schema.object_from_id(project_id, context)
+
+      organization.flows
+    end
+
+    def flow(id:)
+      context.schema.object_from_id(id, context)
+    end
 
     def node(id:)
       context.schema.object_from_id(id, context)
