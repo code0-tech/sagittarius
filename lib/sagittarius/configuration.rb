@@ -25,6 +25,9 @@ module Sagittarius
             port: 3000,
             force_ssl: nil,
           },
+          grpc: {
+            host: '0.0.0.0:50051',
+          },
           log_level: 'info',
           db: {
             host: 'localhost',
