@@ -26,6 +26,13 @@ module Sagittarius
             force_ssl: nil,
           },
           log_level: 'info',
+          mailer: {
+            address: 'smtp.example.com',
+            port: 587,
+            domain: 'code0.tech',
+            username: 'testmail@code0.tech',
+            password: 'changeme',
+          },
           db: {
             host: 'localhost',
             port: 5433,
