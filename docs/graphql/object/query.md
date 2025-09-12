@@ -26,26 +26,6 @@ Returns [`String!`](../scalar/string.md).
 |------|------|-------------|
 | `message` | [`String!`](../scalar/string.md) | String to echo as response |
 
-### flow
-
-Fetches an flow given by its ID
-
-Returns [`Flow`](../object/flow.md).
-
-| Name | Type | Description |
-|------|------|-------------|
-| `id` | [`ID!`](../scalar/id.md) | Id of the flow |
-
-### flows
-
-Fetches all flows in a specific project
-
-Returns [`[Flow!]`](../object/flow.md).
-
-| Name | Type | Description |
-|------|------|-------------|
-| `projectId` | [`NamespaceProjectID!`](../scalar/namespaceprojectid.md) | Id of the project |
-
 ### namespace
 
 Find a namespace
