@@ -7,8 +7,21 @@ class ApplicationMailer < ActionMailer::Base
   def test_mail
     @user = params[:user]
 
-    mail(to: @user.email, subject: 'Test mail') do |format|
-      format.text { render plain: 'This is a test mail.' }
-    end
+    mail(to: @user.email, subject: 'Test mail')
   end
+
+  def password_reset_mail
+    @user = params[:user]
+    @verification_code = params[:verification_code]
+
+    mail(to: @user.email, subject: 'Reset your password')
+  end
+
+  def email_verification_mail
+    @user = params[:user]
+    @verification_code = params[:verification_code]
+
+    mail(to: @user.email, subject: 'Email verification')
+  end
+
 end
