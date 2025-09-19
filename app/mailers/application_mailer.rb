@@ -9,19 +9,4 @@ class ApplicationMailer < ActionMailer::Base
 
     mail(to: @user.email, subject: 'Test mail')
   end
-
-  def password_reset_mail
-    @user = params[:user]
-    @verification_code = params[:verification_code]
-
-    mail(to: @user.email, subject: 'Reset your password')
-  end
-
-  def email_verification_mail
-    @user = params[:user]
-    @verification_code = params[:verification_code]
-
-    mail(to: @user.email, subject: 'Email verification')
-  end
-
 end
