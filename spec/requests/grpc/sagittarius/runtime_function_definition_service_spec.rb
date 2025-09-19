@@ -18,7 +18,6 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         create(:generic_type, data_type: create(:data_type, runtime: runtime))
       end
       let!(:return_type) { create(:data_type_identifier, runtime: runtime, generic_type: generic_type.reload).reload }
-      let(:error_type) { create(:data_type, runtime: runtime) }
 
       let(:runtime_functions) do
         [
@@ -42,15 +41,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
                 generic_mappers: [{ source: [{ generic_key: 'T' }], target: 'V', generic_combinations: [] }],
               },
             },
-            generic_mappers: [
-              {
-                source: [{ generic_key: 'X' }],
-                target: 'Y',
-                parameter_id: 'some_id',
-                generic_combinations: [],
-              }
-            ],
-            error_type_identifiers: [error_type.identifier],
+            throws_error: true,
             runtime_parameter_definitions: [
               {
                 data_type_identifier: {
@@ -94,7 +85,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function.documentations.first.content).to eq('Eine Funktionsdokumentation')
         expect(function.deprecation_messages.first.content).to eq('Eine Deprecationsmeldung')
-        expect(function.error_types.first.data_type.identifier).to eq(error_type.identifier)
+        expect(function.throws_error).to be(true)
         parameter = function.parameters.first
         expect(parameter.data_type.data_type.identifier).to eq(parameter_type.data_type.identifier)
         expect(parameter.runtime_name).to eq('some_id')
@@ -115,11 +106,6 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(parameter_definition.descriptions.first.content).to eq('Eine Parameterbeschreibung')
         expect(parameter_definition.documentations.first.content).to eq('Eine Parameterdokumentation')
         expect(parameter_definition.default_value).to eq({ 'key' => 'value' })
-
-        expect(FunctionGenericMapper.count).to eq(1)
-        expect(FunctionGenericMapper.last.source.first.generic_key).to eq('X')
-        expect(FunctionGenericMapper.last.target).to eq('Y')
-        expect(FunctionGenericMapper.last.runtime_parameter_definition.runtime_name).to eq('some_id')
       end
     end
 

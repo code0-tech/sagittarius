@@ -14,12 +14,14 @@ class NodeParameter < ApplicationRecord
       runtime_parameter_id: runtime_parameter.runtime_name
     )
 
+    param.value = Tucana::Shared::NodeValue.new(literal_value: Tucana::Shared::Value.from_ruby({}))
+
     if literal_value.present?
-      param.literal_value = Tucana::Shared::Value.from_ruby(literal_value)
+      param.value.literal_value = Tucana::Shared::Value.from_ruby(literal_value)
     elsif reference_value.present?
-      param.reference_value = reference_value.to_grpc
+      param.value.reference_value = reference_value.to_grpc
     elsif function_value.present?
-      param.function_value = function_value.to_grpc
+      param.value.function_value = function_value.to_grpc
     end
 
     param

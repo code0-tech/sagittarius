@@ -8,8 +8,6 @@ RSpec.describe RuntimeParameterDefinition do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:runtime_name) }
 
-    it { is_expected.to have_many(:function_generic_mappers) }
-
     it {
       is_expected.to validate_uniqueness_of(:runtime_name).case_insensitive.scoped_to(:runtime_function_definition_id)
     }

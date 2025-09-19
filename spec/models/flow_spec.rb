@@ -47,8 +47,10 @@ RSpec.describe Flow do
                                              database_id: flow.starting_node.node_parameters.first.id,
                                              runtime_parameter_id:
                                                flow.starting_node.node_parameters.first.runtime_parameter.runtime_name,
-                                             literal_value: {
-                                               string_value: flow.starting_node.node_parameters.first.literal_value,
+                                             value: {
+                                               literal_value: {
+                                                 string_value: flow.starting_node.node_parameters.first.literal_value,
+                                               },
                                              },
                                            }
                                          ],

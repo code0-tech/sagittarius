@@ -8,10 +8,6 @@ class CreateGenericCombinationStrategies < Code0::ZeroTrack::Database::Migration
         to_table: :generic_mappers,
         on_delete: :cascade,
       }
-      t.references :function_generic_mapper, null: true, foreign_key: {
-        to_table: :function_generic_mappers,
-        on_delete: :cascade,
-      }
 
       t.timestamps_with_timezone
     end

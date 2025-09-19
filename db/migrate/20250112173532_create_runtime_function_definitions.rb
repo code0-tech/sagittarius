@@ -6,6 +6,7 @@ class CreateRuntimeFunctionDefinitions < Code0::ZeroTrack::Database::Migration[1
       t.references :return_type, null: true, foreign_key: { to_table: :data_types, on_delete: :restrict }
       t.references :runtime, null: false, index: false, foreign_key: { on_delete: :cascade }
       t.text :runtime_name, null: false, limit: 50
+      t.boolean :throws_error, null: false, default: true
 
       t.datetime_with_timezone :removed_at, null: true
 

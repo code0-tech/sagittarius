@@ -6,8 +6,6 @@ class RuntimeFunctionDefinition < ApplicationRecord
 
   has_many :function_definitions, inverse_of: :runtime_function_definition
   has_many :parameters, class_name: 'RuntimeParameterDefinition', inverse_of: :runtime_function_definition
-  has_many :error_types, class_name: 'RuntimeFunctionDefinitionErrorType', inverse_of: :runtime_function_definition
-  has_many :generic_mappers, class_name: 'FunctionGenericMapper', inverse_of: :runtime_function_definition
 
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
