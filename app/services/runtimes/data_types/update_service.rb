@@ -32,14 +32,16 @@ module Runtimes
 
       def sort_data_types(data_types)
         # types without parent are already "in order" because they don't have a dependency
-        sorted_types = data_types.reject { |dt| dt.parent_type.present? }
+        sorted_types = data_types.reject { |dt| parent?(dt) }
         unsorted_types = data_types - sorted_types
 
         unsorted_types.size.times do
           # find the next datatype that doesn't have a dependency on an unsorted type
           next_datatype = unsorted_types.find do |to_sort|
             unsorted_types.none? do |to_search|
-              to_sort.parent_type&.data_type_identifier == to_search.identifier
+              extract_data_type_identifier_string(to_sort.rules.find do |rule|
+                rule.variant == :parent_type
+              end.rule_config) == to_search.identifier
             end
           end
           sorted_types << next_datatype
@@ -49,18 +51,34 @@ module Runtimes
         sorted_types + unsorted_types # any unsorted types also need to be processed. They might still fail validations
       end
 
+      def extract_data_type_identifier_string(parent_type_rule_config)
+        data_type = parent_type_rule_config.parent_type
+        data_type.data_type_identifier || data_type.generic_type.data_type_identifier
+      end
+
+      def parent?(data_type)
+        data_type.rules.any? { |rule| rule.variant == :parent_type }
+      end
+
+      def find_parent_rule(data_type)
+        data_type.rules.find { |rule| rule.variant == :parent_type }
+      end
+
       def update_datatype(data_type, t)
         db_object = DataType.find_or_initialize_by(runtime: current_runtime, identifier: data_type.identifier)
         db_object.removed_at = nil
         db_object.variant = data_type.variant.to_s.downcase
-        db_object.parent_type = find_data_type_identifier(data_type.parent_type, t) if data_type.parent_type.present?
+        if parent?(data_type)
+          db_object.parent_type = find_data_type_identifier(find_parent_rule(data_type).rule_config, t)
+        end
         db_object.rules = update_rules(data_type.rules, db_object)
         db_object.names = update_translations(data_type.name, db_object.names)
         db_object.generic_keys = data_type.generic_keys.to_a
         db_object.save
       end
 
-      def find_data_type_identifier(identifier, t)
+      def find_data_type_identifier(parent_type_rule_config, t)
+        identifier = parent_type_rule_config.parent_type
         if identifier.data_type_identifier.present?
           return create_data_type_identifier(t, data_type_id: find_data_type(identifier.data_type_identifier, t).id)
         end
@@ -85,7 +103,7 @@ module Runtimes
             )
           end
 
-          generic_type.assign_attributes(generic_mappers: update_mappers(identifier.generic_type.generic_mappers, nil,
+          generic_type.assign_attributes(generic_mappers: update_mappers(identifier.generic_type.generic_mappers,
                                                                          t))
 
           return create_data_type_identifier(t, generic_type_id: generic_type.id)

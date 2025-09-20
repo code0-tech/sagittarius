@@ -9,7 +9,6 @@ RSpec.describe DataTypeIdentifier do
     it { is_expected.to belong_to(:generic_type).optional }
     it { is_expected.to belong_to(:runtime) }
     it { is_expected.to belong_to(:generic_mapper).optional.inverse_of(:source) }
-    it { is_expected.to belong_to(:function_generic_mapper).optional.inverse_of(:source) }
     it { is_expected.to have_many(:child_types).class_name('DataType').inverse_of(:parent_type) }
   end
 

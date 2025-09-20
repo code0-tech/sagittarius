@@ -10,7 +10,7 @@ class Flow < ApplicationRecord
   has_many :flow_settings, class_name: 'FlowSetting', inverse_of: :flow
 
   def to_grpc
-    Tucana::Shared::Flow.new(
+    Tucana::Shared::ValidationFlow.new(
       flow_id: id,
       project_id: project.id,
       type: flow_type.identifier,

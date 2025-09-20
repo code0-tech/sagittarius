@@ -5,7 +5,6 @@ require 'rails_helper'
 RSpec.describe GenericCombinationStrategy do
   describe 'associations' do
     it { is_expected.to belong_to(:generic_mapper).optional }
-    it { is_expected.to belong_to(:function_generic_mapper).optional }
   end
 
   describe 'enums' do

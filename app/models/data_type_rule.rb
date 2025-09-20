@@ -9,6 +9,7 @@ class DataTypeRule < ApplicationRecord
     regex: 5,
     return_type: 6,
     input_type: 7,
+    parent_type: 8,
   }.with_indifferent_access
 
   enum :variant, VARIANTS, prefix: :variant

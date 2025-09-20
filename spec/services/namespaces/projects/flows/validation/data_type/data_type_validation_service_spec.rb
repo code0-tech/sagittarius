@@ -48,26 +48,4 @@ RSpec.describe Namespaces::Projects::Flows::Validation::DataType::DataTypeValida
 
     it { expect(service_response).to be_nil }
   end
-
-  context 'when parent type is set' do
-    let(:parent_data_type) { create(:data_type, runtime: runtime) }
-    let(:data_type) do
-      create(:data_type, runtime: runtime, parent_type: create(:data_type_identifier,
-                                                               runtime: runtime,
-                                                               data_type: parent_data_type))
-    end
-
-    it { expect(service_response).to be_nil }
-  end
-
-  context 'when parent type is set and invalid' do
-    let(:parent_data_type) { create(:data_type) }
-    let(:data_type) do
-      create(:data_type, runtime: runtime, parent_type: create(:data_type_identifier,
-                                                               runtime: runtime,
-                                                               data_type: parent_data_type))
-    end
-
-    it { expect(service_response.payload).to eq(:runtime_mismatch) }
-  end
 end

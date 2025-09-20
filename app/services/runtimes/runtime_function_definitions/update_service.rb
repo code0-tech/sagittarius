@@ -38,8 +38,7 @@ module Runtimes
         )
         db_object.removed_at = nil
         db_object.return_type = if runtime_function_definition.return_type_identifier.present?
-                                  find_data_type_identifier(runtime_function_definition.return_type_identifier,
-                                                            runtime_function_definition.generic_mappers, t)
+                                  find_data_type_identifier(runtime_function_definition.return_type_identifier, t)
                                 end
         db_object.names = update_translations(runtime_function_definition.name, db_object.names)
         db_object.descriptions = update_translations(runtime_function_definition.description, db_object.descriptions)
@@ -48,7 +47,7 @@ module Runtimes
         db_object.deprecation_messages = update_translations(runtime_function_definition.deprecation_message,
                                                              db_object.deprecation_messages)
 
-        db_object.error_types = update_error_types(runtime_function_definition.error_type_identifiers, db_object, t)
+        db_object.throws_error = runtime_function_definition.throws_error
 
         if db_object.function_definitions.empty?
           definition = FunctionDefinition.new
@@ -64,32 +63,20 @@ module Runtimes
 
         db_object.parameters = update_parameters(db_object, runtime_function_definition.runtime_parameter_definitions,
                                                  db_object.parameters, t)
-        db_object.generic_mappers = update_mappers(runtime_function_definition.generic_mappers, db_object, t)
 
         db_object.save
         db_object
       end
 
       # These mappers can be either generic mappers or generic function mappers.
-      def update_mappers(generic_mappers, runtime_function_definition, t)
+      def update_mappers(generic_mappers, t)
         generic_mappers.to_a.map do |generic_mapper|
           if generic_mapper.is_a? Tucana::Shared::GenericMapper
             mapper = GenericMapper.create_or_find_by(runtime: current_runtime,
                                                      target: generic_mapper.target,
                                                      source: generic_mapper.source.map do |source|
-                                                       find_data_type_identifier(source, generic_mappers, t)
+                                                       find_data_type_identifier(source, t)
                                                      end)
-          end
-          if generic_mapper.is_a? Tucana::Shared::FunctionGenericMapper
-            parameter = RuntimeParameterDefinition.find_by(runtime_name: generic_mapper.parameter_id,
-                                                           runtime_function_definition: runtime_function_definition)
-            mapper = FunctionGenericMapper.create_or_find_by(
-              runtime_id: current_runtime.id,
-              runtime_function_definition: runtime_function_definition,
-              source: generic_mapper.source.map { |source| find_data_type_identifier(source, generic_mappers, t) },
-              target: generic_mapper.target,
-              runtime_parameter_definition: parameter
-            )
           end
 
           if mapper.nil? || !mapper.save
@@ -102,7 +89,7 @@ module Runtimes
         end
       end
 
-      def find_data_type_identifier(identifier, _generic_mappers, t)
+      def find_data_type_identifier(identifier, t)
         if identifier.data_type_identifier.present?
           return create_data_type_identifier(t, data_type_id: find_data_type(identifier.data_type_identifier, t).id)
         end
@@ -127,7 +114,7 @@ module Runtimes
             )
           end
 
-          generic_type.assign_attributes(generic_mappers: update_mappers(identifier.generic_type.generic_mappers, nil,
+          generic_type.assign_attributes(generic_mappers: update_mappers(identifier.generic_type.generic_mappers,
                                                                          t))
 
           return create_data_type_identifier(t, generic_type_id: generic_type.id)
@@ -178,7 +165,7 @@ module Runtimes
           db_param.runtime_function_definition = runtime_function_definition
           db_param.runtime_name = real_param.runtime_name
           db_param.removed_at = nil
-          db_param.data_type = find_data_type_identifier(real_param.data_type_identifier, [], t)
+          db_param.data_type = find_data_type_identifier(real_param.data_type_identifier, t)
 
           db_param.names = update_translations(real_param.name, db_param.names)
           db_param.descriptions = update_translations(real_param.description, db_param.descriptions)
@@ -217,16 +204,6 @@ module Runtimes
         end
 
         db_translations
-      end
-
-      def update_error_types(real_error_type_identifiers, runtime_function_definition, t)
-        db_error_types = runtime_function_definition.error_types.first(real_error_type_identifiers.length)
-        real_error_type_identifiers.each_with_index do |error_type_identifier, index|
-          db_error_types[index] ||= runtime_function_definition.error_types.build
-          db_error_types[index].data_type = find_data_type(error_type_identifier, t)
-        end
-
-        db_error_types
       end
     end
   end
