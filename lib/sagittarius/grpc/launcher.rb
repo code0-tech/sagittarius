@@ -5,7 +5,7 @@ module Sagittarius
     class Launcher
       include Code0::ZeroTrack::Loggable
 
-      HOST = '0.0.0.0:50051'
+      HOST = Sagittarius::Configuration.config[:rails][:grpc][:host]
 
       def create_server
         @server = GRPC::RpcServer.new(interceptors: [
@@ -15,7 +15,6 @@ module Sagittarius
         ].reverse) # grpc handles interceptors in opposite order. Reversing so we can list them in top-to-bottom order
         logger.info('GRPC server created')
 
-        # TODO: make this configurable
         @server.add_http2_port(HOST, :this_port_is_insecure)
 
         logger.info('Loading application')
