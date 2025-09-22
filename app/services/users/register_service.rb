@@ -28,6 +28,14 @@ module Users
                                                        payload: user_session.errors)
         end
 
+        response = EmailVerificationSendService.new(Sagittarius::Authentication.new(:session, user_session),
+                                                    user).execute
+
+        unless response.success?
+          t.rollback_and_return! ServiceResponse.error(message: 'Failed to send verification email',
+                                                       payload: response.payload)
+        end
+
         AuditService.audit(
           :user_registered,
           author_id: user.id,

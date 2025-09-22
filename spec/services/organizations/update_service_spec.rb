@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Organizations::UpdateService do
   subject(:service_response) { described_class.new(create_authentication(current_user), organization, params).execute }
 
-  shared_examples 'does not update' do
+  shared_examples 'user doesnt verify' do
     it { is_expected.to be_error }
 
     it 'does not update organization' do
@@ -22,7 +22,7 @@ RSpec.describe Organizations::UpdateService do
       { name: generate(:organization_name) }
     end
 
-    it_behaves_like 'does not update'
+    it_behaves_like 'user doesnt verify'
   end
 
   context 'when params are invalid' do
@@ -36,13 +36,13 @@ RSpec.describe Organizations::UpdateService do
     context 'when name is to long' do
       let(:params) { { name: generate(:organization_name) + ('*' * 50) } }
 
-      it_behaves_like 'does not update'
+      it_behaves_like 'user doesnt verify'
     end
 
     context 'when name is to short' do
       let(:params) { { name: 'a' } }
 
-      it_behaves_like 'does not update'
+      it_behaves_like 'user doesnt verify'
     end
   end
 

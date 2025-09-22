@@ -13,6 +13,19 @@ RSpec.describe Users::UpdateService do
     it { is_expected.to be_error }
 
     it { expect { service_response }.not_to create_audit_event }
+
+    it_behaves_like 'sends no email' do
+      let(:token) { SecureRandom.base64(10) }
+      before do
+        if current_user.present?
+          allow(current_user).to receive(:generate_token_for).with(:email_verification).and_return(token)
+        end
+      end
+
+      let(:mailer_class) { UserMailer }
+      let(:mail_method) { :email_verification }
+      let(:mail_params) { { verification_code: token, user: current_user } }
+    end
   end
 
   context 'when user does not exist' do

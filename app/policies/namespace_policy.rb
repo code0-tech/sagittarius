@@ -42,6 +42,8 @@ class NamespacePolicy < BasePolicy
   customizable_permission :delete_runtime
   customizable_permission :rotate_runtime_token
   customizable_permission :assign_role_projects
+  customizable_permission :verify_email
+  customizable_permission :send_verification_email
 end
 
 NamespacePolicy.prepend_extensions
