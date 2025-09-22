@@ -35,6 +35,8 @@ class AuditEvent < ApplicationRecord
     flow_created: 31,
     flow_updated: 32,
     flow_deleted: 33,
+    email_verification_sent: 34,
+    email_verified: 35,
   }.with_indifferent_access
 
   # rubocop:disable Lint/StructNewOverride

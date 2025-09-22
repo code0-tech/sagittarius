@@ -10,6 +10,19 @@ RSpec.describe Users::RegisterService do
     let(:email) { generate(:email) }
     let(:password) { generate(:password) }
 
+    it_behaves_like 'sends an email' do
+      let(:token) { SecureRandom.base64(10) }
+      before do
+        # rubocop:disable RSpec/AnyInstance -- No other way to mock this
+        allow_any_instance_of(User).to receive(:generate_token_for).with(:email_verification).and_return(token)
+        # rubocop:enable RSpec/AnyInstance
+      end
+
+      let(:mailer_class) { UserMailer }
+      let(:mail_method) { :email_verification }
+      let(:mail_params) { { verification_code: token, user: instance_of(User) } }
+    end
+
     it { is_expected.to be_success }
 
     it do
@@ -47,6 +60,19 @@ RSpec.describe Users::RegisterService do
     it { is_expected.not_to be_success }
     it { expect(service_response.message).to eq('User is invalid') }
     it { expect { service_response }.not_to create_audit_event }
+
+    it_behaves_like 'sends no email' do
+      let(:token) { SecureRandom.base64(10) }
+      before do
+        # rubocop:disable RSpec/AnyInstance -- No other way to mock this
+        allow_any_instance_of(User).to receive(:generate_token_for).with(:email_verification).and_return(token)
+        # rubocop:enable RSpec/AnyInstance
+      end
+
+      let(:mailer_class) { UserMailer }
+      let(:mail_method) { :email_verification }
+      let(:mail_params) { { verification_code: token, user: instance_of(User) } }
+    end
   end
 
   context 'when user is invalid' do
