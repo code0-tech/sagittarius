@@ -4,9 +4,7 @@ module Types
   class NamespaceProjectType < Types::BaseObject
     description 'Represents a namespace project'
 
-    field :flow, Types::FlowType, null: true, description: 'Fetches an flow given by its ID' do
-      argument :id, Types::GlobalIdType[::Flow], required: true, description: 'Id of the flow'
-    end
+    authorize :read_namespace_project
 
     field :description, String, null: false, description: 'Description of the project'
 
@@ -19,21 +17,17 @@ module Types
 
     field :primary_runtime, Types::RuntimeType, null: true, description: 'The primary runtime for the project'
 
+    field :flow, Types::FlowType, null: true, description: 'Fetches an flow given by its ID' do
+      argument :id, Types::GlobalIdType[::Flow], required: true, description: 'Id of the flow'
+    end
+
     field :flows, Types::FlowType.connection_type, null: true, description: 'Fetches all flows in this project'
-
-    def flows
-      project = context.schema.object_from_id(id, context)
-
-      project.flows
-    end
-
-    def flow(id:)
-      context.schema.object_from_id(id, context).flows.find(id: id)
-    end
-
-    authorize :read_namespace_project
 
     id_field NamespaceProject
     timestamps
+
+    def flow(id:)
+      object.flows.find(id: id)
+    end
   end
 end
