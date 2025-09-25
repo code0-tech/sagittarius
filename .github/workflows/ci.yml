@@ -29,7 +29,6 @@ jobs:
           GLPA_C0_GH_REF: ${{ github.ref }}
           GLPA_C0_GH_REF_NAME: ${{ github.ref_name }}
           GLPA_C0_GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GLPA_C0_NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
       - name: Find existing comment
         uses: peter-evans/find-comment@v3

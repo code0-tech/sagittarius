@@ -142,12 +142,15 @@ npm-types:generate-graphql:
 
 
 .npm-types:publish-graphql:
-  image: node:22.18.0
+  image: node:24.8.0
   needs:
     - npm-types:generate-graphql
   variables:
-    NODE_AUTH_TOKEN: $C0_NODE_AUTH_TOKEN
     GIT_STRATEGY: empty
+    NPM_CONFIG_PROVENANCE: "false"
+  id_tokens:
+    NPM_ID_TOKEN:
+      aud: "npm:registry.npmjs.org"
   script:
     - cd tooling/graphql/types
     - npm ci
@@ -161,7 +164,7 @@ npm-types:publish-graphql-dry-run:
   stage: test
   script:
     - !reference [.npm-types:publish-graphql, script]
-    - npm publish --dry-run
+    - npm publish --dry-run --tag latest
   artifacts:
     expire_in: 7 days
     paths:
@@ -175,7 +178,7 @@ npm-types:publish-graphql:
   stage: publish
   script:
     - !reference [ .npm-types:publish-graphql, script ]
-    - npm publish
+    - npm publish --tag latest
   rules:
     - if: $C0_GH_REF_NAME == "main"
       when: manual
