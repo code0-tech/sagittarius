@@ -70,7 +70,7 @@ gem 'seed-fu', '~> 2.3'
 
 gem 'lograge', '~> 0.14.0'
 
-gem 'declarative_policy', '~> 1.1'
+gem 'declarative_policy', '~> 2.0'
 
 gem 'code0-license', '~> 0.2.0'
 

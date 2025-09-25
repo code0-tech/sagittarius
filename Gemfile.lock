@@ -105,7 +105,7 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     debug_inspector (1.2.0)
-    declarative_policy (1.1.0)
+    declarative_policy (2.0.1)
     diff-lcs (1.6.2)
     docile (1.4.1)
     drb (2.2.3)
@@ -395,7 +395,7 @@ DEPENDENCIES
   code0-zero_track (= 0.0.4)
   database_cleaner-active_record (~> 2.1)
   debug
-  declarative_policy (~> 1.1)
+  declarative_policy (~> 2.0)
   factory_bot_rails (~> 6.2)
   good_job (~> 4.0)
   graphql (~> 2.1)
