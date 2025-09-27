@@ -1,5 +1,5 @@
 ---
-title: InputTypeConfig
+title: DataTypeRulesInputTypeConfig
 ---
 
 Represents a subtype of input type configuration for a input data type.

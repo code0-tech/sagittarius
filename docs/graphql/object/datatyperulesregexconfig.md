@@ -1,5 +1,5 @@
 ---
-title: RegexConfig
+title: DataTypeRulesRegexConfig
 ---
 
 Represents a rule that can be applied to a data type.

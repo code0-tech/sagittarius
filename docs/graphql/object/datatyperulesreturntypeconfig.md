@@ -1,5 +1,5 @@
 ---
-title: ReturnTypeConfig
+title: DataTypeRulesReturnTypeConfig
 ---
 
 Represents a rule that can be applied to a data type.

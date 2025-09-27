@@ -1,5 +1,5 @@
 ---
-title: ItemOfCollectionConfig
+title: DataTypeRulesItemOfCollectionConfig
 ---
 
 Represents a rule that can be applied to a data type.

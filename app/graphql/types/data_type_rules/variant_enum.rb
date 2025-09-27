@@ -2,7 +2,7 @@
 
 module Types
   module DataTypeRules
-    class DataTypeRuleVariantEnum < Types::BaseEnum
+    class VariantEnum < Types::BaseEnum
       description 'The type of rule that can be applied to a data type.'
 
       value :CONTAINS_KEY, 'The rule checks if a key is present in the data type.',
