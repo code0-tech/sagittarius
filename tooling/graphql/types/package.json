@@ -18,8 +18,8 @@
   },
   "homepage": "https://github.com/code0-tech/sagittarius#readme",
   "devDependencies": {
-    "@graphql-codegen/cli": "^5.0.5",
-    "@graphql-codegen/typescript": "^4.1.5"
+    "@graphql-codegen/cli": "^6.0.0",
+    "@graphql-codegen/typescript": "^5.0.0"
   },
   "files": [
     "index.d.ts",
