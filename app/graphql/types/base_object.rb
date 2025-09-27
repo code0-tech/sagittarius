@@ -7,6 +7,13 @@ module Types
     connection_type_class(Types::CountableConnectionType)
     field_class Types::BaseField
 
+    def self.inherited(subclass)
+      super
+      return if subclass.name.blank?
+
+      subclass.graphql_name subclass.name.delete_prefix('Types::').gsub('::', '').delete_suffix('Type')
+    end
+
     def self.id_field(type, entity_name = graphql_name)
       field :id, Types::GlobalIdType[type], null: false, description: "Global ID of this #{entity_name}",
                                             method: :to_global_id

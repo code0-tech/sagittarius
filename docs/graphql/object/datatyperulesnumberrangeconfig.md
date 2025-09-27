@@ -1,5 +1,5 @@
 ---
-title: NumberRangeConfig
+title: DataTypeRulesNumberRangeConfig
 ---
 
 Represents a rule that can be applied to a data type.

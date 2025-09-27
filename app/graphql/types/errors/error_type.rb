@@ -2,7 +2,10 @@
 
 module Types
   module Errors
+    # rubocop:disable GraphQL/GraphqlName -- we don't want the module prefix
     class ErrorType < BaseUnion
+      graphql_name 'Error'
+      # rubocop:enable GraphQL/GraphqlName
       description 'Objects that can present an error'
       possible_types Errors::ActiveModelErrorType, Errors::MessageErrorType
 

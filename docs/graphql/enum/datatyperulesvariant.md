@@ -1,5 +1,5 @@
 ---
-title: DataTypeRulesDataTypeRuleVariant
+title: DataTypeRulesVariant
 ---
 
 The type of rule that can be applied to a data type.
