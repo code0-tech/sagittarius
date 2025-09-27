@@ -1139,6 +1139,8 @@ CREATE INDEX index_good_jobs_on_cron_key_and_created_at_cond ON good_jobs USING 
 
 CREATE UNIQUE INDEX index_good_jobs_on_cron_key_and_cron_at_cond ON good_jobs USING btree (cron_key, cron_at) WHERE (cron_key IS NOT NULL);
 
+CREATE INDEX index_good_jobs_on_job_class ON good_jobs USING btree (job_class);
+
 CREATE INDEX index_good_jobs_on_labels ON good_jobs USING gin (labels) WHERE (labels IS NOT NULL);
 
 CREATE INDEX index_good_jobs_on_locked_by_id ON good_jobs USING btree (locked_by_id) WHERE (locked_by_id IS NOT NULL);
