@@ -29,6 +29,14 @@ module Sagittarius
             host: '0.0.0.0:50051',
           },
           log_level: 'info',
+          mailer: {
+            from: 'Code0 <testmail@code0.tech>',
+            address: 'smtp.example.com',
+            port: 587,
+            domain: 'code0.tech',
+            username: 'testmail@code0.tech',
+            password: 'changeme',
+          },
           db: {
             host: 'localhost',
             port: 5433,
