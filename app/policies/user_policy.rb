@@ -19,5 +19,7 @@ class UserPolicy < BasePolicy
     enable :update_attachment_avatar
     enable :verify_email
     enable :send_verification_email
+    enable :request_password_reset
+    enable :reset_password
   end
 end

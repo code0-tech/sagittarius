@@ -59,4 +59,8 @@ class User < ApplicationRecord
   generates_token_for :email_verification, expires_in: 15.minutes do
     email
   end
+
+  generates_token_for :password_reset, expires_in: 15.minutes do
+    password_digest&.last(20)
+  end
 end
