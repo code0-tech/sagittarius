@@ -11,6 +11,10 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
       names
       descriptions
       documentations
+      deprecationMessages
+      runtimeFunctionDefinition
+      genericKeys
+      throwsError
       createdAt
       updatedAt
     ]
