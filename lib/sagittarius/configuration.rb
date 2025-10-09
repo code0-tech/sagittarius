@@ -27,6 +27,7 @@ module Sagittarius
           },
           log_level: 'info',
           mailer: {
+            from: 'Code0 <testmail@code0.tech>',
             address: 'smtp.example.com',
             port: 587,
             domain: 'code0.tech',
