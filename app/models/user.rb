@@ -55,4 +55,8 @@ class User < ApplicationRecord
     end
     [mfa_passed, mfa_type]
   end
+
+  generates_token_for :email_verification, expires_in: 15.minutes do
+    email
+  end
 end

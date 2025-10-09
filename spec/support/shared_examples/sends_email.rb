@@ -2,7 +2,7 @@
 
 RSpec.shared_examples 'sends an email' do
   let(:mailer_class) { nil }
-  let(:mai_method) { nil }
+  let(:mail_method) { nil }
   let(:mail_params) { nil }
 
   it do
@@ -21,7 +21,7 @@ end
 
 RSpec.shared_examples 'sends no email' do
   let(:mailer_class) { nil }
-  let(:mai_method) { nil }
+  let(:mail_method) { nil }
   let(:mail_params) { nil }
 
   it do

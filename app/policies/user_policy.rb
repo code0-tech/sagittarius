@@ -17,5 +17,7 @@ class UserPolicy < BasePolicy
     enable :manage_mfa
     enable :update_user
     enable :update_attachment_avatar
+    enable :verify_email
+    enable :send_verification_email
   end
 end
