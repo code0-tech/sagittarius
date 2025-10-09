@@ -20,5 +20,7 @@ class UserPolicy < BasePolicy
     enable :verify_email
     enable :send_verification_email
     enable :verify_email
+    enable :request_password_reset
+    enable :reset_password
   end
 end

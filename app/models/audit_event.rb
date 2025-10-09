@@ -37,6 +37,8 @@ class AuditEvent < ApplicationRecord
     flow_deleted: 33,
     email_verification_sent: 34,
     email_verified: 35,
+    password_reset_requested: 36,
+    password_reset: 37,
   }.with_indifferent_access
 
   # rubocop:disable Lint/StructNewOverride
