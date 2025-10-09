@@ -7,6 +7,7 @@ RSpec.describe SagittariusSchema.types['RuntimeFunctionDefinition'] do
     %w[
       id
       functionDefinitions
+      runtime
       createdAt
       updatedAt
     ]
