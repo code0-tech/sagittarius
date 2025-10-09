@@ -40,18 +40,7 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: Sagittarius::Configuration.config[:rails][:mailer][:address],
-    port: Sagittarius::Configuration.config[:rails][:mailer][:port],
-    domain: Sagittarius::Configuration.config[:rails][:mailer][:domain],
-    user_name: Sagittarius::Configuration.config[:rails][:mailer][:username],
-    password: Sagittarius::Configuration.config[:rails][:mailer][:password],
-    authentication: 'plain',
-    enable_starttls: true,
-    open_timeout: 5,
-    read_timeout: 5,
-  }
+  config.action_mailer.delivery_method = :file
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
