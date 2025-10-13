@@ -10,7 +10,7 @@ RSpec.describe Users::EmailVerificationService do
   let(:current_user) { create(:user) }
   let(:authentication_token) { current_user&.generate_token_for(:email_verification) }
 
-  shared_examples 'user doesnt verify' do
+  shared_examples 'does not update' do
     it { is_expected.to be_error }
 
     it { expect { service_response }.not_to create_audit_event }
@@ -20,7 +20,7 @@ RSpec.describe Users::EmailVerificationService do
   context 'when user does not exist' do
     let(:current_user) { nil }
 
-    it_behaves_like 'user doesnt verify'
+    it_behaves_like 'does not update'
   end
 
   context 'when params are invalid' do
@@ -29,7 +29,7 @@ RSpec.describe Users::EmailVerificationService do
 
       it { expect(service_response.payload).to eq(:missing_permission) }
 
-      it_behaves_like 'user doesnt verify'
+      it_behaves_like 'does not update'
     end
   end
 

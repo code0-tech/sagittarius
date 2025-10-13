@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Runtimes::UpdateService do
   subject(:service_response) { described_class.new(create_authentication(current_user), runtime, params).execute }
 
-  shared_examples 'user doesnt verify' do
+  shared_examples 'does not update' do
     it { is_expected.to be_error }
 
     it 'does not update organization' do
@@ -22,7 +22,7 @@ RSpec.describe Runtimes::UpdateService do
       { name: generate(:runtime_name) }
     end
 
-    it_behaves_like 'user doesnt verify'
+    it_behaves_like 'does not update'
   end
 
   context 'when params are invalid' do
@@ -32,13 +32,13 @@ RSpec.describe Runtimes::UpdateService do
     context 'when name is to long' do
       let(:params) { { name: generate(:runtime_name) + ('*' * 50) } }
 
-      it_behaves_like 'user doesnt verify'
+      it_behaves_like 'does not update'
     end
 
     context 'when name is to short' do
       let(:params) { { name: 'a' } }
 
-      it_behaves_like 'user doesnt verify'
+      it_behaves_like 'does not update'
     end
   end
 
