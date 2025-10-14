@@ -39,7 +39,7 @@ module Namespaces
                   # https://github.com/code0-tech/sagittarius/issues/509
                 end
 
-                generic_mapper.source.each do |source|
+                generic_mapper.sources.each do |source|
                   Namespaces::Projects::Flows::Validation::DataType::DataTypeIdentifierValidationService.new(
                     current_authentication,
                     flow,
