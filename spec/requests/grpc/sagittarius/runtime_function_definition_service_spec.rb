@@ -72,7 +72,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
         expect(GenericMapper.count).to eq(1)
-        expect(GenericMapper.last.source.first.generic_key).to eq('T')
+        expect(GenericMapper.last.sources.first.generic_key).to eq('T')
         expect(GenericMapper.last.target).to eq('V')
 
         expect(GenericType.count).to eq(1)

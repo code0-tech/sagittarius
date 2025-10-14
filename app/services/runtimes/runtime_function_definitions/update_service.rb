@@ -74,7 +74,7 @@ module Runtimes
           if generic_mapper.is_a? Tucana::Shared::GenericMapper
             mapper = GenericMapper.create_or_find_by(runtime: current_runtime,
                                                      target: generic_mapper.target,
-                                                     source: generic_mapper.source.map do |source|
+                                                     sources: generic_mapper.source.map do |source|
                                                        find_data_type_identifier(source, t)
                                                      end)
           end
