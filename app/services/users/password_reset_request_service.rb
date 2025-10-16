@@ -4,16 +4,15 @@ module Users
   class PasswordResetRequestService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_authentication, :user
+    attr_reader :user
 
-    def initialize(current_authentication, user)
-      @current_authentication = current_authentication
+    def initialize(user)
       @user = user
     end
 
     def execute
-      unless Ability.allowed?(current_authentication, :request_password_reset, user)
-        return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+      if user.nil?
+        return ServiceResponse.success(message: 'Sent password reset email') # Do not reveal whether user exists
       end
 
       UserMailer.with(
@@ -23,13 +22,15 @@ module Users
 
       AuditService.audit(
         :password_reset_requested,
-        author_id: current_authentication.user.id,
+        author_id: user.id,
         entity: user,
         target: user,
-        details: {}
+        details: {
+          email: user.email,
+        }
       )
 
-      ServiceResponse.success(message: 'Successfully sent password reset request', payload: user)
+      ServiceResponse.success(message: 'Sent password reset email')
     end
   end
 end

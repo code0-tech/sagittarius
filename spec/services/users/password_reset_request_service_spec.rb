@@ -4,33 +4,30 @@ require 'rails_helper'
 
 RSpec.describe Users::PasswordResetRequestService do
   subject(:service_response) do
-    described_class.new(create_authentication(current_user), current_user).execute
+    described_class.new(current_user).execute
   end
 
   let(:current_user) { create(:user) }
 
-  shared_examples 'user doesnt verify' do
-    it { is_expected.to be_error }
-
-    it { expect { service_response }.not_to create_audit_event }
-  end
-
   context 'when user does not exist' do
     let(:current_user) { nil }
 
-    it_behaves_like 'user doesnt verify'
+    it { is_expected.to be_success }
+    it { expect(service_response.message).to eq('Sent password reset email') }
   end
 
   context 'when user and params are valid' do
     it { is_expected.to be_success }
-    it { expect(service_response.payload.reload).to be_valid }
+    it { expect(service_response.message).to eq('Sent password reset email') }
 
     it do
       is_expected.to create_audit_event(
         :password_reset_requested,
         author_id: current_user.id,
         entity_type: 'User',
-        details: {},
+        details: {
+          email: current_user.email,
+        },
         target_type: 'User'
       )
     end
