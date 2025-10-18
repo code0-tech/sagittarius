@@ -13,6 +13,8 @@ module Types
           null: true,
           description: 'Function definitions of the Node Function'
 
+    field :identifier, String, null: false, description: 'Identifier of the Node Function', method: :runtime_name
+
     id_field RuntimeParameterDefinition
     timestamps
   end

@@ -6,6 +6,7 @@ RSpec.describe SagittariusSchema.types['RuntimeFunctionDefinition'] do
   let(:fields) do
     %w[
       id
+      identifier
       functionDefinitions
       runtime
       createdAt
