@@ -5,27 +5,39 @@ class NodeFunction < ApplicationRecord
   belongs_to :next_node, class_name: 'NodeFunction', optional: true
 
   has_one :previous_node, class_name: 'NodeFunction', foreign_key: :next_node_id, inverse_of: :next_node
+  has_one :flow, class_name: 'Flow', inverse_of: :starting_node
 
   has_many :node_parameter_values, class_name: 'NodeParameter', inverse_of: :function_value
   has_many :node_parameters, class_name: 'NodeParameter', inverse_of: :node_function
-  has_many :flows, class_name: 'Flow', inverse_of: :starting_node
 
   validate :validate_recursion, if: :next_node_changed?
 
   def resolve_flow
-    flow = Flow.find_by(starting_node: self)
-    return flow if flow.present?
+    sql = <<-SQL
+        WITH RECURSIVE node_function_tree AS (
+          SELECT *
+          FROM node_functions
+          WHERE id = ? -- base case
+          UNION ALL
+          SELECT nf.*
+          FROM node_functions nf
+            INNER JOIN node_function_tree nf_tree
+              ON nf.next_node_id = nf_tree.id
+        )
 
-    NodeFunction.where(next_node: self).find_each do |node|
-      while node.previous_node.present?
-        node = node.previous_node
-        return node.flow if node.flow.present?
-      end
-    end
+        SELECT f.*
+        FROM flows f
+        WHERE f.starting_node_id IN (
+          SELECT id FROM node_function_tree
+        )
+        ORDER BY f.id
+    SQL
 
-    NodeParameter.where(function_value: self).find_each do |param|
-      return param.node_function.resolve_flow if param.node_function.flow.present?
-    end
+    flows = Flow.find_by_sql([sql, id])
+
+    raise 'Multiple flows found' if flows.count > 1
+
+    flows.first
   end
 
   def validate_recursion
