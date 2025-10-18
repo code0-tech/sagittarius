@@ -14,7 +14,7 @@ RSpec.describe Users::EmailVerificationService do
     it { is_expected.to be_error }
 
     it { expect { service_response }.not_to create_audit_event }
-    it { expect(current_user&.reload&.email_verified_at).to be_nil }
+    it { expect { service_response }.not_to change { current_user&.reload&.email_verified_at } }
   end
 
   context 'when user does not exist' do
