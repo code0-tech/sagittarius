@@ -6,6 +6,7 @@ module Types
 
     authorize :read_flow
 
+    field :identifier, String, null: false, description: 'Identifier of the Node Function'
     field :next_node, Types::NodeFunctionType, null: true, description: 'The next Node Function in the flow'
     field :parameters, Types::NodeParameterType.connection_type, null: false, method: :node_parameters,
                                                                  description: 'The parameters of the Node Function'
