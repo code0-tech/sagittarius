@@ -19,19 +19,26 @@ class Flow < ApplicationRecord
       return_type_identifier: return_type&.identifier,
       settings: flow_settings.map(&:to_grpc),
       starting_node_id: starting_node.id,
-      node_functions: collect_node_functions
+      node_functions: collect_node_functions.map(&:to_grpc)
     )
   end
 
-  private
-
   def collect_node_functions
-    current_node = starting_node
-    nodes = []
-    until current_node.nil?
-      nodes << current_node.to_grpc
-      current_node = current_node.next_node
-    end
-    nodes
+    sql = <<-SQL
+        WITH RECURSIVE node_function_tree AS (
+          SELECT *
+          FROM node_functions
+          WHERE id = ? -- base case
+          UNION ALL
+          SELECT nf.*
+          FROM node_functions nf
+            INNER JOIN node_function_tree nf_tree
+              ON nf.id = nf_tree.next_node_id
+        )
+
+        SELECT DISTINCT * FROM node_function_tree ORDER BY id
+    SQL
+
+    NodeFunction.find_by_sql([sql, starting_node_id])
   end
 end

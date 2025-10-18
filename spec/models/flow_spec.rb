@@ -86,4 +86,21 @@ RSpec.describe Flow do
       )
     end
   end
+
+  describe '#collect_node_functions' do
+    let(:nodes) do
+      runtime = create(:runtime)
+      definition = create(:runtime_function_definition, runtime: runtime)
+      node3 = create(:node_function, runtime_function: definition)
+      node2 = create(:node_function, runtime_function: definition, next_node: node3)
+      node1 = create(:node_function, runtime_function: definition, next_node: node2)
+      [node1, node2, node3]
+    end
+
+    let(:flow) { create(:flow, starting_node: nodes.first) }
+
+    it 'returns all nodes' do
+      expect(flow.collect_node_functions).to match_array(nodes)
+    end
+  end
 end
