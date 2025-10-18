@@ -7,14 +7,6 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::GenericMap
     described_class.new(create_authentication(current_user), flow, parameter, generic_mapper).execute
   end
 
-  include_context 'with mocked services'
-
-  let(:mocked_service_expectations) do
-    {
-      Namespaces::Projects::Flows::Validation::DataType::DataTypeIdentifierValidationService => 1,
-    }
-  end
-
   let(:current_user) { create(:user) }
   let(:runtime) { create(:runtime) }
   let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
@@ -48,6 +40,6 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::GenericMap
   end
 
   context 'when generic mapper points to a existing generic_key' do
-    it { expect(service_response).to be_nil }
+    it { expect(service_response).to be_empty }
   end
 end

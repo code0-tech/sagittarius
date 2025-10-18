@@ -13,15 +13,14 @@ RSpec.describe Namespaces::Projects::Flows::Validation::DataType::DataTypeRuleVa
   let(:rule) { create(:data_type_rule, data_type: data_type, variant: :regex, config: { pattern: '.*' }) }
 
   context 'when rule is valid' do
-    it { expect(service_response).to be_nil }
+    it { expect(service_response).to be_empty }
   end
 
   context 'when rule is invalid' do
     let(:rule) { build(:data_type_rule, data_type: data_type, variant: :regex, config: { not_a_valid_key: '.*' }) }
 
     it 'returns an error message' do
-      expect(service_response).to be_error
-      expect(rule.errors.full_messages).to include('Config is not a valid JSON schema')
+      expect(service_response).to include(have_attributes(error_code: :data_type_rule_model_invalid))
     end
   end
 end
