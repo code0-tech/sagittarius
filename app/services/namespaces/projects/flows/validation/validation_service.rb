@@ -15,68 +15,67 @@ module Namespaces
           end
 
           def execute
-            transactional do |_t|
-              primary_runtime = flow.project.primary_runtime
-              if primary_runtime.nil?
-                return ServiceResponse.error(
-                  message: 'No primary runtime found for the project, first configure a primary runtime',
-                  payload: :no_primary_runtime
-                )
-              end
+            errors = []
 
-              # ---
-              # Input Type Validation
-              # ---
-              if flow.input_type.present?
-                Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService.new(
-                  current_authentication,
-                  flow,
-                  flow.input_type
-                ).execute
-              end
+            primary_runtime = flow.project.primary_runtime
+            errors << ValidationResult.error(:no_primary_runtime) if primary_runtime.nil?
 
-              # ---
-              # Return Type Validation
-              # ---
-              if flow.return_type.present?
-                Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService.new(
-                  current_authentication,
-                  flow,
-                  flow.return_type
-                ).execute
-              end
-
-              # ---
-              # Setting
-              # ---
-              flow.flow_settings.each do |setting|
-                Namespaces::Projects::Flows::Validation::FlowSettingValidationService.new(
-                  current_authentication,
-                  flow,
-                  setting
-                ).execute
-              end
-
-              # ---
-              # Starting node
-              # ---
-              Namespaces::Projects::Flows::Validation::NodeFunction::NodeFunctionValidationService.new(
+            # ---
+            # Input Type Validation
+            # ---
+            if flow.input_type.present?
+              errors += Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService.new(
                 current_authentication,
                 flow,
-                flow.starting_node
+                flow.input_type
               ).execute
-
-              # ---
-              # Flow Type
-              # ---
-              FlowTypeValidationService.new(
-                current_authentication,
-                flow,
-                flow.flow_type
-              ).execute
-
-              ServiceResponse.success(message: 'Validation service executed successfully', payload: flow)
             end
+
+            # ---
+            # Return Type Validation
+            # ---
+            if flow.return_type.present?
+              errors += Namespaces::Projects::Flows::Validation::DataType::DataTypeValidationService.new(
+                current_authentication,
+                flow,
+                flow.return_type
+              ).execute
+            end
+
+            # ---
+            # Setting
+            # ---
+            flow.flow_settings.each do |setting|
+              errors += Namespaces::Projects::Flows::Validation::FlowSettingValidationService.new(
+                current_authentication,
+                flow,
+                setting
+              ).execute
+            end
+
+            # ---
+            # All nodes
+            # ---
+            flow.collect_node_functions.each do |node_function|
+              errors += Namespaces::Projects::Flows::Validation::NodeFunction::NodeFunctionValidationService.new(
+                current_authentication,
+                flow,
+                node_function
+              ).execute
+            end
+
+            # ---
+            # Flow Type
+            # ---
+            errors += FlowTypeValidationService.new(
+              current_authentication,
+              flow,
+              flow.flow_type
+            ).execute
+
+            return ServiceResponse.error(message: 'Flow validation failed', payload: errors) if errors.any?
+
+            ServiceResponse.success(message: 'Validation service executed successfully', payload: flow)
           end
         end
       end

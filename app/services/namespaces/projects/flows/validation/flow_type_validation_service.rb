@@ -17,18 +17,13 @@ module Namespaces
           end
 
           def execute
+            errors = []
             logger.debug("Validating flow_type: #{flow_type.inspect} for flow: #{flow.id}")
 
-            transactional do |t|
-              if flow_type.runtime != flow.project.primary_runtime
-                t.rollback_and_return!(
-                  ServiceResponse.error(
-                    message: 'Flow type runtime definition does not match the primary runtime of the project',
-                    payload: :runtime_mismatch
-                  )
-                )
-              end
+            if flow_type.runtime != flow.project.primary_runtime
+              errors << ValidationResult.error(:flow_type_runtime_mismatch)
             end
+            errors
           end
         end
       end

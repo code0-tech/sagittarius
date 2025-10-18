@@ -19,36 +19,29 @@ module Namespaces
             end
 
             def execute
+              errors = []
               logger.debug("Validating generic mapper: #{generic_mapper.inspect} for flow: #{flow.id}")
 
-              transactional do |t|
-                target = generic_mapper.target
+              target = generic_mapper.target
 
-                # Validate the target the identifier gets validated later
-                unless parameter.node_function.runtime_function.generic_keys.include?(target)
-                  t.rollback_and_return!(
-                    ServiceResponse.error(
-                      message: "Runtime function definition #{parameter.node_function.runtime_function} " \
-                               "does not have a generic key for target #{target}",
-                      payload: :generic_key_not_found
-                    )
-                  )
-                end
-
-                generic_mapper.generic_combination_strategies.each do |_strategy|
-                  # https://github.com/code0-tech/sagittarius/issues/509
-                end
-
-                generic_mapper.sources.each do |source|
-                  Namespaces::Projects::Flows::Validation::DataType::DataTypeIdentifierValidationService.new(
-                    current_authentication,
-                    flow,
-                    parameter.node_function,
-                    source
-                  ).execute
-                end
+              # Validate the target the identifier gets validated later
+              unless parameter.node_function.runtime_function.generic_keys.include?(target)
+                errors << ValidationResult.error(:generic_key_not_found)
               end
-              nil
+
+              generic_mapper.generic_combination_strategies.each do |_strategy|
+                # https://github.com/code0-tech/sagittarius/issues/509
+              end
+
+              generic_mapper.sources.each do |source|
+                errors += Namespaces::Projects::Flows::Validation::DataType::DataTypeIdentifierValidationService.new(
+                  current_authentication,
+                  flow,
+                  parameter.node_function,
+                  source
+                ).execute
+              end
+              errors
             end
           end
         end
