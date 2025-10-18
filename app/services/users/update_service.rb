@@ -60,6 +60,15 @@ module Users
           )
         end
 
+        if params.key?(:email)
+          response = EmailVerificationSendService.new(current_authentication, user).execute
+
+          unless response.success?
+            t.rollback_and_return! ServiceResponse.error(message: 'Failed to send verification email',
+                                                         payload: response.payload)
+          end
+        end
+
         AuditService.audit(
           :user_updated,
           author_id: current_authentication.user.id,

@@ -810,6 +810,7 @@ CREATE TABLE users (
     updated_at timestamp with time zone NOT NULL,
     admin boolean DEFAULT false NOT NULL,
     totp_secret text,
+    email_verified_at timestamp with time zone,
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),
     CONSTRAINT check_60346c5299 CHECK ((char_length(lastname) <= 50)),
