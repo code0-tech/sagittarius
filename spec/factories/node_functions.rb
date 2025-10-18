@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :node_function do
-    runtime_function factory: %i[runtime_function_definition]
+    runtime_function factory: :runtime_function_definition
     next_node { nil }
     node_parameters { [] }
   end

@@ -19,17 +19,15 @@ class Flow < ApplicationRecord
       return_type_identifier: return_type&.identifier,
       settings: flow_settings.map(&:to_grpc),
       starting_node_id: starting_node.id,
-      node_functions: collect_node_functions
+      node_functions: collect_node_functions.map(&:to_grpc)
     )
   end
-
-  private
 
   def collect_node_functions
     current_node = starting_node
     nodes = []
     until current_node.nil?
-      nodes << current_node.to_grpc
+      nodes << current_node
       current_node = current_node.next_node
     end
     nodes

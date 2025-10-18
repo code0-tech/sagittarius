@@ -14,12 +14,16 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
           #{error_query}
           flow {
             id
-            startingNode {
-              id
-              parameters {
-                count
-                nodes {
-                  id
+            startingNodeId
+            nodes {
+              count
+              nodes {
+                id
+                parameters {
+                  count
+                  nodes {
+                    id
+                  }
                 }
               }
             }
@@ -92,7 +96,12 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
       flow = SagittariusSchema.object_from_id(created_flow_id)
 
       expect(graphql_data_at(:namespaces_projects_flows_create, :flow, :settings).size).to eq(1)
-      expect(graphql_data_at(:namespaces_projects_flows_create, :flow, :starting_node, :parameters, :count)).to eq(1)
+
+      nodes = graphql_data_at(:namespaces_projects_flows_create, :flow, :nodes, :nodes)
+      starting_node = nodes.find do |n|
+        n['id'] == graphql_data_at(:namespaces_projects_flows_create, :flow, :starting_node_id)
+      end
+      expect(starting_node['parameters']['count']).to eq(1)
 
       expect(flow).to be_present
       expect(project.flows).to include(flow)
