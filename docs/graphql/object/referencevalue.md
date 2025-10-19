@@ -10,10 +10,10 @@ Represents a reference value in the system.
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this ReferenceValue was created |
 | `dataTypeIdentifier` | [`DataTypeIdentifier!`](../object/datatypeidentifier.md) | The identifier of the data type this reference value belongs to. |
+| `depth` | [`Int!`](../scalar/int.md) | The depth of the reference value. |
 | `id` | [`ReferenceValueID!`](../scalar/referencevalueid.md) | Global ID of this ReferenceValue |
-| `primaryLevel` | [`Int!`](../scalar/int.md) | The primary level of the reference value. |
+| `node` | [`Int!`](../scalar/int.md) | The node of the reference value. |
 | `referencePath` | [`[ReferencePath!]!`](../object/referencepath.md) | The paths associated with this reference value. |
-| `secondaryLevel` | [`Int!`](../scalar/int.md) | The secondary level of the reference value. |
-| `tertiaryLevel` | [`Int`](../scalar/int.md) | The tertiary level of the reference value, if applicable. |
+| `scope` | [`[Int!]!`](../scalar/int.md) | The scope of the reference value. |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this ReferenceValue was last updated |
 
