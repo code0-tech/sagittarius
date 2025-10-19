@@ -6,10 +6,10 @@ module Types
       description 'Represents a rule that can be applied to a data type.'
 
       possible_types ContainsKeyConfigType, ContainsTypeConfigType, NumberRangeConfigType, ItemOfCollectionConfigType,
-                     RegexConfigType, InputTypesConfigType, ReturnTypeConfigType
+                     RegexConfigType, InputTypesConfigType, ReturnTypeConfigType, ParentTypeConfigType
 
       def self.resolve_type(object, _context)
-        case object[:variant]
+        case object[:variant].to_sym
         when :contains_key
           Types::DataTypeRules::ContainsKeyConfigType
         when :contains_type
@@ -24,6 +24,8 @@ module Types
           Types::DataTypeRules::InputTypesConfigType
         when :return_type
           Types::DataTypeRules::ReturnTypeConfigType
+        when :parent_type
+          Types::DataTypeRules::ParentTypeConfigType
         else
           raise GraphQL::ExecutionError, "Unknown data type rule variant: #{object[:variant]}"
         end
