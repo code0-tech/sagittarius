@@ -19,6 +19,8 @@ module Types
             value: :input_type
       value :RETURN_TYPE, 'The rule checks if the data type matches a specific return type.',
             value: :return_type
+      value :PARENT_TYPE, 'The rule checks if the data type is a child of a specific parent type.',
+            value: :parent_type
     end
   end
 end
