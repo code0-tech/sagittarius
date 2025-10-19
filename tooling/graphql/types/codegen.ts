@@ -1,16 +1,32 @@
 import type {CodegenConfig} from '@graphql-codegen/cli';
-import {readFileSync} from "node:fs";
+import {readFileSync,writeFileSync} from "node:fs";
 
+
+type Type = { kind: string; name?: string; ofType?: Type };
 type Schema = {
   data: {
     __schema: {
-      types: Array<{ kind: string; name: string; }>;
+      types: Array<{
+        kind: string;
+        name: string;
+        fields: Array<{ type: Type }>
+      }>;
     };
   };
 }
 
 const schemaData = readFileSync('../../../tmp/schema.json', 'utf-8');
 const schema: Schema = JSON.parse(schemaData);
+
+schema.data.__schema.types.forEach(type => {
+  type.fields?.forEach(field => {
+    if(field.type.kind == "NON_NULL") {
+      field.type = field.type.ofType
+    }
+  })
+})
+
+writeFileSync('../../../tmp/schema-nullable.json', JSON.stringify(schema), { encoding: 'utf-8' });
 
 const globalIds = schema.data.__schema.types
   .filter(type => type.kind === 'SCALAR' && type.name.endsWith('ID'))
@@ -38,7 +54,7 @@ globalIds.forEach(type => {
 
 
 const config: CodegenConfig = {
-  schema: "../../../tmp/schema.graphql",
+  schema: "../../../tmp/schema-nullable.json",
   generates: {
     './index.d.ts': {
       plugins: [
