@@ -6,6 +6,8 @@ module Types
 
     authorize :read_function_definition
 
+    field :identifier, String, null: false, description: 'Identifier of the function'
+
     field :return_type, Types::DataTypeIdentifierType, null: true, description: 'Return type of the function'
 
     field :parameter_definitions, Types::ParameterDefinitionType.connection_type,

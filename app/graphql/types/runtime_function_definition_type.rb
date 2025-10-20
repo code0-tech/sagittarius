@@ -2,20 +2,27 @@
 
 module Types
   class RuntimeFunctionDefinitionType < Types::BaseObject
-    description 'Represents a Node Function definition'
+    description 'Represents a runtime function definition'
 
     authorize :read_flow
 
     field :runtime, Types::RuntimeType,
-          null: false, description: 'The runtime this Node Function belongs to'
+          null: false, description: 'The runtime this runtime function definition belongs to'
 
     field :function_definitions, Types::FunctionDefinitionType.connection_type,
           null: true,
-          description: 'Function definitions of the Node Function'
+          description: 'Function definitions of the runtime function definition'
 
-    field :identifier, String, null: false, description: 'Identifier of the Node Function', method: :runtime_name
+    field :runtime_parameter_definitions, Types::RuntimeParameterDefinitionType.connection_type,
+          null: true,
+          description: 'Parameter definitions of the runtime function definition'
 
-    id_field RuntimeParameterDefinition
+    field :identifier, String,
+          null: false,
+          description: 'Identifier of the runtime function definition',
+          method: :runtime_name
+
+    id_field RuntimeFunctionDefinition
     timestamps
   end
 end

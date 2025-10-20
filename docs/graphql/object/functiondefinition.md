@@ -14,6 +14,7 @@ Represents a function definition
 | `documentations` | [`TranslationConnection`](../object/translationconnection.md) | Documentation of the function |
 | `genericKeys` | [`[String!]`](../scalar/string.md) | Generic keys of the function |
 | `id` | [`FunctionDefinitionID!`](../scalar/functiondefinitionid.md) | Global ID of this FunctionDefinition |
+| `identifier` | [`String!`](../scalar/string.md) | Identifier of the function |
 | `names` | [`TranslationConnection`](../object/translationconnection.md) | Name of the function |
 | `parameterDefinitions` | [`ParameterDefinitionConnection`](../object/parameterdefinitionconnection.md) | Parameters of the function |
 | `returnType` | [`DataTypeIdentifier`](../object/datatypeidentifier.md) | Return type of the function |
