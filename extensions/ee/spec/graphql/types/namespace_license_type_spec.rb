@@ -7,6 +7,9 @@ RSpec.describe SagittariusSchema.types['NamespaceLicense'] do
     %w[
       namespace
       id
+      startDate
+      endDate
+      licensee
       createdAt
       updatedAt
     ]

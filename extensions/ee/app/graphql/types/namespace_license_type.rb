@@ -2,11 +2,17 @@
 
 module Types
   class NamespaceLicenseType < Types::BaseObject
-    description 'Represents a Namespace License'
+    description '(EE only) Represents a Namespace License'
 
     authorize :read_namespace_license
 
     field :namespace, Types::NamespaceType, null: false, description: 'The namespace the license belongs to'
+
+    field :start_date, Types::TimeType, null: false, description: 'The start date of the license'
+
+    field :end_date, Types::TimeType, null: true, description: 'The end date of the license'
+
+    field :licensee, GraphQL::Types::JSON, null: false, description: 'The licensee information'
 
     id_field NamespaceLicense
     timestamps

@@ -14,6 +14,8 @@ RSpec.describe SagittariusSchema.types['User'] do
       admin
       namespaceMemberships
       avatarPath
+      sessions
+      identities
       createdAt
       updatedAt
     ]

@@ -44,6 +44,18 @@ class NamespaceLicense < ApplicationRecord
     nil
   end
 
+  def start_date
+    license&.start_date
+  end
+
+  def end_date
+    license&.end_date
+  end
+
+  def licensee
+    license&.licensee
+  end
+
   def restrictions
     license&.restrictions
   end

@@ -4,7 +4,7 @@ module Mutations
   module Namespaces
     module Licenses
       class Create < BaseMutation
-        description 'Create a new namespace license.'
+        description '(EE only) Create a new namespace license.'
 
         field :namespace_license, Types::NamespaceLicenseType, null: true, description: 'The newly created license.'
 

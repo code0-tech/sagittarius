@@ -6,6 +6,7 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
   let(:fields) do
     %w[
       id
+      identifier
       returnType
       parameterDefinitions
       names

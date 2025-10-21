@@ -13,8 +13,8 @@ module Types
     field :return_type, Types::DataTypeType,
           null: true,
           description: 'The return data type of the flow'
-    field :settings, [Types::FlowSettingType],
-          null: true,
+    field :settings, Types::FlowSettingType.connection_type,
+          null: false,
           method: :flow_settings,
           description: 'The settings of the flow'
     field :starting_node_id, Types::GlobalIdType[::NodeFunction],

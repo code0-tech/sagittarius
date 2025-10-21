@@ -13,7 +13,7 @@ Represents a flow
 | `inputType` | [`DataType`](../object/datatype.md) | The input data type of the flow |
 | `nodes` | [`NodeFunctionConnection!`](../object/nodefunctionconnection.md) | Nodes of the flow |
 | `returnType` | [`DataType`](../object/datatype.md) | The return data type of the flow |
-| `settings` | [`[FlowSetting!]`](../object/flowsetting.md) | The settings of the flow |
+| `settings` | [`FlowSettingConnection!`](../object/flowsettingconnection.md) | The settings of the flow |
 | `startingNodeId` | [`NodeFunctionID!`](../scalar/nodefunctionid.md) | The ID of the starting node of the flow |
 | `type` | [`FlowType!`](../object/flowtype.md) | The flow type of the flow |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Flow was last updated |

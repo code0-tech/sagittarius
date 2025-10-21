@@ -24,6 +24,16 @@ module Types
           description: 'Namespace of this user',
           method: :ensure_namespace
 
+    field :sessions, Types::UserSessionType.connection_type,
+          null: false,
+          description: 'Sessions of this user',
+          method: :user_sessions
+
+    field :identities, Types::UserIdentityType.connection_type,
+          null: false,
+          description: 'Identities of this user',
+          method: :user_identities
+
     lookahead_field :namespace_memberships,
                     base_scope: ->(object) { object.namespace_memberships },
                     conditional_lookaheads: { user: :user, namespace: { namespace: :namespace_members } }

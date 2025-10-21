@@ -4,7 +4,7 @@ module Mutations
   module Namespaces
     module Licenses
       class Delete < BaseMutation
-        description 'Deletes an namespace license.'
+        description '(EE only) Deletes an namespace license.'
 
         field :namespace_license, Types::NamespaceLicenseType, null: true,
                                                                description: 'The deleted namespace license.'

@@ -28,9 +28,11 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
               }
             }
             settings {
-              flowSettingId
-              id
-              value
+              nodes {
+                flowSettingIdentifier
+                id
+                value
+              }
             }
           }
         }
