@@ -12,6 +12,7 @@ Represents a user
 | `avatarPath` | [`String`](../scalar/string.md) | The avatar if present of the user |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this User was created |
 | `email` | [`String!`](../scalar/string.md) | Email of the user |
+| `emailVerifiedAt` | [`Time`](../scalar/time.md) | Email verification date of the user if present |
 | `firstname` | [`String!`](../scalar/string.md) | Firstname of the user |
 | `id` | [`UserID!`](../scalar/userid.md) | Global ID of this User |
 | `identities` | [`UserIdentityConnection!`](../object/useridentityconnection.md) | Identities of this user |
