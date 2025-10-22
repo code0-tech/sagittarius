@@ -5,13 +5,12 @@ require 'rails_helper'
 RSpec.describe SagittariusSchema.types['DataType'] do
   let(:fields) do
     %w[
-      namespace
       identifier
       variant
       id
       rules
       name
-      parent
+      runtime
       genericKeys
       createdAt
       updatedAt

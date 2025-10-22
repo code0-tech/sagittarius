@@ -2,7 +2,7 @@
 
 module Types
   class RuntimeParameterDefinitionType < Types::BaseObject
-    description 'Represents a Node parameter definition'
+    description 'Represents a runtime parameter definition'
 
     authorize :read_flow
 

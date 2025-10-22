@@ -2,7 +2,7 @@
 title: RuntimeParameterDefinition
 ---
 
-Represents a Node parameter definition
+Represents a runtime parameter definition
 
 ## Fields without arguments
 

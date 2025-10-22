@@ -2,7 +2,7 @@
 title: namespacesLicensesDelete
 ---
 
-Deletes an namespace license.
+(EE only) Deletes an namespace license.
 
 ## Arguments
 

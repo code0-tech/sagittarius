@@ -2,7 +2,7 @@
 title: namespacesLicensesCreate
 ---
 
-Create a new namespace license.
+(EE only) Create a new namespace license.
 
 ## Arguments
 

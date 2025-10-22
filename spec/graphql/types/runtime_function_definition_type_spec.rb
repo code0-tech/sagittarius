@@ -8,6 +8,7 @@ RSpec.describe SagittariusSchema.types['RuntimeFunctionDefinition'] do
       id
       identifier
       functionDefinitions
+      runtimeParameterDefinitions
       runtime
       createdAt
       updatedAt

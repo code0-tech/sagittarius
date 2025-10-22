@@ -6,8 +6,12 @@ module Types
 
     authorize :read_datatype
 
-    field :sources, [Types::DataTypeIdentifierType], null: false, description: 'The source data type identifier.'
-    field :target, String, null: false, description: 'The target key for the generic value.'
+    field :source_data_type_identifiers, [Types::DataTypeIdentifierType],
+          null: false,
+          description: 'The source data type identifier.'
+    field :target, String,
+          null: false,
+          description: 'The target key for the generic value.'
 
     field :generic_combination_strategies, [Types::GenericCombinationStrategyType],
           null: true,

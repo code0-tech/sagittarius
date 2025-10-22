@@ -6,7 +6,9 @@ module Types
 
     authorize :read_parameter_definition
 
-    field :data_type, Types::DataTypeIdentifierType, null: true, description: 'Data type of the parameter'
+    field :identifier, String, null: false, description: 'Identifier of the parameter'
+
+    field :data_type_identifier, Types::DataTypeIdentifierType, null: true, description: 'Data type of the parameter'
 
     field :descriptions, Types::TranslationType.connection_type, null: true, description: 'Description of the parameter'
     field :names, Types::TranslationType.connection_type, null: true, description: 'Name of the parameter'
