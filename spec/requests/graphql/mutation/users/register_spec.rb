@@ -14,7 +14,9 @@ RSpec.describe 'usersRegister Mutation' do
             id
             user {
               id
-
+              namespace {
+                id
+              }
             }
           }
         }
@@ -44,6 +46,10 @@ RSpec.describe 'usersRegister Mutation' do
     expect(user).to be_a(User)
     expect(user.username).to eq(input[:username])
     expect(user.email).to eq(input[:email])
+
+    expect(
+      graphql_data_at(:users_register, :user_session, :user, :namespace)
+    ).to match a_graphql_entity_for(user.namespace)
 
     is_expected.to create_audit_event(
       :user_registered,

@@ -47,6 +47,7 @@ module Users
         transactional do |t|
           user = User.create(username: username, email: email, password: password, firstname: firstname,
                              lastname: lastname)
+          user.ensure_namespace
           return ServiceResponse.error(message: 'User is invalid', payload: user.errors) unless user.persisted?
 
           user_identity = UserIdentity.create(user: user, provider_id: provider_id, identifier: identifier)

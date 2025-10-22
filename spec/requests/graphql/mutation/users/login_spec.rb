@@ -15,6 +15,9 @@ RSpec.describe 'usersLogin Mutation' do
             token
             user {
               id
+              namespace {
+                id
+              }
             }
           }
         }
@@ -23,14 +26,14 @@ RSpec.describe 'usersLogin Mutation' do
   end
 
   let(:password) { generate(:password) }
-  let(:user) { create(:user, password: password) }
+  let(:user) { create(:user, :with_namespace, password: password) }
   let(:variables) { { input: input } }
 
   before { post_graphql mutation, variables: variables }
 
   context 'when input is valid' do
     context 'when using totp mfa authentication' do
-      let(:user) { create(:user, password: password, totp_secret: totp_secret) }
+      let(:user) { create(:user, :with_namespace, password: password, totp_secret: totp_secret) }
       let(:totp_secret) { ROTP::Base32.random }
       let(:totp) { ROTP::TOTP.new(totp_secret).now }
 
@@ -54,6 +57,10 @@ RSpec.describe 'usersLogin Mutation' do
         expect(user_session).to be_a(UserSession)
         expect(user_session.user.username).to eq(user.username)
         expect(user_session.user.email).to eq(user.email)
+
+        expect(
+          graphql_data_at(:users_login, :user_session, :user, :namespace)
+        ).to match a_graphql_entity_for(user.namespace)
 
         is_expected.to create_audit_event(
           :user_logged_in,
@@ -82,6 +89,10 @@ RSpec.describe 'usersLogin Mutation' do
         expect(user_session.user.username).to eq(user.username)
         expect(user_session.user.email).to eq(user.email)
 
+        expect(
+          graphql_data_at(:users_login, :user_session, :user, :namespace)
+        ).to match a_graphql_entity_for(user.namespace)
+
         is_expected.to create_audit_event(
           :user_logged_in,
           author_id: user.id,
@@ -108,6 +119,10 @@ RSpec.describe 'usersLogin Mutation' do
         expect(user_session).to be_a(UserSession)
         expect(user_session.user.username).to eq(user.username)
         expect(user_session.user.email).to eq(user.email)
+
+        expect(
+          graphql_data_at(:users_login, :user_session, :user, :namespace)
+        ).to match a_graphql_entity_for(user.namespace)
 
         is_expected.to create_audit_event(
           :user_logged_in,

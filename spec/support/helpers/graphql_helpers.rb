@@ -87,4 +87,38 @@ module GraphqlHelpers
       }
     )
   end
+
+  # Wrapper around a_hash_including that supports unpacking with **
+  class UnpackableMatcher < SimpleDelegator
+    include RSpec::Matchers
+
+    attr_reader :to_hash
+
+    def initialize(hash)
+      @to_hash = hash
+      super(a_hash_including(hash))
+    end
+
+    def to_json(_opts = {})
+      to_hash.to_json
+    end
+
+    def as_json(opts = {})
+      to_hash.as_json(opts)
+    end
+  end
+
+  def a_graphql_entity_for(model = nil, *fields, **attrs)
+    raise ArgumentError, 'model is nil' if model.nil? && fields.any?
+
+    attrs.transform_keys! { |k| GraphqlHelpers.graphql_field_name(k) }
+    attrs['id'] = model.to_global_id.to_s if model
+    fields.each do |name|
+      attrs[GraphqlHelpers.graphql_field_name(name)] = model.public_send(name)
+    end
+
+    raise ArgumentError, 'no attributes' if attrs.empty?
+
+    UnpackableMatcher.new(attrs)
+  end
 end
