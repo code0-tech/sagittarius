@@ -60,6 +60,11 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
                 ],
               }
             ],
+            version: {
+              major: 0,
+              minor: 0,
+              patch: 0,
+            },
           }
         ]
       end
@@ -86,6 +91,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function.documentations.first.content).to eq('Eine Funktionsdokumentation')
         expect(function.deprecation_messages.first.content).to eq('Eine Deprecationsmeldung')
         expect(function.throws_error).to be(true)
+        expect(function.version).to eq('0.0.0')
         parameter = function.parameters.first
         expect(parameter.data_type.data_type.identifier).to eq(parameter_type.data_type.identifier)
         expect(parameter.runtime_name).to eq('some_id')
@@ -140,6 +146,11 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
                 ],
               }
             ],
+            version: {
+              major: 0,
+              minor: 0,
+              patch: 0,
+            },
           }
         ]
       end
@@ -194,6 +205,11 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
                 { code: 'de_DE', content: 'Eine Funktion' }
               ],
               runtime_parameter_definitions: [],
+              version: {
+                major: 0,
+                minor: 0,
+                patch: 0,
+              },
             }
           ]
         end

@@ -9,5 +9,6 @@ FactoryBot.define do
     runtime
     generic_keys { [] }
     parameters { [] }
+    version { '0.0.0' }
   end
 end

@@ -19,6 +19,11 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
           rules: [
             Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1, to: 10 })
           ],
+          version: {
+            major: 0,
+            minor: 0,
+            patch: 0,
+          },
         }
       ]
     end
@@ -62,6 +67,11 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
               )
             ],
             generic_keys: ['T'],
+            version: {
+              major: 0,
+              minor: 0,
+              patch: 0,
+            },
           },
           {
             variant: :PRIMITIVE,
@@ -72,6 +82,11 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
             rules: [
               Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1 })
             ],
+            version: {
+              major: 0,
+              minor: 0,
+              patch: 0,
+            },
           }
         ]
       end

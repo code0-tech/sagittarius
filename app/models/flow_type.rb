@@ -14,4 +14,8 @@ class FlowType < ApplicationRecord
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :documentations, -> { by_purpose(:documentation) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+
+  def parsed_version
+    Gem::Version.new(version)
+  end
 end

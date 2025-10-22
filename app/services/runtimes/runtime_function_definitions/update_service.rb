@@ -48,6 +48,8 @@ module Runtimes
                                                              db_object.deprecation_messages)
 
         db_object.throws_error = runtime_function_definition.throws_error
+        definition_version = runtime_function_definition.version
+        db_object.version = "#{definition_version.major}.#{definition_version.minor}.#{definition_version.patch}"
 
         if db_object.function_definitions.empty?
           definition = FunctionDefinition.new

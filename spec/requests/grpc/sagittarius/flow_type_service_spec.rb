@@ -26,6 +26,11 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
           ],
           editable: true,
           return_type_identifier: data_type.identifier,
+          version: {
+            major: 0,
+            minor: 0,
+            patch: 0,
+          },
         }
       ]
     end
@@ -49,6 +54,7 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
 
       expect(flow_type.editable).to be true
       expect(flow_type.return_type.identifier).to eq('some_return_type_identifier')
+      expect(flow_type.version).to eq('0.0.0')
     end
 
     context 'when removing datatypes' do

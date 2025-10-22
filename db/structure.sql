@@ -170,6 +170,7 @@ CREATE TABLE data_types (
     removed_at timestamp with time zone,
     generic_keys text[] DEFAULT '{}'::text[] NOT NULL,
     parent_type_id bigint,
+    version text NOT NULL,
     CONSTRAINT check_3a7198812e CHECK ((char_length(identifier) <= 50))
 );
 
@@ -229,7 +230,8 @@ CREATE TABLE flow_types (
     editable boolean DEFAULT true NOT NULL,
     removed_at timestamp with time zone,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    version text NOT NULL
 );
 
 CREATE SEQUENCE flow_types_id_seq
@@ -684,6 +686,7 @@ CREATE TABLE runtime_function_definitions (
     updated_at timestamp with time zone NOT NULL,
     return_type_id bigint,
     generic_keys text[] DEFAULT '{}'::text[] NOT NULL,
+    version text NOT NULL,
     CONSTRAINT check_fe8fff4f27 CHECK ((char_length(runtime_name) <= 50))
 );
 

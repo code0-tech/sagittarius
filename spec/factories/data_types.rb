@@ -9,5 +9,6 @@ FactoryBot.define do
     identifier { generate(:data_type_name) }
     parent_type { nil }
     generic_keys { [] }
+    version { '0.0.0' }
   end
 end
