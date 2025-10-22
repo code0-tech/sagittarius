@@ -15,6 +15,9 @@ RSpec.describe 'usersIdentityLogin Mutation' do
             token
             user {
               id
+              namespace {
+                id
+              }
             }
           }
         }
@@ -23,7 +26,7 @@ RSpec.describe 'usersIdentityLogin Mutation' do
   end
 
   let(:password) { generate(:password) }
-  let(:user) { create(:user, password: password) }
+  let(:user) { create(:user, :with_namespace, password: password) }
   let(:variables) do
     {
       input: {
@@ -60,6 +63,10 @@ RSpec.describe 'usersIdentityLogin Mutation' do
     expect(user_session).to be_a(UserSession)
     expect(user_session.user.username).to eq(user.username)
     expect(user_session.user.email).to eq(user.email)
+
+    expect(
+      graphql_data_at(:users_identity_login, :user_session, :user, :namespace)
+    ).to match a_graphql_entity_for(user.namespace)
 
     is_expected.to create_audit_event(
       :user_logged_in,

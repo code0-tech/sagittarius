@@ -23,6 +23,7 @@ module Mutations
           email,
           password
         ).execute.to_mutation_response(success_key: :user_session)
+        bypass_authorization! response, object_path: %i[user_session user namespace]
         bypass_authorization! response, object_path: %i[user_session user]
         bypass_authorization! response, object_path: :user_session
       end

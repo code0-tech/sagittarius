@@ -17,5 +17,9 @@ FactoryBot.define do
     trait :admin do
       admin { true }
     end
+
+    trait :with_namespace do
+      after :build, &:ensure_namespace
+    end
   end
 end
