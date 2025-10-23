@@ -8,8 +8,8 @@ module Types
       field :data_type_identifier, Types::DataTypeIdentifierType,
             null: false, description: 'The identifier of the data type this input type belongs to'
 
-      field :input_type, Types::DataTypeType,
-            null: false, description: 'The input data type that this configuration applies to'
+      field :input_identifier, String,
+            null: false, description: 'The input identifier that this configuration applies to'
     end
   end
 end
