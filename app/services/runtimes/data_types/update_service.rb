@@ -74,6 +74,7 @@ module Runtimes
         db_object.rules = update_rules(data_type.rules, db_object)
         db_object.names = update_translations(data_type.name, db_object.names)
         db_object.generic_keys = data_type.generic_keys.to_a
+        db_object.version = "#{data_type.version.major}.#{data_type.version.minor}.#{data_type.version.patch}"
         db_object.save
       end
 

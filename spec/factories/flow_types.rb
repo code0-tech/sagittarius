@@ -9,5 +9,6 @@ FactoryBot.define do
     input_type factory: :data_type
     return_type factory: :data_type
     editable { false }
+    version { '0.0.0' }
   end
 end

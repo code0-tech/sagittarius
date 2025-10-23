@@ -42,6 +42,7 @@ module Runtimes
         db_object.editable = flow_type.editable
         db_object.descriptions = update_translations(flow_type.description, db_object.descriptions)
         db_object.names = update_translations(flow_type.name, db_object.names)
+        db_object.version = "#{flow_type.version.major}.#{flow_type.version.minor}.#{flow_type.version.patch}"
         db_object.save
       end
 

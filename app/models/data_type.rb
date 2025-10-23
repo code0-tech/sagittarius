@@ -30,6 +30,10 @@ class DataType < ApplicationRecord
 
   validate :validate_recursion, if: :parent_type_changed?
 
+  def parsed_version
+    Gem::Version.new(version)
+  end
+
   def validate_recursion
     current_type = self
     until current_type.parent_type&.data_type.nil?
