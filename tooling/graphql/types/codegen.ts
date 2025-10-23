@@ -64,9 +64,18 @@ const config: CodegenConfig = {
         scalars,
         strictScalars: true,
         declarationKind: 'interface',
+        constEnums: true
       }
     },
   },
+  hooks: {
+    afterAllFileWrite: () => {
+      const filePath = './index.d.ts';
+      let content = readFileSync(filePath, 'utf-8');
+      content = content.replace(/}\s*;/g, '}');
+      writeFileSync(filePath, content, { encoding: 'utf-8' });
+    }
+  }
 };
 
 
