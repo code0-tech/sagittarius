@@ -6,4 +6,9 @@ class UserMailerPreview < ActionMailer::Preview
     user = User.first || FactoryBot.create(:user)
     UserMailer.with(user: user, verification_code: user.generate_token_for(:email_verification)).email_verification
   end
+
+  def reset_email
+    user = User.first || FactoryBot.create(:user)
+    UserMailer.with(user: user, verification_code: user.generate_token_for(:password_reset)).password_reset
+  end
 end
