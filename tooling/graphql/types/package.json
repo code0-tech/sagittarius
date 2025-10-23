@@ -2,7 +2,7 @@
   "name": "@code0-tech/sagittarius-graphql-types",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.d.ts",
   "types": "index.d.ts",
   "scripts": {
     "generate": "graphql-codegen --config codegen.ts"
@@ -23,7 +23,6 @@
   },
   "files": [
     "index.d.ts",
-    "index.js",
     "package.json"
   ],
   "publishConfig": {

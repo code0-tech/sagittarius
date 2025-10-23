@@ -155,7 +155,6 @@ npm-types:generate-graphql:
     - cd tooling/graphql/types
     - npm ci
     - npm run generate
-    - touch index.js
     - npm version --git-tag-version false 0.0.0-$CI_COMMIT_SHA
 
 npm-types:publish-graphql-dry-run:
