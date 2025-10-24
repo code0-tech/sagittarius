@@ -17,17 +17,14 @@ module Namespaces
           end
 
           def execute
+            errors = []
             logger.debug("Validating setting: #{setting.inspect} for flow: #{flow.id}")
 
-            transactional do |t|
-              if setting.invalid?
-                logger.debug("Invalid setting: #{setting.errors.full_messages.join(', ')}")
-                t.rollback_and_return! ServiceResponse.error(
-                  message: 'Invalid flow setting',
-                  payload: setting.errors
-                )
-              end
+            if setting.invalid?
+              logger.debug("Invalid setting: #{setting.errors.full_messages.join(', ')}")
+              errors << ValidationResult.error(:flow_setting_model_invalid, setting.errors)
             end
+            errors
           end
         end
       end

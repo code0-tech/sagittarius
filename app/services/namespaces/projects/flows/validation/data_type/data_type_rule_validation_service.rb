@@ -19,21 +19,20 @@ module Namespaces
             end
 
             def execute
+              errors = []
               logger.debug(message: 'Validating data type rule', rule_id: rule.id)
 
-              transactional do |t|
+              transactional do |_t|
                 if rule.invalid?
                   logger.debug(message: 'Data type rule validation (model) failed',
                                flow: flow.id,
                                data_type: data_type.id,
                                rule: rule.id,
                                errors: rule.errors.full_messages)
-                  t.rollback_and_return! ServiceResponse.error(
-                    message: 'Data type rule is invalid',
-                    payload: rule.errors
-                  )
+                  errors << ValidationResult.error(:data_type_rule_model_invalid, rule.errors)
                 end
               end
+              errors
             end
           end
         end

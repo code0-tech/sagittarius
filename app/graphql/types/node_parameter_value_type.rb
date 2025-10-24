@@ -9,14 +9,12 @@ module Types
 
     def self.resolve_type(object, _context)
       case object
-      when LiteralValue
-        Types::LiteralValueType
       when ReferenceValue
         Types::ReferenceValueType
       when NodeFunction
         Types::NodeFunctionType
       else
-        raise "Unexpected value type: #{object.class}"
+        Types::LiteralValueType
       end
     end
   end
