@@ -250,6 +250,7 @@ CREATE TABLE flows (
     input_type_id bigint,
     return_type_id bigint,
     starting_node_id bigint NOT NULL,
+    name text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
@@ -1098,6 +1099,8 @@ CREATE UNIQUE INDEX index_flow_types_on_runtime_id_and_identifier ON flow_types 
 CREATE INDEX index_flows_on_flow_type_id ON flows USING btree (flow_type_id);
 
 CREATE INDEX index_flows_on_input_type_id ON flows USING btree (input_type_id);
+
+CREATE UNIQUE INDEX index_flows_on_name_and_project_id ON flows USING btree (name, project_id);
 
 CREATE INDEX index_flows_on_project_id ON flows USING btree (project_id);
 
