@@ -6,7 +6,8 @@ module Types
 
     authorize :read_flow
 
-    # field :name, String, null: false does exist in pictor but not in grpc
+    field :name, String, null: false, description: 'Name of the flow'
+
     field :input_type, Types::DataTypeType,
           null: true,
           description: 'The input data type of the flow'

@@ -5,6 +5,8 @@ module Types
     class FlowInputType < Types::BaseInputObject
       description 'Input type for creating or updating a flow'
 
+      argument :name, String, required: true, description: 'The name of the flow'
+
       argument :settings, [Types::Input::FlowSettingInputType], required: false,
                                                                 description: 'The settings of the flow'
       argument :starting_node, Types::Input::NodeFunctionInputType, required: true,
