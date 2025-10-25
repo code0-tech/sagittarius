@@ -7,7 +7,7 @@ module Types
       graphql_name 'Error'
       # rubocop:enable GraphQL/GraphqlName
       description 'Objects that can present an error'
-      possible_types Errors::ActiveModelErrorType, Errors::MessageErrorType
+      possible_types Errors::ActiveModelErrorType, Errors::MessageErrorType, Errors::ErrorCodeType
 
       def self.resolve_type(object, _ctx)
         case object
@@ -15,6 +15,8 @@ module Types
           Errors::ActiveModelErrorType
         when Sagittarius::Graphql::ErrorMessageContainer
           Errors::MessageErrorType
+        when Sagittarius::Graphql::ServiceResponseErrorContainer
+          Errors::ErrorCodeType
         else
           raise 'Unsupported ErrorType'
         end

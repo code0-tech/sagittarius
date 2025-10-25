@@ -10,7 +10,7 @@ RSpec.describe ApplicationSettingsUpdateService do
     let(:params) { { user_registration_enabled: false } }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:permission_missing) }
+    it { expect(service_response.payload).to eq(:missing_permission) }
 
     it 'does not change any settings' do
       expect { service_response }.not_to change { ApplicationSetting.pluck(:value) }
@@ -26,7 +26,7 @@ RSpec.describe ApplicationSettingsUpdateService do
     let(:params) { { user_registration_enabled: false } }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:permission_missing) }
+    it { expect(service_response.payload).to eq(:missing_permission) }
 
     it 'does not change any settings' do
       expect { service_response }.not_to change { ApplicationSetting.pluck(:value) }

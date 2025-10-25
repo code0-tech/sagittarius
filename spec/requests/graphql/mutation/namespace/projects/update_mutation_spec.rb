@@ -123,7 +123,7 @@ RSpec.describe 'namespacesProjectsUpdate Mutation' do
       mutate!
 
       expect(graphql_data_at(:namespaces_projects_update, :namespace_project)).to be_nil
-      expect(graphql_data_at(:namespaces_projects_update, :errors)).to include({ 'message' => 'missing_permission' })
+      expect(graphql_data_at(:namespaces_projects_update, :errors)).to include({ 'errorCode' => 'MISSING_PERMISSION' })
     end
   end
 end

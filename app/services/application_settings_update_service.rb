@@ -12,7 +12,7 @@ class ApplicationSettingsUpdateService
 
   def execute
     unless Ability.allowed?(current_authentication, :update_application_setting)
-      return ServiceResponse.error(message: 'Missing permissions', payload: :permission_missing)
+      return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
     end
 
     transactional do |t|

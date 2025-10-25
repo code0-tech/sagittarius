@@ -42,7 +42,7 @@ RSpec.describe 'usersLogout Mutation' do
       let(:current_user) { create(:user) }
 
       it 'does not log out the session' do
-        expect(graphql_data_at(:users_logout, :errors, :message)).to include('missing_permission')
+        expect(graphql_data_at(:users_logout, :errors, :error_code)).to include('MISSING_PERMISSION')
         expect(graphql_data_at(:users_logout, :user_session)).to be_nil
       end
     end

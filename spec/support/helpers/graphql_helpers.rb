@@ -84,6 +84,9 @@ module GraphqlHelpers
         ...on MessageError {
           message
         }
+        ...on ErrorCode {
+          errorCode
+        }
       }
     )
   end
