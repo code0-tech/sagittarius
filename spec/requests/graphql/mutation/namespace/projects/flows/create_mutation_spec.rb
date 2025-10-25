@@ -128,7 +128,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
 
       expect(graphql_data_at(:namespaces_projects_flows_create, :errors)).to be_present
       expect(graphql_data_at(:namespaces_projects_flows_create, :flow)).to be_nil
-      expect(graphql_data_at(:namespaces_projects_flows_create, :errors).first['message']).to eq('missing_permission')
+      expect(graphql_data_at(:namespaces_projects_flows_create, :errors).first['errorCode']).to eq('MISSING_PERMISSION')
     end
   end
 end

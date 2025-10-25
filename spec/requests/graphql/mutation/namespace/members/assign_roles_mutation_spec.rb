@@ -87,7 +87,7 @@ RSpec.describe 'namespacesMembersAssignRoles Mutation' do
       expect(graphql_data_at(:namespaces_members_assign_roles, :namespace_member_roles)).to be_nil
       expect(
         graphql_data_at(:namespaces_members_assign_roles, :errors)
-      ).to include({ 'message' => 'missing_permission' })
+      ).to include({ 'errorCode' => 'MISSING_PERMISSION' })
     end
   end
 end

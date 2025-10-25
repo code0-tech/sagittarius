@@ -110,7 +110,7 @@ RSpec.describe 'usersUpdate Mutation' do
 
       it 'returns an error' do
         expect(graphql_data_at(:users_update, :user)).to be_nil
-        expect(graphql_data_at(:users_update, :errors)).to include({ 'message' => 'mfa_required' })
+        expect(graphql_data_at(:users_update, :errors)).to include({ 'errorCode' => 'MFA_REQUIRED' })
       end
     end
 
