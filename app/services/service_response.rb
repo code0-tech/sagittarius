@@ -6,6 +6,10 @@ class ServiceResponse
   end
 
   def self.error(message: nil, payload: nil)
+    if payload.is_a?(Symbol) || payload.is_a?(Array)
+      Array.wrap(payload).each { |error_code| ErrorCode.validate_error_code!(error_code) }
+    end
+
     new(status: :error, message: message, payload: payload)
   end
 
@@ -48,7 +52,12 @@ class ServiceResponse
       { success_key => nil, errors: payload.errors }
     else
       errors = Array.wrap(payload).map do |message|
-        Sagittarius::Graphql::ErrorMessageContainer.new(message: message)
+        case message
+        when String
+          Sagittarius::Graphql::ErrorMessageContainer.new(message: message)
+        when Symbol
+          Sagittarius::Graphql::ServiceResponseErrorContainer.new(error_code: message)
+        end
       end
 
       { success_key => nil, errors: errors }

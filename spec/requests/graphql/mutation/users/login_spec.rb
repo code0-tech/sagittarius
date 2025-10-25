@@ -187,7 +187,7 @@ RSpec.describe 'usersLogin Mutation' do
       it 'returns errors' do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
-        expect(graphql_data_at(:users_login, :errors, :message)).to include('invalid_login_data')
+        expect(graphql_data_at(:users_login, :errors, :error_code)).to include('INVALID_LOGIN_DATA')
       end
     end
 
@@ -202,7 +202,7 @@ RSpec.describe 'usersLogin Mutation' do
       it 'returns errors' do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
-        expect(graphql_data_at(:users_login, :errors, :message)).to include('invalid_login_data')
+        expect(graphql_data_at(:users_login, :errors, :error_code)).to include('INVALID_LOGIN_DATA')
       end
     end
 
@@ -217,7 +217,7 @@ RSpec.describe 'usersLogin Mutation' do
       it 'returns errors' do
         expect(graphql_data_at(:users_login, :user_session)).not_to be_present
 
-        expect(graphql_data_at(:users_login, :errors, :message)).to include('invalid_login_data')
+        expect(graphql_data_at(:users_login, :errors, :error_code)).to include('INVALID_LOGIN_DATA')
       end
     end
   end

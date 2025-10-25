@@ -44,7 +44,7 @@ RSpec.describe 'applicationSettingsUpdate Mutation' do
 
     it 'returns an error' do
       expect(graphql_data_at(:application_settings_update, :application_settings)).to be_nil
-      expect(graphql_data_at(:application_settings_update, :errors)).to include('message' => 'permission_missing')
+      expect(graphql_data_at(:application_settings_update, :errors)).to include('errorCode' => 'MISSING_PERMISSION')
     end
   end
 end

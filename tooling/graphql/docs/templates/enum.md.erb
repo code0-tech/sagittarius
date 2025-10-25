@@ -11,5 +11,5 @@ title: <%= object[:name] %>
 | Value | Description |
 |-------|-------------|
 <% sorted_by_name.call(object[:values]).each do |value| -%>
-| `<%= value[:name] %>` | <%= value[:description] %> |
+| `<%= value[:name] %>` | <%= value[:description] %><% if value[:is_deprecated] %>**Deprecated:** <%= value[:deprecation_reason] %><% end %> |
 <% end -%>

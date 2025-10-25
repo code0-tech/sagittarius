@@ -68,7 +68,7 @@ RSpec.describe 'namespacesLicensesDelete Mutation' do
       mutate!
 
       expect(graphql_data_at(:namespaces_licenses_delete, :namespace_license)).to be_nil
-      expect(graphql_data_at(:namespaces_licenses_delete, :errors)).to include({ 'message' => 'missing_permission' })
+      expect(graphql_data_at(:namespaces_licenses_delete, :errors)).to include({ 'errorCode' => 'MISSING_PERMISSION' })
     end
   end
 end
