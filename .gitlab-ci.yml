@@ -10,12 +10,12 @@ include:
     file: ci-template.gitlab-ci.yml
 
 .bundle:
-  image: ruby:3.2.2
+  image: ruby:3.4.7
   before_script:
     - bundle install --jobs $(nproc)
 
 .rails:
-  image: ghcr.io/code0-tech/build-images/ruby-postgres:211.1-ruby-3.2.2-postgres-16.1
+  image: ghcr.io/code0-tech/build-images/ruby-postgres:220.1-ruby-3.4.7-postgres-16.1
   before_script:
     - cp tooling/pipeline/sagittarius.yml config/sagittarius.yml
     - !reference [.bundle, before_script]
