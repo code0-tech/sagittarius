@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '3.2.2'
+ruby '3.4.7'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 8.0.0'
@@ -72,7 +72,7 @@ gem 'lograge', '~> 0.14.0'
 
 gem 'declarative_policy', '~> 2.0'
 
-gem 'code0-license', '~> 0.2.0'
+gem 'code0-license', '~> 0.3.0'
 
 gem 'good_job', '~> 4.0'
 
@@ -81,7 +81,7 @@ gem 'rotp'
 gem 'grpc', '~> 1.67'
 gem 'tucana', '0.0.37'
 
-gem 'code0-identities', '~> 0.0.1'
+gem 'code0-identities', '~> 0.0.2'
 
 gem 'pry', '~> 0.15.0'
 gem 'pry-byebug', '~> 3.10'
