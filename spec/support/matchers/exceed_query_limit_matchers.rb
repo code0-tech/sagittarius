@@ -21,7 +21,7 @@ module ExceedQueryLimitHelpers
       return combined_counts if @show_common_queries
 
       combined_counts
-        .transform_values { select_suffixes_with_diffs(_1) }
+        .transform_values { select_suffixes_with_diffs(it) }
         .reject { |_prefix, suffs| suffs.empty? }
     end
 
