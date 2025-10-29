@@ -13,7 +13,7 @@ RSpec.describe Namespaces::Projects::Flows::Validation::FlowSettingValidationSer
   let(:setting) { create(:flow_setting, flow: flow) }
 
   context 'when setting.flow == flow' do
-    it { expect(service_response).to be_nil }
+    it { expect(service_response).to be_empty }
   end
 
   context 'when setting is invalid' do
@@ -24,11 +24,10 @@ RSpec.describe Namespaces::Projects::Flows::Validation::FlowSettingValidationSer
     end
 
     it 'returns an error' do
-      expect(service_response).to be_error
-      expect(service_response.payload).to eq(setting.errors)
+      expect(service_response).to include(have_attributes(error_code: :flow_setting_model_invalid))
       expect(setting).to have_received(:invalid?)
-      #                                         debug, payload, test -> 3 times
-      expect(setting).to have_received(:errors).exactly(3).times
+      #                                         debug, payload -> 2 times
+      expect(setting).to have_received(:errors).exactly(2).times
     end
   end
 end

@@ -19,49 +19,41 @@ module Namespaces
             end
 
             def execute
+              errors = []
               logger.debug("Validating node parameter: #{parameter.id} for flow: #{flow.id}")
 
-              transactional do |t|
-                if parameter.invalid?
-                  logger.debug(message: 'Node parameter validation failed',
-                               errors: parameter.errors.full_messages)
-                  t.rollback_and_return!(
-                    ServiceResponse.error(
-                      message: 'Node function is invalid',
-                      payload: parameter.errors
-                    )
-                  )
-                end
-                if parameter.runtime_parameter.runtime_function_definition.runtime != flow.project.primary_runtime
-                  t.rollback_and_return!(
-                    ServiceResponse.error(
-                      message: 'Node parameter runtime does not match the primary runtime of the project',
-                      payload: :runtime_mismatch
-                    )
-                  )
-                end
-
-                return if parameter.literal_value.present?
-
-                if parameter.reference_value.present?
-                  ReferenceValueValidationService.new(
-                    current_authentication,
-                    flow,
-                    parameter.node_function,
-                    parameter.reference_value
-                  ).execute
-                  return
-                end
-                if parameter.function_value.present?
-                  logger.debug("Validating function value:
-                    #{parameter.function_value.id} for node parameter: #{parameter.id}")
-                  NodeFunctionValidationService.new(
-                    current_authentication,
-                    flow,
-                    parameter.function_value
-                  ).execute
-                end
+              if parameter.invalid?
+                logger.debug(message: 'Node parameter validation failed',
+                             errors: parameter.errors.full_messages)
+                errors << ValidationResult.error(:node_parameter_model_invalid, parameter.errors)
               end
+              if parameter.runtime_parameter.runtime_function_definition.runtime != flow.project.primary_runtime
+                errors << ValidationResult.error(:node_parameter_runtime_mismatch)
+              end
+
+              if parameter.literal_value.present?
+                return errors # TODO: ig
+              end
+
+              if parameter.reference_value.present?
+                errors += ReferenceValueValidationService.new(
+                  current_authentication,
+                  flow,
+                  parameter.node_function,
+                  parameter.reference_value
+                ).execute
+                return errors
+              end
+              if parameter.function_value.present?
+                logger.debug("Validating function value:
+                    #{parameter.function_value.id} for node parameter: #{parameter.id}")
+                errors += NodeFunctionValidationService.new(
+                  current_authentication,
+                  flow,
+                  parameter.function_value
+                ).execute
+              end
+              errors
             end
           end
         end
