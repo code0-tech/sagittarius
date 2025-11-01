@@ -43,7 +43,7 @@ group :development, :test do
   gem 'factory_bot_rails', '~> 6.2'
   gem 'test-prof', '~> 1.0'
 
-  gem 'shoulda-matchers', '~> 6.0'
+  gem 'shoulda-matchers', '~> 7.0'
 
   gem 'rspec_junit_formatter', '~> 0.6.0', require: false
   gem 'rspec-parameterized', '~> 2.0'
