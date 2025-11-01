@@ -27,7 +27,8 @@ module Mutations
               namespace_project: project,
               flow_type: flow_type,
               starting_node: flow.starting_node,
-              flow_settings: flow.settings || []
+              flow_settings: flow.settings || [],
+              name: flow.name
             ).execute.to_mutation_response(success_key: :flow)
           end
 

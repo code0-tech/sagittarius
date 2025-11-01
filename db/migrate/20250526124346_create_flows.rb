@@ -59,6 +59,10 @@ class CreateFlows < Code0::ZeroTrack::Database::Migration[1.0]
 
       t.references :starting_node, null: false, foreign_key: { to_table: :node_functions, on_delete: :restrict }
 
+      t.text :name, null: false
+
+      t.index %i[name project_id], unique: true
+
       t.timestamps_with_timezone
     end
 
