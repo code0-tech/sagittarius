@@ -13,15 +13,14 @@ RSpec.describe Namespaces::Projects::Flows::Validation::FlowTypeValidationServic
   let(:flow) { create(:flow, flow_type: flow_type, project: namespace_project) }
 
   context 'when primary runtime is equal to flow type runtime' do
-    it { expect(service_response).to be_nil }
+    it { expect(service_response).to be_empty }
   end
 
   context 'when primary runtime is not equal to flow type runtime' do
     let(:flow_type) { create(:flow_type) }
 
     it 'returns an error' do
-      expect(service_response).to be_error
-      expect(service_response.payload).to eq(:runtime_mismatch)
+      expect(service_response).to include(have_attributes(error_code: :flow_type_runtime_mismatch))
     end
   end
 end

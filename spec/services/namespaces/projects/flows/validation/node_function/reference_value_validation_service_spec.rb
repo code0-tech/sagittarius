@@ -7,14 +7,6 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
     described_class.new(create_authentication(current_user), flow, first_node, reference_value).execute
   end
 
-  include_context 'with mocked services'
-
-  let(:mocked_service_expectations) do
-    {
-      Namespaces::Projects::Flows::Validation::DataType::DataTypeIdentifierValidationService => 1,
-    }
-  end
-
   let(:current_user) { create(:user) }
   let(:runtime) { create(:runtime) }
   let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
@@ -50,7 +42,7 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
            ])
   end
   let(:data_type_identifier) do
-    create(:data_type_identifier, generic_key: 'T', runtime: runtime)
+    create(:data_type_identifier, data_type: create(:data_type, runtime: runtime), runtime: runtime)
   end
   let(:primary_level) { 0 }
   let(:secondary_level) { 0 }
@@ -66,38 +58,36 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
   context 'with secondary level' do
     let(:secondary_level) { 0 }
 
-    it { expect(service_response).to be_nil }
+    it { expect(service_response).to be_empty }
 
     context 'with secondary level out of bounds' do
       let(:secondary_level) { 2 }
 
-      it { expect(service_response).to be_error }
-      it { expect(service_response.payload).to eq(:secondary_level_not_found) }
+      it { expect(service_response).to include(have_attributes(error_code: :secondary_level_not_found)) }
     end
   end
 
   context 'with primary level' do
     let(:primary_level) { 1 }
 
-    it { expect(service_response).to be_nil }
+    it { expect(service_response).to be_empty }
 
     context 'with primary level of 2' do
       let(:primary_level) { 2 }
 
-      it { expect(service_response).to be_nil }
+      it { expect(service_response).to be_empty }
     end
 
     context 'with primary level of 3' do
       let(:primary_level) { 3 }
 
-      it { expect(service_response).to be_nil }
+      it { expect(service_response).to be_empty }
     end
 
     context 'with primary level out of bounds' do
       let(:primary_level) { 4 }
 
-      it { expect(service_response).to be_error }
-      it { expect(service_response.payload).to eq(:primary_level_not_found) }
+      it { expect(service_response).to include(have_attributes(error_code: :primary_level_not_found)) }
     end
   end
 
@@ -106,14 +96,14 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
     let(:secondary_level) { 1 }
     let(:tertiary_level) { 1 }
 
-    it { expect(service_response).to be_nil }
+    it { expect(service_response).to be_empty }
 
     context 'with not existing parameter' do
       let(:primary_level) { 0 }
       let(:secondary_level) { 0 }
       let(:tertiary_level) { 1 }
 
-      it { expect(service_response.payload).to eq(:tertiary_level_exceeds_parameters) }
+      it { expect(service_response).to include(have_attributes(error_code: :tertiary_level_exceeds_parameters)) }
     end
 
     context 'with no parameter' do
@@ -121,14 +111,14 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
       let(:secondary_level) { 0 }
       let(:tertiary_level) { nil }
 
-      it { expect(service_response).to be_nil }
+      it { expect(service_response).to be_empty }
 
       context 'with deeper primary level' do
         let(:primary_level) { 1 }
         let(:secondary_level) { 0 }
         let(:tertiary_level) { 0 }
 
-        it { expect(service_response.payload).to eq(:tertiary_level_exceeds_parameters) }
+        it { expect(service_response).to include(have_attributes(error_code: :tertiary_level_exceeds_parameters)) }
       end
 
       context 'with deeper primary level nested' do
@@ -136,7 +126,7 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
         let(:secondary_level) { 0 }
         let(:tertiary_level) { 0 }
 
-        it { expect(service_response).to be_nil }
+        it { expect(service_response).to be_empty }
       end
     end
 
@@ -145,8 +135,7 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
       let(:secondary_level) { 0 }
       let(:tertiary_level) { 2 }
 
-      it { expect(service_response).to be_error }
-      it { expect(service_response.payload).to eq(:tertiary_level_exceeds_parameters) }
+      it { expect(service_response).to include(have_attributes(error_code: :tertiary_level_exceeds_parameters)) }
     end
   end
 end
