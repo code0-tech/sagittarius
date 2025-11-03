@@ -11,6 +11,7 @@ Represents a flow
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Flow was created |
 | `id` | [`FlowID!`](../scalar/flowid.md) | Global ID of this Flow |
 | `inputType` | [`DataType`](../object/datatype.md) | The input data type of the flow |
+| `name` | [`String!`](../scalar/string.md) | Name of the flow |
 | `nodes` | [`NodeFunctionConnection!`](../object/nodefunctionconnection.md) | Nodes of the flow |
 | `returnType` | [`DataType`](../object/datatype.md) | The return data type of the flow |
 | `settings` | [`FlowSettingConnection!`](../object/flowsettingconnection.md) | The settings of the flow |

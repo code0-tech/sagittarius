@@ -15,6 +15,11 @@ RSpec.describe Flow do
     it { is_expected.to have_many(:flow_settings) }
   end
 
+  describe 'validations' do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).case_insensitive.scoped_to(:project_id) }
+  end
+
   describe '#to_grpc' do
     let(:flow) do
       create(

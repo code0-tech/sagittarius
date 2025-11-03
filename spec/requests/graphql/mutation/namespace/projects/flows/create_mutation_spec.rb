@@ -57,6 +57,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
     {
       projectId: project.to_global_id.to_s,
       flow: {
+        name: generate(:flow_name),
         type: flow_type.to_global_id.to_s,
         settings: {
           flowSettingId: 'key',
