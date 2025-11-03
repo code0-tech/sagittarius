@@ -9,6 +9,10 @@ class Flow < ApplicationRecord
 
   has_many :flow_settings, class_name: 'FlowSetting', inverse_of: :flow
 
+  validates :name, presence: true,
+            allow_blank: false,
+            uniqueness: { case_sensitive: false, scope: :project_id }
+
   def to_grpc
     Tucana::Shared::ValidationFlow.new(
       flow_id: id,
