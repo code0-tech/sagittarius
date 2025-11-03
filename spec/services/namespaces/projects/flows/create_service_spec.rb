@@ -13,7 +13,8 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
     create(:node_function, runtime_function: create(:runtime_function_definition, runtime: runtime))
   end
   let(:params) do
-    { project: namespace_project, name: generate(:flow_name), flow_type: create(:flow_type, runtime: runtime), starting_node: starting_node }
+    { project: namespace_project, name: generate(:flow_name), flow_type: create(:flow_type, runtime: runtime),
+      starting_node: starting_node }
   end
 
   shared_examples 'does not create' do
