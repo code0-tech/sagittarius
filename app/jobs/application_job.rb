@@ -11,7 +11,7 @@ class ApplicationJob < ActiveJob::Base
   retry_on StandardError, wait: :polynomially_longer, attempts: 10
 
   before_enqueue do |job|
-    next if job.arguments.first&.key?(:sagittarius_context)
+    next if job.arguments.first&.try(:key?, :sagittarius_context)
 
     job.arguments.unshift Code0::ZeroTrack::Context.current.to_h.merge(sagittarius_context: true)
   end

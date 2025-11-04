@@ -59,6 +59,8 @@ module Namespaces
               )
             end
 
+            UpdateRuntimesForProjectJob.perform_later(namespace_project.id)
+
             AuditService.audit(
               :flow_created,
               author_id: current_authentication.user.id,

@@ -28,6 +28,8 @@ module Namespaces
               )
             end
 
+            UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+
             AuditService.audit(
               :flow_deleted,
               author_id: current_authentication.user.id,

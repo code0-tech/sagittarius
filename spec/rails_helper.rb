@@ -88,6 +88,9 @@ RSpec.configure do |config|
   config.include AuthenticationHelpers, type: :policy
   config.include AuthenticationHelpers, type: :service
 
+  # Load job helpers
+  config.include JobHelpers, type: :job
+
   config.before eager_load: true do
     Rails.application.eager_load!
   end
