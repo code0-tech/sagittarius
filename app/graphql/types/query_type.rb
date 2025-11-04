@@ -34,6 +34,8 @@ module Types
       require_one_of %i[id name]
     end
 
+    field :organizations, Types::OrganizationType.connection_type, null: false, description: 'Find organizations'
+
     field :namespace, Types::NamespaceType, null: true, description: 'Find a namespace' do
       argument :id, Types::GlobalIdType[::Namespace], required: true, description: 'GlobalID of the target namespace'
     end
@@ -62,6 +64,10 @@ module Types
       args[:id] = args[:id].model_id if args[:id].present?
 
       OrganizationsFinder.new(**args, single: true).execute
+    end
+
+    def organizations
+      OrganizationsFinder.new(namespace_member_user: current_user).execute
     end
 
     def namespace(id:)

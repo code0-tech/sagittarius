@@ -26,6 +26,23 @@ RSpec.describe OrganizationsFinder do
     it { is_expected.to contain_exactly(second_organization) }
   end
 
+  context 'when filtering by namespace member' do
+    let(:user) { create(:user) }
+    let(:params) { { namespace_member_user: user } }
+
+    before do
+      create(:namespace_member, user: user, namespace: first_organization.ensure_namespace)
+    end
+
+    it { is_expected.to contain_exactly(first_organization) }
+
+    context 'when filtered with null user' do
+      let(:params) { { namespace_member_user: nil } }
+
+      it { is_expected.to be_empty }
+    end
+  end
+
   context 'when setting limit' do
     let(:params) { { limit: 1 } }
 

@@ -12,6 +12,7 @@ Root Query type
 | `currentAuthentication` | [`Authentication`](../union/authentication.md) | Get the currently logged in authentication |
 | `currentUser` | [`User`](../object/user.md) | Get the currently logged in user |
 | `globalRuntimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Find runtimes |
+| `organizations` | [`OrganizationConnection!`](../object/organizationconnection.md) | Find organizations |
 | `users` | [`UserConnection!`](../object/userconnection.md) | Find users |
 
 ## Fields with arguments
