@@ -21,5 +21,6 @@ Represents a user
 | `namespaceMemberships` | [`NamespaceMemberConnection!`](../object/namespacememberconnection.md) | Namespace Memberships of this user |
 | `sessions` | [`UserSessionConnection!`](../object/usersessionconnection.md) | Sessions of this user |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this User was last updated |
+| `userAbilities` | [`UserUserAbilities!`](../object/useruserabilities.md) | Abilities for the current user on this User |
 | `username` | [`String!`](../scalar/string.md) | Username of the user |
 

@@ -36,7 +36,7 @@ RSpec.describe 'namespacesProjectsFlowsDelete Mutation' do
   context 'when user has permission' do
     before do
       namespace_role = create(:namespace_role, namespace: namespace_project.namespace).tap do |role|
-        create(:namespace_role_ability, namespace_role: role, ability: :delete_flows)
+        create(:namespace_role_ability, namespace_role: role, ability: :delete_flow)
         create(:namespace_role_ability, namespace_role: role, ability: :read_namespace_project)
       end
       namespace_member = create(:namespace_member, namespace: namespace_project.namespace, user: current_user)

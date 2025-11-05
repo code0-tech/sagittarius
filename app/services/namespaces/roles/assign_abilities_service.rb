@@ -15,7 +15,7 @@ module Namespaces
 
       def execute
         namespace = role.namespace
-        unless Ability.allowed?(current_authentication, :assign_role_abilities, namespace)
+        unless Ability.allowed?(current_authentication, :assign_role_abilities, role)
           return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
         end
 

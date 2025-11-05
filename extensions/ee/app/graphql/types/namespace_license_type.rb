@@ -14,6 +14,10 @@ module Types
 
     field :licensee, GraphQL::Types::JSON, null: false, description: 'The licensee information'
 
+    expose_abilities %i[
+      delete_namespace_license
+    ]
+
     id_field NamespaceLicense
     timestamps
   end

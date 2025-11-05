@@ -36,7 +36,7 @@ RSpec.describe Namespaces::Projects::Flows::DeleteService do
     let(:current_user) { create(:user) }
 
     before do
-      stub_allowed_ability(NamespaceProjectPolicy, :delete_flows, user: current_user, subject: namespace_project)
+      stub_allowed_ability(NamespaceProjectPolicy, :delete_flow, user: current_user, subject: namespace_project)
     end
 
     it { is_expected.to be_success }

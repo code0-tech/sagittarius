@@ -9,6 +9,10 @@ module EE
         field :namespace_licenses, ::Types::NamespaceLicenseType.connection_type,
               null: false,
               description: '(EE only) Licenses of the namespace'
+
+        expose_abilities %i[
+          create_namespace_license
+        ]
       end
     end
   end

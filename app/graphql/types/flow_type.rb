@@ -30,6 +30,10 @@ module Types
           description: 'Nodes of the flow',
           method: :collect_node_functions
 
+    expose_abilities %i[
+      delete_flow
+    ]
+
     id_field Flow
     timestamps
 

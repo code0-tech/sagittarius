@@ -57,4 +57,6 @@ end
 # rubocop:enable GraphQL/MaxDepthSchema
 # rubocop:enable GraphQL/MaxComplexitySchema
 
-Types::BaseObject.instance_variable_set(:@user_ability_types, nil) # release temporary type map
+if Types::BaseObject.instance_variable_defined?(:@user_ability_types)
+  Types::BaseObject.remove_instance_variable(:@user_ability_types) # release temporary type map
+end

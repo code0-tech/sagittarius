@@ -39,6 +39,11 @@ module Types
                     base_scope: ->(object) { object.namespace_memberships },
                     conditional_lookaheads: { user: :user, namespace: { namespace: :namespace_members } }
 
+    expose_abilities %i[
+      manage_mfa
+      update_user
+    ]
+
     id_field User
     timestamps
 

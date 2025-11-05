@@ -12,6 +12,11 @@ module Types
     field :member_roles, NamespaceMemberRoleType.connection_type, null: false, description: 'Memberroles of the member'
     field :roles, NamespaceRoleType.connection_type, null: false, description: 'Roles of the member'
 
+    expose_abilities %i[
+      assign_member_roles
+      delete_member
+    ]
+
     id_field NamespaceMember
     timestamps
   end

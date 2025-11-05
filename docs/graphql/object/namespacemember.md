@@ -15,4 +15,5 @@ Represents a namespace member
 | `roles` | [`NamespaceRoleConnection!`](../object/namespaceroleconnection.md) | Roles of the member |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceMember was last updated |
 | `user` | [`User!`](../object/user.md) | User this member belongs to |
+| `userAbilities` | [`NamespaceMemberUserAbilities!`](../object/namespacememberuserabilities.md) | Abilities for the current user on this NamespaceMember |
 

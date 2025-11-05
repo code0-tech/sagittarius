@@ -8,6 +8,7 @@ RSpec.describe SagittariusSchema.types['Organization'] do
       id
       name
       namespace
+      userAbilities
       createdAt
       updatedAt
     ]

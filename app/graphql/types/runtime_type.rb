@@ -17,6 +17,12 @@ module Types
 
     field :token, String, null: true, description: 'Token belonging to the runtime, only present on creation'
 
+    expose_abilities %i[
+      delete_runtime
+      update_runtime
+      rotate_runtime_token
+    ]
+
     id_field Runtime
     timestamps
 
