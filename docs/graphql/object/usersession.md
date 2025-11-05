@@ -14,4 +14,5 @@ Represents a user session
 | `token` | [`String`](../scalar/string.md) | Token belonging to the session, only present on creation |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this UserSession was last updated |
 | `user` | [`User!`](../object/user.md) | User that belongs to the session |
+| `userAbilities` | [`UserSessionUserAbilities!`](../object/usersessionuserabilities.md) | Abilities for the current user on this UserSession |
 

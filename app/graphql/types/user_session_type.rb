@@ -11,6 +11,10 @@ module Types
     field :token, String, null: true, description: 'Token belonging to the session, only present on creation'
     field :user, Types::UserType, null: false, description: 'User that belongs to the session'
 
+    expose_abilities %i[
+      logout_session
+    ]
+
     id_field UserSession
     timestamps
 

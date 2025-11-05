@@ -14,6 +14,7 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
       projects
       status
       token
+      userAbilities
       createdAt
       updatedAt
     ]

@@ -13,6 +13,7 @@ RSpec.describe SagittariusSchema.types['NamespaceProject'] do
       runtimes
       flows
       flow
+      user_abilities
       created_at
       updated_at
     ]

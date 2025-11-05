@@ -18,4 +18,5 @@ Represents a flow
 | `startingNodeId` | [`NodeFunctionID!`](../scalar/nodefunctionid.md) | The ID of the starting node of the flow |
 | `type` | [`FlowType!`](../object/flowtype.md) | The flow type of the flow |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Flow was last updated |
+| `userAbilities` | [`FlowUserAbilities!`](../object/flowuserabilities.md) | Abilities for the current user on this Flow |
 

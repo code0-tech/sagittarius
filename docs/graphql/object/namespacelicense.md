@@ -15,4 +15,5 @@ title: NamespaceLicense
 | `namespace` | [`Namespace!`](../object/namespace.md) | The namespace the license belongs to |
 | `startDate` | [`Time!`](../scalar/time.md) | The start date of the license |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceLicense was last updated |
+| `userAbilities` | [`NamespaceLicenseUserAbilities!`](../object/namespacelicenseuserabilities.md) | Abilities for the current user on this NamespaceLicense |
 

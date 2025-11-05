@@ -15,4 +15,5 @@ Represents a namespace role.
 | `name` | [`String!`](../scalar/string.md) | The name of this role |
 | `namespace` | [`Namespace`](../object/namespace.md) | The namespace where this role belongs to |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceRole was last updated |
+| `userAbilities` | [`NamespaceRoleUserAbilities!`](../object/namespaceroleuserabilities.md) | Abilities for the current user on this NamespaceRole |
 

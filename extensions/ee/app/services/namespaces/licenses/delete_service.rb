@@ -13,7 +13,7 @@ module Namespaces
       end
 
       def execute
-        unless Ability.allowed?(current_authentication, :delete_namespace_license, namespace_license.namespace)
+        unless Ability.allowed?(current_authentication, :delete_namespace_license, namespace_license)
           return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
         end
 

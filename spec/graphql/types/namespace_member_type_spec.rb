@@ -10,6 +10,7 @@ RSpec.describe SagittariusSchema.types['NamespaceMember'] do
       namespace
       memberRoles
       roles
+      userAbilities
       createdAt
       updatedAt
     ]

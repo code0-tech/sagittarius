@@ -13,6 +13,11 @@ module Types
           description: 'Namespace of this organization',
           method: :ensure_namespace
 
+    expose_abilities %i[
+      delete_organization
+      update_organization
+    ]
+
     id_field Organization
     timestamps
   end

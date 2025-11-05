@@ -10,6 +10,7 @@ RSpec.describe SagittariusSchema.types['NamespaceLicense'] do
       startDate
       endDate
       licensee
+      userAbilities
       createdAt
       updatedAt
     ]

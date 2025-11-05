@@ -24,7 +24,7 @@ module Types
       field :updated_at, Types::TimeType, null: false, description: "Time when this #{entity_name} was last updated"
     end
 
-    def self.expose_abilities(abilities, entity_name = graphql_name)
+    def self.expose_abilities(abilities, entity_name: graphql_name, subject_resolver: nil)
       @user_ability_types ||= {}
 
       type_class = @user_ability_types.fetch("#{entity_name}UserAbilities", nil)
@@ -43,10 +43,11 @@ module Types
         abilities.each do |ability|
           field ability, Boolean,
                 null: false,
-                description: "Shows if the current user can #{ability} in this #{entity_name}"
+                description: "Shows if the current user has the `#{ability}` ability on this #{entity_name}"
 
           define_method(ability) do
-            Ability.allowed?(current_user, ability, object)
+            subject = subject_resolver.nil? ? object : subject_resolver.call
+            Ability.allowed?(current_authentication, ability, subject)
           end
         end
       end

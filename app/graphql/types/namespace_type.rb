@@ -22,6 +22,13 @@ module Types
     lookahead_field :members, base_scope: ->(object) { object.namespace_members },
                               conditional_lookaheads: { user: :user, namespace: :namespace }
 
+    expose_abilities %i[
+      invite_member
+      create_namespace_role
+      create_namespace_project
+      create_runtime
+    ]
+
     id_field Namespace
     timestamps
   end

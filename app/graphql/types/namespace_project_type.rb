@@ -23,6 +23,13 @@ module Types
 
     field :flows, Types::FlowType.connection_type, null: true, description: 'Fetches all flows in this project'
 
+    expose_abilities %i[
+      create_flow
+      assign_project_runtimes
+      delete_namespace_project
+      update_namespace_project
+    ]
+
     id_field NamespaceProject
     timestamps
 

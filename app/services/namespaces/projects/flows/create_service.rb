@@ -15,7 +15,7 @@ module Namespaces
         end
 
         def execute
-          unless Ability.allowed?(current_authentication, :create_flows, namespace_project)
+          unless Ability.allowed?(current_authentication, :create_flow, namespace_project)
             return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
           end
 

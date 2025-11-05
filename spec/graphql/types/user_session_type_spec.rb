@@ -9,6 +9,7 @@ RSpec.describe SagittariusSchema.types['UserSession'] do
       user
       token
       active
+      userAbilities
       createdAt
       updatedAt
     ]

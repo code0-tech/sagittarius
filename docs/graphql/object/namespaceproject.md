@@ -17,6 +17,7 @@ Represents a namespace project
 | `primaryRuntime` | [`Runtime`](../object/runtime.md) | The primary runtime for the project |
 | `runtimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Runtimes assigned to this project |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceProject was last updated |
+| `userAbilities` | [`NamespaceProjectUserAbilities!`](../object/namespaceprojectuserabilities.md) | Abilities for the current user on this NamespaceProject |
 
 ## Fields with arguments
 

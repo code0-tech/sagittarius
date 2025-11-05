@@ -84,7 +84,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
   context 'when user has the permission' do
     before do
       namespace_role = create(:namespace_role, namespace: project.namespace).tap do |role|
-        create(:namespace_role_ability, namespace_role: role, ability: :create_flows)
+        create(:namespace_role_ability, namespace_role: role, ability: :create_flow)
         create(:namespace_role_ability, namespace_role: role, ability: :read_namespace_project)
       end
       namespace_member = create(:namespace_member, namespace: project.namespace, user: current_user)

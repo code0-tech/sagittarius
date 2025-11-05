@@ -12,7 +12,7 @@ module Runtimes
     end
 
     def execute
-      unless Ability.allowed?(current_authentication, :rotate_runtime_token, runtime.namespace || :global)
+      unless Ability.allowed?(current_authentication, :rotate_runtime_token, runtime || :global)
         return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
       end
 

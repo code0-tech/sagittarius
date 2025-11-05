@@ -17,4 +17,5 @@ Represents a Namespace
 | `roles` | [`NamespaceRoleConnection!`](../object/namespaceroleconnection.md) | Roles of the namespace |
 | `runtimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Runtime of the namespace |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Namespace was last updated |
+| `userAbilities` | [`NamespaceUserAbilities!`](../object/namespaceuserabilities.md) | Abilities for the current user on this Namespace |
 

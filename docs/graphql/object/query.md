@@ -13,6 +13,7 @@ Root Query type
 | `currentUser` | [`User`](../object/user.md) | Get the currently logged in user |
 | `globalRuntimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Find runtimes |
 | `organizations` | [`OrganizationConnection!`](../object/organizationconnection.md) | Find organizations |
+| `userAbilities` | [`InstanceUserAbilities!`](../object/instanceuserabilities.md) | Abilities for the current user on this Instance |
 | `users` | [`UserConnection!`](../object/userconnection.md) | Find users |
 
 ## Fields with arguments

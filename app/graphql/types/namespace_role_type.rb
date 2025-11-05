@@ -15,6 +15,13 @@ module Types
     field :assigned_projects, Types::NamespaceProjectType.connection_type,
           description: 'The projects this role is assigned to'
 
+    expose_abilities %i[
+      assign_role_abilities
+      assign_role_projects
+      delete_namespace_role
+      update_namespace_role
+    ]
+
     id_field ::NamespaceRole
     timestamps
 

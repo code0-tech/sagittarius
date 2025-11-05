@@ -13,4 +13,5 @@ Represents a Organization
 | `name` | [`String!`](../scalar/string.md) | Name of the organization |
 | `namespace` | [`Namespace!`](../object/namespace.md) | Namespace of this organization |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Organization was last updated |
+| `userAbilities` | [`OrganizationUserAbilities!`](../object/organizationuserabilities.md) | Abilities for the current user on this Organization |
 
