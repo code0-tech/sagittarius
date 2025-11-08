@@ -7,13 +7,7 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
 
   grpc_stream :update
 
-  def self.update_started(runtime_id)
-    runtime = Runtime.find(runtime_id)
-    runtime.connected!
-    runtime.save
-
-    logger.info(message: 'Runtime connected', runtime_id: runtime.id)
-
+  def self.update_runtime(runtime)
     flows = []
     runtime.projects.each do |project|
       project.flows.each do |flow|
@@ -31,6 +25,16 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
       ),
       runtime.id
     )
+  end
+
+  def self.update_started(runtime_id)
+    runtime = Runtime.find(runtime_id)
+    runtime.connected!
+    runtime.save
+
+    logger.info(message: 'Runtime connected', runtime_id: runtime.id)
+
+    update_runtime(runtime)
   end
 
   def self.update_died(runtime_id)

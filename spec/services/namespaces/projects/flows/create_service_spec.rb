@@ -66,5 +66,13 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
         target_type: 'NamespaceProject'
       )
     end
+
+    it 'queues job to update runtimes' do
+      allow(UpdateRuntimesForProjectJob).to receive(:perform_later)
+
+      service_response
+
+      expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
+    end
   end
 end
