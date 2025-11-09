@@ -25,6 +25,8 @@ module Runtimes
             end
           end
 
+          UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+
           ServiceResponse.success(message: 'Updated runtime function definition', payload: runtime_function_definitions)
         end
       end

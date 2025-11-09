@@ -9,6 +9,8 @@ class NamespaceProjectRuntimeAssignment < ApplicationRecord
   validate :validate_namespaces, if: :runtime_changed?
   validate :validate_namespaces, if: :namespace_project_changed?
 
+  scope :compatible, -> { where(compatible: true) }
+
   private
 
   def validate_namespaces

@@ -72,6 +72,10 @@ class ErrorCode
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       tertiary_level_exceeds_parameters: { description: '', deprecation_reason: 'Outdated concept' },
+
+      missing_primary_runtime: { description: 'The project is missing a primary runtime' },
+      missing_definition: { description: 'The primary runtime has more definitions than this one' },
+      outdated_definition: { description: 'The primary runtime has a newer definition than this one' },
     }
   end
 end

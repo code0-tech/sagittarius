@@ -9,13 +9,11 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
 
   def self.update_runtime(runtime)
     flows = []
-    runtime.projects.each do |project|
-      project.flows.each do |flow|
+    runtime.project_assignments.compatible.each do |assignment|
+      assignment.project.flows.each do |flow|
         flows << flow.to_grpc
       end
     end
-
-    # TODO: Add check to check for primary runtime conflicts
 
     send_update(
       Tucana::Sagittarius::FlowResponse.new(
