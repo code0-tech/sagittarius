@@ -59,6 +59,7 @@ module Namespaces
             current_node = all_nodes[node_index]
 
             update_node(t, current_node, current_node_input)
+            update_node_parameters(t, current_node, current_node_input)
 
             current_node_input = current_node_input.next_node
             node_index += 1
@@ -70,19 +71,36 @@ module Namespaces
         end
 
         def update_node_parameters(t, current_node, current_node_input)
-          current_node_input.parameters.each do |parameter|
-            node_parameter = current_node.parameters.find_or_initialize_by(runtime_parameter_definition_id: parameter.runtime_parameter_definition_id)
-            node_parameter.value = parameter.value
+          db_parameters = current_node.node_parameters.first(current_node_input.parameters.count)
+          current_node_input.parameters.each_with_index do |parameter, index|
+            db_parameters[index] ||= NodeParameter.new
+            db_parameters[index].runtime_parameter_definition_id = parameter.runtime_parameter_definition_id.model_id
+            if parameter.value.function_value
+              db_parameters[index].function_value = SagittariusSchema.object_from_id(parameter.value.function_value.runtime_function_id)
+              db_parameters[index].literal_value = nil
+              db_parameters[index].reference_value = nil
+            elsif parameter.value.literal_value
+              db_parameters[index].literal_value = parameter.value.literal_value
+              db_parameters[index].function_value = nil
+              db_parameters[index].reference_value = nil
+            else
+              db_parameters[index].reference_value = ReferenceValue.create(
+                reference_value_id: parameter.value.reference_value.reference_value_id,
+                data_type_identifier: get_data_type_identifier(identifier)
+              )
+              db_parameters[index].literal_value = nil
+              db_parameters[index].function_value = nil
+            end
 
-            next if node_parameter.valid?
+            next if db_parameters[index].valid?
 
             t.rollback_and_return! ServiceResponse.error(
               message: 'Invalid node parameter',
-              payload: node_parameter.errors
+              payload: db_parameters[index].errors
             )
           end
 
-          current_node.node_parameters.where.not(runtime_parameter_id: current_node_input.parameters.map(&:runtime_parameter_definition_id)).destroy_all
+          current_node.node_parameters = db_parameters
         end
 
         def validate_flow(t)
