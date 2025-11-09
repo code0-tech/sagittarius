@@ -21,11 +21,14 @@ Represents the available error responses
 | `INVALID_VERIFICATION_CODE` | Invalid verification code provided |
 | `MFA_FAILED` | Invalid MFA data provided |
 | `MFA_REQUIRED` | MFA is required |
+| `MISSING_DEFINITION` | The primary runtime has more definitions than this one |
 | `MISSING_IDENTITY_DATA` | This external identity is missing data |
 | `MISSING_PARAMETER` | Not all required parameters are present |
 | `MISSING_PERMISSION` | The user is not permitted to perform this operation |
+| `MISSING_PRIMARY_RUNTIME` | The project is missing a primary runtime |
 | `NO_FREE_LICENSE_SEATS` | There are no free license seats to complete this operation |
 | `NO_PRIMARY_RUNTIME` | The project does not have a primary runtime |
+| `OUTDATED_DEFINITION` | The primary runtime has a newer definition than this one |
 | `PRIMARY_LEVEL_NOT_FOUND` | **Deprecated:** Outdated concept |
 | `REGISTRATION_DISABLED` | Self-registration is disabled |
 | `RUNTIME_MISMATCH` | Resources are from different runtimes |

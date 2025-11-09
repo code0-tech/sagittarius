@@ -465,7 +465,8 @@ CREATE TABLE namespace_project_runtime_assignments (
     runtime_id bigint NOT NULL,
     namespace_project_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    compatible boolean DEFAULT false NOT NULL
 );
 
 CREATE SEQUENCE namespace_project_runtime_assignments_id_seq
