@@ -269,7 +269,7 @@ GEM
       tsort (>= 0.2)
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
-    rake (13.3.0)
+    rake (13.3.1)
     rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
@@ -376,7 +376,7 @@ GEM
     thor (1.4.0)
     timeout (0.4.3)
     tsort (0.2.0)
-    tucana (0.0.37)
+    tucana (0.0.40)
       grpc (~> 1.64)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -430,7 +430,7 @@ DEPENDENCIES
   simplecov (~> 0.22.0)
   simplecov-cobertura (~> 3.0)
   test-prof (~> 1.0)
-  tucana (= 0.0.37)
+  tucana (= 0.0.40)
   tzinfo-data
 
 RUBY VERSION
