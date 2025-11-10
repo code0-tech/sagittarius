@@ -109,11 +109,28 @@ module Namespaces
               next
             end
 
-            identifier = parameter.value.reference_value.data_type_identifier
+            reference_value = SagittariusSchema.object_from_id(
+              parameter.value.node_id
+            )
 
-            ReferenceValue.create(
-              reference_value_id: parameter.value.reference_value.reference_value_id,
-              data_type_identifier: get_data_type_identifier(identifier)
+            if reference_value.nil?
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Invalid reference value node id',
+                payload: :referenced_value_not_found
+              )
+            end
+
+            params << NodeParameter.create(
+              runtime_parameter: runtime_parameter,
+              reference_value: ReferenceValue.create(
+                node_function: reference_value,
+                reference_paths: parameter.value.reference_paths.map do |path|
+                  ReferencePath.create(
+                    path: path.path,
+                    array_index: path.array_index
+                  )
+                end
+              )
             )
           end
 
