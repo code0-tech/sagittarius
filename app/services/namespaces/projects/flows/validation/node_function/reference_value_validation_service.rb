@@ -20,12 +20,6 @@ module Namespaces
 
             def execute
               errors = []
-              errors += Namespaces::Projects::Flows::Validation::DataType::DataTypeIdentifierValidationService.new(
-                current_authentication,
-                flow,
-                node,
-                reference_value.data_type_identifier
-              ).execute
 
               unless reference_value.valid?
                 errors += ValidationResult.error(:reference_value_invalid, reference_value.errors)
