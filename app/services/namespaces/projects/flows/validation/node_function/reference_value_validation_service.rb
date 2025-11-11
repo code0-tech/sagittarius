@@ -22,7 +22,7 @@ module Namespaces
               errors = []
 
               unless reference_value.valid?
-                errors += ValidationResult.error(:reference_value_invalid, reference_value.errors)
+                errors << ValidationResult.error(:reference_value_invalid, reference_value.errors)
               end
 
               # https://github.com/code0-tech/sagittarius/issues/508 Validate the usage and datatypes

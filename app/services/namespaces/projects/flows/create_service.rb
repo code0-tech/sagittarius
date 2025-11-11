@@ -115,7 +115,7 @@ module Namespaces
 
             if reference_value.nil?
               t.rollback_and_return! ServiceResponse.error(
-                message: 'Invalid reference value node id',
+                message: 'Referenced node function not found',
                 payload: :referenced_value_not_found
               )
             end

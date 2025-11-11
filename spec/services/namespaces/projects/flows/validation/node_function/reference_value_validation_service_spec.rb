@@ -44,13 +44,10 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
   let(:data_type_identifier) do
     create(:data_type_identifier, data_type: create(:data_type, runtime: runtime), runtime: runtime)
   end
-  let(:primary_level) { 0 }
-  let(:secondary_level) { 0 }
-  let(:tertiary_level) { nil }
   let(:reference_value) do
     create(:reference_value,
            node_function: create(:node_function))
   end
 
-  it { is_expected.to be_success }
+  it { is_expected.to be_empty }
 end
