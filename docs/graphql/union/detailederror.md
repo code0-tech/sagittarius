@@ -1,11 +1,10 @@
 ---
-title: Error
+title: DetailedError
 ---
 
-Objects that can present an error
+Represents a detailed error with either a message or an active model error
 
 ## Possible types
 
 - [`ActiveModelError`](../object/activemodelerror.md)
-- [`ErrorCode`](../object/errorcode.md)
 - [`MessageError`](../object/messageerror.md)
