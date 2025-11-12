@@ -6,7 +6,7 @@ RSpec.describe ReferencePath do
   subject do
     create(:reference_path,
            reference_value: create(:reference_value,
-                                   data_type_identifier: create(:data_type_identifier, data_type: create(:data_type))))
+                                   node_function: create(:node_function)))
   end
 
   describe 'associations' do

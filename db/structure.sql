@@ -660,12 +660,9 @@ ALTER SEQUENCE reference_paths_id_seq OWNED BY reference_paths.id;
 
 CREATE TABLE reference_values (
     id bigint NOT NULL,
-    data_type_identifier_id bigint NOT NULL,
-    primary_level integer NOT NULL,
-    secondary_level integer NOT NULL,
-    tertiary_level integer,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    node_function_id bigint NOT NULL
 );
 
 CREATE SEQUENCE reference_values_id_seq
@@ -1200,7 +1197,7 @@ CREATE INDEX index_parameter_definitions_on_runtime_parameter_definition_id ON p
 
 CREATE INDEX index_reference_paths_on_reference_value_id ON reference_paths USING btree (reference_value_id);
 
-CREATE INDEX index_reference_values_on_data_type_identifier_id ON reference_values USING btree (data_type_identifier_id);
+CREATE INDEX index_reference_values_on_node_function_id ON reference_values USING btree (node_function_id);
 
 CREATE INDEX index_runtime_function_definitions_on_return_type_id ON runtime_function_definitions USING btree (return_type_id);
 
@@ -1330,6 +1327,9 @@ ALTER TABLE ONLY flows
 ALTER TABLE ONLY node_functions
     ADD CONSTRAINT fk_rails_8953e1d86a FOREIGN KEY (runtime_function_id) REFERENCES runtime_function_definitions(id) ON DELETE RESTRICT;
 
+ALTER TABLE ONLY reference_values
+    ADD CONSTRAINT fk_rails_8b9d8f68cc FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
+
 ALTER TABLE ONLY data_type_identifiers
     ADD CONSTRAINT fk_rails_8d8385e8ec FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
@@ -1353,9 +1353,6 @@ ALTER TABLE ONLY flow_type_settings
 
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_ab927e0ecb FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY reference_values
-    ADD CONSTRAINT fk_rails_bb34a5d62c FOREIGN KEY (data_type_identifier_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_bb587eff6a FOREIGN KEY (input_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
