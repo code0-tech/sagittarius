@@ -9,7 +9,7 @@ module Types
     field :avatar_path, String, null: true, description: 'The avatar if present of the user'
 
     field :admin, Boolean, null: false, description: 'Global admin status of the user'
-    field :email, String, null: false, description: 'Email of the user'
+    field :email, String, null: false, description: 'Email of the user', authorize: :read_email
     field :email_verified_at, Types::TimeType, null: true, description: 'Email verification date of the user if present'
     field :firstname, String, null: true, description: 'Firstname of the user'
     field :lastname, String, null: true, description: 'Lastname of the user'

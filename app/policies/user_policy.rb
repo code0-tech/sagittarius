@@ -10,6 +10,7 @@ class UserPolicy < BasePolicy
     enable :update_user
     enable :read_user_identity
     enable :update_attachment_avatar
+    enable :read_email
   end
 
   rule { user_is_self }.policy do
@@ -19,5 +20,6 @@ class UserPolicy < BasePolicy
     enable :update_attachment_avatar
     enable :verify_email
     enable :send_verification_email
+    enable :read_email
   end
 end
