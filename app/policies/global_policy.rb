@@ -20,5 +20,6 @@ class GlobalPolicy < BasePolicy
     enable :update_runtime
     enable :delete_runtime
     enable :rotate_runtime_token
+    enable :list_users
   end
 end
