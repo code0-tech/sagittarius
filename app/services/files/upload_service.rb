@@ -27,8 +27,8 @@ module Files
       object.send(attachment_name).attach attachment
 
       unless object.save
-        ServiceResponse.error(message: 'Failed to save object', error_code: :invalid_attachment,
-                              details: object.errors)
+        return ServiceResponse.error(message: 'Failed to save object', error_code: :invalid_attachment,
+                                     details: object.errors)
       end
 
       AuditService.audit(

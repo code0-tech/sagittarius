@@ -23,7 +23,7 @@ module Users
         ServiceResponse.success(message: 'Logged out session', payload: user_session)
       else
         logger.warn(message: 'Failed to log out session', session_id: user_session.id, user_id: user_session.user_id)
-        ServiceResponse.error(error_code: user_session.errors)
+        ServiceResponse.error(error_code: :invalid_user_session, details: user_session.errors)
       end
     end
   end

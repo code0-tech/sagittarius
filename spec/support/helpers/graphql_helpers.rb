@@ -79,8 +79,8 @@ module GraphqlHelpers
       errors {
         errorCode
 			  details {
-				  ...on ActiveModelError { attribute type }
-				  ...on MessageError { message }
+          ...on ActiveModelError { attribute type }
+          ...on MessageError { message }
 			  }
       }
     )
