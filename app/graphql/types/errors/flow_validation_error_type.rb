@@ -6,7 +6,7 @@ module Types
     class FlowValidationErrorType < Types::BaseObject
       graphql_name 'FlowValidationError'
       # rubocop:enable GraphQL/GraphqlName
-      description 'Represents an flow validation error'
+      description 'Represents a flow validation error'
 
       field :details, Errors::ActiveModelErrorType, null: true,
                                                     description: 'Additional details about the validation error'
