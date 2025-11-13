@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
+# rubocop:disable GraphQL/MaxComplexitySchema
 class SagittariusSchema < GraphQL::Schema
   mutation(Types::MutationType)
   query(Types::QueryType)
 
   default_max_page_size 50
   max_depth 20
-  max_complexity 200
   connections.add(ActiveRecord::Relation, Sagittarius::Graphql::StableConnection)
 
   # For batch-loading (see https://graphql-ruby.org/dataloader/overview.html)
@@ -14,6 +14,7 @@ class SagittariusSchema < GraphQL::Schema
 
   use GraphQL::Schema::AlwaysVisible
 
+  # rubocop:enable GraphQL/MaxComplexitySchema
   # rubocop:disable Lint/UselessMethodDefinition
   # GraphQL-Ruby calls this when something goes wrong while running a query:
   def self.type_error(err, context)

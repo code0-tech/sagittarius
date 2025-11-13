@@ -18,7 +18,7 @@ RSpec.describe 'Recursive Query Protection' do
       # Organization -> Namespace -> Parent (Organization) -> Namespace -> Parent...
       nested_levels = 25
       nested_query = 'id name'
-      
+
       nested_levels.times do
         nested_query = <<~NESTED
           id
@@ -56,7 +56,7 @@ RSpec.describe 'Recursive Query Protection' do
 
   context 'with reasonably nested query' do
     let(:query) do
-      # A reasonable query with moderate nesting (depth ~5)
+      # A reasonable query with moderate nesting (depth ~7-8)
       <<~QUERY
         query($organizationId: OrganizationID!) {
           organization(id: $organizationId) {
