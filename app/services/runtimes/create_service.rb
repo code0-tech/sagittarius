@@ -15,12 +15,15 @@ module Runtimes
 
     def execute
       unless Ability.allowed?(current_authentication, :create_runtime, namespace || :global)
-        return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+        return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
       end
 
       transactional do
         runtime = Runtime.create(namespace: namespace, name: name, **params)
-        return ServiceResponse.error(message: 'Runtime is invalid', payload: runtime.errors) unless runtime.persisted?
+        unless runtime.persisted?
+          return ServiceResponse.error(message: 'Runtime is invalid', error_code: :invalid_runtime,
+                                       details: runtime.errors)
+        end
 
         AuditService.audit(
           :runtime_created,

@@ -13,14 +13,15 @@ module Runtimes
 
     def execute
       unless Ability.allowed?(current_authentication, :rotate_runtime_token, runtime || :global)
-        return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+        return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
       end
 
       transactional do |t|
         runtime.regenerate_token!
         unless runtime.save
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to rotate runtime token',
-                                                       payload: runtime.errors)
+                                                       error_code: :invalid_runtime,
+                                                       details: runtime.errors)
         end
         AuditService.audit(
           :runtime_token_rotated,

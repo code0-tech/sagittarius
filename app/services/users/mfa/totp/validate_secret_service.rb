@@ -17,23 +17,24 @@ module Users
 
         def execute
           unless Ability.allowed?(current_authentication, :manage_mfa, current_user)
-            return ServiceResponse.error(payload: :missing_permission)
+            return ServiceResponse.error(error_code: :missing_permission)
           end
 
-          return ServiceResponse.error(payload: :totp_secret_already_set) unless current_user.totp_secret.nil?
+          return ServiceResponse.error(error_code: :totp_secret_already_set) unless current_user.totp_secret.nil?
 
           totp_secret = Rails.application.message_verifier(:totp_secret).verified(secret)
 
-          return ServiceResponse.error(payload: :invalid_totp_secret) if totp_secret.nil?
+          return ServiceResponse.error(error_code: :invalid_totp_secret) if totp_secret.nil?
 
           totp = ROTP::TOTP.new(totp_secret)
 
-          return ServiceResponse.error(payload: :wrong_totp) unless totp.verify(current_totp)
+          return ServiceResponse.error(error_code: :wrong_totp) unless totp.verify(current_totp)
 
           transactional do
             current_user.totp_secret = totp_secret
             unless current_user.save
-              return ServiceResponse.error(message: 'Error while saving user', payload: current_user.errors)
+              return ServiceResponse.error(message: 'Error while saving user', error_code: :invalid_user,
+                                           details: current_user.errors)
             end
 
             AuditService.audit(

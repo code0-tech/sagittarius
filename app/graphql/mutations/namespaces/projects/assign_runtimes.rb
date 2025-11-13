@@ -17,8 +17,14 @@ module Mutations
           namespace_project = SagittariusSchema.object_from_id(namespace_project_id)
           runtimes = runtime_ids.map { |runtime_id| SagittariusSchema.object_from_id(runtime_id) }
 
-          return { namespace_project: nil, errors: [create_message_error('Invalid project')] } if namespace_project.nil?
-          return { namespace_project: nil, errors: [create_message_error('Invalid runtime')] } if runtimes.any?(&:nil?)
+          if namespace_project.nil?
+            return { namespace_project: nil,
+                     errors: [create_error(:project_not_found, 'Invalid project')] }
+          end
+          if runtimes.any?(&:nil?)
+            return { namespace_project: nil,
+                     errors: [create_error(:runtime_not_found, 'Invalid runtime')] }
+          end
 
           ::Namespaces::Projects::AssignRuntimesService.new(
             current_authentication,

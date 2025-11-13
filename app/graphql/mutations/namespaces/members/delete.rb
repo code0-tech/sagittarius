@@ -16,7 +16,7 @@ module Mutations
 
           if namespace_member.nil?
             return { namespace_member: nil,
-                     errors: [create_message_error('Invalid member')] }
+                     errors: [create_error(:namespace_member_not_found, 'Invalid member')] }
           end
 
           ::Namespaces::Members::DeleteService.new(

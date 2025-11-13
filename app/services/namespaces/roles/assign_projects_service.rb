@@ -16,7 +16,7 @@ module Namespaces
       def execute
         namespace = role.namespace
         unless Ability.allowed?(current_authentication, :assign_role_projects, role)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
         end
 
         transactional do |t|

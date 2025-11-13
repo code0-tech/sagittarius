@@ -17,8 +17,12 @@ module Mutations
           role = SagittariusSchema.object_from_id(role_id)
           projects = project_ids.map { |id| SagittariusSchema.object_from_id(id) }
 
-          return { projects: nil, errors: [create_message_error('Invalid role')] } if role.nil?
-          return { projects: nil, errors: [create_message_error('Invalid project')] } if projects.any?(&:nil?)
+          return { projects: nil, errors: [create_error(:namespace_role_not_found, 'Invalid role')] } if role.nil?
+
+          if projects.any?(&:nil?)
+            return { projects: nil,
+                     errors: [create_error(:namespace_project_not_found, 'Invalid project')] }
+          end
 
           ::Namespaces::Roles::AssignProjectsService.new(
             current_authentication,

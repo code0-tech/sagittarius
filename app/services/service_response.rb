@@ -55,7 +55,14 @@ class ServiceResponse
                           payload[:details].errors
                         else
                           Array.wrap(payload[:details]).map do |message|
-                            { message: message }
+                            case message
+                            when String
+                              { message: message }
+                            when Namespaces::Projects::Flows::Validation::Validation::ValidationResult
+                              message
+                            else
+                              raise "Unsupported error detail type: #{message.class.name}"
+                            end
                           end
                         end
 

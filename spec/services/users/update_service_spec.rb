@@ -153,7 +153,7 @@ RSpec.describe Users::UpdateService do
 
       context 'when mfa is not provided' do
         it 'requires mfa' do
-          expect(service_response.payload).to eq(:mfa_required)
+          expect(service_response.payload[:error_code]).to eq(:mfa_required)
         end
 
         it { is_expected.not_to be_success }
@@ -173,7 +173,7 @@ RSpec.describe Users::UpdateService do
         end
 
         it 'fails' do
-          expect(service_response.payload).to eq(:mfa_failed)
+          expect(service_response.payload[:error_code]).to eq(:mfa_failed)
         end
 
         it { is_expected.not_to be_success }

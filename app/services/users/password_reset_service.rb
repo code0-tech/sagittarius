@@ -16,13 +16,14 @@ module Users
 
       if user.nil?
         return ServiceResponse.error(message: 'Invalid or expired verification code',
-                                     payload: :invalid_verification_code)
+                                     error_code: :invalid_verification_code)
       end
 
       transactional do |t|
         user.password = new_password
         unless user.save
-          t.rollback_and_return! ServiceResponse.error(message: 'Failed to reset password', payload: user.errors)
+          t.rollback_and_return! ServiceResponse.error(message: 'Failed to reset password',
+                                                       error_code: :failed_to_reset_password, details: user.errors)
         end
 
         AuditService.audit(

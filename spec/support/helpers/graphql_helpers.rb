@@ -77,16 +77,11 @@ module GraphqlHelpers
   def error_query
     %(
       errors {
-        ...on ActiveModelError {
-          attribute
-          type
-        }
-        ...on MessageError {
-          message
-        }
-        ...on ErrorCode {
-          errorCode
-        }
+        errorCode
+			  details {
+				  ...on ActiveModelError { attribute type }
+				  ...on MessageError { message }
+			  }
       }
     )
   end

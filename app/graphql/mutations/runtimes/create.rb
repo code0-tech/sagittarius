@@ -17,7 +17,7 @@ module Mutations
 
         if namespace.nil? && namespace_id.present?
           return { runtime: nil,
-                   errors: [create_message_error('Invalid namespace')] }
+                   errors: [create_error(:namespace_not_found, 'Invalid namespace')] }
         end
 
         ::Runtimes::CreateService.new(

@@ -13,7 +13,7 @@ module Organizations
 
     def execute
       unless Ability.allowed?(current_authentication, :delete_organization, organization)
-        return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+        return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
       end
 
       transactional do |t|
@@ -21,7 +21,8 @@ module Organizations
 
         if organization.persisted?
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete organization',
-                                                       payload: organization.errors)
+                                                       error_code: :invalid_organization,
+                                                       details: organization.errors)
         end
 
         AuditService.audit(

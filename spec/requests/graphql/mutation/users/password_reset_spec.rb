@@ -61,9 +61,9 @@ RSpec.describe 'userPasswordReset Mutation' do
     let(:new_password_confirmation) { 'differentpassword' }
 
     it 'returns validation error' do
-      expect(graphql_data_at(:users_password_reset, :errors)).to include(
-        { 'message' => 'Invalid password repeat' }
-      )
+      expect(
+        graphql_data_at(:users_password_reset, :errors, :details)
+      ).to include([{ 'message' => 'Invalid password repeat' }])
     end
 
     it { is_expected.not_to create_audit_event(:password_reset) }

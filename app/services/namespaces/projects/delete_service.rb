@@ -14,7 +14,7 @@ module Namespaces
 
       def execute
         unless Ability.allowed?(current_authentication, :delete_namespace_project, namespace_project)
-          return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
         end
 
         transactional do |t|
@@ -23,7 +23,8 @@ module Namespaces
           if namespace_project.persisted?
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to delete project',
-              payload: namespace_project.errors
+              error_code: :invalid_namespace_project,
+              details: namespace_project.errors
             )
           end
 

@@ -15,7 +15,7 @@ module Users
 
         def execute
           unless Ability.allowed?(current_authentication, :manage_mfa, current_user)
-            return ServiceResponse.error(payload: :missing_permission)
+            return ServiceResponse.error(error_code: :missing_permission)
           end
 
           transactional do |t|
@@ -23,7 +23,7 @@ module Users
             old_codes.delete_all
             unless old_codes.count.zero?
               t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete old backup codes',
-                                                           payload: :failed_to_invalidate_old_backup_codes)
+                                                           error_code: :failed_to_invalidate_old_backup_codes)
             end
 
             new_codes = generate_new_codes(t)

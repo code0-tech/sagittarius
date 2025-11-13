@@ -67,7 +67,8 @@ RSpec.describe 'usersLogout Mutation' do
       let(:user_session_id) { 'gid://sagittarius/UserSession/0' }
 
       it 'raises validation error' do
-        expect(graphql_data_at(:users_logout, :errors, :message)).to include('Invalid user session')
+        expect(graphql_data_at(:users_logout, :errors, :error_code)).to include('USER_SESSION_NOT_FOUND')
+        expect(graphql_data_at(:users_logout, :errors, :details)).to include([{ 'message' => 'Invalid user session' }])
       end
     end
   end

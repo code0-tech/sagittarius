@@ -17,7 +17,7 @@ RSpec.describe Namespaces::Projects::UpdateService do
     let(:current_user) { nil }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
     it { expect { service_response }.not_to change { namespace_project.reload.name } }
     it { expect { service_response }.not_to change { namespace_project.reload.primary_runtime } }
 
@@ -30,7 +30,7 @@ RSpec.describe Namespaces::Projects::UpdateService do
     let(:current_user) { create(:user) }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
     it { expect { service_response }.not_to change { namespace_project.reload.name } }
     it { expect { service_response }.not_to change { namespace_project.reload.primary_runtime } }
 

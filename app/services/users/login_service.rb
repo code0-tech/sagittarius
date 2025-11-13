@@ -16,27 +16,28 @@ module Users
       user = User.authenticate_by(args)
       if user.nil?
         logger.info(message: 'Failed login', username: args[:username], email: args[:email])
-        return ServiceResponse.error(message: 'Invalid login data', payload: :invalid_login_data)
+        return ServiceResponse.error(message: 'Invalid login data', error_code: :invalid_login_data)
       end
 
       transactional do |t|
         if mfa.present? && !user.mfa_enabled?
           t.rollback_and_return! ServiceResponse.error(message: 'Tried to login via MFA even if mfa is disabled',
-                                                       payload: :mfa_failed)
+                                                       error_code: :mfa_failed)
         end
 
         mfa_passed, mfa_type = user.validate_mfa!(mfa)
 
         if !mfa_passed && user.mfa_enabled?
           t.rollback_and_return! ServiceResponse.error(message: 'MFA failed',
-                                                       payload: :mfa_failed)
+                                                       error_code: :mfa_failed)
         end
 
         user_session = UserSession.create(user: user)
         unless user_session.persisted?
           logger.warn(message: 'Failed to create valid session for user', user_id: user.id, username: user.username)
           t.rollback_and_return! ServiceResponse.error(message: 'UserSession is invalid',
-                                                       payload: user_session.errors)
+                                                       error_code: :invalid_user_session,
+                                                       details: user_session.errors)
         end
 
         AuditService.audit(

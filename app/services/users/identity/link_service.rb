@@ -30,14 +30,18 @@ module Users
                                               provider_id: provider_id)
 
           unless user_identity.persisted?
-            t.rollback_and_return! ServiceResponse.error(payload: user_identity.errors,
-                                                         message: 'An error occurred while creating user identity')
+            t.rollback_and_return! ServiceResponse.error(
+              error_code: :invalid_user_identity,
+              details: user_identity.errors,
+              message: 'An error occurred while creating user identity'
+            )
           end
 
           current_user.user_identities << user_identity
 
           unless current_user.save
-            t.rollback_and_return! ServiceResponse.error(payload: current_user.errors, message: 'Failed to save user')
+            t.rollback_and_return! ServiceResponse.error(error_code: :invalid_user, details: current_user.errors,
+                                                         message: 'Failed to save user')
           end
 
           AuditService.audit(

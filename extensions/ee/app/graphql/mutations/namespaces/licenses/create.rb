@@ -17,7 +17,7 @@ module Mutations
 
           if namespace.nil?
             return { namespace_license: nil,
-                     errors: [create_message_error('Invalid namespace')] }
+                     errors: [create_error(:namespace_not_found, 'Invalid namespace')] }
           end
 
           ::Namespaces::Licenses::CreateService.new(

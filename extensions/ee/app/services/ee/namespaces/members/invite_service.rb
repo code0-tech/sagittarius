@@ -17,7 +17,7 @@ module EE
 
           t.rollback_and_return! ServiceResponse.error(
             message: 'No free member seats in license',
-            payload: :no_free_license_seats
+            error_code: :no_free_license_seats
           )
         end
       end

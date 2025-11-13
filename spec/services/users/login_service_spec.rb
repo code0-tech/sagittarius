@@ -61,7 +61,7 @@ RSpec.describe Users::LoginService do
 
         it 'fails' do
           expect(service_response).not_to be_success
-          expect(service_response.payload).to eq(:mfa_failed)
+          expect(service_response.payload[:error_code]).to eq(:mfa_failed)
           is_expected.not_to create_audit_event
         end
       end
@@ -112,7 +112,7 @@ RSpec.describe Users::LoginService do
 
           it 'returns an error response' do
             expect(service_response).to be_error
-            expect(service_response.payload).to eq(:mfa_failed)
+            expect(service_response.payload[:error_code]).to eq(:mfa_failed)
             is_expected.not_to create_audit_event
           end
         end

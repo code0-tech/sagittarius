@@ -73,7 +73,10 @@ module Namespaces
               flow.flow_type
             ).execute
 
-            return ServiceResponse.error(message: 'Flow validation failed', payload: errors) if errors.any?
+            if errors.any?
+              return ServiceResponse.error(message: 'Flow validation failed', error_code: :flow_validation_failed,
+                                           details: errors)
+            end
 
             ServiceResponse.success(message: 'Validation service executed successfully', payload: flow)
           end

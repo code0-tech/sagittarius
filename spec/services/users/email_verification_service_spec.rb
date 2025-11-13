@@ -27,7 +27,7 @@ RSpec.describe Users::EmailVerificationService do
     context 'when token is invalid' do
       let(:authentication_token) { 'invalidtoken' }
 
-      it { expect(service_response.payload).to eq(:missing_permission) }
+      it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
 
       it_behaves_like 'does not update'
     end

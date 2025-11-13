@@ -16,7 +16,7 @@ module Mutations
 
           if user_identity.nil?
             return { user_identity: nil,
-                     errors: [create_message_error('Invalid identity')] }
+                     errors: [create_error(:identity_not_found, 'Invalid identity')] }
           end
 
           ::Users::Identity::UnlinkService.new(

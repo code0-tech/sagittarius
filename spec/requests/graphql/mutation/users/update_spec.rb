@@ -65,7 +65,8 @@ RSpec.describe 'usersUpdate Mutation' do
 
       it 'returns an error' do
         expect(graphql_data_at(:users_update, :user)).to be_nil
-        expect(graphql_data_at(:users_update, :errors)).to include({ 'message' => 'Invalid password repeat' })
+        expect(graphql_data_at(:users_update, :errors,
+                               :details)).to include([{ 'message' => 'Invalid password repeat' }])
       end
     end
 
@@ -110,7 +111,7 @@ RSpec.describe 'usersUpdate Mutation' do
 
       it 'returns an error' do
         expect(graphql_data_at(:users_update, :user)).to be_nil
-        expect(graphql_data_at(:users_update, :errors)).to include({ 'errorCode' => 'MFA_REQUIRED' })
+        expect(graphql_data_at(:users_update, :errors, :error_code)).to include('MFA_REQUIRED')
       end
     end
 
@@ -157,7 +158,8 @@ RSpec.describe 'usersUpdate Mutation' do
 
     it 'returns an error' do
       expect(graphql_data_at(:users_update, :user)).to be_nil
-      expect(graphql_data_at(:users_update, :errors)).to include({ 'attribute' => 'username', 'type' => 'taken' })
+      expect(graphql_data_at(:users_update, :errors,
+                             :details)).to include([{ 'attribute' => 'username', 'type' => 'taken' }])
     end
   end
 end

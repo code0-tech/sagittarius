@@ -27,10 +27,10 @@ module Mutations
       def resolve(user_id:, mfa: nil, **params)
         user = SagittariusSchema.object_from_id(user_id)
 
-        return { user: nil, errors: [create_message_error('Invalid user')] } if user.nil?
+        return { user: nil, errors: [create_error(:user_not_found, 'Invalid user with provided id')] } if user.nil?
 
         if params[:password] != params.delete(:password_repeat)
-          return { user: nil, errors: [create_message_error('Invalid password repeat')] }
+          return { user: nil, errors: [create_error(:invalid_password_repeat, 'Invalid password repeat')] }
         end
 
         ::Users::UpdateService.new(

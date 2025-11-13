@@ -52,7 +52,7 @@ RSpec.describe Users::RegisterService do
 
       it { is_expected.not_to be_success }
       it { expect(service_response.message).to eq('User registration is disabled') }
-      it { expect(service_response.payload).to eq(:registration_disabled) }
+      it { expect(service_response.payload[:error_code]).to eq(:registration_disabled) }
     end
   end
 
@@ -85,7 +85,7 @@ RSpec.describe Users::RegisterService do
       let(:password) { generate(:password) }
 
       it_behaves_like 'invalid user'
-      it { expect(service_response.payload.full_messages).to include('Username has already been taken') }
+      it { expect(service_response.payload[:details].full_messages).to include('Username has already been taken') }
     end
 
     context 'when email is duplicated' do
@@ -94,7 +94,7 @@ RSpec.describe Users::RegisterService do
       let(:password) { generate(:password) }
 
       it_behaves_like 'invalid user'
-      it { expect(service_response.payload.full_messages).to include('Email has already been taken') }
+      it { expect(service_response.payload[:details].full_messages).to include('Email has already been taken') }
     end
   end
 
@@ -105,7 +105,7 @@ RSpec.describe Users::RegisterService do
       let(:password) { generate(:password) }
 
       it_behaves_like 'invalid user'
-      it { expect(service_response.payload.full_messages).to include("Username can't be blank") }
+      it { expect(service_response.payload[:details].full_messages).to include("Username can't be blank") }
     end
 
     context 'when email is nil' do
@@ -114,7 +114,7 @@ RSpec.describe Users::RegisterService do
       let(:password) { generate(:password) }
 
       it_behaves_like 'invalid user'
-      it { expect(service_response.payload.full_messages).to include("Email can't be blank") }
+      it { expect(service_response.payload[:details].full_messages).to include("Email can't be blank") }
     end
 
     context 'when password is nil' do
@@ -123,7 +123,7 @@ RSpec.describe Users::RegisterService do
       let(:password) { nil }
 
       it_behaves_like 'invalid user'
-      it { expect(service_response.payload.full_messages).to include("Password can't be blank") }
+      it { expect(service_response.payload[:details].full_messages).to include("Password can't be blank") }
     end
   end
 end

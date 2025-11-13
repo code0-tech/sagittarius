@@ -14,7 +14,7 @@ module Namespaces
 
       def execute
         unless Ability.allowed?(current_authentication, :delete_member, namespace_member)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
         end
 
         transactional do |t|
@@ -22,7 +22,8 @@ module Namespaces
 
           if namespace_member.persisted?
             t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete namespace member',
-                                                         payload: namespace_member.errors)
+                                                         error_code: :invalid_namespace_member,
+                                                         details: namespace_member.errors)
           end
 
           check_last_administrator(t)
@@ -49,7 +50,7 @@ module Namespaces
                                .exists?(abilities: { ability: :namespace_administrator })
           t.rollback_and_return! ServiceResponse.error(
             message: 'Cannot remove last administrator from namespace',
-            payload: :cannot_remove_last_administrator
+            error_code: :cannot_remove_last_administrator
           )
         end
       end

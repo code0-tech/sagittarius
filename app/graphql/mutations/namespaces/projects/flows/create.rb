@@ -17,10 +17,20 @@ module Mutations
           def resolve(project_id:, flow:, **_params)
             project = SagittariusSchema.object_from_id(project_id)
 
-            return error('Invalid project id') if project.nil?
+            if project.nil?
+              return {
+                flow: nil,
+                errors: [create_error(:namespace_project_not_found, 'Invalid project id')],
+              }
+            end
 
             flow_type = SagittariusSchema.object_from_id(flow.type)
-            return error('Invalid flow type id') if flow_type.nil?
+            if flow_type.nil?
+              return {
+                flow: nil,
+                errors: [create_error(:flow_type_not_found, 'Invalid flow type id')],
+              }
+            end
 
             ::Namespaces::Projects::Flows::CreateService.new(
               current_authentication,
@@ -30,13 +40,6 @@ module Mutations
               flow_settings: flow.settings || [],
               name: flow.name
             ).execute.to_mutation_response(success_key: :flow)
-          end
-
-          def error(message)
-            {
-              flow: nil,
-              errors: [create_message_error(message)],
-            }
           end
         end
       end

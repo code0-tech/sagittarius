@@ -19,7 +19,7 @@ module Mutations
       def resolve(reset_token:, new_password:, new_password_confirmation:)
         if new_password != new_password_confirmation
           return { user: nil,
-                   errors: [create_message_error('Invalid password repeat')] }
+                   errors: [create_error(:invalid_password_repeat, 'Invalid password repeat')] }
         end
 
         message = ::Users::PasswordResetService.new(

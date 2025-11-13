@@ -53,7 +53,7 @@ RSpec.describe Users::Identity::LinkService do
 
     it do
       expect(service_response).not_to be_success
-      expect(service_response.payload.full_messages).to include('Identifier has already been taken')
+      expect(service_response.payload[:details].full_messages).to include('Identifier has already been taken')
     end
 
     it 'does not create the audit event' do

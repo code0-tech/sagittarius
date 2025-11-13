@@ -17,7 +17,7 @@ module Mutations
 
         if organization.nil?
           return { organization_role: nil,
-                   errors: [create_message_error('Invalid organization')] }
+                   errors: [create_error(:organization_not_found, 'Invalid organization')] }
         end
 
         response = ::Organizations::DeleteService.new(

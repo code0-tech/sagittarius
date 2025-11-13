@@ -13,7 +13,7 @@ module Users
 
     def execute
       unless Ability.allowed?(current_authentication, :logout_session, user_session)
-        return ServiceResponse.error(payload: :missing_permission)
+        return ServiceResponse.error(error_code: :missing_permission)
       end
 
       user_session.active = false
@@ -23,7 +23,7 @@ module Users
         ServiceResponse.success(message: 'Logged out session', payload: user_session)
       else
         logger.warn(message: 'Failed to log out session', session_id: user_session.id, user_id: user_session.user_id)
-        ServiceResponse.error(payload: user_session.errors)
+        ServiceResponse.error(error_code: user_session.errors)
       end
     end
   end

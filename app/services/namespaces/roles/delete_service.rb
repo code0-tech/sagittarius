@@ -14,7 +14,7 @@ module Namespaces
 
       def execute
         unless Ability.allowed?(current_authentication, :delete_namespace_role, namespace_role)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
         end
 
         if !namespace_role.namespace.has_owner? &&
@@ -22,14 +22,15 @@ module Namespaces
                           .joins(:abilities)
                           .exists?(abilities: { ability: :namespace_administrator })
           return ServiceResponse.error(message: 'Cannot delete last administrator role',
-                                       payload: :cannot_delete_last_admin_role)
+                                       error_code: :cannot_delete_last_admin_role)
         end
 
         transactional do
           namespace_role.delete
 
           if namespace_role.persisted?
-            return ServiceResponse.error(message: 'Failed to delete namespace role', payload: namespace_role.errors)
+            return ServiceResponse.error(message: 'Failed to delete namespace role',
+                                         error_code: :invalid_namespace_role, details: namespace_role.errors)
           end
 
           AuditService.audit(

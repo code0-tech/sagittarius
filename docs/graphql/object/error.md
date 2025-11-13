@@ -8,6 +8,6 @@ Objects that can present an error
 
 | Name | Type | Description |
 |------|------|-------------|
-| `code` | [`ErrorCode!`](../object/errorcode.md) | The code representing the error type |
 | `details` | [`[DetailedError!]`](../union/detailederror.md) | Detailed validation errors if applicable |
+| `errorCode` | [`ErrorCodeEnum!`](../enum/errorcodeenum.md) | The code representing the error type |
 

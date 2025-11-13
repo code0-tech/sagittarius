@@ -15,7 +15,7 @@ module Namespaces
 
       def execute
         unless Ability.allowed?(current_authentication, :update_namespace_role, namespace_role)
-          return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
         end
 
         transactional do |t|
@@ -23,7 +23,8 @@ module Namespaces
           unless success
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to update namespace role',
-              payload: namespace_role.errors
+              error_code: :invalid_namespace_role,
+              details: namespace_role.errors
             )
           end
 
