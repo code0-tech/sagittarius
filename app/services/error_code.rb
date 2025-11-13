@@ -66,6 +66,7 @@ class ErrorCode
       namespace_member_not_found: { description: 'The namespace member with the given identifier was not found' },
       license_not_found: { description: 'The namespace license with the given identifier was not found' },
       flow_type_not_found: { description: 'The flow type with the given identifier was not found' },
+      organization_not_found: { description: 'The organization with the given identifier was not found' },
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       tertiary_level_exceeds_parameters: { description: '', deprecation_reason: 'Outdated concept' },
