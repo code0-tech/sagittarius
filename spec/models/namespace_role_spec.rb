@@ -14,7 +14,7 @@ RSpec.describe NamespaceRole do
     it do
       is_expected.to have_many(:assigned_projects).class_name('NamespaceProject')
                                                   .through(:project_assignments)
-                                                  .source(:role)
+                                                  .source(:project)
                                                   .inverse_of(:assigned_roles)
     end
   end

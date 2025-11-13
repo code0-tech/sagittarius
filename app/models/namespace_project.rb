@@ -11,7 +11,7 @@ class NamespaceProject < ApplicationRecord
                               inverse_of: :project
   has_many :assigned_roles, class_name: 'NamespaceRole', through: :role_assignments,
                             inverse_of: :assigned_projects,
-                            source: :project
+                            source: :role
   has_many :flows, class_name: 'Flow', inverse_of: :project
 
   validates :name, presence: true,
