@@ -57,7 +57,7 @@ module Users
           end
           user_session = UserSession.create(user: user)
           unless user_session.persisted?
-            t.rollback_and_return! ServiceResponse.error(message: :invalid_user_session,
+            t.rollback_and_return! ServiceResponse.error(error_code: :invalid_user_session,
                                                          details: user_session.errors)
           end
 

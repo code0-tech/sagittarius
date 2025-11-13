@@ -38,11 +38,11 @@ RSpec.describe Users::Identity::RegisterService do
 
     it 'creates the audit event' do
       expect { service_response }.to create_audit_event(
-        :user_registered,
-        entity_type: 'User',
-        details: { 'provider_id' => provider_id.to_s, 'identifier' => 'identifier' },
-        target_type: 'User'
-      )
+                                       :user_registered,
+                                       entity_type: 'User',
+                                       details: { 'provider_id' => provider_id.to_s, 'identifier' => 'identifier' },
+                                       target_type: 'User'
+                                     )
     end
 
     context 'when user registration is disabled' do
@@ -58,7 +58,7 @@ RSpec.describe Users::Identity::RegisterService do
 
   shared_examples 'invalid user' do |error_code|
     it { is_expected.not_to be_success }
-    it { expect(service_response[:error_code]).to eq(error_code) }
+    it { expect(service_response.payload[:error_code]).to eq(error_code) }
     it { expect { service_response }.not_to create_audit_event }
   end
 
@@ -183,7 +183,7 @@ RSpec.describe Users::Identity::RegisterService do
     end
 
     it { is_expected.not_to be_success }
-    it { expect(service_response[:error_code]).to eq(:invalid_user_identity) }
+    it { expect(service_response.payload[:error_code]).to eq(:invalid_user_identity) }
     it { expect { service_response }.not_to create_audit_event }
     it { expect(service_response.payload[:details].full_messages).to include('Identifier has already been taken') }
   end
