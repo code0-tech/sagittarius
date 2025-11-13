@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'user node Query' do
+RSpec.describe 'user Query' do
   include GraphqlHelpers
 
   subject(:query!) { post_graphql query, current_user: current_user }
@@ -11,11 +11,9 @@ RSpec.describe 'user node Query' do
   let(:query) do
     <<~QUERY
       query {
-        node(id: "#{target_user.to_global_id}") {
-          ... on User {
-            id
-            username
-          }
+        user(id: "#{target_user.to_global_id}") {
+          id
+          username
         }
       }
     QUERY
@@ -27,7 +25,7 @@ RSpec.describe 'user node Query' do
     it 'returns nil due to read_user authorization on UserType' do
       query!
 
-      expect(graphql_data_at(:node)).to be_nil
+      expect(graphql_data_at(:user)).to be_nil
     end
   end
 
@@ -37,8 +35,8 @@ RSpec.describe 'user node Query' do
     it 'returns the user' do
       query!
 
-      expect(graphql_data_at(:node, :id)).to eq(target_user.to_global_id.to_s)
-      expect(graphql_data_at(:node, :username)).to eq(target_user.username)
+      expect(graphql_data_at(:user, :id)).to eq(target_user.to_global_id.to_s)
+      expect(graphql_data_at(:user, :username)).to eq(target_user.username)
     end
   end
 
@@ -48,8 +46,8 @@ RSpec.describe 'user node Query' do
     it 'returns the user' do
       query!
 
-      expect(graphql_data_at(:node, :id)).to eq(target_user.to_global_id.to_s)
-      expect(graphql_data_at(:node, :username)).to eq(target_user.username)
+      expect(graphql_data_at(:user, :id)).to eq(target_user.to_global_id.to_s)
+      expect(graphql_data_at(:user, :username)).to eq(target_user.username)
     end
   end
 
@@ -60,8 +58,8 @@ RSpec.describe 'user node Query' do
     it 'returns the user' do
       query!
 
-      expect(graphql_data_at(:node, :id)).to eq(current_user.to_global_id.to_s)
-      expect(graphql_data_at(:node, :username)).to eq(current_user.username)
+      expect(graphql_data_at(:user, :id)).to eq(current_user.to_global_id.to_s)
+      expect(graphql_data_at(:user, :username)).to eq(current_user.username)
     end
   end
 end
