@@ -17,7 +17,7 @@ module Types
 
     field :primary_runtime, Types::RuntimeType, null: true, description: 'The primary runtime for the project'
 
-    field :flow, Types::FlowType, null: true, description: 'Fetches an flow given by its ID' do
+    field :flow, Types::FlowType, null: true, description: 'Fetches a flow given by its ID' do
       argument :id, Types::GlobalIdType[::Flow], required: true, description: 'Id of the flow'
     end
 
