@@ -14,6 +14,7 @@ RSpec.describe SagittariusSchema.types['Namespace'] do
       createdAt
       updatedAt
       namespaceLicenses
+      currentNamespaceLicense
       userAbilities
     ]
   end
