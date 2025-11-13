@@ -15,18 +15,21 @@ module Users
 
     def execute
       unless ApplicationSetting.current[:user_registration_enabled]
-        return ServiceResponse.error(message: 'User registration is disabled', payload: :registration_disabled)
+        return ServiceResponse.error(message: 'User registration is disabled', error_code: :registration_disabled)
       end
 
       transactional do |t|
         user = User.create(username: username, email: email, password: password)
         user.ensure_namespace
-        return ServiceResponse.error(message: 'User is invalid', payload: user.errors) unless user.persisted?
+        unless user.persisted?
+          return ServiceResponse.error(message: 'User is invalid', error_code: :invalid_user, details: user.errors)
+        end
 
         user_session = UserSession.create(user: user)
         unless user_session.persisted?
           t.rollback_and_return! ServiceResponse.error(message: 'UserSession is invalid',
-                                                       payload: user_session.errors)
+                                                       error_code: :invalid_user_session,
+                                                       details: user_session.errors)
         end
 
         email_verification_response = EmailVerificationSendService.new(
@@ -36,7 +39,8 @@ module Users
 
         unless email_verification_response.success?
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to send verification email',
-                                                       payload: email_verification_response.payload)
+                                                       error_code: :email_verification_send_failed,
+                                                       details: email_verification_response.payload)
         end
 
         AuditService.audit(

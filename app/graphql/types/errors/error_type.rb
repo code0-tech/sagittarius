@@ -8,8 +8,9 @@ module Types
       # rubocop:enable GraphQL/GraphqlName
       description 'Objects that can present an error'
 
-      field :code, Errors::ErrorCodeType, null: false, description: 'The code representing the error type'
       field :details, [Errors::DetailedErrorType], null: true, description: 'Detailed validation errors if applicable'
+      field :error_code, ErrorCodeEnum, null: false, description: 'The code representing the error type'
+
     end
   end
 end

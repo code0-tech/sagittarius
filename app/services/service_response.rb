@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ServiceResponse
+  include Code0::ZeroTrack::Loggable
+
   def self.success(message: nil, payload: nil)
     new(status: :success, message: message, payload: payload)
   end
@@ -10,7 +12,8 @@ class ServiceResponse
 
     ErrorCode.validate_error_code!(error_code)
 
-    new(status: :error, message: message, payload: { error_code: error_code, details: details })
+    new(status: :error, message: message,
+        payload: { error_code: error_code, details: details })
   end
 
   attr_reader :status, :message, :payload
@@ -47,17 +50,16 @@ class ServiceResponse
 
   def to_mutation_response(success_key: :object)
     return { success_key => payload, errors: [] } if success?
-    return { success_key => nil, errors: payload } if payload&.details.is_a?(ActiveModel::Errors)
 
-    payload.details = Array.wrap(payload&.details).map do |message|
-      case message
-      when String
-        Sagittarius::Graphql::ErrorMessageContainer.new(message: message)
-      when Symbol
-        Sagittarius::Graphql::ServiceResponseErrorContainer.new(error_code: message)
-      end
-    end
+    payload[:details] = if payload[:details].is_a?(ActiveModel::Errors)
+                          payload[:details].errors
+                        else
+                          Array.wrap(payload[:details]).map do |message|
+                            { message: message }
+                          end
+                        end
 
-    { success_key => nil, errors: payload }
+    { success_key => nil,
+      errors: [Sagittarius::Graphql::ErrorContainer.new(payload[:error_code], payload[:details])] }
   end
 end

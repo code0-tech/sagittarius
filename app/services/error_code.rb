@@ -36,7 +36,8 @@ class ErrorCode
       failed_to_invalidate_old_backup_codes: { description: 'The old backup codes could not be deleted' },
       failed_to_save_valid_backup_code: { description: 'The new backup codes could not be saved' },
       invalid_setting: { description: 'Invalid setting provided' },
-
+      invalid_user: { description: 'The user is invalid because of active model errors' },
+      invalid_password_repeat: { description: 'The provided password repeat does not match the password' },
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       tertiary_level_exceeds_parameters: { description: '', deprecation_reason: 'Outdated concept' },

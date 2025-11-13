@@ -27,7 +27,12 @@ module Mutations
     end
 
     def create_error(code, message)
-      { code: code, details: message }
+      ErrorCode.validate_error_code!(code)
+
+      Sagittarius::Graphql::ErrorContainer.new(
+        code,
+        [{ message: message }]
+      )
     end
   end
 end

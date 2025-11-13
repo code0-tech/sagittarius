@@ -16,14 +16,14 @@ module Users
 
       def execute
         unless ApplicationSetting.current[:user_registration_enabled]
-          return ServiceResponse.error(message: 'User registration is disabled', payload: :registration_disabled)
+          return ServiceResponse.error(message: 'User registration is disabled', error_code: :registration_disabled)
         end
 
         begin
           identity = identity_provider.load_identity(provider_id, args)
         rescue Code0::Identities::Error => e
           logger.warn(message: 'Identity validation failed', exception: e)
-          return ServiceResponse.error(message: e.message, payload: :identity_validation_failed)
+          return ServiceResponse.error(message: e.message, error_code: :identity_validation_failed)
         end
 
         identifier = identity.identifier
@@ -33,7 +33,7 @@ module Users
         lastname = identity.lastname
         password = SecureRandom.base58(50)
 
-        return ServiceResponse.error(message: 'No email given', payload: :missing_identity_data) if email.nil?
+        return ServiceResponse.error(error_code: :missing_identity_data) if email.nil?
 
         username = email.split('@').first if username.nil?
 
@@ -48,17 +48,17 @@ module Users
           user = User.create(username: username, email: email, password: password, firstname: firstname,
                              lastname: lastname)
           user.ensure_namespace
-          return ServiceResponse.error(message: 'User is invalid', payload: user.errors) unless user.persisted?
+          return ServiceResponse.error(error_code: :invalid_user, details: user.errors) unless user.persisted?
 
           user_identity = UserIdentity.create(user: user, provider_id: provider_id, identifier: identifier)
           unless user_identity.persisted?
-            t.rollback_and_return! ServiceResponse.error(message: 'UserIdentity is invalid',
-                                                         payload: user_identity.errors)
+            t.rollback_and_return! ServiceResponse.error(error_code: :invalid_user_identity,
+                                                         details: user_identity.errors)
           end
           user_session = UserSession.create(user: user)
           unless user_session.persisted?
-            t.rollback_and_return! ServiceResponse.error(message: 'UserSession is invalid',
-                                                         payload: user_session.errors)
+            t.rollback_and_return! ServiceResponse.error(message: :invalid_user_session,
+                                                         details: user_session.errors)
           end
 
           AuditService.audit(

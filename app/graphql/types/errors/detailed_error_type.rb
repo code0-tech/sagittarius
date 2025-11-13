@@ -13,7 +13,7 @@ module Types
         case object
         when ActiveModel::Error
           Types::Errors::ActiveModelErrorType
-        when Sagittarius::Graphql::ErrorMessageContainer
+        when Hash
           Types::Errors::MessageErrorType
         else
           raise 'Unsupported DetailedErrorType'
