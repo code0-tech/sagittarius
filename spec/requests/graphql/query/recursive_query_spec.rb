@@ -16,7 +16,7 @@ RSpec.describe 'Recursive Query Protection' do
     let(:query) do
       # Create a query with deep nesting that would cause recursion
       # Organization -> Namespace -> Parent (Organization) -> Namespace -> Parent...
-      nested_levels = 20
+      nested_levels = 25
       nested_query = 'id name'
       
       nested_levels.times do
