@@ -38,11 +38,11 @@ RSpec.describe Users::Identity::RegisterService do
 
     it 'creates the audit event' do
       expect { service_response }.to create_audit_event(
-                                       :user_registered,
-                                       entity_type: 'User',
-                                       details: { 'provider_id' => provider_id.to_s, 'identifier' => 'identifier' },
-                                       target_type: 'User'
-                                     )
+        :user_registered,
+        entity_type: 'User',
+        details: { 'provider_id' => provider_id.to_s, 'identifier' => 'identifier' },
+        target_type: 'User'
+      )
     end
 
     context 'when user registration is disabled' do

@@ -16,6 +16,7 @@ Represents the available error responses
 | `FAILED_TO_RESET_PASSWORD` | Failed to reset the user password |
 | `FAILED_TO_SAVE_VALID_BACKUP_CODE` | The new backup codes could not be saved |
 | `FLOW_NOT_FOUND` | The flow with the given identifier was not found |
+| `FLOW_TYPE_NOT_FOUND` | The flow type with the given identifier was not found |
 | `FLOW_VALIDATION_FAILED` | The flow validation has failed |
 | `GENERIC_KEY_NOT_FOUND` | The given key was not found in the data type |
 | `IDENTITY_NOT_FOUND` | The external identity with the given identifier was not found |
@@ -33,6 +34,7 @@ Represents the available error responses
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |
 | `INVALID_SETTING` | Invalid setting provided |
+| `INVALID_TOTP_SECRET` | The TOTP secret is invalid or cannot be verified |
 | `INVALID_USER` | The user is invalid because of active model errors |
 | `INVALID_USER_IDENTITY` | The user identity is invalid because of active model errors |
 | `INVALID_USER_SESSION` | The user session is invalid because of active model errors |

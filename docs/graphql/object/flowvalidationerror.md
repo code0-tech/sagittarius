@@ -2,7 +2,7 @@
 title: FlowValidationError
 ---
 
-Represents an flow validation error
+Represents a flow validation error
 
 ## Fields without arguments
 

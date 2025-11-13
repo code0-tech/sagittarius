@@ -30,6 +30,7 @@ class ErrorCode
       mfa_required: { description: 'MFA is required' },
       invalid_login_data: { description: 'Invalid login data provided' },
       totp_secret_already_set: { description: 'This user already has TOTP set up' },
+      invalid_totp_secret: { description: 'The TOTP secret is invalid or cannot be verified' },
       wrong_totp: { description: 'Invalid TOTP code provided' },
       invalid_verification_code: { description: 'Invalid verification code provided' },
       unmodifiable_field: { description: 'The user is not permitted to modify this field' },
