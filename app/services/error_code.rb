@@ -51,7 +51,7 @@ class ErrorCode
       failed_to_reset_password: { description: 'Failed to reset the user password' },
       loading_identity_failed: { description: 'Failed to load user identity from external provider' },
       invalid_flow_setting: { description: 'The flow setting is invalid because of active model errors' },
-      invalid_namespace_member: { description: 'The flow setting is invalid because of active model errors' },
+      invalid_namespace_member: { description: 'The namespace member is invalid because of active model errors' },
       invalid_attachment: { description: 'The attachment is invalid because of active model errors' },
       invalid_namespace_license: { description: 'The namespace license is invalid because of active model errors' },
       project_not_found: { description: 'The namespace project with the given identifier was not found' },
