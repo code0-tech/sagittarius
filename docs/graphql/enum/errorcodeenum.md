@@ -28,7 +28,7 @@ Represents the available error responses
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
 | `INVALID_NAMESPACE_LICENSE` | The namespace license is invalid because of active model errors |
-| `INVALID_NAMESPACE_MEMBER` | The flow setting is invalid because of active model errors |
+| `INVALID_NAMESPACE_MEMBER` | The namespace member is invalid because of active model errors |
 | `INVALID_NAMESPACE_PROJECT` | The namespace project is invalid because of active model errors |
 | `INVALID_NAMESPACE_ROLE` | The namespace role is invalid because of active model errors |
 | `INVALID_ORGANIZATION` | The organization is invalid because of active model errors |
