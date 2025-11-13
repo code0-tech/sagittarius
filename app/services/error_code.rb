@@ -33,6 +33,7 @@ class ErrorCode
       invalid_totp_secret: { description: 'The TOTP secret is invalid or cannot be verified' },
       wrong_totp: { description: 'Invalid TOTP code provided' },
       invalid_verification_code: { description: 'Invalid verification code provided' },
+      email_verification_send_failed: { description: 'Failed to send the email verification' },
       unmodifiable_field: { description: 'The user is not permitted to modify this field' },
       failed_to_invalidate_old_backup_codes: { description: 'The old backup codes could not be deleted' },
       failed_to_save_valid_backup_code: { description: 'The new backup codes could not be saved' },
