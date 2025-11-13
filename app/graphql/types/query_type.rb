@@ -85,7 +85,7 @@ module Types
 
     def users
       unless Ability.allowed?(current_authentication, :list_users, :global)
-        raise GraphQL::ExecutionError, 'You do not have permission to list all users'
+        raise GraphQL::UnauthorizedError, 'You do not have permission to list all users'
       end
 
       User.all
