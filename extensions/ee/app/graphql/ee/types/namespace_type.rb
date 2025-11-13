@@ -10,6 +10,11 @@ module EE
               null: false,
               description: '(EE only) Licenses of the namespace'
 
+        field :current_namespace_license, ::Types::NamespaceLicenseType,
+              null: true,
+              description: '(EE only) Currently active license of the namespace',
+              method: :current_license
+
         expose_abilities %i[
           create_namespace_license
         ]
