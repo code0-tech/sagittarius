@@ -6,6 +6,7 @@ class SagittariusSchema < GraphQL::Schema
 
   default_max_page_size 50
   max_depth 20
+  max_complexity 200
   connections.add(ActiveRecord::Relation, Sagittarius::Graphql::StableConnection)
 
   # For batch-loading (see https://graphql-ruby.org/dataloader/overview.html)
