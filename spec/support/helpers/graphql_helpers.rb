@@ -78,10 +78,10 @@ module GraphqlHelpers
     %(
       errors {
         errorCode
-			  details {
+        details {
           ...on ActiveModelError { attribute type }
           ...on MessageError { message }
-			  }
+        }
       }
     )
   end
