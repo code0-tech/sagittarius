@@ -25,6 +25,7 @@ Represents the available error responses
 | `INCONSISTENT_NAMESPACE` | Resources are from different namespaces |
 | `INVALID_ATTACHMENT` | The attachment is invalid because of active model errors |
 | `INVALID_EXTERNAL_IDENTITY` | This external identity is invalid |
+| `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
 | `INVALID_NAMESPACE_LICENSE` | The namespace license is invalid because of active model errors |

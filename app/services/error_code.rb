@@ -56,6 +56,7 @@ class ErrorCode
       invalid_namespace_member: { description: 'The namespace member is invalid because of active model errors' },
       invalid_attachment: { description: 'The attachment is invalid because of active model errors' },
       invalid_namespace_license: { description: 'The namespace license is invalid because of active model errors' },
+      invalid_flow: { description: 'The flow is invalid because of active model errors' },
       project_not_found: { description: 'The namespace project with the given identifier was not found' },
       runtime_not_found: { description: 'The runtime with the given identifier was not found' },
       namespace_not_found: { description: 'The namespace with the given identifier was not found' },
