@@ -662,7 +662,11 @@ CREATE TABLE reference_values (
     id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    node_function_id bigint NOT NULL
+    node_function_id bigint NOT NULL,
+    depth integer DEFAULT 0 NOT NULL,
+    node integer DEFAULT 0 NOT NULL,
+    scope integer[] DEFAULT '{}'::integer[] NOT NULL,
+    data_type_identifier_id bigint NOT NULL
 );
 
 CREATE SEQUENCE reference_values_id_seq
@@ -1197,6 +1201,8 @@ CREATE INDEX index_parameter_definitions_on_runtime_parameter_definition_id ON p
 
 CREATE INDEX index_reference_paths_on_reference_value_id ON reference_paths USING btree (reference_value_id);
 
+CREATE INDEX index_reference_values_on_data_type_identifier_id ON reference_values USING btree (data_type_identifier_id);
+
 CREATE INDEX index_reference_values_on_node_function_id ON reference_values USING btree (node_function_id);
 
 CREATE INDEX index_runtime_function_definitions_on_return_type_id ON runtime_function_definitions USING btree (return_type_id);
@@ -1353,6 +1359,9 @@ ALTER TABLE ONLY flow_type_settings
 
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_ab927e0ecb FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY reference_values
+    ADD CONSTRAINT fk_rails_bb34a5d62c FOREIGN KEY (data_type_identifier_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_bb587eff6a FOREIGN KEY (input_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;

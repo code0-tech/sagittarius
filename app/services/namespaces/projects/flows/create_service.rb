@@ -124,6 +124,10 @@ module Namespaces
               runtime_parameter: runtime_parameter,
               reference_value: ReferenceValue.create(
                 node_function: reference_value,
+                data_type_identifier: get_data_type_identifier(parameter.value.reference_value.data_type_identifier),
+                depth: parameter.value.reference_value.depth,
+                node: parameter.value.reference_value.node,
+                scope: parameter.value.reference_value.scope,
                 reference_paths: parameter.value.reference_value.reference_paths.map do |path|
                   ReferencePath.create(
                     path: path.path,
@@ -142,6 +146,28 @@ module Namespaces
             runtime_function: runtime_function_definition,
             node_parameters: params
           )
+        end
+
+        private
+
+        def get_data_type_identifier(identifier)
+          return DataTypeIdentifier.create(generic_key: identifier.generic_key) if identifier.generic_key.present?
+
+          if identifier.generic_type.present?
+            data_type = SagittariusSchema.object_from_id(identifier.generic_type.data_type_id)
+            mappers = identifier.generic_type.mappers.map do |mapper|
+              GenericMapper.create(
+                generic_mapper_id: mapper.generic_mapper_id,
+                source: mapper.source,
+                target: mapper.target
+              )
+            end
+            return DataTypeIdentifier.create(generic_type: GenericType.create(data_type: data_type, mappers: mappers))
+          end
+
+          return if identifier.data_type_id.blank?
+
+          DataTypeIdentifier.create(data_type: SagittariusSchema.object_from_id(identifier.data_type_id))
         end
       end
     end
