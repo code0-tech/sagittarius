@@ -9,6 +9,7 @@ RSpec.describe SagittariusSchema.types['Query'] do
       currentAuthentication
       currentUser
       echo
+      metadata
       organization
       organizations
       users
