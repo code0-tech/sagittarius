@@ -92,9 +92,7 @@ module Types
     end
 
     def users
-      unless Ability.allowed?(current_authentication, :list_users, :global)
-        raise GraphQL::UnauthorizedError, 'You do not have permission to list all users'
-      end
+      return User.none unless Ability.allowed?(context[:current_authentication], :list_users, :global)
 
       User.all
     end

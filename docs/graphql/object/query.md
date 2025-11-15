@@ -68,3 +68,13 @@ Returns [`Organization`](../object/organization.md).
 |------|------|-------------|
 | `id` | [`OrganizationID`](../scalar/organizationid.md) | GlobalID of the target organization |
 | `name` | [`String`](../scalar/string.md) | Name of the target organization |
+
+### user
+
+Find a user
+
+Returns [`User`](../object/user.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `id` | [`UserID!`](../scalar/userid.md) | GlobalID of the target user |
