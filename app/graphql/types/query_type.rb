@@ -69,8 +69,8 @@ module Types
 
     def metadata
       {
-        version: Sagittarius::VERSION,
-        extensions: Sagittarius::Extensions.active.map(&:to_s)
+        version: Sagittarius::Version,
+        extensions: Sagittarius::Extensions.active.map(&:to_s),
       }
     end
 

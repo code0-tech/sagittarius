@@ -12,6 +12,7 @@ Root Query type
 | `currentAuthentication` | [`Authentication`](../union/authentication.md) | Get the currently logged in authentication |
 | `currentUser` | [`User`](../object/user.md) | Get the currently logged in user |
 | `globalRuntimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Find runtimes |
+| `metadata` | [`Metadata!`](../object/metadata.md) | Get application metadata |
 | `organizations` | [`OrganizationConnection!`](../object/organizationconnection.md) | Find organizations |
 | `userAbilities` | [`InstanceUserAbilities!`](../object/instanceuserabilities.md) | Abilities for the current user on this Instance |
 | `users` | [`UserConnection!`](../object/userconnection.md) | Find users |

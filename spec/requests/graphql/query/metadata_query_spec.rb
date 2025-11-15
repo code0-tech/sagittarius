@@ -19,7 +19,7 @@ RSpec.describe 'metadata Query' do
   before { post_graphql query }
 
   it 'returns the application version' do
-    expect(graphql_data_at(:metadata, :version)).to eq(Sagittarius::VERSION)
+    expect(graphql_data_at(:metadata, :version)).to eq(Sagittarius::Version)
   end
 
   it 'returns the list of active extensions' do
