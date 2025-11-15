@@ -110,7 +110,7 @@ module Namespaces
             end
 
             reference_value = SagittariusSchema.object_from_id(
-              parameter.value.reference_value.node_id
+              parameter.value.reference_value.node_function_id
             )
 
             if reference_value.nil?

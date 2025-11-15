@@ -6,7 +6,7 @@ module Types
 
     authorize :read_flow
 
-    field :node_function, Types::NodeFunctionType, null: false, description: 'The referenced value.'
+    field :node_function_id, GlobalIdType[::NodeFunction], null: false, description: 'The referenced value.'
 
     field :data_type_identifier, Types::DataTypeIdentifierType,
           null: false, description: 'The identifier of the data type this reference value belongs to.'
