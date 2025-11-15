@@ -15,18 +15,21 @@ module Files
 
     def execute
       if object.nil? || current_authentication.nil? || attachment.nil? || attachment_name.nil?
-        return ServiceResponse.error(message: 'Missing parameter', payload: :missing_parameter)
+        return ServiceResponse.error(message: 'Missing parameter', error_code: :missing_parameter)
       end
 
       unless Ability.allowed?(current_authentication, :"update_attachment_#{attachment_name}", object)
-        return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+        return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
       end
 
       # No other check because the permission will fail
 
       object.send(attachment_name).attach attachment
 
-      ServiceResponse.success(message: 'Failed to save object', payload: object.errors) unless object.save
+      unless object.save
+        return ServiceResponse.error(message: 'Failed to save object', error_code: :invalid_attachment,
+                                     details: object.errors)
+      end
 
       AuditService.audit(
         :attachment_updated,

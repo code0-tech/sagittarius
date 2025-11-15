@@ -19,7 +19,7 @@ module Mutations
 
           if namespace.nil?
             return { organization_project: nil,
-                     errors: [create_message_error('Invalid namespace')] }
+                     errors: [create_error(:namespace_not_found, 'Invalid namespace')] }
           end
 
           ::Namespaces::Projects::CreateService.new(

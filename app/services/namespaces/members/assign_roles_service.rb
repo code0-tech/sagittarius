@@ -16,13 +16,13 @@ module Namespaces
       def execute
         namespace = member.namespace
         unless Ability.allowed?(current_authentication, :assign_member_roles, member)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
         end
 
         unless roles.map(&:namespace).all? { |t| t == namespace }
           return ServiceResponse.error(
             message: 'Roles and member belong to different namespaces',
-            payload: :inconsistent_namespace
+            error_code: :inconsistent_namespace
           )
         end
 
@@ -78,7 +78,7 @@ module Namespaces
                      .exists?(abilities: { ability: :namespace_administrator })
           t.rollback_and_return! ServiceResponse.error(
             message: 'Cannot remove last administrator from namespace',
-            payload: :cannot_remove_last_administrator
+            error_code: :cannot_remove_last_administrator
           )
         end
       end

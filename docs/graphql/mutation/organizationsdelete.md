@@ -16,5 +16,5 @@ Delete an existing organization.
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
+| `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |
 | `organization` | [`Organization`](../object/organization.md) | The deleted organization. |

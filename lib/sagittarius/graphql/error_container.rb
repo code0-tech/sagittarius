@@ -2,6 +2,6 @@
 
 module Sagittarius
   module Graphql
-    ErrorMessageContainer = Struct.new(:message)
+    ErrorContainer = Struct.new(:error_code, :details)
   end
 end

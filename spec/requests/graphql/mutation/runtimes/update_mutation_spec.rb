@@ -103,7 +103,8 @@ RSpec.describe 'runtimesUpdate Mutation' do
 
     it 'returns an error' do
       expect(graphql_data_at(:runtimes_update, :organization)).to be_nil
-      expect(graphql_data_at(:runtimes_update, :errors)).to include({ 'attribute' => 'name', 'type' => 'taken' })
+      expect(graphql_data_at(:runtimes_update, :errors,
+                             :details)).to include([{ 'attribute' => 'name', 'type' => 'taken' }])
     end
   end
 end

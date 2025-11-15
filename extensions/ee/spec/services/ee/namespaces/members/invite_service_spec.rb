@@ -18,6 +18,6 @@ RSpec.describe Namespaces::Members::InviteService do
 
     it { is_expected.not_to be_success }
     it { expect { service_response }.not_to change { NamespaceMember.count } }
-    it { expect(service_response.payload).to eq(:no_free_license_seats) }
+    it { expect(service_response.payload[:error_code]).to eq(:no_free_license_seats) }
   end
 end

@@ -18,4 +18,4 @@ Update the abilities a role is granted.
 |------|------|-------------|
 | `abilities` | [`[NamespaceRoleAbility!]`](../enum/namespaceroleability.md) | The now granted abilities |
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
+| `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |

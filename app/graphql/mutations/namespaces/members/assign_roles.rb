@@ -18,8 +18,14 @@ module Mutations
           member = SagittariusSchema.object_from_id(member_id)
           roles = role_ids.map { |id| SagittariusSchema.object_from_id(id) }
 
-          return { namespace_member_roles: nil, errors: [create_message_error('Invalid member')] } if member.nil?
-          return { namespace_member_roles: nil, errors: [create_message_error('Invalid role')] } if roles.any?(&:nil?)
+          if member.nil?
+            return { namespace_member_roles: nil,
+                     errors: [create_error(:namespace_member_not_found, 'Invalid member')] }
+          end
+          if roles.any?(&:nil?)
+            return { namespace_member_roles: nil,
+                     errors: [create_error(:namespace_role_not_found, 'Invalid role')] }
+          end
 
           ::Namespaces::Members::AssignRolesService.new(
             current_authentication,

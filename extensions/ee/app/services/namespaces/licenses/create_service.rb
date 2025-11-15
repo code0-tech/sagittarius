@@ -15,7 +15,7 @@ module Namespaces
 
       def execute
         unless Ability.allowed?(current_authentication, :create_namespace_license, namespace)
-          return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
         end
 
         transactional do |t|
@@ -23,7 +23,8 @@ module Namespaces
           unless namespace_license.persisted?
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to create namespace license',
-              payload: namespace_license.errors
+              error_code: :invalid_namespace_license,
+              details: namespace_license.errors
             )
           end
 

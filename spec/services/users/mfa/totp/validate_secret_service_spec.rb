@@ -13,7 +13,7 @@ RSpec.describe Users::Mfa::Totp::ValidateSecretService do
     let(:signed_secret) { nil }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
   end
 
   context 'when user is valid but totp secret is already set' do
@@ -22,7 +22,7 @@ RSpec.describe Users::Mfa::Totp::ValidateSecretService do
     let(:signed_secret) { nil }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:totp_secret_already_set) }
+    it { expect(service_response.payload[:error_code]).to eq(:totp_secret_already_set) }
   end
 
   context 'when user and secret is valid but totp is not' do

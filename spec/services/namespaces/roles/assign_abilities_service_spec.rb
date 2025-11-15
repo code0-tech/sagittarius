@@ -19,7 +19,7 @@ RSpec.describe Namespaces::Roles::AssignAbilitiesService do
     let(:current_user) { nil }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
     it { expect { service_response }.not_to change { NamespaceRoleAbility.count } }
 
     it do
@@ -29,7 +29,7 @@ RSpec.describe Namespaces::Roles::AssignAbilitiesService do
 
   context 'when user does not have permission' do
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
     it { expect { service_response }.not_to change { NamespaceRoleAbility.count } }
 
     it do
@@ -67,7 +67,7 @@ RSpec.describe Namespaces::Roles::AssignAbilitiesService do
         end
 
         it { is_expected.not_to be_success }
-        it { expect(service_response.payload).to eq(:cannot_remove_last_admin_ability) }
+        it { expect(service_response.payload[:error_code]).to eq(:cannot_remove_last_admin_ability) }
         it { expect { service_response }.not_to change { NamespaceRoleAbility.count } }
 
         it do

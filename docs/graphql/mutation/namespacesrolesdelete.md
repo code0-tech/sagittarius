@@ -16,5 +16,5 @@ Delete an existing role in a namespace.
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
+| `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |
 | `namespaceRole` | [`NamespaceRole`](../object/namespacerole.md) | The deleted namespace role |

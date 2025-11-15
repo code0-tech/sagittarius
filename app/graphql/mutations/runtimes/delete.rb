@@ -15,7 +15,7 @@ module Mutations
 
         if runtime.nil?
           return { runtime: nil,
-                   errors: [create_message_error('Invalid runtime')] }
+                   errors: [create_error(:runtime_not_found, 'Invalid runtime')] }
         end
 
         ::Runtimes::DeleteService.new(

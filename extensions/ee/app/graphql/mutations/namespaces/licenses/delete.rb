@@ -18,7 +18,7 @@ module Mutations
 
           if license.nil?
             return { organization_license: nil,
-                     errors: [create_message_error('Invalid license')] }
+                     errors: [create_error(:license_not_found, 'Invalid license')] }
           end
 
           ::Namespaces::Licenses::DeleteService.new(

@@ -17,7 +17,7 @@ module Mutations
 
             if flow.nil?
               return { flow: nil,
-                       errors: [create_message_error('Invalid flow')] }
+                       errors: [create_error(:flow_not_found, 'Invalid flow')] }
             end
 
             ::Namespaces::Projects::Flows::DeleteService.new(

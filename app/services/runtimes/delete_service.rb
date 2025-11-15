@@ -13,7 +13,7 @@ module Runtimes
 
     def execute
       unless Ability.allowed?(current_authentication, :delete_runtime, runtime || :global)
-        return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+        return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
       end
 
       transactional do |t|
@@ -21,7 +21,8 @@ module Runtimes
 
         if runtime.persisted?
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete organization',
-                                                       payload: runtime.errors)
+                                                       error_code: :invalid_runtime,
+                                                       details: runtime.errors)
         end
 
         AuditService.audit(

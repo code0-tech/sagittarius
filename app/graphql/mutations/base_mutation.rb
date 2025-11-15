@@ -26,8 +26,13 @@ module Mutations
       context[:current_authentication]
     end
 
-    def create_message_error(message)
-      Sagittarius::Graphql::ErrorMessageContainer.new(message: message)
+    def create_error(code, message)
+      ErrorCode.validate_error_code!(code)
+
+      Sagittarius::Graphql::ErrorContainer.new(
+        code,
+        [{ message: message }]
+      )
     end
   end
 end

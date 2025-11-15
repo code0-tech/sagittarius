@@ -16,7 +16,7 @@ module Namespaces
       def execute
         namespace = role.namespace
         unless Ability.allowed?(current_authentication, :assign_role_abilities, role)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
         end
 
         transactional do |t|
@@ -66,7 +66,7 @@ module Namespaces
                abilities.include?(:namespace_administrator)
           t.rollback_and_return! ServiceResponse.error(
             message: 'Cannot remove the last administrator ability',
-            payload: :cannot_remove_last_admin_ability
+            error_code: :cannot_remove_last_admin_ability
           )
         end
       end

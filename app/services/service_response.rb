@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
 class ServiceResponse
+  include Code0::ZeroTrack::Loggable
+
   def self.success(message: nil, payload: nil)
     new(status: :success, message: message, payload: payload)
   end
 
-  def self.error(message: nil, payload: nil)
-    if payload.is_a?(Symbol) || payload.is_a?(Array)
-      Array.wrap(payload).each { |error_code| ErrorCode.validate_error_code!(error_code) }
-    end
+  def self.error(message: nil, error_code: nil, details: nil)
+    raise ArgumentError, 'error_code must be provided for error responses' if error_code.nil?
 
-    new(status: :error, message: message, payload: payload)
+    ErrorCode.validate_error_code!(error_code)
+
+    new(status: :error, message: message,
+        payload: { error_code: error_code, details: details })
   end
 
   attr_reader :status, :message, :payload
@@ -48,19 +51,22 @@ class ServiceResponse
   def to_mutation_response(success_key: :object)
     return { success_key => payload, errors: [] } if success?
 
-    if payload.is_a?(ActiveModel::Errors)
-      { success_key => nil, errors: payload.errors }
-    else
-      errors = Array.wrap(payload).map do |message|
-        case message
-        when String
-          Sagittarius::Graphql::ErrorMessageContainer.new(message: message)
-        when Symbol
-          Sagittarius::Graphql::ServiceResponseErrorContainer.new(error_code: message)
-        end
-      end
+    payload[:details] = if payload[:details].is_a?(ActiveModel::Errors)
+                          payload[:details].errors
+                        else
+                          Array.wrap(payload[:details]).map do |message|
+                            case message
+                            when String
+                              { message: message }
+                            when Namespaces::Projects::Flows::Validation::Validation::ValidationResult
+                              message
+                            else
+                              raise "Unsupported error detail type: #{message.class.name}"
+                            end
+                          end
+                        end
 
-      { success_key => nil, errors: errors }
-    end
+    { success_key => nil,
+      errors: [Sagittarius::Graphql::ErrorContainer.new(payload[:error_code], payload[:details])] }
   end
 end

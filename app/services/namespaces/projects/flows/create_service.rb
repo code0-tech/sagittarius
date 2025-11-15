@@ -16,7 +16,7 @@ module Namespaces
 
         def execute
           unless Ability.allowed?(current_authentication, :create_flow, namespace_project)
-            return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+            return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
           end
 
           transactional do |t|
@@ -28,7 +28,8 @@ module Namespaces
                 if setting.invalid?
                   t.rollback_and_return! ServiceResponse.error(
                     message: 'Invalid flow setting',
-                    payload: setting.errors
+                    error_code: :invalid_flow_setting,
+                    details: setting.errors
                   )
                 end
 

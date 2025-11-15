@@ -15,14 +15,15 @@ module Namespaces
 
       def execute
         unless Ability.allowed?(current_authentication, :create_namespace_role, namespace)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
         end
 
         transactional do
           namespace_role = NamespaceRole.create(namespace: namespace, **params)
 
           unless namespace_role.persisted?
-            return ServiceResponse.error(message: 'Failed to save namespace role', payload: namespace_role.errors)
+            return ServiceResponse.error(message: 'Failed to save namespace role', error_code: :invalid_namespace_role,
+                                         details: namespace_role.errors)
           end
 
           AuditService.audit(

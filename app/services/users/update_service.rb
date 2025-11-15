@@ -20,17 +20,17 @@ module Users
 
     def execute
       unless Ability.allowed?(current_authentication, :update_user, user)
-        return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+        return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
       end
 
       if params.key?(:admin)
         unless current_authentication.user.admin?
           return ServiceResponse.error(message: 'Cannot modify users admin status because user isn`t admin',
-                                       payload: :unmodifiable_field)
+                                       error_code: :cannot_modify_admin)
         end
 
         if current_authentication.user == user
-          return ServiceResponse.error(message: 'Cannot modify own admin status', payload: :unmodifiable_field)
+          return ServiceResponse.error(message: 'Cannot modify own admin status', error_code: :cannot_modify_own_admin)
         end
       end
 
@@ -40,7 +40,7 @@ module Users
           if mfa.nil?
             return ServiceResponse.error(
               message: "MFA required for fields: #{params.keys.intersection(REQUIRES_MFA_FIELDS)}",
-              payload: :mfa_required
+              error_code: :mfa_required
             )
           end
 
@@ -48,7 +48,7 @@ module Users
 
           unless mfa_passed
             t.rollback_and_return! ServiceResponse.error(message: 'MFA failed',
-                                                         payload: :mfa_failed)
+                                                         error_code: :mfa_failed)
           end
         end
 
@@ -56,7 +56,8 @@ module Users
         unless success
           t.rollback_and_return! ServiceResponse.error(
             message: 'Failed to update user',
-            payload: user.errors
+            error_code: :invalid_user,
+            details: user.errors
           )
         end
 
@@ -65,7 +66,8 @@ module Users
 
           unless response.success?
             t.rollback_and_return! ServiceResponse.error(message: 'Failed to send verification email',
-                                                         payload: response.payload)
+                                                         error_code: :email_verification_send_failed,
+                                                         details: response.payload)
           end
         end
 

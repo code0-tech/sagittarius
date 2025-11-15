@@ -16,4 +16,4 @@ Rotates the backup codes of a user.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `codes` | [`[String!]`](../scalar/string.md) | The newly rotated backup codes. |
-| `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
+| `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |

@@ -62,7 +62,7 @@ RSpec.describe 'Graphql' do
         expect(response).to have_http_status(:ok)
 
         expect_graphql_errors_to_be_empty
-        expect(graphql_data_at(:users_login, :errors, :message)).to be_present
+        expect(graphql_data_at(:users_login, :errors, :error_code)).to be_present
       end
 
       context 'when aliasing the mutation' do

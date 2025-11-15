@@ -13,7 +13,7 @@ module Organizations
 
     def execute
       unless Ability.allowed?(current_authentication, :create_organization)
-        return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+        return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
       end
 
       transactional do |t|
@@ -21,7 +21,8 @@ module Organizations
         unless organization.persisted?
           t.rollback_and_return! ServiceResponse.error(
             message: 'Failed to create organization',
-            payload: organization.errors
+            error_code: :invalid_organization,
+            details: organization.errors
           )
         end
 
@@ -51,7 +52,8 @@ module Organizations
 
       unless created_object.persisted?
         t.rollback_and_return! ServiceResponse.error(message: "Failed to create #{model}",
-                                                     payload: created_object.errors)
+                                                     error_code: :"invalid_#{model.name.underscore}",
+                                                     details: created_object.errors)
       end
 
       created_object

@@ -13,7 +13,10 @@ module Mutations
       def resolve(user_session_id:)
         user_session = SagittariusSchema.object_from_id(user_session_id)
 
-        return { user_session: nil, errors: [create_message_error('Invalid user session')] } if user_session.nil?
+        if user_session.nil?
+          return { user_session: nil,
+                   errors: [create_error(:user_session_not_found, 'Invalid user session')] }
+        end
 
         ::Users::LogoutService.new(
           current_authentication,

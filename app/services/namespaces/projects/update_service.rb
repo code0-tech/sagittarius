@@ -15,7 +15,7 @@ module Namespaces
 
       def execute
         unless Ability.allowed?(current_authentication, :update_namespace_project, namespace_project)
-          return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
         end
 
         params[:primary_runtime_id] = params.delete(:primary_runtime)&.id if params.key?(:primary_runtime)
@@ -25,7 +25,8 @@ module Namespaces
           unless success
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to update namespace project',
-              payload: namespace_project.errors
+              error_code: :invalid_namespace_project,
+              details: namespace_project.errors
             )
           end
 

@@ -52,13 +52,13 @@ RSpec.describe Users::Identity::RegisterService do
 
       it { is_expected.not_to be_success }
       it { expect(service_response.message).to eq('User registration is disabled') }
-      it { expect(service_response.payload).to eq(:registration_disabled) }
+      it { expect(service_response.payload[:error_code]).to eq(:registration_disabled) }
     end
   end
 
-  shared_examples 'invalid user' do |error_message|
+  shared_examples 'invalid user' do |error_code|
     it { is_expected.not_to be_success }
-    it { expect(service_response.message).to eq(error_message) }
+    it { expect(service_response.payload[:error_code]).to eq(error_code) }
     it { expect { service_response }.not_to create_audit_event }
   end
 
@@ -79,10 +79,10 @@ RSpec.describe Users::Identity::RegisterService do
       end
 
       it 'returns the right error' do
-        expect(service_response.payload).to eq(:missing_identity_data)
+        expect(service_response.payload[:error_code]).to eq(:missing_identity_data)
       end
 
-      it_behaves_like 'invalid user', 'No email given'
+      it_behaves_like 'invalid user', :missing_identity_data
     end
 
     context 'when username is missing' do
@@ -163,7 +163,7 @@ RSpec.describe Users::Identity::RegisterService do
 
     it 'catches the error' do
       expect { service_response }.not_to raise_error
-      expect(service_response.payload).to eq(:identity_validation_failed)
+      expect(service_response.payload[:error_code]).to eq(:identity_validation_failed)
       expect(service_response.message).to eq('Error message')
     end
   end
@@ -183,9 +183,9 @@ RSpec.describe Users::Identity::RegisterService do
     end
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.message).to eq('UserIdentity is invalid') }
+    it { expect(service_response.payload[:error_code]).to eq(:invalid_user_identity) }
     it { expect { service_response }.not_to create_audit_event }
-    it { expect(service_response.payload.full_messages).to include('Identifier has already been taken') }
+    it { expect(service_response.payload[:details].full_messages).to include('Identifier has already been taken') }
   end
 
   context 'when email is a duplicate' do
@@ -198,6 +198,6 @@ RSpec.describe Users::Identity::RegisterService do
                                                               existing_user.email, 'firstname', 'lastname')
     end
 
-    it_behaves_like 'invalid user', 'User is invalid'
+    it_behaves_like 'invalid user', :invalid_user
   end
 end

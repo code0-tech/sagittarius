@@ -11,7 +11,7 @@ RSpec.describe Runtimes::DeleteService do
     let(:current_user) { nil }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
     it { expect { service_response }.not_to change { Runtime.count } }
 
     it do

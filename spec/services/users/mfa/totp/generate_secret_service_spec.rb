@@ -9,7 +9,7 @@ RSpec.describe Users::Mfa::Totp::GenerateSecretService do
     let(:current_user) { nil }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
   end
 
   context 'when user is valid' do
@@ -17,7 +17,7 @@ RSpec.describe Users::Mfa::Totp::GenerateSecretService do
       let(:current_user) { create(:user, totp_secret: ROTP::Base32.random) }
 
       it { is_expected.not_to be_success }
-      it { expect(service_response.payload).to eq(:totp_secret_already_set) }
+      it { expect(service_response.payload[:error_code]).to eq(:totp_secret_already_set) }
     end
 
     context 'when totp secret is not set' do

@@ -56,7 +56,8 @@ RSpec.describe 'organizationsCreate Mutation' do
 
     it 'returns an error' do
       expect(graphql_data_at(:organizations_create, :organization)).to be_nil
-      expect(graphql_data_at(:organizations_create, :errors)).to include({ 'attribute' => 'name', 'type' => 'taken' })
+      expect(graphql_data_at(:organizations_create, :errors,
+                             :details)).to include([{ 'attribute' => 'name', 'type' => 'taken' }])
     end
   end
 end

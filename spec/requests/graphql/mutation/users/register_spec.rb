@@ -74,10 +74,12 @@ RSpec.describe 'usersRegister Mutation' do
       post_graphql mutation, variables: variables
       expect(graphql_data_at(:users_register, :user_session)).not_to be_present
 
-      expect(graphql_data_at(:users_register, :errors)).to include(
-        { 'attribute' => 'username', 'type' => 'taken' },
-        { 'attribute' => 'email', 'type' => 'taken' }
-      )
+      expect(graphql_data_at(:users_register, :errors, :details)).to include([
+                                                                               { 'attribute' => 'username',
+                                                                                 'type' => 'taken' },
+                                                                               { 'attribute' => 'email',
+                                                                                 'type' => 'taken' }
+                                                                             ])
     end
   end
 
@@ -94,9 +96,9 @@ RSpec.describe 'usersRegister Mutation' do
     it 'returns errors' do
       expect(graphql_data_at(:users_register, :user_session)).not_to be_present
 
-      expect(graphql_data_at(:users_register, :errors)).to include(
-        { 'message' => 'Invalid password repeat' }
-      )
+      expect(
+        graphql_data_at(:users_register, :errors, :details)
+      ).to include([{ 'message' => 'Invalid password repeat' }])
     end
   end
 
@@ -113,14 +115,20 @@ RSpec.describe 'usersRegister Mutation' do
     it 'returns errors' do
       expect(graphql_data_at(:users_register, :user_session)).not_to be_present
 
-      expect(graphql_data_at(:users_register, :errors)).to include(
-        { 'attribute' => 'password', 'type' => 'blank' },
-        { 'attribute' => 'username', 'type' => 'too_short' },
-        { 'attribute' => 'username', 'type' => 'blank' },
-        { 'attribute' => 'email', 'type' => 'too_short' },
-        { 'attribute' => 'email', 'type' => 'invalid' },
-        { 'attribute' => 'email', 'type' => 'blank' }
-      )
+      expect(graphql_data_at(:users_register, :errors, :details)).to include([
+                                                                               { 'attribute' => 'password',
+                                                                                 'type' => 'blank' },
+                                                                               { 'attribute' => 'username',
+                                                                                 'type' => 'too_short' },
+                                                                               { 'attribute' => 'username',
+                                                                                 'type' => 'blank' },
+                                                                               { 'attribute' => 'email',
+                                                                                 'type' => 'too_short' },
+                                                                               { 'attribute' => 'email',
+                                                                                 'type' => 'invalid' },
+                                                                               { 'attribute' => 'email',
+                                                                                 'type' => 'blank' }
+                                                                             ])
     end
   end
 end

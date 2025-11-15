@@ -15,7 +15,7 @@ module Namespaces
 
       def execute
         unless Ability.allowed?(current_authentication, :invite_member, namespace)
-          return ServiceResponse.error(message: 'Missing permissions', payload: :missing_permission)
+          return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
         end
 
         transactional do |t|
@@ -25,7 +25,8 @@ module Namespaces
 
           unless namespace_member.persisted?
             t.rollback_and_return! ServiceResponse.error(message: 'Failed to save namespace member',
-                                                         payload: namespace_member.errors)
+                                                         error_code: :invalid_namespace_member,
+                                                         details: namespace_member.errors)
           end
 
           AuditService.audit(

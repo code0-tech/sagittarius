@@ -18,5 +18,5 @@ Update an existing runtime.
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `errors` | [`[Error!]!`](../union/error.md) | Errors encountered during execution of the mutation. |
+| `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |
 | `runtime` | [`Runtime`](../object/runtime.md) | The updated runtime. |

@@ -15,7 +15,10 @@ module Mutations
         def resolve(namespace_id:, **params)
           namespace = SagittariusSchema.object_from_id(namespace_id)
 
-          return { namespace_role: nil, errors: [create_message_error('Invalid namespace')] } if namespace.nil?
+          if namespace.nil?
+            return { namespace_role: nil,
+                     errors: [create_error(:namespace_not_found, 'Invalid namespace')] }
+          end
 
           ::Namespaces::Roles::CreateService.new(
             current_authentication,

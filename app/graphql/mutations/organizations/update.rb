@@ -15,7 +15,10 @@ module Mutations
       def resolve(organization_id:, **params)
         organization = SagittariusSchema.object_from_id(organization_id)
 
-        return { organization: nil, errors: [create_message_error('Invalid organization')] } if organization.nil?
+        if organization.nil?
+          return { organization: nil,
+                   errors: [create_error(:organization_not_found, 'Invalid organization')] }
+        end
 
         ::Organizations::UpdateService.new(
           current_authentication,

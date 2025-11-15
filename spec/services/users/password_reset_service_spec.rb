@@ -28,7 +28,7 @@ RSpec.describe Users::PasswordResetService do
     context 'when token is invalid' do
       let(:authentication_token) { 'invalidtoken' }
 
-      it { expect(service_response.payload).to eq(:invalid_verification_code) }
+      it { expect(service_response.payload[:error_code]).to eq(:invalid_verification_code) }
 
       it_behaves_like 'user doesnt verify'
     end

@@ -12,11 +12,11 @@ module Users
 
         def execute
           unless Ability.allowed?(current_authentication, :manage_mfa, current_authentication.user)
-            return ServiceResponse.error(payload: :missing_permission)
+            return ServiceResponse.error(error_code: :missing_permission)
           end
 
           unless current_authentication.user.totp_secret.nil?
-            return ServiceResponse.error(payload: :totp_secret_already_set)
+            return ServiceResponse.error(error_code: :totp_secret_already_set)
           end
 
           totp_secret = ROTP::Base32.random

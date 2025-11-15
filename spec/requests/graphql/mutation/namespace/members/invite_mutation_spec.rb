@@ -75,8 +75,8 @@ RSpec.describe 'namespacesMembersInvite Mutation' do
 
         expect(graphql_data_at(:namespaces_members_invite, :namespace_member)).to be_nil
         expect(
-          graphql_data_at(:namespaces_members_invite, :errors)
-        ).to include({ 'attribute' => 'namespace', 'type' => 'taken' })
+          graphql_data_at(:namespaces_members_invite, :errors, :details)
+        ).to include([{ 'attribute' => 'namespace', 'type' => 'taken' }])
       end
     end
   end
@@ -86,7 +86,7 @@ RSpec.describe 'namespacesMembersInvite Mutation' do
       mutate!
 
       expect(graphql_data_at(:namespaces_members_invite, :namespace_member)).to be_nil
-      expect(graphql_data_at(:namespaces_members_invite, :errors)).to include({ 'errorCode' => 'MISSING_PERMISSION' })
+      expect(graphql_data_at(:namespaces_members_invite, :errors, :error_code)).to include('MISSING_PERMISSION')
     end
   end
 end

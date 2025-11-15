@@ -59,7 +59,7 @@ RSpec.describe Users::Identity::LoginService do
     it do
       is_expected.not_to create_audit_event
       expect(service_response).not_to be_success
-      expect(service_response.payload.message).to eq('Validation failed')
+      expect(service_response.payload[:error_code]).to eq(:loading_identity_failed)
       expect(service_response.message).to eq('An error occurred while loading external identity')
     end
   end
@@ -75,7 +75,7 @@ RSpec.describe Users::Identity::LoginService do
     it do
       is_expected.not_to create_audit_event
       expect(service_response).not_to be_success
-      expect(service_response.payload).to eq(:invalid_external_identity)
+      expect(service_response.payload[:error_code]).to eq(:invalid_external_identity)
       expect(service_response.message).to eq('External identity is nil')
     end
   end
@@ -92,7 +92,7 @@ RSpec.describe Users::Identity::LoginService do
     it do
       is_expected.not_to create_audit_event
       expect(service_response).not_to be_success
-      expect(service_response.payload).to eq(:external_identity_does_not_exist)
+      expect(service_response.payload[:error_code]).to eq(:external_identity_does_not_exist)
       expect(service_response.message).to eq('No user with that external identity exists, please register first')
     end
   end

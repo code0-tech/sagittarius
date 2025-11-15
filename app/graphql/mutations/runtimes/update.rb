@@ -17,7 +17,7 @@ module Mutations
       def resolve(runtime_id:, **params)
         runtime = SagittariusSchema.object_from_id(runtime_id)
 
-        return { runtime: nil, errors: [create_message_error('Invalid runtime')] } if runtime.nil?
+        return { runtime: nil, errors: [create_error(:runtime_not_found, 'Invalid runtime')] } if runtime.nil?
 
         ::Runtimes::UpdateService.new(
           current_authentication,

@@ -16,7 +16,9 @@ module Mutations
       argument :username, String, required: true, description: 'Username of the user'
 
       def resolve(username:, email:, password:, password_repeat:)
-        return { user: nil, errors: [create_message_error('Invalid password repeat')] } if password != password_repeat
+        if password != password_repeat
+          return { user: nil, errors: [create_error(:invalid_password_repeat, 'Invalid password repeat')] }
+        end
 
         response = ::Users::RegisterService.new(
           username,

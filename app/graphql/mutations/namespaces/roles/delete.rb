@@ -16,7 +16,7 @@ module Mutations
 
           if namespace_role.nil?
             return { namespace_role: nil,
-                     errors: [create_message_error('Invalid namespace role')] }
+                     errors: [create_error(:namespace_role_not_found, 'Invalid namespace role')] }
           end
 
           ::Namespaces::Roles::DeleteService.new(

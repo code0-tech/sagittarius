@@ -21,7 +21,7 @@ module Mutations
 
           if project.nil?
             return { organization_project: nil,
-                     errors: [create_message_error('Invalid project')] }
+                     errors: [create_error(:project_not_found, 'Invalid project')] }
           end
 
           params[:primary_runtime_id] = params[:primary_runtime_id]&.model_id if params.key?(:primary_runtime_id)

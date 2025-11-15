@@ -24,6 +24,8 @@ module Namespaces
           attr_reader :type, :error_code, :details
 
           def initialize(type:, error_code:, details:)
+            FlowValidationErrorCode.validate_error_code!(error_code)
+
             @type = type
             @error_code = error_code
             @details = details

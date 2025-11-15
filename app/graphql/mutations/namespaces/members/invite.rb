@@ -16,8 +16,11 @@ module Mutations
           namespace = SagittariusSchema.object_from_id(namespace_id)
           user = SagittariusSchema.object_from_id(user_id)
 
-          return { namespace_member: nil, errors: [create_message_error('Invalid namespace')] } if namespace.nil?
-          return { namespace_member: nil, errors: [create_message_error('Invalid user')] } if user.nil?
+          if namespace.nil?
+            return { namespace_member: nil,
+                     errors: [create_error(:namespace_not_found, 'Invalid namespace')] }
+          end
+          return { namespace_member: nil, errors: [create_error(:user_not_found, 'Invalid user')] } if user.nil?
 
           ::Namespaces::Members::InviteService.new(
             current_authentication,

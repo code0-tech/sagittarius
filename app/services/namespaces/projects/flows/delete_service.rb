@@ -15,7 +15,7 @@ module Namespaces
 
         def execute
           unless Ability.allowed?(current_authentication, :delete_flow, flow)
-            return ServiceResponse.error(message: 'Missing permission', payload: :missing_permission)
+            return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
           end
 
           transactional do |t|
@@ -24,7 +24,8 @@ module Namespaces
             if flow.persisted?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Failed to delete flow',
-                payload: flow.errors
+                error_code: :invalid_flow,
+                details: flow.errors
               )
             end
 

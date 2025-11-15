@@ -15,7 +15,7 @@ RSpec.describe Namespaces::Roles::UpdateService do
     let(:current_user) { nil }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
     it { expect { service_response }.not_to change { namespace_role.reload.name } }
 
     it do
@@ -27,7 +27,7 @@ RSpec.describe Namespaces::Roles::UpdateService do
     let(:current_user) { create(:user) }
 
     it { is_expected.not_to be_success }
-    it { expect(service_response.payload).to eq(:missing_permission) }
+    it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
     it { expect { service_response }.not_to change { namespace_role.reload.name } }
 
     it do

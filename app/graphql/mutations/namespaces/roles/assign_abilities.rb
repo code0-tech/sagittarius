@@ -16,7 +16,7 @@ module Mutations
         def resolve(role_id:, abilities:)
           role = SagittariusSchema.object_from_id(role_id)
 
-          return { abilities: nil, errors: [create_message_error('Invalid role')] } if role.nil?
+          return { abilities: nil, errors: [create_error(:namespace_role_not_found, 'Invalid role')] } if role.nil?
 
           ::Namespaces::Roles::AssignAbilitiesService.new(
             current_authentication,

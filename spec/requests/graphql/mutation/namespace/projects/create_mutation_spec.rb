@@ -76,8 +76,8 @@ RSpec.describe 'namespacesProjectsCreate Mutation' do
 
         expect(graphql_data_at(:namespaces_projects_create, :namespace_project)).to be_nil
         expect(
-          graphql_data_at(:namespaces_projects_create, :errors)
-        ).to include({ 'attribute' => 'name', 'type' => 'taken' })
+          graphql_data_at(:namespaces_projects_create, :errors, :details)
+        ).to include([{ 'attribute' => 'name', 'type' => 'taken' }])
       end
     end
 
@@ -117,7 +117,7 @@ RSpec.describe 'namespacesProjectsCreate Mutation' do
       mutate!
 
       expect(graphql_data_at(:namespaces_projects_create, :namespace_project)).to be_nil
-      expect(graphql_data_at(:namespaces_projects_create, :errors)).to include({ 'errorCode' => 'MISSING_PERMISSION' })
+      expect(graphql_data_at(:namespaces_projects_create, :errors, :error_code)).to include('MISSING_PERMISSION')
     end
   end
 end

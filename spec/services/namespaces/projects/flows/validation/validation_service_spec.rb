@@ -69,7 +69,7 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
     end
 
     it 'returns an error' do
-      expect(service_response.payload).to include(have_attributes(error_code: :no_primary_runtime))
+      expect(service_response.payload[:details]).to include(have_attributes(error_code: :no_primary_runtime))
     end
   end
 
