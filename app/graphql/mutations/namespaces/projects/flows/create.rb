@@ -20,7 +20,7 @@ module Mutations
             if project.nil?
               return {
                 flow: nil,
-                errors: [create_error(:namespace_project_not_found, 'Invalid project id')],
+                errors: [create_error(:project_not_found, 'Invalid project id')],
               }
             end
 

@@ -21,7 +21,7 @@ module Mutations
 
           if projects.any?(&:nil?)
             return { projects: nil,
-                     errors: [create_error(:namespace_project_not_found, 'Invalid project')] }
+                     errors: [create_error(:project_not_found, 'Invalid project')] }
           end
 
           ::Namespaces::Roles::AssignProjectsService.new(

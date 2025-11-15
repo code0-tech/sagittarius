@@ -16,7 +16,7 @@ module Mutations
 
           if project.nil?
             return { organization_project: nil,
-                     errors: [create_error(:namespace_project_not_found, 'Invalid project')] }
+                     errors: [create_error(:project_not_found, 'Invalid project')] }
           end
 
           ::Namespaces::Projects::DeleteService.new(
