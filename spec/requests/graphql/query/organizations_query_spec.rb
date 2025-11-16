@@ -52,4 +52,19 @@ RSpec.describe 'organization Query' do
       )
     end
   end
+
+  context 'when admin user' do
+    let(:current_user) { create(:user, admin: true) }
+    let!(:third_organization) { create(:organization) }
+
+    it 'returns all organizations' do
+      query!
+
+      expect(graphql_data_at(:organizations, :nodes)).to contain_exactly(
+        a_graphql_entity_for(first_organization),
+        a_graphql_entity_for(second_organization),
+        a_graphql_entity_for(third_organization)
+      )
+    end
+  end
 end

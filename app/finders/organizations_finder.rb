@@ -31,6 +31,7 @@ class OrganizationsFinder < ApplicationFinder
   def by_namespace_member_user(organizations)
     return organizations unless params.key?(:namespace_member_user)
     return Organization.none if params[:namespace_member_user].nil?
+    return organizations if params[:namespace_member_user].admin?
 
     namespaces = NamespaceMember.where(user_id: params[:namespace_member_user][:id]).select(:namespace_id)
 

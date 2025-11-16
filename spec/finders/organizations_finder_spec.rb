@@ -41,6 +41,14 @@ RSpec.describe OrganizationsFinder do
 
       it { is_expected.to be_empty }
     end
+
+    context 'when user is admin' do
+      let(:user) { create(:user, admin: true) }
+
+      it 'returns all organizations' do
+        expect(subject).to contain_exactly(first_organization, second_organization)
+      end
+    end
   end
 
   context 'when setting limit' do
