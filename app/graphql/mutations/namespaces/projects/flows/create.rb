@@ -36,7 +36,8 @@ module Mutations
               current_authentication,
               namespace_project: project,
               flow_type: flow_type,
-              starting_node: flow.starting_node,
+              starting_node_id: flow.starting_node_id,
+              nodes: flow.nodes,
               flow_settings: flow.settings || [],
               name: flow.name
             ).execute.to_mutation_response(success_key: :flow)

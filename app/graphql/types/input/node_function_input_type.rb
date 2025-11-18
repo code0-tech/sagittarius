@@ -5,11 +5,14 @@ module Types
     class NodeFunctionInputType < Types::BaseInputObject
       description 'Input type for a Node Function'
 
+      argument :id, Types::GlobalIdType[::NodeFunction],
+               required: true, description: 'The identifier of the Node Function used to create/update the flow'
+
       argument :runtime_function_id, Types::GlobalIdType[::RuntimeFunctionDefinition],
                required: true, description: 'The identifier of the Runtime Function Definition'
 
-      argument :next_node, Types::Input::NodeFunctionInputType, required: false,
-                                                                description: 'The next Node Function in the flow'
+      argument :next_node_id, Types::GlobalIdType[::NodeFunction], required: false,
+                                                                   description: 'The next Node Function in the flow'
       argument :parameters, [Types::Input::NodeParameterInputType], required: true,
                                                                     description: 'The parameters of the Node Function'
     end

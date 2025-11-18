@@ -38,9 +38,11 @@ module Namespaces
               params[:flow_settings] = settings
             end
 
-            if params.key?(:starting_node) && params[:starting_node].is_a?(Types::Input::NodeFunctionInputType)
-              node = create_node_function(params[:starting_node], t)
-              params[:starting_node] = node
+            if params.key?(:starting_node_id)
+              params[:starting_node] = p create_node_function(params[:starting_node_id], params[:nodes], t)
+
+              params.delete(:starting_node_id)
+              params.delete(:nodes)
             end
 
             flow = Flow.create(project: namespace_project, **params)
@@ -76,7 +78,9 @@ module Namespaces
           end
         end
 
-        def create_node_function(node_function, t)
+        def create_node_function(node_function_id, input_nodes, t)
+          node_function = input_nodes.find { |n| n.id == node_function_id }
+
           runtime_function_definition = SagittariusSchema.object_from_id(node_function.runtime_function_id)
           if runtime_function_definition.nil?
             t.rollback_and_return! ServiceResponse.error(
@@ -139,8 +143,9 @@ module Namespaces
             )
           end
 
-          next_node = nil
-          next_node = create_node_function(node_function.next_node, t) if node_function.next_node.present?
+          next_node = if node_function.next_node_id.present?
+                        create_node_function(node_function.next_node_id, input_nodes, t)
+                      end
 
           NodeFunction.create(
             next_node: next_node,

@@ -59,21 +59,36 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
       flow: {
         name: generate(:flow_name),
         type: flow_type.to_global_id.to_s,
+        startingNodeId: 'gid://sagittarius/NodeFunction/999',
         settings: {
           flowSettingId: 'key',
           object: {
             'key' => 'value',
           },
         },
-        startingNode: {
-          runtimeFunctionId: runtime_function.to_global_id.to_s,
-          parameters: [
-            runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
-            value: {
-              literalValue: 'test_value',
-            }
-          ],
-        },
+        nodes: [
+          {
+            id: 'gid://sagittarius/NodeFunction/999',
+            runtimeFunctionId: runtime_function.to_global_id.to_s,
+            parameters: [
+              runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
+              value: {
+                literalValue: 'test_value',
+              }
+            ],
+            nextNodeId: 'gid://sagittarius/NodeFunction/991',
+          },
+          {
+            id: 'gid://sagittarius/NodeFunction/991',
+            runtimeFunctionId: runtime_function.to_global_id.to_s,
+            parameters: [
+              runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
+              value: {
+                literalValue: 'test_value2',
+              }
+            ],
+          }
+        ],
       },
     }
   end
@@ -108,6 +123,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
 
       expect(flow).to be_present
       expect(project.flows).to include(flow)
+      expect(flow.collect_node_functions.count).to eq(2)
 
       is_expected.to create_audit_event(
         :flow_created,
