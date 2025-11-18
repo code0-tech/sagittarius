@@ -39,7 +39,7 @@ module Namespaces
             end
 
             if params.key?(:starting_node_id)
-              params[:starting_node] = p create_node_function(params[:starting_node_id], params[:nodes], t)
+              params[:starting_node] = create_node_function(params[:starting_node_id], params[:nodes], t)
 
               params.delete(:starting_node_id)
               params.delete(:nodes)
