@@ -92,10 +92,6 @@ module RuboCop
           node.location.expression.source_buffer.name
         end
 
-        def in_mutation?(node)
-          dirname(node).include?('app/mutations') # .include? because the path is ../app/mutations/...
-        end
-
         def in_service?(node)
           dirname(node).include?('app/services') # .include? because the path is ../app/services/...
         end
