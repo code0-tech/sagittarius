@@ -107,4 +107,4 @@ Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
 Sagittarius/ErrorCode:
-    Enabled: true
+  Enabled: true
