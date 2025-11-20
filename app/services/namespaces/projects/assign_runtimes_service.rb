@@ -32,7 +32,7 @@ module Namespaces
             )
           end
 
-          UpdateRuntimeCompatibilityJob.perform_later(namespace_project_id: namespace_project.id)
+          UpdateRuntimeCompatibilityJob.perform_later({ namespace_project_id: namespace_project.id })
 
           AuditService.audit(
             :project_runtimes_assigned,

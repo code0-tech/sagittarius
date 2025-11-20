@@ -14,7 +14,7 @@ module Runtimes
 
       if primary_runtime.nil?
         return ServiceResponse.error(message: 'No primary runtime given',
-                                     payload: :missing_primary_runtime)
+                                     error_code: :missing_primary_runtime)
       end
 
       { DataType => :identifier, FlowType => :identifier,
@@ -31,29 +31,31 @@ module Runtimes
 
       if to_check_types.size < primary_types.size
         return ServiceResponse.error(message: "#{model} amount dont match",
-                                     payload: :missing_definition)
+                                     error_code: :missing_definition)
       end
 
       primary_types.each do |curr_type|
         to_check = model.find_by(runtime: runtime, identifier_field => curr_type.send(identifier_field))
         if to_check.nil?
           return ServiceResponse.error(message: "#{model} is not present in new runtime",
-                                       payload: :missing_definition)
+                                       error_code: :missing_definition)
         end
 
         result = compare_version(curr_type.parsed_version, to_check.parsed_version)
 
         unless result
           return ServiceResponse.error(message: "#{model} is outdated",
-                                       payload: :outdated_definition)
+                                       error_code: :outdated_definition)
         end
       end
       ServiceResponse.success
     end
 
+    # true: compatible
+    # false: not compatible
     def compare_version(primary_version, to_check_version)
       return false if primary_version.segments[0] != to_check_version.segments[0]
-      return false if primary_version.segments[1] < to_check_version.segments[1]
+      return false if primary_version.segments[1] > to_check_version.segments[1]
 
       true
     end

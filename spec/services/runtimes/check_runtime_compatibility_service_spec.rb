@@ -16,7 +16,7 @@ RSpec.describe Runtimes::CheckRuntimeCompatibilityService do
 
     it 'returns an error with :missing_primary_runtime payload' do
       expect(service_response).to be_error
-      expect(service_response.payload).to eq(:missing_primary_runtime)
+      expect(service_response.payload[:error_code]).to eq(:missing_primary_runtime)
     end
   end
 
@@ -27,29 +27,29 @@ RSpec.describe Runtimes::CheckRuntimeCompatibilityService do
 
     it 'returns missing_datatypes error' do
       expect(service_response.error?).to be true
-      expect(service_response.payload).to eq(:missing_definition)
+      expect(service_response.payload[:error_code]).to eq(:missing_definition)
     end
   end
 
-  context 'when a data type version is newer on runtime than primary (outdated primary)' do
+  context 'when secondary runtime has outdated definitions' do
     before do
-      create(:data_type, runtime: primary_runtime, identifier: 'dt1', version: '1.1.0')
+      create(:data_type, runtime: primary_runtime, identifier: 'dt1', version: '1.3.0')
       create(:data_type, runtime: runtime, identifier: 'dt1', version: '1.2.0')
     end
 
     it 'returns outdated_data_type error' do
       expect(service_response.error?).to be true
-      expect(service_response.payload).to eq(:outdated_definition)
+      expect(service_response.payload[:error_code]).to eq(:outdated_definition)
     end
   end
 
   context 'when all models are compatible' do
     before do
-      create(:data_type, runtime: primary_runtime, identifier: 'dt1', version: '1.2.0')
-      create(:data_type, runtime: runtime, identifier: 'dt1', version: '1.1.0')
+      create(:data_type, runtime: primary_runtime, identifier: 'dt1', version: '1.3.0')
+      create(:data_type, runtime: runtime, identifier: 'dt1', version: '1.3.0')
       create(:flow_type, runtime: primary_runtime, identifier: 'ft1', version: '2.1.0')
-      create(:flow_type, runtime: runtime, identifier: 'ft1', version: '2.0.0')
-      create(:runtime_function_definition, runtime_name: 'rfd1', runtime: primary_runtime, version: '3.2.0')
+      create(:flow_type, runtime: runtime, identifier: 'ft1', version: '2.2.0')
+      create(:runtime_function_definition, runtime_name: 'rfd1', runtime: primary_runtime, version: '3.0.0')
       create(:runtime_function_definition, runtime_name: 'rfd1', runtime: runtime, version: '3.1.0')
     end
 

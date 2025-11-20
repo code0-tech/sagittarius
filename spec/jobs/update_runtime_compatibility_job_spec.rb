@@ -10,7 +10,7 @@ RSpec.describe UpdateRuntimeCompatibilityJob do
     assignment2 = create(:namespace_project_runtime_assignment, compatible: false)
 
     success_res = ServiceResponse.success
-    err_response = ServiceResponse.error
+    err_response = ServiceResponse.error(error_code: :outdated_definition, message: 'Runtime is outdated')
 
     service1 = instance_double(Runtimes::CheckRuntimeCompatibilityService, execute: success_res)
     service2 = instance_double(Runtimes::CheckRuntimeCompatibilityService, execute: err_response)
