@@ -10,6 +10,7 @@ RSpec.describe SagittariusSchema.types['NamespaceRole'] do
       name
       abilities
       assignedProjects
+      members
       userAbilities
       createdAt
       updatedAt

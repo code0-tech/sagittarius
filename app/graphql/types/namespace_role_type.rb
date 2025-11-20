@@ -15,6 +15,9 @@ module Types
     field :assigned_projects, Types::NamespaceProjectType.connection_type,
           description: 'The projects this role is assigned to'
 
+    field :members, Types::NamespaceMemberType.connection_type,
+          description: 'The members this role is assigned to'
+
     expose_abilities %i[
       assign_role_abilities
       assign_role_projects

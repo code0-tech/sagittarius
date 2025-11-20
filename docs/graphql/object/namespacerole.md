@@ -12,6 +12,7 @@ Represents a namespace role.
 | `assignedProjects` | [`NamespaceProjectConnection`](../object/namespaceprojectconnection.md) | The projects this role is assigned to |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceRole was created |
 | `id` | [`NamespaceRoleID!`](../scalar/namespaceroleid.md) | Global ID of this NamespaceRole |
+| `members` | [`NamespaceMemberConnection`](../object/namespacememberconnection.md) | The members this role is assigned to |
 | `name` | [`String!`](../scalar/string.md) | The name of this role |
 | `namespace` | [`Namespace`](../object/namespace.md) | The namespace where this role belongs to |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceRole was last updated |

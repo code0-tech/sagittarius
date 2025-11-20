@@ -11,6 +11,7 @@ RSpec.describe SagittariusSchema.types['NamespaceProject'] do
       namespace
       primary_runtime
       runtimes
+      roles
       flows
       flow
       user_abilities

@@ -10,7 +10,7 @@ class NamespaceRole < ApplicationRecord
   has_many :assigned_projects, class_name: 'NamespaceProject',
                                through: :project_assignments,
                                inverse_of: :assigned_roles,
-                               source: :role
+                               source: :project
 
   scope :applicable_to_project, lambda { |project|
     left_joins(:project_assignments)
