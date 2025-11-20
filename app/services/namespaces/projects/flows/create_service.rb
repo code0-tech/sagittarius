@@ -23,8 +23,8 @@ module Namespaces
             settings = []
             if params.key?(:flow_settings)
               params[:flow_settings].each do |graphql_setting|
-                setting = FlowSetting.new(flow_setting_id: graphql_setting.flow_setting_id,
-                                          object: graphql_setting.object)
+                setting = FlowSetting.new(flow_setting_id: graphql_setting.flow_setting_identifier,
+                                          object: graphql_setting.value)
                 if setting.invalid?
                   t.rollback_and_return! ServiceResponse.error(
                     message: 'Invalid flow setting',
