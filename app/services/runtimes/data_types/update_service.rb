@@ -24,6 +24,8 @@ module Runtimes
             end
           end
 
+          UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+
           ServiceResponse.success(message: 'Updated data types', payload: data_types)
         end
       end
