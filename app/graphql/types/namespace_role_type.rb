@@ -31,9 +31,5 @@ module Types
     def abilities
       object.abilities.map(&:ability)
     end
-
-    def assigned_members
-      object.members
-    end
   end
 end
