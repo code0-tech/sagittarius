@@ -11,6 +11,7 @@ Bundler.require(*Rails.groups)
 require_relative '../lib/sagittarius/utils'
 require_relative '../lib/sagittarius/extensions'
 require_relative '../lib/sagittarius/configuration'
+require_relative '../lib/sagittarius/version'
 
 module Sagittarius
   class Application < Rails::Application

@@ -22,6 +22,8 @@ module Types
     field :application_settings, Types::ApplicationSettingsType, null: true,
                                                                  description: 'Get global application settings'
 
+    field :metadata, Types::MetadataType, null: false, description: 'Get application metadata'
+
     field :echo, GraphQL::Types::String, null: false, description: 'Field available for use to test API access' do
       argument :message, GraphQL::Types::String, required: true, description: 'String to echo as response'
     end
@@ -63,6 +65,13 @@ module Types
 
     def application_settings
       ApplicationSetting.current
+    end
+
+    def metadata
+      {
+        version: Sagittarius::Version,
+        extensions: Sagittarius::Extensions.active.map(&:to_s),
+      }
     end
 
     def echo(message:)
