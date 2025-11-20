@@ -45,9 +45,11 @@ Represents the available error responses
 | `LOADING_IDENTITY_FAILED` | Failed to load user identity from external provider |
 | `MFA_FAILED` | Invalid MFA data provided |
 | `MFA_REQUIRED` | MFA is required |
+| `MISSING_DEFINITION` | The primary runtime has more definitions than this one |
 | `MISSING_IDENTITY_DATA` | This external identity is missing data |
 | `MISSING_PARAMETER` | Not all required parameters are present |
 | `MISSING_PERMISSION` | The user is not permitted to perform this operation |
+| `MISSING_PRIMARY_RUNTIME` | The project is missing a primary runtime |
 | `NAMESPACE_MEMBER_NOT_FOUND` | The namespace member with the given identifier was not found |
 | `NAMESPACE_NOT_FOUND` | The namespace with the given identifier was not found |
 | `NAMESPACE_PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
@@ -55,6 +57,7 @@ Represents the available error responses
 | `NO_FREE_LICENSE_SEATS` | There are no free license seats to complete this operation |
 | `NO_PRIMARY_RUNTIME` | The project does not have a primary runtime |
 | `ORGANIZATION_NOT_FOUND` | The organization with the given identifier was not found |
+| `OUTDATED_DEFINITION` | The primary runtime has a newer definition than this one |
 | `PRIMARY_LEVEL_NOT_FOUND` | **Deprecated:** Outdated concept |
 | `PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
 | `REGISTRATION_DISABLED` | Self-registration is disabled |
