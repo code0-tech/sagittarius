@@ -61,8 +61,8 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
         type: flow_type.to_global_id.to_s,
         startingNodeId: 'gid://sagittarius/NodeFunction/999',
         settings: {
-          flowSettingId: 'key',
-          object: {
+          flowSettingIdentifier: 'key',
+          value: {
             'key' => 'value',
           },
         },
