@@ -88,10 +88,6 @@ module RuboCop
           File.dirname(filepath(node))
         end
 
-        def basename(node)
-          File.basename(filepath(node))
-        end
-
         def filepath(node)
           node.location.expression.source_buffer.name
         end
