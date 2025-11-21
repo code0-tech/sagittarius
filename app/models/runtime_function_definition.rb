@@ -14,6 +14,10 @@ class RuntimeFunctionDefinition < ApplicationRecord
     by_purpose(:deprecation_message)
   }, class_name: 'Translation', as: :owner, inverse_of: :owner
 
+  has_many :display_messages, -> { by_purpose(:display_message) },
+           class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_many :aliases, -> { by_purpose(:alias) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+
   validates :runtime_name, presence: true,
                            length: { minimum: 3, maximum: 50 },
                            uniqueness: { case_sensitive: false, scope: :runtime_id }

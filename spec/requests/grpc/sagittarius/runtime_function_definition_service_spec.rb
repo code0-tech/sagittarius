@@ -35,6 +35,12 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
             deprecation_message: [
               { code: 'de_DE', content: 'Eine Deprecationsmeldung' }
             ],
+            display_message: [
+              { code: 'de_DE', content: 'Eine Funktionsanzeige' }
+            ],
+            alias: [
+              { code: 'de_DE', content: 'Ein Funktionsalias' }
+            ],
             return_type_identifier: {
               generic_type: {
                 data_type_identifier: return_type.generic_type.data_type.identifier,
@@ -90,6 +96,8 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function.documentations.first.content).to eq('Eine Funktionsdokumentation')
         expect(function.deprecation_messages.first.content).to eq('Eine Deprecationsmeldung')
+        expect(function.aliases.first.content).to eq('Ein Funktionsalias')
+        expect(function.display_messages.first.content).to eq('Eine Funktionsanzeige')
         expect(function.throws_error).to be(true)
         expect(function.version).to eq('0.0.0')
         parameter = function.parameters.first
@@ -104,6 +112,8 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function_definition.names.first.content).to eq('Eine Funktion')
         expect(function_definition.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function_definition.documentations.first.content).to eq('Eine Funktionsdokumentation')
+        expect(function_definition.aliases.first.content).to eq('Ein Funktionsalias')
+        expect(function_definition.display_messages.first.content).to eq('Eine Funktionsanzeige')
         expect(function_definition.return_type.generic_type.reload.data_type.identifier)
           .to eq(return_type.generic_type.data_type.identifier)
         parameter_definition = ParameterDefinition.first

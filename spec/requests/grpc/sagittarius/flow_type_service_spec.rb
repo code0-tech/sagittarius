@@ -24,6 +24,12 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
           description: [
             { code: 'en_US', content: "That's a description" }
           ],
+          display_message: [
+            { code: 'en_US', content: 'Flow Type: ${0}' }
+          ],
+          alias: [
+            { code: 'de_DE', content: 'Irgendein Flow Typ' }
+          ],
           editable: true,
           return_type_identifier: data_type.identifier,
           version: {
@@ -51,6 +57,14 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
       expect(flow_type.descriptions.count).to eq(1)
       expect(flow_type.descriptions.first.code).to eq('en_US')
       expect(flow_type.descriptions.first.content).to eq("That's a description")
+
+      expect(flow_type.display_messages.count).to eq(1)
+      expect(flow_type.display_messages.first.code).to eq('en_US')
+      expect(flow_type.display_messages.first.content).to eq('Flow Type: ${0}')
+
+      expect(flow_type.aliases.count).to eq(1)
+      expect(flow_type.aliases.first.code).to eq('de_DE')
+      expect(flow_type.aliases.first.content).to eq('Irgendein Flow Typ')
 
       expect(flow_type.editable).to be true
       expect(flow_type.return_type.identifier).to eq('some_return_type_identifier')

@@ -48,6 +48,9 @@ module Runtimes
                                                        db_object.documentations)
         db_object.deprecation_messages = update_translations(runtime_function_definition.deprecation_message,
                                                              db_object.deprecation_messages)
+        db_object.display_messages = update_translations(runtime_function_definition.display_message,
+                                                         db_object.display_messages)
+        db_object.aliases = update_translations(runtime_function_definition.alias, db_object.aliases)
 
         db_object.throws_error = runtime_function_definition.throws_error
         definition_version = runtime_function_definition.version
@@ -60,6 +63,9 @@ module Runtimes
                                                         definition.descriptions)
           definition.documentations = update_translations(runtime_function_definition.documentation,
                                                           definition.documentations)
+          definition.display_messages = update_translations(runtime_function_definition.display_message,
+                                                            definition.display_messages)
+          definition.aliases = update_translations(runtime_function_definition.alias, definition.aliases)
           definition.return_type = db_object.return_type
 
           db_object.function_definitions << definition
