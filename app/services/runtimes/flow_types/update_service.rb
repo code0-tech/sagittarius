@@ -56,7 +56,7 @@ module Runtimes
 
         if data_type.nil?
           t.rollback_and_return! ServiceResponse.error(message: "Could not find datatype with identifier #{identifier}",
-                                                       payload: :no_datatype_for_identifier)
+                                                       error_code: :no_data_type_for_identifier)
         end
 
         data_type

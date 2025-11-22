@@ -10,6 +10,7 @@ class ErrorCode
     raise InvalidErrorCode, error_code unless error_codes.include?(error_code)
   end
 
+  # rubocop:disable Layout/LineLength -- To keep readability of the error codes
   def self.error_codes
     {
       missing_permission: { description: 'The user is not permitted to perform this operation' },
@@ -69,15 +70,26 @@ class ErrorCode
       license_not_found: { description: 'The namespace license with the given identifier was not found' },
       flow_type_not_found: { description: 'The flow type with the given identifier was not found' },
       organization_not_found: { description: 'The organization with the given identifier was not found' },
+      invalid_runtime_function_id: { description: 'The runtime function ID is invalid' },
+      invalid_runtime_parameter_id: { description: 'The runtime parameter ID is invalid' },
+      referenced_value_not_found: { description: 'A referenced value could not be found' },
+      invalid_runtime_parameter_definition: { description: 'The runtime parameter definition is invalid' },
+      invalid_runtime_function_definition: { description: 'The runtime function definition is invalid' },
+      no_generic_type_for_identifier: { description: 'No generic type could be found for the given identifier' },
+      no_data_type_for_identifier: { description: 'No data type could be found for the given identifier' },
+      no_datatype_identifier_for_generic_key: { description: 'No data type identifier could be found for the given generic key' },
+      invalid_generic_mapper: { description: 'The generic mapper is invalid because of active model errors' },
+      invalid_data_type: { description: 'The data type is invalid because of active model errors' },
+
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       tertiary_level_exceeds_parameters: { description: '', deprecation_reason: 'Outdated concept' },
-
       missing_primary_runtime: { description: 'The project is missing a primary runtime' },
       missing_definition: { description: 'The primary runtime has more definitions than this one' },
       outdated_definition: { description: 'The primary runtime has a newer definition than this one' },
     }
   end
+  # rubocop:enable Layout/LineLength
 end
 
 ErrorCode.prepend_extensions

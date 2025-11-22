@@ -16,7 +16,7 @@ module Users
       def execute
         transactional do |t|
           if identity.nil?
-            t.rollback_and_return! ServiceResponse.error(payload: :external_identity_does_not_exist,
+            t.rollback_and_return! ServiceResponse.error(error_code: :external_identity_does_not_exist,
                                                          message: 'Nil identity given')
           end
 

@@ -49,7 +49,7 @@ module Users
                                                    user: current_user)).persisted?
               if i > 10
                 t.rollback_and_return! ServiceResponse.error(message: 'Failed to save valid backup code',
-                                                             payload: :failed_to_save_valid_backup_code)
+                                                             error_code: :failed_to_save_valid_backup_code)
               end
               i += 1
             end
