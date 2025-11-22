@@ -11,6 +11,7 @@ class UserPolicy < BasePolicy
     enable :read_user_identity
     enable :update_attachment_avatar
     enable :read_email
+    enable :delete_user
   end
 
   rule { user_is_self }.policy do
