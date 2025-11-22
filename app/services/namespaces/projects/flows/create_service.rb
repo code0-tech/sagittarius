@@ -19,6 +19,13 @@ module Namespaces
             return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
           end
 
+          if namespace_project.primary_runtime.nil?
+            return ServiceResponse.error(
+              message: 'Project has no primary runtime',
+              error_code: :no_primary_runtime
+            )
+          end
+
           transactional do |t|
             settings = []
             if params.key?(:flow_settings)
@@ -83,7 +90,9 @@ module Namespaces
         def create_node_function(node_function_id, input_nodes, t)
           node_function = input_nodes.find { |n| n.id == node_function_id }
 
-          runtime_function_definition = SagittariusSchema.object_from_id(node_function.runtime_function_id)
+          runtime_function_definition = namespace_project.primary_runtime.runtime_function_definitions.find_by(
+            id: node_function.runtime_function_id.model_id
+          )
           if runtime_function_definition.nil?
             t.rollback_and_return! ServiceResponse.error(
               message: 'Invalid runtime function id',
@@ -93,7 +102,9 @@ module Namespaces
 
           params = []
           node_function.parameters.each do |parameter|
-            runtime_parameter = SagittariusSchema.object_from_id(parameter.runtime_parameter_definition_id)
+            runtime_parameter = runtime_function_definition.parameters.find_by(
+              id: parameter.runtime_parameter_definition_id.model_id
+            )
             if runtime_parameter.nil?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Invalid runtime parameter id',
@@ -116,11 +127,12 @@ module Namespaces
               next
             end
 
-            reference_value = SagittariusSchema.object_from_id(
-              parameter.value.reference_value.node_function_id
+            referenced_node = NodeFunction.joins(:runtime_function).find_by(
+              id: parameter.value.reference_value.node_function_id.model_id,
+              runtime_function_definitions: { runtime_id: namespace_project.primary_runtime.id }
             )
 
-            if reference_value.nil?
+            if referenced_node.nil?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Referenced node function not found',
                 error_code: :referenced_value_not_found
@@ -130,8 +142,8 @@ module Namespaces
             params << NodeParameter.create(
               runtime_parameter: runtime_parameter,
               reference_value: ReferenceValue.create(
-                node_function: reference_value,
-                data_type_identifier: get_data_type_identifier(parameter.value.reference_value.data_type_identifier),
+                node_function: referenced_node,
+                data_type_identifier: get_data_type_identifier(parameter.value.reference_value.data_type_identifier, t),
                 depth: parameter.value.reference_value.depth,
                 node: parameter.value.reference_value.node,
                 scope: parameter.value.reference_value.scope,
@@ -158,11 +170,21 @@ module Namespaces
 
         private
 
-        def get_data_type_identifier(identifier)
+        def get_data_type_identifier(identifier, t)
           return DataTypeIdentifier.create(generic_key: identifier.generic_key) if identifier.generic_key.present?
 
           if identifier.generic_type.present?
-            data_type = SagittariusSchema.object_from_id(identifier.generic_type.data_type_id)
+            data_type = namespace_project.primary_runtime.data_types.find_by(
+              id: identifier.generic_type.data_type_id.model_id
+            )
+
+            if data_type.nil?
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Data type not found',
+                error_code: :data_type_not_found
+              )
+            end
+
             mappers = identifier.generic_type.mappers.map do |mapper|
               GenericMapper.create(
                 generic_mapper_id: mapper.generic_mapper_id,
@@ -175,7 +197,16 @@ module Namespaces
 
           return if identifier.data_type_id.blank?
 
-          DataTypeIdentifier.create(data_type: SagittariusSchema.object_from_id(identifier.data_type_id))
+          data_type = namespace_project.primary_runtime.data_types.find_by(id: identifier.data_type_id.model_id)
+
+          if data_type.nil?
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Data type not found',
+              error_code: :data_type_not_found
+            )
+          end
+
+          DataTypeIdentifier.create(data_type: data_type)
         end
       end
     end

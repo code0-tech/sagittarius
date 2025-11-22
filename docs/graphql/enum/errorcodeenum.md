@@ -11,6 +11,8 @@ Represents the available error responses
 | `CANNOT_MODIFY_OWN_ADMIN` | Users cannot modify their own admin status |
 | `CANNOT_REMOVE_LAST_ADMINISTRATOR` | This action would remove the last administrator |
 | `CANNOT_REMOVE_LAST_ADMIN_ABILITY` | This action would remove the last administrative ability |
+| `DATA_TYPE_IDENTIFIER_NOT_FOUND` | The data type identifier with the given identifier was not found |
+| `DATA_TYPE_NOT_FOUND` | The data type with the given identifier was not found |
 | `EMAIL_VERIFICATION_SEND_FAILED` | Failed to send the email verification |
 | `EXTERNAL_IDENTITY_DOES_NOT_EXIST` | This external identity does not exist |
 | `FAILED_TO_INVALIDATE_OLD_BACKUP_CODES` | The old backup codes could not be deleted |
