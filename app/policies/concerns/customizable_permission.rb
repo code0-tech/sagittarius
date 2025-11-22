@@ -13,12 +13,14 @@ module CustomizablePermission
     def customizable_permission(ability)
       condition(ability) { user_has_ability?(ability, user, subject) }
 
-      rule { send(ability) | admin }.enable ability
+      rule { send(ability) | namespace_admin }.enable ability
     end
   end
 
   included do
-    condition(:admin) { user_has_ability?(:namespace_administrator, user, subject) || can?(:namespace_administrator) }
+    condition(:namespace_admin) do
+      user_has_ability?(:namespace_administrator, user, subject) || can?(:namespace_administrator)
+    end
 
     def namespace(subject)
       @namespace ||= self.class.namespace_resolver_block.call(subject)

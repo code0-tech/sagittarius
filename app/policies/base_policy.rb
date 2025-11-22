@@ -21,4 +21,5 @@ class BasePolicy < DeclarativePolicy::Base
   # rubocop:enable Rails/Delegate
 
   condition(:anonymous) { authentication.nil? || authentication.type == :none }
+  condition(:admin) { user&.admin? }
 end
