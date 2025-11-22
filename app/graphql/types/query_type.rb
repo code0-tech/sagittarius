@@ -89,6 +89,8 @@ module Types
     end
 
     def organizations
+      return Organization.all if current_user&.admin?
+
       OrganizationsFinder.new(namespace_member_user: current_user).execute
     end
 

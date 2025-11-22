@@ -8,6 +8,11 @@ class NamespacePolicy < BasePolicy
   condition(:is_user_namespace) { subject.user_type? }
   condition(:is_owner) { subject.parent == user }
 
+  rule { admin }.policy do
+    enable :namespace_administrator
+    enable :has_access
+  end
+
   rule { is_member }.enable :has_access
 
   rule { is_user_namespace & is_owner }.policy do
