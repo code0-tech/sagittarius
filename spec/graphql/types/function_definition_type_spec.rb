@@ -10,6 +10,8 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
       returnType
       parameterDefinitions
       names
+      displayMessages
+      aliases
       descriptions
       documentations
       deprecationMessages

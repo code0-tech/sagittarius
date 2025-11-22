@@ -8,8 +8,10 @@ Represents a flow type
 
 | Name | Type | Description |
 |------|------|-------------|
+| `aliases` | [`TranslationConnection`](../object/translationconnection.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this FlowType was created |
 | `descriptions` | [`TranslationConnection`](../object/translationconnection.md) | Descriptions of the flow type |
+| `displayMessages` | [`TranslationConnection`](../object/translationconnection.md) | Display message of the function |
 | `editable` | [`Boolean!`](../scalar/boolean.md) | Editable status of the flow type |
 | `flowTypeSettings` | [`[FlowTypeSetting!]!`](../object/flowtypesetting.md) | Flow type settings of the flow type |
 | `id` | [`TypesFlowTypeID!`](../scalar/typesflowtypeid.md) | Global ID of this FlowType |

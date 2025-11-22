@@ -8,7 +8,9 @@ Represents a DataType
 
 | Name | Type | Description |
 |------|------|-------------|
+| `aliases` | [`TranslationConnection`](../object/translationconnection.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this DataType was created |
+| `displayMessages` | [`TranslationConnection`](../object/translationconnection.md) | Display message of the function |
 | `genericKeys` | [`[String!]`](../scalar/string.md) | Generic keys of the datatype |
 | `id` | [`DataTypeID!`](../scalar/datatypeid.md) | Global ID of this DataType |
 | `identifier` | [`String!`](../scalar/string.md) | The identifier scoped to the namespace |

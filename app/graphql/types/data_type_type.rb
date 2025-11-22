@@ -6,6 +6,9 @@ module Types
 
     authorize :read_datatype
 
+    field :aliases, Types::TranslationType.connection_type, null: true, description: 'Name of the function'
+    field :display_messages, Types::TranslationType.connection_type, null: true,
+                                                                     description: 'Display message of the function'
     field :generic_keys, [String], null: true, description: 'Generic keys of the datatype'
     field :identifier, String, null: false, description: 'The identifier scoped to the namespace'
     field :name, Types::TranslationType.connection_type, method: :names, null: false,
