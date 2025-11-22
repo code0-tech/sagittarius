@@ -20,7 +20,7 @@ module Runtimes
           sort_data_types(data_types).each do |data_type|
             unless update_datatype(data_type, t)
               t.rollback_and_return! ServiceResponse.error(message: 'Failed to update data type',
-                                                           payload: data_type.errors)
+                                                           error_code: :invalid_data_type, details: data_type.errors)
             end
           end
 
@@ -104,7 +104,7 @@ module Runtimes
           if generic_type.nil?
             t.rollback_and_return! ServiceResponse.error(
               message: "Could not find generic type with identifier #{identifier.generic_type.data_type_identifier}",
-              payload: :no_generic_type_for_identifier
+              error_code: :no_generic_type_for_identifier
             )
           end
 
@@ -127,7 +127,7 @@ module Runtimes
         if data_type_identifier.nil?
           t.rollback_and_return! ServiceResponse.error(
             message: "Could not find datatype identifier with #{kwargs}",
-            payload: :no_datatype_identifier_for_generic_key
+            error_code: :no_datatype_identifier_for_generic_key
           )
         end
 
@@ -139,7 +139,7 @@ module Runtimes
 
         if data_type.nil?
           t.rollback_and_return! ServiceResponse.error(message: "Could not find datatype with identifier #{identifier}",
-                                                       payload: :no_datatype_for_identifier)
+                                                       error_code: :no_data_type_for_identifier)
         end
 
         data_type

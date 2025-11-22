@@ -92,7 +92,7 @@ module Runtimes
           if mapper.nil? || !mapper.save
             t.rollback_and_return! ServiceResponse.error(
               message: "Could not find or create generic mapper (#{generic_mapper})",
-              payload: :error_creating_generic_mapper
+              error_code: :invalid_generic_mapper
             )
           end
           mapper
@@ -120,7 +120,7 @@ module Runtimes
           if generic_type.nil?
             t.rollback_and_return! ServiceResponse.error(
               message: "Could not find generic type with identifier #{identifier.generic_type.data_type_identifier}",
-              payload: :no_generic_type_for_identifier
+              error_code: :no_generic_type_for_identifier
             )
           end
 
@@ -143,7 +143,7 @@ module Runtimes
         if data_type_identifier.nil?
           t.rollback_and_return! ServiceResponse.error(
             message: "Could not find datatype identifier with #{kwargs}",
-            payload: :no_datatype_identifier_for_generic_key
+            error_code: :no_datatype_identifier_for_generic_key
           )
         end
 
@@ -186,7 +186,8 @@ module Runtimes
           unless db_param.save
             t.rollback_and_return! ServiceResponse.error(
               message: 'Could not save runtime parameter definition',
-              payload: db_param.errors
+              error_code: :invalid_runtime_parameter_definition,
+              details: db_param.errors
             )
           end
 

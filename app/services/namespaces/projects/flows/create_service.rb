@@ -49,7 +49,8 @@ module Namespaces
             unless flow.persisted?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Failed to create flow',
-                payload: flow.errors
+                error_code: :invalid_flow,
+                details: flow.errors
               )
             end
 
@@ -58,7 +59,8 @@ module Namespaces
             if res.error?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Flow validation failed',
-                payload: res.payload
+                error_code: :flow_validation_failed,
+                details: res.payload
               )
             end
 
@@ -85,7 +87,7 @@ module Namespaces
           if runtime_function_definition.nil?
             t.rollback_and_return! ServiceResponse.error(
               message: 'Invalid runtime function id',
-              payload: :invalid_runtime_function_id
+              error_code: :invalid_runtime_function_id
             )
           end
 
@@ -95,7 +97,7 @@ module Namespaces
             if runtime_parameter.nil?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Invalid runtime parameter id',
-                payload: :invalid_runtime_parameter_id
+                error_code: :invalid_runtime_parameter_id
               )
             end
 
@@ -121,7 +123,7 @@ module Namespaces
             if reference_value.nil?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Referenced node function not found',
-                payload: :referenced_value_not_found
+                error_code: :referenced_value_not_found
               )
             end
 

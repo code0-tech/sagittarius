@@ -24,9 +24,11 @@ Represents the available error responses
 | `IDENTITY_VALIDATION_FAILED` | Failed to validate the external identity |
 | `INCONSISTENT_NAMESPACE` | Resources are from different namespaces |
 | `INVALID_ATTACHMENT` | The attachment is invalid because of active model errors |
+| `INVALID_DATA_TYPE` | The data type is invalid because of active model errors |
 | `INVALID_EXTERNAL_IDENTITY` | This external identity is invalid |
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
+| `INVALID_GENERIC_MAPPER` | The generic mapper is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
 | `INVALID_NAMESPACE_LICENSE` | The namespace license is invalid because of active model errors |
 | `INVALID_NAMESPACE_MEMBER` | The namespace member is invalid because of active model errors |
@@ -35,6 +37,10 @@ Represents the available error responses
 | `INVALID_ORGANIZATION` | The organization is invalid because of active model errors |
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |
+| `INVALID_RUNTIME_FUNCTION_DEFINITION` | The runtime function definition is invalid |
+| `INVALID_RUNTIME_FUNCTION_ID` | The runtime function ID is invalid |
+| `INVALID_RUNTIME_PARAMETER_DEFINITION` | The runtime parameter definition is invalid |
+| `INVALID_RUNTIME_PARAMETER_ID` | The runtime parameter ID is invalid |
 | `INVALID_SETTING` | Invalid setting provided |
 | `INVALID_TOTP_SECRET` | The TOTP secret is invalid or cannot be verified |
 | `INVALID_USER` | The user is invalid because of active model errors |
@@ -54,12 +60,16 @@ Represents the available error responses
 | `NAMESPACE_NOT_FOUND` | The namespace with the given identifier was not found |
 | `NAMESPACE_PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
 | `NAMESPACE_ROLE_NOT_FOUND` | The namespace role with the given identifier was not found |
+| `NO_DATATYPE_IDENTIFIER_FOR_GENERIC_KEY` | No data type identifier could be found for the given generic key |
+| `NO_DATA_TYPE_FOR_IDENTIFIER` | No data type could be found for the given identifier |
 | `NO_FREE_LICENSE_SEATS` | There are no free license seats to complete this operation |
+| `NO_GENERIC_TYPE_FOR_IDENTIFIER` | No generic type could be found for the given identifier |
 | `NO_PRIMARY_RUNTIME` | The project does not have a primary runtime |
 | `ORGANIZATION_NOT_FOUND` | The organization with the given identifier was not found |
 | `OUTDATED_DEFINITION` | The primary runtime has a newer definition than this one |
 | `PRIMARY_LEVEL_NOT_FOUND` | **Deprecated:** Outdated concept |
 | `PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
+| `REFERENCED_VALUE_NOT_FOUND` | A referenced value could not be found |
 | `REGISTRATION_DISABLED` | Self-registration is disabled |
 | `RUNTIME_MISMATCH` | Resources are from different runtimes |
 | `RUNTIME_NOT_FOUND` | The runtime with the given identifier was not found |
