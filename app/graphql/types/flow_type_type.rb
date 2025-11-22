@@ -6,8 +6,11 @@ module Types
 
     authorize :read_flow_type
 
+    field :aliases, Types::TranslationType.connection_type, null: true, description: 'Name of the function'
     field :descriptions, Types::TranslationType.connection_type, null: true,
                                                                  description: 'Descriptions of the flow type'
+    field :display_messages, Types::TranslationType.connection_type, null: true,
+                                                                     description: 'Display message of the function'
     field :editable, Boolean, null: false, description: 'Editable status of the flow type'
     field :flow_type_settings, [Types::FlowTypeSettingType], null: false,
                                                              description: 'Flow type settings of the flow type'

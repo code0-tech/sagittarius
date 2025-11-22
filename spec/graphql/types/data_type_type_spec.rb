@@ -10,6 +10,8 @@ RSpec.describe SagittariusSchema.types['DataType'] do
       id
       rules
       name
+      display_messages
+      aliases
       runtime
       genericKeys
       createdAt
