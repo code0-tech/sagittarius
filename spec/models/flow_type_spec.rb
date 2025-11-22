@@ -10,6 +10,11 @@ RSpec.describe FlowType do
     it { is_expected.to belong_to(:input_type).class_name('DataType').optional }
     it { is_expected.to belong_to(:return_type).class_name('DataType').optional }
     it { is_expected.to have_many(:flow_type_settings).inverse_of(:flow_type) }
+    it { is_expected.to have_many(:aliases).class_name('Translation') }
+    it { is_expected.to have_many(:display_messages).class_name('Translation') }
+    it { is_expected.to have_many(:descriptions).class_name('Translation') }
+    it { is_expected.to have_many(:documentations).class_name('Translation') }
+    it { is_expected.to have_many(:names).class_name('Translation') }
   end
 
   describe 'validations' do

@@ -9,6 +9,8 @@ RSpec.describe DataType do
     it { is_expected.to belong_to(:parent_type).class_name('DataTypeIdentifier').inverse_of(:child_types).optional }
     it { is_expected.to belong_to(:runtime).inverse_of(:data_types) }
     it { is_expected.to have_many(:names).class_name('Translation') }
+    it { is_expected.to have_many(:aliases).class_name('Translation') }
+    it { is_expected.to have_many(:display_messages).class_name('Translation') }
     it { is_expected.to have_many(:rules).class_name('DataTypeRule').inverse_of(:data_type) }
   end
 

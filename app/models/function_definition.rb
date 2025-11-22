@@ -11,4 +11,7 @@ class FunctionDefinition < ApplicationRecord
   has_many :documentations, -> { by_purpose(:documentation) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :deprecation_messages, -> { by_purpose(:deprecation_message) },
            class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_many :display_messages, -> { by_purpose(:display_message) },
+           class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_many :aliases, -> { by_purpose(:alias) }, class_name: 'Translation', as: :owner, inverse_of: :owner
 end

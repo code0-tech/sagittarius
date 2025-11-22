@@ -12,5 +12,7 @@ RSpec.describe FunctionDefinition do
     it { is_expected.to have_many(:descriptions).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:documentations).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:deprecation_messages).class_name('Translation').inverse_of(:owner) }
+    it { is_expected.to have_many(:aliases).class_name('Translation') }
+    it { is_expected.to have_many(:display_messages).class_name('Translation') }
   end
 end

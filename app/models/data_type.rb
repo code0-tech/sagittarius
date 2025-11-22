@@ -21,6 +21,10 @@ class DataType < ApplicationRecord
   has_many :data_type_identifiers, class_name: 'DataTypeIdentifier', inverse_of: :data_type
   has_many :generic_types, class_name: 'GenericType', inverse_of: :data_type
 
+  has_many :display_messages, -> { by_purpose(:display_message) },
+           class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_many :aliases, -> { by_purpose(:alias) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+
   validates :variant, presence: true,
                       inclusion: {
                         in: VARIANTS.keys.map(&:to_s),

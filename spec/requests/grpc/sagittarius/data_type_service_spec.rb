@@ -16,6 +16,12 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
           name: [
             { code: 'de_DE', content: 'Positive Zahl' }
           ],
+          alias: [
+            { code: 'de_DE', content: 'Positive Nummer' }
+          ],
+          display_message: [
+            { code: 'de_DE', content: 'Zahl: ${0}' }
+          ],
           rules: [
             Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1, to: 10 })
           ],
@@ -45,6 +51,12 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
       expect(data_type.names.count).to eq(1)
       expect(data_type.names.first.code).to eq('de_DE')
       expect(data_type.names.first.content).to eq('Positive Zahl')
+      expect(data_type.aliases.count).to eq(1)
+      expect(data_type.aliases.first.code).to eq('de_DE')
+      expect(data_type.aliases.first.content).to eq('Positive Nummer')
+      expect(data_type.display_messages.count).to eq(1)
+      expect(data_type.display_messages.first.code).to eq('de_DE')
+      expect(data_type.display_messages.first.content).to eq('Zahl: ${0}')
       expect(data_type.rules.count).to eq(1)
       expect(data_type.rules.first.variant).to eq('number_range')
       expect(data_type.rules.first.config).to eq({ 'from' => 1, 'to' => 10, 'steps' => 0 })
