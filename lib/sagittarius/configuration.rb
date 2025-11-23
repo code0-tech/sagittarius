@@ -42,6 +42,7 @@ module Sagittarius
             port: 5433,
             username: 'sagittarius',
             password: 'sagittarius',
+            pool_size: 4,
             encryption: {
               primary_key: 'YzaMv4bXYK84unYIQI4Ms4sV3ucbvWs0',
               deterministic_key: 'jgTaxTqzM15ved1S8HdXrqrjfCfF5R0h',

@@ -24,7 +24,7 @@ default: &default
   port: <%= db_config[:port] %>
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= Sagittarius::Configuration.config[:rails][:threads] %>
+  pool: <%= Sagittarius::Configuration.config[:rails][:db][:pool_size] %>
 
 development:
   <<: *default
