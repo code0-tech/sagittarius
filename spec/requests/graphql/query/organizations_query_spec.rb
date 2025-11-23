@@ -27,6 +27,23 @@ RSpec.describe 'organization Query' do
     create(:organization) # organization where the user isn't a member
   end
 
+  context 'when admin' do
+    let(:current_user) { create(:user, :admin) }
+
+    before do
+      (1..3).each do |_|
+        create(:organization)
+      end
+
+      query!
+    end
+
+    it 'returns all organizations' do
+      organization_graphql_entities = Organization.all.map { |org| a_graphql_entity_for(org) }
+      expect(graphql_data_at(:organizations, :nodes)).to match_array(organization_graphql_entities)
+    end
+  end
+
   context 'when anonymous' do
     it 'does not return organizations' do
       query!
