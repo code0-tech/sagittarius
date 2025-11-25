@@ -17,7 +17,7 @@ module Users
       end
 
       transactional do |t|
-        user.delete
+        user.destroy
 
         if user.persisted?
           t.rollback_and_return! ServiceResponse.error(
