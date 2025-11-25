@@ -2,7 +2,7 @@
 title: Application
 ---
 
-Represents the application with different fields 
+Represents the application instance
 
 ## Fields without arguments
 

@@ -66,13 +66,7 @@ module Types
     end
 
     def application
-      {
-        settings: ApplicationSetting.current,
-        metadata: {
-          version: Sagittarius::Version,
-          extensions: Sagittarius::Extensions.active.map(&:to_s),
-        },
-      }
+      {}
     end
 
     def echo(message:)
