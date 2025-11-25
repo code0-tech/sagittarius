@@ -5,11 +5,10 @@ require 'rails_helper'
 RSpec.describe SagittariusSchema.types['Query'] do
   let(:fields) do
     %w[
-      applicationSettings
+      application
       currentAuthentication
       currentUser
       echo
-      metadata
       organization
       organizations
       users
