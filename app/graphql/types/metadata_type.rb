@@ -6,5 +6,13 @@ module Types
 
     field :extensions, [GraphQL::Types::String], null: false, description: 'List of loaded extensions'
     field :version, GraphQL::Types::String, null: false, description: 'Application version'
+
+    def extensions
+      Sagittarius::Extensions.active
+    end
+
+    def version
+      Sagittarius::Version
+    end
   end
 end

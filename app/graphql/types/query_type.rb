@@ -19,10 +19,8 @@ module Types
     field :current_user, Types::UserType, null: true, description: 'Get the currently logged in user'
     # rubocop:enable GraphQL/ExtractType
 
-    field :application_settings, Types::ApplicationSettingsType, null: true,
-                                                                 description: 'Get global application settings'
-
-    field :metadata, Types::MetadataType, null: false, description: 'Get application metadata'
+    field :application, Types::ApplicationType, null: false,
+                                                description: 'Get application information'
 
     field :echo, GraphQL::Types::String, null: false, description: 'Field available for use to test API access' do
       argument :message, GraphQL::Types::String, required: true, description: 'String to echo as response'
@@ -67,15 +65,8 @@ module Types
       ids.map { |id| context.schema.object_from_id(id, context) }
     end
 
-    def application_settings
-      ApplicationSetting.current
-    end
-
-    def metadata
-      {
-        version: Sagittarius::Version,
-        extensions: Sagittarius::Extensions.active.map(&:to_s),
-      }
+    def application
+      {}
     end
 
     def echo(message:)
