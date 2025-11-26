@@ -158,24 +158,8 @@ module Runtimes
       def update_rules(rules, data_type)
         db_rules = data_type.rules.first(rules.length)
         rules.each_with_index do |rule, index|
-          config = rule.rule_config.to_h.transform_values do |value|
-            next value unless value.is_a?(Hash)
-
-            data_type_identifier = value[:data_type_identifier]
-            generic_key = value[:generic_key]
-
-            next value if data_type_identifier.nil? || generic_key.nil? # return the old thing if neither is present
-            next data_type_identifier unless data_type_identifier.empty? # return data_type_identifier if it's present
-            next { generic_key: generic_key } if generic_key.present? # return generic_key if it's present
-
-            next { generic_type: value[:generic_type] }
-          end
-
           db_rules[index] ||= DataTypeRule.new
-          db_rules[index].assign_attributes(
-            variant: rule.variant.to_s.downcase,
-            config: config
-          )
+          db_rules[index].assign_attributes(variant: rule.variant.to_s.downcase, config: rule.rule_config.to_h)
         end
 
         db_rules
