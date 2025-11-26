@@ -158,8 +158,26 @@ module Runtimes
       def update_rules(rules, data_type)
         db_rules = data_type.rules.first(rules.length)
         rules.each_with_index do |rule, index|
+          config = rule.rule_config.to_h.transform_values do |value|
+            case value
+            when Tucana::Shared::DataTypeIdentifier
+              if value.data_type_identifier.present?
+                value.data_type_identifier
+              elsif value.generic_key.present?
+                { generic_key: value.generic_key }
+              else
+                { generic_type: value.generic_type }
+              end
+            else
+              value
+            end
+          end
+
           db_rules[index] ||= DataTypeRule.new
-          db_rules[index].assign_attributes(variant: rule.variant.to_s.downcase, config: rule.rule_config.to_h)
+          db_rules[index].assign_attributes(
+            variant: rule.variant.to_s.downcase,
+            config: config
+          )
         end
 
         db_rules
