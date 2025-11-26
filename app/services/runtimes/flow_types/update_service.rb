@@ -36,6 +36,8 @@ module Runtimes
 
           UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
 
+          logger.info(message: 'Updated flow types for runtime', runtime_id: current_runtime.id)
+
           ServiceResponse.success(message: 'Updated data types', payload: flow_types)
         end
       end
