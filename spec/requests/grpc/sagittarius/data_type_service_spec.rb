@@ -23,7 +23,10 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
             { code: 'de_DE', content: 'Zahl: ${0}' }
           ],
           rules: [
-            Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1, to: 10 })
+            Tucana::Shared::DefinitionDataTypeRule.create(
+              :contains_type,
+              { data_type_identifier: { generic_key: 'T' } }
+            )
           ],
           version: {
             major: 0,
@@ -58,8 +61,8 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
       expect(data_type.display_messages.first.code).to eq('de_DE')
       expect(data_type.display_messages.first.content).to eq('Zahl: ${0}')
       expect(data_type.rules.count).to eq(1)
-      expect(data_type.rules.first.variant).to eq('number_range')
-      expect(data_type.rules.first.config).to eq({ 'from' => 1, 'to' => 10, 'steps' => 0 })
+      expect(data_type.rules.first.variant).to eq('contains_type')
+      expect(data_type.rules.first.config).to eq({ 'data_type_identifier' => { 'generic_key' => 'T' } })
     end
 
     context 'with dependent data types' do
