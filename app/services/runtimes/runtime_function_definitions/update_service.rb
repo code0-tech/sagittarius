@@ -4,6 +4,7 @@ module Runtimes
   module RuntimeFunctionDefinitions
     class UpdateService
       include Sagittarius::Database::Transactional
+      include Code0::ZeroTrack::Loggable
 
       attr_reader :current_runtime, :runtime_function_definitions
 
@@ -19,13 +20,21 @@ module Runtimes
           # rubocop:enable Rails/SkipsModelValidations
           runtime_function_definitions.each do |runtime_function_definition|
             response = update_runtime_function_definition(runtime_function_definition, t)
-            unless response.persisted?
-              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update runtime function definition',
-                                                           payload: response.errors)
-            end
+            next if response.persisted?
+
+            logger.error(message: 'Failed to update runtime function definition',
+                         runtime_id: current_runtime.id,
+                         definition_identifier: runtime_function_definition.identifier,
+                         errors: response.errors.full_messages)
+
+            t.rollback_and_return! ServiceResponse.error(message: 'Failed to update runtime function definition',
+                                                         error_code: :invalid_runtime_function_definition,
+                                                         details: response.errors)
           end
 
           UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+
+          logger.info(message: 'Updated runtime function definitions for runtime', runtime_id: current_runtime.id)
 
           ServiceResponse.success(message: 'Updated runtime function definition', payload: runtime_function_definitions)
         end
