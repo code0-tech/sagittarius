@@ -32,7 +32,7 @@ module Sagittarius
           payload = log_payload(method, code, end_time - start_time, exception)
 
           if exception
-            logger.error(**payload)
+            logger.error(**payload, stack: exception.backtrace)
           else
             logger.info(**payload)
           end

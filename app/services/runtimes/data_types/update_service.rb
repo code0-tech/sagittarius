@@ -80,7 +80,7 @@ module Runtimes
         db_object.removed_at = nil
         db_object.variant = data_type.variant.to_s.downcase
         if parent?(data_type)
-          db_object.parent_type = find_data_type_identifier(find_parent_rule(data_type).rule_config, t)
+          db_object.parent_type = find_data_type_identifier_by_parent(find_parent_rule(data_type).rule_config, t)
         end
         db_object.rules = update_rules(data_type.rules, db_object)
         db_object.names = update_translations(data_type.name, db_object.names)
@@ -92,8 +92,62 @@ module Runtimes
         db_object
       end
 
-      def find_data_type_identifier(parent_type_rule_config, t)
+      def find_data_type_identifier_by_parent(parent_type_rule_config, t)
         identifier = parent_type_rule_config.parent_type
+        if identifier.data_type_identifier.present?
+          return create_data_type_identifier(t, data_type_id: find_data_type(identifier.data_type_identifier, t).id)
+        end
+
+        if identifier.generic_type.present?
+          data_type = find_data_type(identifier.generic_type.data_type_identifier, t)
+
+          generic_type = GenericType.find_by(
+            data_type: data_type
+          )
+          if generic_type.nil?
+            generic_type = GenericType.create(
+              data_type: data_type
+            )
+          end
+
+          if generic_type.nil?
+            t.rollback_and_return! ServiceResponse.error(
+              message: "Could not find generic type with identifier #{identifier.generic_type.data_type_identifier}",
+              error_code: :no_generic_type_for_identifier
+            )
+          end
+
+          generic_type.assign_attributes(generic_mappers: update_mappers(identifier.generic_type.generic_mappers,
+                                                                         t))
+
+          return create_data_type_identifier(t, generic_type_id: generic_type.id)
+        end
+        return create_data_type_identifier(t, generic_key: identifier.generic_key) if identifier.generic_key.present?
+
+        raise ArgumentError, "Invalid identifier: #{identifier.inspect}"
+      end
+
+      def update_mappers(generic_mappers, t)
+        generic_mappers.to_a.map do |generic_mapper|
+          if generic_mapper.is_a? Tucana::Shared::GenericMapper
+            mapper = GenericMapper.create_or_find_by(runtime: current_runtime,
+                                                     target: generic_mapper.target,
+                                                     sources: generic_mapper.source.map do |source|
+                                                       find_data_type_identifier(source, t)
+                                                     end)
+          end
+
+          if mapper.nil? || !mapper.save
+            t.rollback_and_return! ServiceResponse.error(
+              message: "Could not find or create generic mapper (#{generic_mapper})",
+              error_code: :invalid_generic_mapper
+            )
+          end
+          mapper
+        end
+      end
+
+      def find_data_type_identifier(identifier, t)
         if identifier.data_type_identifier.present?
           return create_data_type_identifier(t, data_type_id: find_data_type(identifier.data_type_identifier, t).id)
         end

@@ -83,6 +83,7 @@ class ErrorCode
       data_type_identifier_not_found: { description: 'The data type identifier with the given identifier was not found' },
       data_type_not_found: { description: 'The data type with the given identifier was not found' },
       invalid_flow_type: { description: 'The flow type is invalid because of active model errors' },
+      no_datatype_for_identifier: { description: 'No data type could be found for the given identifier' },
 
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
