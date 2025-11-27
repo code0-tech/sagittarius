@@ -66,11 +66,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
                 ],
               }
             ],
-            version: {
-              major: 0,
-              minor: 0,
-              patch: 0,
-            },
+            version: '0.0.0',
           }
         ]
       end
@@ -156,11 +152,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
                 ],
               }
             ],
-            version: {
-              major: 0,
-              minor: 0,
-              patch: 0,
-            },
+            version: '0.0.0',
           }
         ]
       end
@@ -215,11 +207,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
                 { code: 'de_DE', content: 'Eine Funktion' }
               ],
               runtime_parameter_definitions: [],
-              version: {
-                major: 0,
-                minor: 0,
-                patch: 0,
-              },
+              version: '0.0.0',
             }
           ]
         end

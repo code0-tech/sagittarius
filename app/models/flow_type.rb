@@ -19,6 +19,14 @@ class FlowType < ApplicationRecord
            class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :aliases, -> { by_purpose(:alias) }, class_name: 'Translation', as: :owner, inverse_of: :owner
 
+  validate :validate_version
+
+  def validate_version
+    parsed_version
+  rescue ArgumentError
+    errors.add(:version, :invalid_version)
+  end
+
   def parsed_version
     Gem::Version.new(version)
   end

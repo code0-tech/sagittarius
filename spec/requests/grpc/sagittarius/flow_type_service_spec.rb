@@ -32,11 +32,7 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
           ],
           editable: true,
           return_type_identifier: data_type.identifier,
-          version: {
-            major: 0,
-            minor: 0,
-            patch: 0,
-          },
+          version: '0.0.0',
         }
       ]
     end
