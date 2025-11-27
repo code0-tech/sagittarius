@@ -15,8 +15,8 @@ module Types
             value: :item_of_collection
       value :REGEX, 'The rule checks if a string matches a specified regular expression.',
             value: :regex
-      value :INPUT_TYPE, 'The rule checks if the data type matches a specific input type.',
-            value: :input_type
+      value :INPUT_TYPES, 'The rule checks if the data type matches a specific input type.',
+            value: :input_types
       value :RETURN_TYPE, 'The rule checks if the data type matches a specific return type.',
             value: :return_type
       value :PARENT_TYPE, 'The rule checks if the data type is a child of a specific parent type.',

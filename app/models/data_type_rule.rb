@@ -8,7 +8,7 @@ class DataTypeRule < ApplicationRecord
     number_range: 4,
     regex: 5,
     return_type: 6,
-    input_type: 7,
+    input_types: 7,
     parent_type: 8,
   }.with_indifferent_access
 
@@ -57,9 +57,9 @@ class DataTypeRule < ApplicationRecord
                        hash_conversion: true,
                      }
 
-  validates :config, if: :variant_input_type?,
+  validates :config, if: :variant_input_types?,
                      'sagittarius/validators/json_schema': {
-                       filename: 'data_types/InputTypeRuleConfig',
+                       filename: 'data_types/InputTypesRuleConfig',
                        hash_conversion: true,
                      }
 end
