@@ -4,6 +4,7 @@ module Runtimes
   module FlowTypes
     class UpdateService
       include Sagittarius::Database::Transactional
+      include Code0::ZeroTrack::Loggable
 
       attr_reader :current_runtime, :flow_types
 
@@ -18,13 +19,24 @@ module Runtimes
           FlowType.where(runtime: current_runtime).update_all(removed_at: Time.zone.now)
           # rubocop:enable Rails/SkipsModelValidations
           flow_types.each do |flow_type|
-            unless update_flowtype(flow_type, t)
-              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update flow type',
-                                                           payload: flow_type.errors)
-            end
+            db_flow_type = update_flowtype(flow_type, t)
+            next if db_flow_type.persisted?
+
+            logger.error(
+              message: 'Failed to update flow type',
+              runtime_id: current_runtime.id,
+              flow_type_identifier: flow_type.identifier,
+              errors: db_flow_type.errors.full_messages
+            )
+
+            t.rollback_and_return! ServiceResponse.error(message: 'Failed to update flow type',
+                                                         error_code: :invalid_flow_type,
+                                                         details: db_flow_type.errors)
           end
 
           UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+
+          logger.info(message: 'Updated flow types for runtime', runtime_id: current_runtime.id)
 
           ServiceResponse.success(message: 'Updated data types', payload: flow_types)
         end
@@ -49,6 +61,7 @@ module Runtimes
         db_object.aliases = update_translations(flow_type.alias, db_object.aliases)
         db_object.version = "#{flow_type.version.major}.#{flow_type.version.minor}.#{flow_type.version.patch}"
         db_object.save
+        db_object
       end
 
       def find_datatype(identifier, t)

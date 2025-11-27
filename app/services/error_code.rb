@@ -80,6 +80,7 @@ class ErrorCode
       no_datatype_identifier_for_generic_key: { description: 'No data type identifier could be found for the given generic key' },
       invalid_generic_mapper: { description: 'The generic mapper is invalid because of active model errors' },
       invalid_data_type: { description: 'The data type is invalid because of active model errors' },
+      invalid_flow_type: { description: 'The flow type is invalid because of active model errors' },
 
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },

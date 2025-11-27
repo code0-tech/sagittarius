@@ -4,6 +4,7 @@ module Runtimes
   module DataTypes
     class UpdateService
       include Sagittarius::Database::Transactional
+      include Code0::ZeroTrack::Loggable
 
       attr_reader :current_runtime, :data_types
 
@@ -18,13 +19,21 @@ module Runtimes
           DataType.where(runtime: current_runtime).update_all(removed_at: Time.zone.now)
           # rubocop:enable Rails/SkipsModelValidations
           sort_data_types(data_types).each do |data_type|
-            unless update_datatype(data_type, t)
-              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update data type',
-                                                           error_code: :invalid_data_type, details: data_type.errors)
-            end
+            db_data_type = update_datatype(data_type, t)
+            next if db_data_type.persisted?
+
+            logger.error(message: 'Failed to update data type',
+                         runtime_id: current_runtime.id,
+                         data_type_identifier: data_type.identifier,
+                         errors: db_data_type.errors.full_messages)
+
+            t.rollback_and_return! ServiceResponse.error(message: 'Failed to update data type',
+                                                         error_code: :invalid_data_type, details: db_data_type.errors)
           end
 
           UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+
+          logger.info(message: 'Updated data types for runtime', runtime_id: current_runtime.id)
 
           ServiceResponse.success(message: 'Updated data types', payload: data_types)
         end
@@ -80,6 +89,7 @@ module Runtimes
         db_object.generic_keys = data_type.generic_keys.to_a
         db_object.version = "#{data_type.version.major}.#{data_type.version.minor}.#{data_type.version.patch}"
         db_object.save
+        db_object
       end
 
       def find_data_type_identifier(parent_type_rule_config, t)
