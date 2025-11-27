@@ -1,0 +1,72 @@
+# frozen_string_literal: true
+
+module Runtimes
+  module Grpc
+    module FlowTypes
+      class UpdateService
+        include Sagittarius::Database::Transactional
+        include Code0::ZeroTrack::Loggable
+        include Runtimes::Grpc::TranslationUpdateHelper
+        include Runtimes::Grpc::DataTypeHelper
+
+        attr_reader :current_runtime, :flow_types
+
+        def initialize(current_runtime, flow_types)
+          @current_runtime = current_runtime
+          @flow_types = flow_types
+        end
+
+        def execute
+          transactional do |t|
+            # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
+            FlowType.where(runtime: current_runtime).update_all(removed_at: Time.zone.now)
+            # rubocop:enable Rails/SkipsModelValidations
+            flow_types.each do |flow_type|
+              db_flow_type = update_flowtype(flow_type, t)
+              next if db_flow_type.persisted?
+
+              logger.error(
+                message: 'Failed to update flow type',
+                runtime_id: current_runtime.id,
+                flow_type_identifier: flow_type.identifier,
+                errors: db_flow_type.errors.full_messages
+              )
+
+              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update flow type',
+                                                           error_code: :invalid_flow_type,
+                                                           details: db_flow_type.errors)
+            end
+
+            UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+
+            logger.info(message: 'Updated flow types for runtime', runtime_id: current_runtime.id)
+
+            ServiceResponse.success(message: 'Updated data types', payload: flow_types)
+          end
+        end
+
+        protected
+
+        def update_flowtype(flow_type, t)
+          db_object = FlowType.find_or_initialize_by(runtime: current_runtime, identifier: flow_type.identifier)
+          db_object.removed_at = nil
+          if flow_type.input_type_identifier.present?
+            db_object.input_type = find_data_type(flow_type.input_type_identifier, t)
+          end
+          if flow_type.return_type_identifier.present?
+            db_object.return_type = find_data_type(flow_type.return_type_identifier, t)
+          end
+          db_object.editable = flow_type.editable
+          db_object.descriptions = update_translations(flow_type.description, db_object.descriptions)
+          db_object.names = update_translations(flow_type.name, db_object.names)
+          db_object.documentations = update_translations(flow_type.documentation, db_object.documentations)
+          db_object.display_messages = update_translations(flow_type.display_message, db_object.display_messages)
+          db_object.aliases = update_translations(flow_type.alias, db_object.aliases)
+          db_object.version = flow_type.version
+          db_object.save
+          db_object
+        end
+      end
+    end
+  end
+end
