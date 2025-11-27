@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe FlowType do
-  subject { create(:flow_type) }
+  subject(:flow_type) { create(:flow_type) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:runtime) }
@@ -21,5 +21,25 @@ RSpec.describe FlowType do
     it { is_expected.to validate_presence_of(:identifier) }
     it { is_expected.to validate_uniqueness_of(:identifier).scoped_to(:runtime_id) }
     it { is_expected.to allow_values(true, false).for(:editable) }
+  end
+
+  describe '#validate_version' do
+    it 'adds an error if version is blank' do
+      flow_type.version = ''
+      flow_type.validate_version
+      expect(flow_type.errors[:version]).to include("can't be blank")
+    end
+
+    it 'adds an error if version is invalid' do
+      flow_type.version = 'invalid_version'
+      flow_type.validate_version
+      expect(flow_type.errors[:version]).to include('Invalid version')
+    end
+
+    it 'does not add an error if version is valid' do
+      flow_type.version = '1.0.0'
+      flow_type.validate_version
+      expect(flow_type.errors[:version]).to be_empty
+    end
   end
 end

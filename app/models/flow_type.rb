@@ -25,7 +25,7 @@ class FlowType < ApplicationRecord
     errors.add(:version, :blank) if version.blank?
     parsed_version
   rescue ArgumentError
-    errors.add(:version, :invalid_version)
+    errors.add(:version, 'Invalid version')
   end
 
   def parsed_version
