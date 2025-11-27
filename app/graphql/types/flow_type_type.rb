@@ -19,7 +19,7 @@ module Types
     field :names, Types::TranslationType.connection_type, null: true, description: 'Names of the flow type'
     field :return_type, Types::DataTypeType, null: true, description: 'Return type of the flow type'
 
-    id_field FlowType
+    id_field ::FlowType
     timestamps
   end
 end
