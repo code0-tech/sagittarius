@@ -27,6 +27,7 @@ class RuntimeFunctionDefinition < ApplicationRecord
   validate :validate_version
 
   def validate_version
+    errors.add(:version, :blank) if version.blank?
     parsed_version
   rescue ArgumentError
     errors.add(:version, :invalid_version)
