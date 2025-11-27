@@ -14,7 +14,7 @@ Represents a flow type
 | `displayMessages` | [`TranslationConnection`](../object/translationconnection.md) | Display message of the function |
 | `editable` | [`Boolean!`](../scalar/boolean.md) | Editable status of the flow type |
 | `flowTypeSettings` | [`[FlowTypeSetting!]!`](../object/flowtypesetting.md) | Flow type settings of the flow type |
-| `id` | [`TypesFlowTypeID!`](../scalar/typesflowtypeid.md) | Global ID of this FlowType |
+| `id` | [`FlowTypeID!`](../scalar/flowtypeid.md) | Global ID of this FlowType |
 | `identifier` | [`String!`](../scalar/string.md) | Identifier of the flow type |
 | `inputType` | [`DataType`](../object/datatype.md) | Input type of the flow type |
 | `names` | [`TranslationConnection`](../object/translationconnection.md) | Names of the flow type |
