@@ -62,8 +62,7 @@ module Runtimes
         db_object.aliases = update_translations(runtime_function_definition.alias, db_object.aliases)
 
         db_object.throws_error = runtime_function_definition.throws_error
-        definition_version = runtime_function_definition.version
-        db_object.version = "#{definition_version.major}.#{definition_version.minor}.#{definition_version.patch}"
+        db_object.version = runtime_function_definition.version
 
         if db_object.function_definitions.empty?
           definition = FunctionDefinition.new
