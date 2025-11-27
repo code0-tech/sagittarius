@@ -120,7 +120,6 @@ module Runtimes
           )
           if generic_type.nil?
             generic_type = GenericType.create(
-              runtime_id: current_runtime.id,
               data_type: data_type
             )
           end
@@ -163,7 +162,7 @@ module Runtimes
 
         if data_type.nil?
           t.rollback_and_return! ServiceResponse.error(message: "Could not find datatype with identifier #{identifier}",
-                                                       payload: :no_datatype_for_identifier)
+                                                       error_code: :no_datatype_for_identifier)
         end
 
         data_type
