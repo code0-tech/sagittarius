@@ -40,6 +40,7 @@ class AuditEvent < ApplicationRecord
     password_reset_requested: 36,
     password_reset: 37,
     user_deleted: 38,
+    user_created: 39,
   }.with_indifferent_access
 
   # rubocop:disable Lint/StructNewOverride
