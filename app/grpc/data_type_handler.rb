@@ -6,7 +6,7 @@ class DataTypeHandler < Tucana::Sagittarius::DataTypeService::Service
   def update(request, _call)
     current_runtime = Runtime.find(Code0::ZeroTrack::Context.current[:runtime][:id])
 
-    response = Runtimes::DataTypes::UpdateService.new(current_runtime, request.data_types).execute
+    response = Runtimes::Grpc::DataTypes::UpdateService.new(current_runtime, request.data_types).execute
 
     Tucana::Sagittarius::DataTypeUpdateResponse.new(success: response.success?)
   end
