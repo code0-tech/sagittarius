@@ -51,7 +51,7 @@ module Namespaces
 
           create_audit_event(new_roles, old_roles_for_audit_event, namespace)
 
-          ServiceResponse.success(message: 'Member roles updated', payload: new_roles)
+          ServiceResponse.success(message: 'Member roles updated', payload: member)
         end
       end
 
