@@ -61,6 +61,70 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
       expect(data_type.rules.first.config).to eq({ 'data_type_identifier' => { 'generic_key' => 'T' } })
     end
 
+    context 'with more rules' do
+      let(:data_types) do
+        [
+          {
+            variant: :PRIMITIVE,
+            identifier: 'parent_type_identifier',
+            version: '0.0.0',
+          },
+          {
+            variant: :PRIMITIVE,
+            identifier: 'positive_number',
+            name: [
+              { code: 'de_DE', content: 'Positive Zahl' }
+            ],
+            alias: [
+              { code: 'de_DE', content: 'Positive Nummer' }
+            ],
+            display_message: [
+              { code: 'de_DE', content: 'Zahl: ${0}' }
+            ],
+            rules: [
+              Tucana::Shared::DefinitionDataTypeRule.create(:contains_key, {
+                                                              key: 'example_key',
+                                                              data_type_identifier: {
+                                                                data_type_identifier: 'some_type',
+                                                              },
+                                                            }),
+              Tucana::Shared::DefinitionDataTypeRule.create(:contains_type, {
+                                                              data_type_identifier: { generic_key: 'T' },
+                                                            }),
+              Tucana::Shared::DefinitionDataTypeRule.create(:item_of_collection, { items: [] }),
+              Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1, to: 100, steps: 1 }),
+              Tucana::Shared::DefinitionDataTypeRule.create(:regex, { pattern: '^\d+$' }),
+              Tucana::Shared::DefinitionDataTypeRule.create(:input_types, {
+                                                              input_types: [{
+                                                                data_type_identifier: {
+                                                                  data_type_identifier: 'input_type_1',
+                                                                },
+                                                                input_identifier: 'input_1',
+                                                              }],
+                                                            }),
+              Tucana::Shared::DefinitionDataTypeRule.create(:return_type, {
+                                                              data_type_identifier: {
+                                                                data_type_identifier: 'another_type',
+                                                              },
+                                                            }),
+              Tucana::Shared::DefinitionDataTypeRule.create(:parent_type, {
+                                                              parent_type: {
+                                                                data_type_identifier: 'parent_type_identifier',
+                                                              },
+                                                            })
+            ],
+            version: '0.0.0',
+          }
+        ]
+      end
+
+      it 'creates a correct datatype with all rules' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+        expect(DataType.last.rules.count).to eq(8)
+      end
+    end
+
     context 'with dependent data types' do
       let(:data_types) do
         [
