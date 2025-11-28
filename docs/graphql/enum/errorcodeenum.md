@@ -63,7 +63,6 @@ Represents the available error responses
 | `NAMESPACE_NOT_FOUND` | The namespace with the given identifier was not found |
 | `NAMESPACE_PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
 | `NAMESPACE_ROLE_NOT_FOUND` | The namespace role with the given identifier was not found |
-| `NO_DATATYPE_FOR_IDENTIFIER` | No data type could be found for the given identifier |
 | `NO_DATATYPE_IDENTIFIER_FOR_GENERIC_KEY` | No data type identifier could be found for the given generic key |
 | `NO_DATA_TYPE_FOR_IDENTIFIER` | No data type could be found for the given identifier |
 | `NO_FREE_LICENSE_SEATS` | There are no free license seats to complete this operation |

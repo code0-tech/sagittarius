@@ -10,13 +10,11 @@ module Runtimes
         raise 'Including class must define current_runtime' unless respond_to?(:current_runtime)
 
         generic_mappers.to_a.map do |generic_mapper|
-          if generic_mapper.is_a? Tucana::Shared::GenericMapper
-            mapper = GenericMapper.create_or_find_by(runtime: current_runtime,
-                                                     target: generic_mapper.target,
-                                                     sources: generic_mapper.source.map do |source|
-                                                       find_data_type_identifier(source, t)
-                                                     end)
-          end
+          mapper = GenericMapper.create_or_find_by(runtime: current_runtime,
+                                                   target: generic_mapper.target,
+                                                   sources: generic_mapper.source.map do |source|
+                                                     find_data_type_identifier(source, t)
+                                                   end)
 
           if mapper.nil? || !mapper.save
             t.rollback_and_return! ServiceResponse.error(
@@ -97,7 +95,7 @@ module Runtimes
 
         if data_type.nil?
           t.rollback_and_return! ServiceResponse.error(message: "Could not find datatype with identifier #{identifier}",
-                                                       error_code: :no_datatype_for_identifier)
+                                                       error_code: :no_data_type_for_identifier)
         end
 
         data_type
