@@ -21,25 +21,25 @@ RSpec.describe FlowType do
     it { is_expected.to validate_presence_of(:identifier) }
     it { is_expected.to validate_uniqueness_of(:identifier).scoped_to(:runtime_id) }
     it { is_expected.to allow_values(true, false).for(:editable) }
-  end
 
-  describe '#validate_version' do
-    it 'adds an error if version is blank' do
-      flow_type.version = ''
-      flow_type.validate_version
-      expect(flow_type.errors[:version]).to include("can't be blank")
-    end
+    describe '#validate_version' do
+      it 'adds an error if version is blank' do
+        flow_type.version = ''
+        flow_type.validate_version
+        expect(flow_type.errors.added?(:version, :blank)).to be(true)
+      end
 
-    it 'adds an error if version is invalid' do
-      flow_type.version = 'invalid_version'
-      flow_type.validate_version
-      expect(flow_type.errors[:version]).to include('Invalid version')
-    end
+      it 'adds an error if version is invalid' do
+        flow_type.version = 'invalid_version'
+        flow_type.validate_version
+        expect(flow_type.errors.added?(:version, :invalid)).to be(true)
+      end
 
-    it 'does not add an error if version is valid' do
-      flow_type.version = '1.0.0'
-      flow_type.validate_version
-      expect(flow_type.errors[:version]).to be_empty
+      it 'does not add an error if version is valid' do
+        flow_type.version = '1.0.0'
+        flow_type.validate_version
+        expect(flow_type.errors[:version]).to be_empty
+      end
     end
   end
 end

@@ -22,10 +22,11 @@ class FlowType < ApplicationRecord
   validate :validate_version
 
   def validate_version
-    errors.add(:version, :blank) if version.blank?
+    return errors.add(:version, :blank) if version.blank?
+
     parsed_version
   rescue ArgumentError
-    errors.add(:version, 'Invalid version')
+    errors.add(:version, :invalid)
   end
 
   def parsed_version

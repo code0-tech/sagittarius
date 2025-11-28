@@ -37,10 +37,11 @@ class DataType < ApplicationRecord
   validate :validate_recursion, if: :parent_type_changed?
 
   def validate_version
-    errors.add(:version, :blank) if version.blank?
+    return errors.add(:version, :blank) if version.blank?
+
     parsed_version
   rescue ArgumentError
-    errors.add(:version, 'Invalid version')
+    errors.add(:version, :invalid)
   end
 
   def parsed_version
