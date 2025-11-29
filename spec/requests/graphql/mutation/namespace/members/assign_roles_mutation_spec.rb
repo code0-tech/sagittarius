@@ -12,13 +12,17 @@ RSpec.describe 'namespacesMembersAssignRoles Mutation' do
       mutation($input: NamespacesMembersAssignRolesInput!) {
         namespacesMembersAssignRoles(input: $input) {
           #{error_query}
-          namespaceMemberRoles {
-            id
-            member {
-              id
-            }
-            role {
-              id
+          member {
+            memberRoles {
+              nodes {
+                id
+                member {
+                  id
+                }
+                role {
+                  id
+                }
+              }
             }
           }
         }
@@ -57,7 +61,7 @@ RSpec.describe 'namespacesMembersAssignRoles Mutation' do
     it 'assigns the given roles to the member' do
       mutate!
 
-      role_ids = graphql_data_at(:namespaces_members_assign_roles, :namespace_member_roles, :id)
+      role_ids = graphql_data_at(:namespaces_members_assign_roles, :member, :member_roles, :nodes, :id)
       expect(role_ids).to be_present
       expect(role_ids).to be_a(Array)
 
@@ -84,7 +88,7 @@ RSpec.describe 'namespacesMembersAssignRoles Mutation' do
     it 'returns an error' do
       mutate!
 
-      expect(graphql_data_at(:namespaces_members_assign_roles, :namespace_member_roles)).to be_nil
+      expect(graphql_data_at(:namespaces_members_assign_roles, :member)).to be_nil
       expect(
         graphql_data_at(:namespaces_members_assign_roles, :errors, :error_code)
       ).to include('MISSING_PERMISSION')

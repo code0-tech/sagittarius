@@ -83,7 +83,7 @@ RSpec.describe Namespaces::Members::AssignRolesService do
       end
 
       it { is_expected.to be_success }
-      it { expect(service_response.payload.map(&:role)).to eq([namespace_role]) }
+      it { expect(service_response.payload).to eq(member.reload) }
       it { expect { service_response }.to change { NamespaceMemberRole.count }.by(1) }
 
       it do
@@ -112,7 +112,7 @@ RSpec.describe Namespaces::Members::AssignRolesService do
       end
 
       it { is_expected.to be_success }
-      it { expect(service_response.payload.map(&:role)).to eq([]) }
+      it { expect(service_response.payload).to eq(member.reload) }
       it { expect { service_response }.to change { NamespaceMemberRole.count }.by(-1) }
 
       it do
@@ -142,7 +142,7 @@ RSpec.describe Namespaces::Members::AssignRolesService do
       end
 
       it { is_expected.to be_success }
-      it { expect(service_response.payload.map(&:role)).to eq([adding_namespace_role]) }
+      it { expect(service_response.payload).to eq(member.reload) }
       it { expect { service_response }.not_to change { NamespaceMemberRole.count } }
 
       it do

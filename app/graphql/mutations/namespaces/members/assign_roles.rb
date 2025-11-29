@@ -6,8 +6,8 @@ module Mutations
       class AssignRoles < BaseMutation
         description 'Update the roles a member is assigned to.'
 
-        field :namespace_member_roles, [Types::NamespaceMemberRoleType],
-              description: 'The roles the member is now assigned to'
+        field :member, Types::NamespaceMemberType,
+              description: 'The member which was assigned the roles', null: true
 
         argument :member_id, Types::GlobalIdType[::NamespaceMember],
                  description: 'The id of the member which should be assigned the roles'
@@ -31,7 +31,7 @@ module Mutations
             current_authentication,
             member,
             roles
-          ).execute.to_mutation_response(success_key: :namespace_member_roles)
+          ).execute.to_mutation_response(success_key: :member)
         end
       end
     end
