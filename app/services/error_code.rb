@@ -83,6 +83,9 @@ class ErrorCode
       data_type_not_found: { description: 'The data type with the given identifier was not found' },
       invalid_flow_type: { description: 'The flow type is invalid because of active model errors' },
       no_data_type_for_identifier: { description: 'No data type could be found for the given identifier' },
+      next_node_not_found: { description: 'The id for the next node does not exist' },
+      function_value_not_found: { description: 'The id for the function value node does not exist' },
+      invalid_node_parameter: { description: 'The node parameter is invalid' },
 
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
