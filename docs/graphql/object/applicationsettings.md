@@ -8,6 +8,7 @@ Represents the application settings
 
 | Name | Type | Description |
 |------|------|-------------|
+| `adminStatusVisible` | [`Boolean!`](../scalar/boolean.md) | Shows if admin status can be queried by non-administrators |
 | `organizationCreationRestricted` | [`Boolean!`](../scalar/boolean.md) | Shows if organization creation is restricted to administrators |
 | `userRegistrationEnabled` | [`Boolean!`](../scalar/boolean.md) | Shows if user registration is enabled |
 

@@ -11,9 +11,10 @@ class ApplicationSetting < ApplicationRecord
     user_registration_enabled: 1,
     organization_creation_restricted: 2,
     identity_providers: 3,
+    admin_status_visible: 4,
   }.with_indifferent_access
 
-  BOOLEAN_OPTIONS = %i[user_registration_enabled organization_creation_restricted].freeze
+  BOOLEAN_OPTIONS = %i[user_registration_enabled organization_creation_restricted admin_status_visible].freeze
 
   enum :setting, SETTINGS
 

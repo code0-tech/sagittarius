@@ -14,3 +14,8 @@ ApplicationSetting.seed_once :setting do |s|
   s.setting = :identity_providers
   s.value = []
 end
+
+ApplicationSetting.seed_once :setting do |s|
+  s.setting = :admin_status_visible
+  s.value = true
+end

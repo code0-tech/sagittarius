@@ -8,7 +8,10 @@ module Types
 
     field :avatar_path, String, null: true, description: 'The avatar if present of the user'
 
-    field :admin, Boolean, null: false, description: 'Global admin status of the user'
+    field :admin, Boolean,
+          null: false,
+          description: 'Global admin status of the user',
+          authorize: :read_admin_status
     field :email, String, null: true, description: 'Email of the user', authorize: :read_email
     field :email_verified_at, Types::TimeType,
           null: true,
