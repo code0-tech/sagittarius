@@ -77,4 +77,5 @@ Returns [`User`](../object/user.md).
 
 | Name | Type | Description |
 |------|------|-------------|
-| `id` | [`UserID!`](../scalar/userid.md) | GlobalID of the target user |
+| `id` | [`UserID`](../scalar/userid.md) | GlobalID of the target user |
+| `username` | [`String`](../scalar/string.md) | Username of the target user |
