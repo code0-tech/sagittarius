@@ -24,7 +24,17 @@ module Namespaces
             update_settings(t)
             update_nodes(t)
 
+            unless flow.save
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Flow is invalid',
+                error_code: :invalid_flow,
+                details: flow.errors
+              )
+            end
+
             validate_flow(t)
+
+            UpdateRuntimesForProjectJob.perform_later(flow.project.id)
 
             create_audit_event
 
@@ -54,25 +64,49 @@ module Namespaces
         def update_nodes(t)
           all_nodes = flow.collect_node_functions
 
-          current_node_input = flow_input.starting_node
+          current_node_input_id = flow_input.starting_node_id
           node_index = 0
 
           updated_nodes = []
 
-          until current_node_input.nil?
+          until current_node_input_id.nil?
             current_node = all_nodes[node_index]
+            current_node_input = flow_input.nodes.find { |n| n.id == current_node_input_id }
 
             update_node(t, current_node, current_node_input)
             updated_nodes << { node: current_node, input: current_node_input }
 
-            current_node_input = current_node_input.next_node
+            current_node_input_id = current_node_input.next_node_id
             node_index += 1
           end
 
           updated_nodes.each do |node|
             update_node_parameters(t, node[:node], node[:input], updated_nodes)
             update_next_node(t, node[:node], node[:input], updated_nodes)
+
+            next if node[:node].save
+
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Invalid node',
+              error_code: :invalid_node_function,
+              details: node[:node].errors
+            )
           end
+
+          update_starting_node(t, updated_nodes)
+        end
+
+        def update_starting_node(t, all_nodes)
+          starting_node = all_nodes.find { |n| n[:input].id == flow_input.starting_node_id }
+
+          if starting_node.nil?
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Starting node not found',
+              error_code: :node_not_found
+            )
+          end
+
+          flow.starting_node = starting_node[:node]
         end
 
         def update_node(t, current_node, current_node_input)
@@ -86,7 +120,7 @@ module Namespaces
             )
           end
 
-          current_node.runtime_function_definition = runtime_function_definition
+          current_node.runtime_function = runtime_function_definition
         end
 
         def update_next_node(t, current_node, current_node_input, all_nodes)
@@ -95,7 +129,7 @@ module Namespaces
           if next_node.nil? && current_node_input.next_node_id.present?
             t.rollback_and_return! ServiceResponse.error(
               message: 'Next node not found',
-              error_code: :next_node_not_found
+              error_code: :node_not_found
             )
           end
 
@@ -208,7 +242,7 @@ module Namespaces
             entity: flow,
             target: flow.project,
             details: {
-              **flow_input.attributes.except('created_at', 'updated_at'),
+              **flow.attributes.except('created_at', 'updated_at'),
             }
           )
         end
