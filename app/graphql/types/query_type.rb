@@ -41,7 +41,11 @@ module Types
     end
 
     field :user, Types::UserType, null: true, description: 'Find a user' do
-      argument :id, Types::GlobalIdType[::User], required: true, description: 'GlobalID of the target user'
+      argument :id, Types::GlobalIdType[::User], required: false, description: 'GlobalID of the target user'
+
+      argument :username, GraphQL::Types::String, required: false, description: 'Username of the target user'
+
+      require_one_of %i[id username]
     end
 
     field :users, Types::UserType.connection_type, null: false, description: 'Find users'
@@ -89,8 +93,12 @@ module Types
       SagittariusSchema.object_from_id(id)
     end
 
-    def user(id:)
-      SagittariusSchema.object_from_id(id)
+    def user(id: nil, username: nil)
+      if id.present?
+        SagittariusSchema.object_from_id(id)
+      elsif username.present?
+        User.find_by(username: username)
+      end
     end
 
     def users
