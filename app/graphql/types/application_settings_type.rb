@@ -16,5 +16,8 @@ module Types
     field :admin_status_visible, Boolean,
           null: false,
           description: 'Shows if admin status can be queried by non-administrators'
+
+    field :identity_providers, [Types::IdentityProviderType], null: false,
+                                                              description: 'List of configured identity providers'
   end
 end

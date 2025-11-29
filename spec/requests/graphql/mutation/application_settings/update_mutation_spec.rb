@@ -13,6 +13,10 @@ RSpec.describe 'applicationSettingsUpdate Mutation' do
           applicationSettings {
             userRegistrationEnabled
             organizationCreationRestricted
+            identityProviders {
+              type
+              id
+            }
           }
         }
       }
