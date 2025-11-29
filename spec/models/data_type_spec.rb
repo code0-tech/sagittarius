@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DataType do
-  subject { create(:data_type) }
+  subject(:data_type) { create(:data_type) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:parent_type).class_name('DataTypeIdentifier').inverse_of(:child_types).optional }
@@ -55,6 +55,26 @@ RSpec.describe DataType do
 
       expect(dt1.valid?).to be(false)
       expect(dt1.errors.added?(:parent_type, :recursion)).to be(true)
+    end
+
+    describe '#validate_version' do
+      it 'adds an error if version is blank' do
+        data_type.version = ''
+        data_type.validate_version
+        expect(data_type.errors.added?(:version, :blank)).to be(true)
+      end
+
+      it 'adds an error if version is invalid' do
+        data_type.version = 'invalid_version'
+        data_type.validate_version
+        expect(data_type.errors.added?(:version, :invalid)).to be(true)
+      end
+
+      it 'does not add an error if version is valid' do
+        data_type.version = '1.0.0'
+        data_type.validate_version
+        expect(data_type.errors[:version]).to be_empty
+      end
     end
   end
 end

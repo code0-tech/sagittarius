@@ -24,6 +24,16 @@ class RuntimeFunctionDefinition < ApplicationRecord
 
   validate :generic_keys_length
 
+  validate :validate_version
+
+  def validate_version
+    return errors.add(:version, :blank) if version.blank?
+
+    parsed_version
+  rescue ArgumentError
+    errors.add(:version, :invalid)
+  end
+
   def parsed_version
     Gem::Version.new(version)
   end

@@ -23,6 +23,26 @@ RSpec.describe RuntimeFunctionDefinition do
         expect(function.errors[:generic_keys]).to include('must be 30 or fewer')
       end
     end
+
+    describe '#validate_version' do
+      it 'adds an error if version is blank' do
+        function.version = ''
+        function.validate_version
+        expect(function.errors.added?(:version, :blank)).to be(true)
+      end
+
+      it 'adds an error if version is invalid' do
+        function.version = 'invalid_version'
+        function.validate_version
+        expect(function.errors.added?(:version, :invalid)).to be(true)
+      end
+
+      it 'does not add an error if version is valid' do
+        function.version = '1.0.0'
+        function.validate_version
+        expect(function.errors[:version]).to be_empty
+      end
+    end
   end
 
   describe 'associations' do

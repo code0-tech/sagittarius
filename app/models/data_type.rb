@@ -30,9 +30,19 @@ class DataType < ApplicationRecord
                         in: VARIANTS.keys.map(&:to_s),
                       }
 
+  validate :validate_version
+
   validate :generic_keys_length
 
   validate :validate_recursion, if: :parent_type_changed?
+
+  def validate_version
+    return errors.add(:version, :blank) if version.blank?
+
+    parsed_version
+  rescue ArgumentError
+    errors.add(:version, :invalid)
+  end
 
   def parsed_version
     Gem::Version.new(version)
