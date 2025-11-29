@@ -24,7 +24,7 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
           nil,
           []
         )
-      ],
+      ]
     )
   end
 

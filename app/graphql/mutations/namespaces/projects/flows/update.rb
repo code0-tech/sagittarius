@@ -17,23 +17,16 @@ module Mutations
           def resolve(flow_id:, flow_input:, **_params)
             flow = SagittariusSchema.object_from_id(flow_id)
 
-            return error('Invalid flow id') if flow.nil?
+            return { errors: [create_error(:flow_not_found, 'Flow does not exist')] } if flow.nil?
 
-            flow_type = SagittariusSchema.object_from_id(flow.type)
-            return error('Invalid flow type id') if flow_type.nil?
+            flow_type = SagittariusSchema.object_from_id(flow_input.type)
+            return { errors: [create_error(:flow_type_not_found, 'Invalid flow type id')] } if flow_type.nil?
 
             ::Namespaces::Projects::Flows::UpdateService.new(
               current_authentication,
               flow,
               flow_input
             ).execute.to_mutation_response(success_key: :flow)
-          end
-
-          def error(message)
-            {
-              flow: nil,
-              errors: [create_message_error(message)],
-            }
           end
         end
       end

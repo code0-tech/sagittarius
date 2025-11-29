@@ -46,8 +46,8 @@ module Namespaces
 
         def update_settings(t)
           flow_input.settings.each do |setting|
-            flow_setting = flow.flow_settings.find_or_initialize_by(flow_setting_id: setting.flow_setting_id)
-            flow_setting.object = setting.object
+            flow_setting = flow.flow_settings.find_or_initialize_by(flow_setting_id: setting.flow_setting_identifier)
+            flow_setting.object = setting.value
 
             next if flow_setting.valid?
 
@@ -58,7 +58,7 @@ module Namespaces
             )
           end
 
-          flow.flow_settings.where.not(flow_setting_id: flow_input.settings.map(&:flow_setting_id)).destroy_all
+          flow.flow_settings.where.not(flow_setting_id: flow_input.settings.map(&:flow_setting_identifier)).destroy_all
         end
 
         def update_nodes(t)
@@ -70,7 +70,7 @@ module Namespaces
           updated_nodes = []
 
           until current_node_input_id.nil?
-            current_node = all_nodes[node_index]
+            current_node = all_nodes[node_index] || NodeFunction.new
             current_node_input = flow_input.nodes.find { |n| n.id == current_node_input_id }
 
             update_node(t, current_node, current_node_input)
@@ -133,15 +133,15 @@ module Namespaces
             )
           end
 
-          current_node.next_node = next_node
+          current_node.next_node = next_node&.[](:node)
         end
 
         def update_node_parameters(t, current_node, current_node_input, all_nodes)
           db_parameters = current_node.node_parameters.first(current_node_input.parameters.count)
           current_node_input.parameters.each_with_index do |parameter, index|
-            db_parameters[index] ||= NodeParameter.new
+            db_parameters[index] ||= current_node.node_parameters.build
 
-            runtime_parameter = current_node.runtime_function_definition.parameters.find_by(
+            runtime_parameter = current_node.runtime_function.parameters.find_by(
               id: parameter.runtime_parameter_definition_id.model_id
             )
             if runtime_parameter.nil?
@@ -151,7 +151,7 @@ module Namespaces
               )
             end
 
-            db_parameters[index].runtime_parameter_definition = runtime_parameter
+            db_parameters[index].runtime_parameter = runtime_parameter
 
             db_parameters[index].literal_value = parameter.value.literal_value.presence
 
