@@ -3,6 +3,7 @@
 class UserPolicy < BasePolicy
   condition(:user_is_self) { subject.id == user&.id }
   condition(:user_is_admin) { user&.admin? || false }
+  condition(:admin_status_visible) { ApplicationSetting.current[:admin_status_visible] }
 
   rule { ~anonymous }.enable :read_user
 
@@ -12,7 +13,10 @@ class UserPolicy < BasePolicy
     enable :update_attachment_avatar
     enable :read_email
     enable :delete_user
+    enable :read_admin_status
   end
+
+  rule { admin_status_visible & ~anonymous }.enable :read_admin_status
 
   rule { user_is_self }.policy do
     enable :read_user_identity
