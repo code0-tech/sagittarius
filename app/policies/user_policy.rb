@@ -14,6 +14,7 @@ class UserPolicy < BasePolicy
     enable :read_email
     enable :delete_user
     enable :read_admin_status
+    enable :read_mfa_status
   end
 
   rule { admin_status_visible & ~anonymous }.enable :read_admin_status
@@ -26,5 +27,6 @@ class UserPolicy < BasePolicy
     enable :verify_email
     enable :send_verification_email
     enable :read_email
+    enable :read_mfa_status
   end
 end
