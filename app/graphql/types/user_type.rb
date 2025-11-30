@@ -41,6 +41,10 @@ module Types
           description: 'Identities of this user',
           method: :user_identities
 
+    field :mfa_status, Types::MfaStatusType,
+          null: true,
+          description: 'Multi-factor authentication status of this user'
+
     lookahead_field :namespace_memberships,
                     base_scope: ->(object) { object.namespace_memberships },
                     conditional_lookaheads: { user: :user, namespace: { namespace: :namespace_members } }
@@ -57,6 +61,14 @@ module Types
       return unless object.avatar.attached?
 
       Rails.application.routes.url_helpers.rails_storage_proxy_path object.avatar
+    end
+
+    def mfa_status
+      {
+        enabled: object.mfa_enabled?,
+        totp_enabled: object.totp_secret.present?,
+        backup_codes_count: object.backup_codes.size,
+      }
     end
   end
 end

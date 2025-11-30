@@ -17,6 +17,7 @@ Represents a user
 | `id` | [`UserID!`](../scalar/userid.md) | Global ID of this User |
 | `identities` | [`UserIdentityConnection!`](../object/useridentityconnection.md) | Identities of this user |
 | `lastname` | [`String`](../scalar/string.md) | Lastname of the user |
+| `mfaStatus` | [`MfaStatus`](../object/mfastatus.md) | Multi-factor authentication status of this user |
 | `namespace` | [`Namespace`](../object/namespace.md) | Namespace of this user |
 | `namespaceMemberships` | [`NamespaceMemberConnection!`](../object/namespacememberconnection.md) | Namespace Memberships of this user |
 | `sessions` | [`UserSessionConnection!`](../object/usersessionconnection.md) | Sessions of this user |
