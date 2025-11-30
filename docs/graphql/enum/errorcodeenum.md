@@ -21,6 +21,7 @@ Represents the available error responses
 | `FLOW_NOT_FOUND` | The flow with the given identifier was not found |
 | `FLOW_TYPE_NOT_FOUND` | The flow type with the given identifier was not found |
 | `FLOW_VALIDATION_FAILED` | The flow validation has failed |
+| `FUNCTION_VALUE_NOT_FOUND` | The id for the function value node does not exist |
 | `GENERIC_KEY_NOT_FOUND` | The given key was not found in the data type |
 | `IDENTITY_NOT_FOUND` | The external identity with the given identifier was not found |
 | `IDENTITY_VALIDATION_FAILED` | Failed to validate the external identity |
@@ -37,6 +38,8 @@ Represents the available error responses
 | `INVALID_NAMESPACE_MEMBER` | The namespace member is invalid because of active model errors |
 | `INVALID_NAMESPACE_PROJECT` | The namespace project is invalid because of active model errors |
 | `INVALID_NAMESPACE_ROLE` | The namespace role is invalid because of active model errors |
+| `INVALID_NODE_FUNCTION` | The node function is invalid |
+| `INVALID_NODE_PARAMETER` | The node parameter is invalid |
 | `INVALID_ORGANIZATION` | The organization is invalid because of active model errors |
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |
@@ -63,6 +66,7 @@ Represents the available error responses
 | `NAMESPACE_NOT_FOUND` | The namespace with the given identifier was not found |
 | `NAMESPACE_PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
 | `NAMESPACE_ROLE_NOT_FOUND` | The namespace role with the given identifier was not found |
+| `NODE_NOT_FOUND` | The node with this id does not exist |
 | `NO_DATATYPE_IDENTIFIER_FOR_GENERIC_KEY` | No data type identifier could be found for the given generic key |
 | `NO_DATA_TYPE_FOR_IDENTIFIER` | No data type could be found for the given identifier |
 | `NO_FREE_LICENSE_SEATS` | There are no free license seats to complete this operation |
