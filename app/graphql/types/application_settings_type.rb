@@ -16,5 +16,17 @@ module Types
     field :admin_status_visible, Boolean,
           null: false,
           description: 'Shows if admin status can be queried by non-administrators'
+
+    field :terms_and_conditions_url, String,
+          null: true,
+          description: 'URL to the terms and conditions page'
+
+    field :privacy_url, String,
+          null: true,
+          description: 'URL to the privacy policy page'
+
+    field :legal_notice_url, String,
+          null: true,
+          description: 'URL to the legal notice page'
   end
 end

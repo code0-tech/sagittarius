@@ -8,6 +8,9 @@ RSpec.describe SagittariusSchema.types['ApplicationSettings'] do
       userRegistrationEnabled
       organizationCreationRestricted
       adminStatusVisible
+      termsAndConditionsUrl
+      privacyUrl
+      legalNoticeUrl
     ]
   end
 
