@@ -7,6 +7,9 @@ RSpec.describe SagittariusSchema.types['Application'] do
     %w[
       settings
       metadata
+      privacyUrl
+      termsAndConditionsUrl
+      legalNoticeUrl
     ]
   end
 
