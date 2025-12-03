@@ -4,9 +4,9 @@ module Types
   class OidcIdentityProviderConfigType < Types::BaseObject
     description 'Represents an OIDC identity provider configuration'
 
-    markdown_documentation <<~QUERY
+    markdown_documentation <<~MARKDOWN
       For more information see: https://github.com/code0-tech/code0-identities/blob/#{Code0::Identities::VERSION}/README.md#oauth-based
-    QUERY
+    MARKDOWN
 
     # rubocop:disable Graphql/ExtractType
     field :client_id, String,

@@ -4,9 +4,9 @@ module Types
   class SamlIdentityProviderConfigType < Types::BaseObject
     description 'Represents the configuration for a SAML identity provider.'
 
-    markdown_documentation <<~QUERY
+    markdown_documentation <<~MARKDOWN
       For more information see: https://github.com/code0-tech/code0-identities/blob/#{Code0::Identities::VERSION}/README.md#saml
-    QUERY
+    MARKDOWN
 
     field :provider_name, String,
           null: false,
