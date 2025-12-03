@@ -94,6 +94,8 @@ module Namespaces
           end
 
           update_starting_node(t, updated_nodes)
+
+          delete_old_nodes(t, all_nodes.reject { |node| updated_nodes.pluck(:node).pluck(:id).include?(node.id) })
         end
 
         def update_starting_node(t, all_nodes)
@@ -107,6 +109,19 @@ module Namespaces
           end
 
           flow.starting_node = starting_node[:node]
+        end
+
+        def delete_old_nodes(t, remaining_nodes)
+          remaining_nodes.each do |node|
+            node.destroy
+            next unless node.persisted?
+
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Failed to delete node',
+              error_code: :invalid_node_function,
+              details: node.errors
+            )
+          end
         end
 
         def update_node(t, current_node, current_node_input)
