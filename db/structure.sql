@@ -59,7 +59,7 @@ ALTER SEQUENCE active_storage_variant_records_id_seq OWNED BY active_storage_var
 CREATE TABLE application_settings (
     id bigint NOT NULL,
     setting integer NOT NULL,
-    value jsonb NOT NULL,
+    value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );

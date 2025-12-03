@@ -12,9 +12,13 @@ class ApplicationSetting < ApplicationRecord
     organization_creation_restricted: 2,
     identity_providers: 3,
     admin_status_visible: 4,
+    terms_and_conditions_url: 5,
+    privacy_url: 6,
+    legal_notice_url: 7,
   }.with_indifferent_access
 
   BOOLEAN_OPTIONS = %i[user_registration_enabled organization_creation_restricted admin_status_visible].freeze
+  URL_OPTIONS = %i[terms_and_conditions_url privacy_url legal_notice_url].freeze
 
   enum :setting, SETTINGS
 
@@ -29,7 +33,17 @@ class ApplicationSetting < ApplicationRecord
     validates :value, inclusion: { in: [false, true] }, if: :"#{option}?"
   end
 
+  URL_OPTIONS.each do |option|
+    validates :value,
+              length: { maximum: 2048 },
+              format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+              allow_nil: true,
+              if: :"#{option}?"
+  end
+
   def validate_value
+    return if URL_OPTIONS.map(&:to_s).include?(setting) && value.nil?
+
     errors.add(:value, :blank) if value.nil?
   end
 
