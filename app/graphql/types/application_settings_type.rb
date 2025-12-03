@@ -17,7 +17,8 @@ module Types
           null: false,
           description: 'Shows if admin status can be queried by non-administrators'
 
-    field :identity_providers, Types::IdentityProviderType.connection_type, null: false,
-                                                              description: 'List of configured identity providers'
+    field :identity_providers, Types::IdentityProviderType.connection_type,
+          null: false,
+          description: 'List of configured identity providers'
   end
 end
