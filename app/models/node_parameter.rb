@@ -21,7 +21,7 @@ class NodeParameter < ApplicationRecord
     elsif reference_value.present?
       param.value.reference_value = reference_value.to_grpc
     elsif function_value.present?
-      param.value.function_value = function_value.to_grpc
+      param.value.node_function_id = function_value.id
     end
 
     param
