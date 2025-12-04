@@ -13,7 +13,7 @@ class NamespaceProjectPolicy < BasePolicy
     enable :read_flow
   end
 
- rule { admin }.policy do
+  rule { admin }.policy do
     enable :namespace_administrator
   end
 
