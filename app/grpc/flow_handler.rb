@@ -10,7 +10,7 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
   def self.update_runtime(runtime)
     flows = []
     runtime.project_assignments.compatible.each do |assignment|
-      assignment.project.flows.each do |flow|
+      assignment.namespace_project.flows.each do |flow|
         flows << flow.to_grpc
       end
     end

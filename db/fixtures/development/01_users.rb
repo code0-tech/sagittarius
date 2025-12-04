@@ -27,3 +27,10 @@ User.seed_once :username do |u|
   u.password = 'password'
   u.admin = false
 end
+
+%w[Admin Maintainer Owner User].each do |username|
+  UserSession.seed_once :token do |session|
+    session.user = User.find_by(username: username)
+    session.token = username
+  end
+end

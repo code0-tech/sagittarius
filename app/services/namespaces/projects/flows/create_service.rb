@@ -121,9 +121,13 @@ module Namespaces
               next
             end
             if parameter.value.function_value.present?
+              # A little bit hacky but okay
               params << NodeParameter.create(
                 runtime_parameter: runtime_parameter,
-                function_value: create_node_function(parameter.value.function_value, input_nodes, t)
+                function_value: create_node_function(
+                  parameter.value.function_value.id,
+                  [parameter.value.function_value], t
+                )
               )
               next
             end
