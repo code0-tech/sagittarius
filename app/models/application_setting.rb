@@ -25,12 +25,36 @@ class ApplicationSetting < ApplicationRecord
                       }
   validate :validate_value
 
+  validate :validate_identity_providers, if: :identity_providers?
+
   BOOLEAN_OPTIONS.each do |option|
     validates :value, inclusion: { in: [false, true] }, if: :"#{option}?"
   end
 
   def validate_value
     errors.add(:value, :blank) if value.nil?
+  end
+
+  def validate_identity_providers
+    value.each do |provider|
+      provider.deep_symbolize_keys!
+      if provider[:id].nil? || provider[:type].nil? || provider[:config].nil?
+        next errors.add(:value, :id_type_or_config_missing)
+      end
+
+      if provider[:type] == 'saml'
+        allowed_keys = %i[provider_name attribute_statements settings response_settings metadata_url]
+        errors.add(:value, :invalid_saml_configuration_keys) unless (provider[:config].keys - allowed_keys).empty?
+      else
+        required_keys = %i[client_id client_secret redirect_uri user_details_url authorization_url]
+        allowed_keys = %i[provider_name attribute_statements] + required_keys
+
+        required_keys -= %i[user_details_url authorization_url] unless provider[:type] == 'oidc'
+
+        errors.add(:value, :invalid_oidc_configuration_keys) unless (provider[:config].keys - allowed_keys).empty?
+        errors.add(:value, :missing_oidc_configuration_keys) unless (required_keys - provider[:config].keys).empty?
+      end
+    end
   end
 
   def self.assert_settings_present!(records = ApplicationSetting.all)
