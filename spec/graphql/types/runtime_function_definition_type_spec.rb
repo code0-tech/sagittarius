@@ -8,7 +8,7 @@ RSpec.describe SagittariusSchema.types['RuntimeFunctionDefinition'] do
       id
       identifier
       functionDefinitions
-      parameters
+      runtimeParameterDefinitions
       runtime
       createdAt
       updatedAt
@@ -17,5 +17,5 @@ RSpec.describe SagittariusSchema.types['RuntimeFunctionDefinition'] do
 
   it { expect(described_class.graphql_name).to eq('RuntimeFunctionDefinition') }
   it { expect(described_class).to have_graphql_fields(fields) }
-  it { expect(described_class).to require_graphql_authorizations(:read_runtime) }
+  it { expect(described_class).to require_graphql_authorizations(:read_runtime_function_definition) }
 end
