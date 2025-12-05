@@ -74,7 +74,7 @@ module Runtimes
             types << data_type.data_type_identifier
           else
             types << data_type.generic_type.data_type_identifier
-            data_type.generic_type.generic_mappers.each do |mapper|
+            data_type.generic_type.generic_mappers.to_a.each do |mapper|
               mapper.source.each do |source_identifier|
                 types += extract_data_type_identifier_strings(
                   Tucana::Shared::DefinitionDataTypeParentTypeRuleConfig.new(parent_type: source_identifier)
