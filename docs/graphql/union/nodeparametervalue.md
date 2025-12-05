@@ -7,5 +7,5 @@ Represents a parameter value for a node.
 ## Possible types
 
 - [`LiteralValue`](../object/literalvalue.md)
-- [`NodeFunction`](../object/nodefunction.md)
+- [`NodeFunctionId`](../object/nodefunctionid.md)
 - [`ReferenceValue`](../object/referencevalue.md)

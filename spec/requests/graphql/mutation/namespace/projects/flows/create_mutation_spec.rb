@@ -67,25 +67,24 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
           },
         },
         nodes: [
+          { id: 'gid://sagittarius/NodeFunction/2000',
+            runtimeFunctionId: runtime_function.to_global_id.to_s,
+            nextNodeId: nil,
+            parameters: [
+              {
+                runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
+                value: {
+                  literalValue: 100,
+                },
+              }
+            ] },
           {
             id: 'gid://sagittarius/NodeFunction/1000',
             runtimeFunctionId: runtime_function.to_global_id.to_s,
             parameters: [
               runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
               value: {
-                functionValue: {
-                  id: 'gid://sagittarius/NodeFunction/2000',
-                  runtimeFunctionId: runtime_function.to_global_id.to_s,
-                  nextNodeId: nil,
-                  parameters: [
-                    {
-                      runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
-                      value: {
-                        literalValue: 100,
-                      },
-                    }
-                  ],
-                },
+                nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
               }
             ],
             nextNodeId: 'gid://sagittarius/NodeFunction/1001',
