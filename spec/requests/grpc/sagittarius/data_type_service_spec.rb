@@ -138,10 +138,37 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
               Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 9 }),
               Tucana::Shared::DefinitionDataTypeRule.create(
                 :parent_type,
-                { parent_type: { data_type_identifier: 'positive_number' } }
+                { parent_type: {
+                  generic_type: {
+                    data_type_identifier: 'positive_number',
+                    generic_mappers: [
+                      {
+                        source: [
+                          {
+                            data_type_identifier: 'some_other_dependency',
+                          }
+                        ],
+                        target: 'T',
+                        generic_combinations: [],
+                      }
+                    ],
+                  },
+                } }
               )
             ],
             generic_keys: ['T'],
+            version: '0.0.0',
+          },
+
+          {
+            variant: :PRIMITIVE,
+            identifier: 'some_other_dependency',
+            name: [
+              { code: 'de_DE', content: 'Positive Zahl' }
+            ],
+            rules: [
+              Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1 })
+            ],
             version: '0.0.0',
           },
           {
@@ -168,7 +195,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
         expect(small_positive_number).to be_present
         expect(positive_number.generic_keys).to be_empty
         expect(small_positive_number.generic_keys).to eq(['T'])
-        expect(small_positive_number.parent_type.data_type).to eq(positive_number)
+        expect(small_positive_number.parent_type.generic_type.data_type).to eq(positive_number)
       end
     end
 
