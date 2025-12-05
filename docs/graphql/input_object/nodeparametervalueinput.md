@@ -8,6 +8,6 @@ Input type for parameter value
 
 | Name | Type | Description |
 |------|------|-------------|
-| `functionValue` | [`NodeFunctionInput`](../input_object/nodefunctioninput.md) | The function value of the parameter |
 | `literalValue` | [`JSON`](../scalar/json.md) | The literal value of the parameter |
+| `nodeFunctionId` | [`NodeFunctionID`](../scalar/nodefunctionid.md) | The function value of the parameter as an id |
 | `referenceValue` | [`ReferenceValueInput`](../input_object/referencevalueinput.md) | The reference value of the parameter |

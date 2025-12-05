@@ -54,13 +54,14 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
                                          ])
   end
+
   let(:input) do
     {
       flowId: flow.to_global_id.to_s,
       flowInput: {
         name: generate(:flow_name),
         type: flow_type.to_global_id.to_s,
-        startingNodeId: 'gid://sagittarius/NodeFunction/999',
+        startingNodeId: 'gid://sagittarius/NodeFunction/1000',
         settings: {
           flowSettingIdentifier: 'key',
           value: {
@@ -68,24 +69,46 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
           },
         },
         nodes: [
+          { id: 'gid://sagittarius/NodeFunction/2000',
+            runtimeFunctionId: runtime_function.to_global_id.to_s,
+            nextNodeId: nil,
+            parameters: [
+              {
+                runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
+                value: {
+                  literalValue: 100,
+                },
+              }
+            ] },
           {
-            id: 'gid://sagittarius/NodeFunction/999',
+            id: 'gid://sagittarius/NodeFunction/1000',
             runtimeFunctionId: runtime_function.to_global_id.to_s,
             parameters: [
               runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
               value: {
-                literalValue: 'test_value',
+                nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
               }
             ],
-            nextNodeId: 'gid://sagittarius/NodeFunction/991',
+            nextNodeId: 'gid://sagittarius/NodeFunction/1001',
           },
           {
-            id: 'gid://sagittarius/NodeFunction/991',
+            id: 'gid://sagittarius/NodeFunction/1001',
             runtimeFunctionId: runtime_function.to_global_id.to_s,
             parameters: [
               runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
               value: {
-                literalValue: 'test_value2',
+                # https://github.com/code0-tech/sagittarius/issues/756
+                literalValue: 42,
+                #   referenceValue: {
+                #     depth: 1,
+                #     node: 1,
+                #     scope: [],
+                #     referencePath: [],
+                #     nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+                #     dataTypeIdentifier: {
+                # genericKey: 'K',
+                #  },
+                # },
               }
             ],
           }
@@ -94,7 +117,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     }
   end
 
-  let(:variables) { { input: input } }
+ let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
 
   context 'when user has the permission' do
@@ -105,6 +128,8 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
     it 'updates flow' do
       mutate!
+
+      p parsed_response
 
       updated_flow_id = graphql_data_at(:namespaces_projects_flows_update, :flow, :id)
       expect(updated_flow_id).to be_present

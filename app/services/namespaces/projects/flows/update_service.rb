@@ -170,8 +170,8 @@ module Namespaces
 
             db_parameters[index].literal_value = parameter.value.literal_value.presence
 
-            if parameter.value.function_value.present?
-              node = all_nodes.find { |n| n[:input].id == parameter.value.function_value.runtime_function_id }
+            if parameter.value.node_function_id.present?
+              node = all_nodes.find { |n| n[:input].id == parameter.value.node_function_id }
 
               if node.nil?
                 t.rollback_and_return! ServiceResponse.error(
