@@ -24,6 +24,7 @@ module Sagittarius
           web: {
             port: 3000,
             force_ssl: nil,
+            bind: nil,
           },
           grpc: {
             host: '0.0.0.0:50051',
