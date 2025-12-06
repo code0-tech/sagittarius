@@ -4,7 +4,7 @@ module Types
   class DataTypeType < Types::BaseObject
     description 'Represents a DataType'
 
-    authorize :read_datatype
+    authorize :read_data_type
 
     field :aliases, Types::TranslationType.connection_type, null: true, description: 'Name of the function'
     field :display_messages, Types::TranslationType.connection_type, null: true,
