@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Namespaces::Projects::Flows::CreateService do
   subject(:service_response) do
-    described_class.new(create_authentication(current_user), namespace_project: namespace_project, **params).execute
+    described_class.new(create_authentication(current_user), namespace_project: namespace_project).execute
   end
 
   let(:runtime) { create(:runtime) }
