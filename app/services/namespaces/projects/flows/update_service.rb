@@ -69,14 +69,12 @@ module Namespaces
 
           updated_nodes = []
 
-          until current_node_input_id.nil?
+          flow_input.nodes.each do |node_input|
             current_node = all_nodes[node_index] || NodeFunction.new
-            current_node_input = flow_input.nodes.find { |n| n.id == current_node_input_id }
 
-            update_node(t, current_node, current_node_input)
-            updated_nodes << { node: current_node, input: current_node_input }
+            update_node(t, current_node, node_input)
+            updated_nodes << { node: current_node, input: node_input }
 
-            current_node_input_id = current_node_input.next_node_id
             node_index += 1
           end
 
@@ -192,15 +190,11 @@ module Namespaces
                 t
               )
 
-              # This will be broken, because we cant reference nodes that arent created yet
-              # And we will need to put all parameter nodes inside the flowinput.nodes
-              # So we can reference them here because we will not recursively search for them
-              referenced_node = NodeFunction.joins(:runtime_function).find_by(
-                id: parameter.value.reference_value.node_function_id.model_id,
-                runtime_function_definitions: { runtime_id: flow.project.primary_runtime.id }
-              )
+             referenced_node = all_nodes.find do |n|
+                n[:input].id == parameter.value.reference_value.node_function_id
+              end
 
-              if referenced_node.nil?
+             if referenced_node.nil?
                 t.rollback_and_return! ServiceResponse.error(
                   message: 'Referenced node function not found',
                   error_code: :referenced_value_not_found
@@ -219,7 +213,7 @@ module Namespaces
 
               reference_value.assign_attributes(
                 data_type_identifier: data_type_identifier,
-                node_function: reference_value,
+                node_function: referenced_node[:node],
                 depth: parameter.value.reference_value.depth,
                 node: parameter.value.reference_value.node,
                 scope: parameter.value.reference_value.scope,
