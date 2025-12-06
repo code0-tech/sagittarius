@@ -131,6 +131,8 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
     it 'creates namespace project' do
       mutate!
 
+      p parsed_response
+
       created_flow_id = graphql_data_at(:namespaces_projects_flows_create, :flow, :id)
       expect(created_flow_id).to be_present
       flow = SagittariusSchema.object_from_id(created_flow_id)

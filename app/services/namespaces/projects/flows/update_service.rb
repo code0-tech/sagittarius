@@ -21,20 +21,7 @@ module Namespaces
           end
 
           transactional do |t|
-            update_settings(t)
-            update_nodes(t)
-
-            unless flow.save
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Flow is invalid',
-                error_code: :invalid_flow,
-                details: flow.errors
-              )
-            end
-
-            validate_flow(t)
-
-            UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+            update_flow(t)
 
             create_audit_event
 
@@ -42,7 +29,29 @@ module Namespaces
           end
         end
 
+        def update_flow(t)
+          update_settings(t)
+          update_nodes(t)
+          update_flow_attributes
+
+          unless flow.save
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Flow is invalid',
+              error_code: :invalid_flow,
+              details: flow.errors
+            )
+          end
+
+          validate_flow(t)
+
+          UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+        end
+
         private
+
+        def update_flow_attributes
+          flow.name = flow_input.name
+        end
 
         def update_settings(t)
           flow_input.settings.each do |setting|
@@ -64,7 +73,7 @@ module Namespaces
         def update_nodes(t)
           all_nodes = flow.collect_node_functions
 
-          current_node_input_id = flow_input.starting_node_id
+          flow_input.starting_node_id
           node_index = 0
 
           updated_nodes = []
@@ -190,11 +199,11 @@ module Namespaces
                 t
               )
 
-             referenced_node = all_nodes.find do |n|
+              referenced_node = all_nodes.find do |n|
                 n[:input].id == parameter.value.reference_value.node_function_id
               end
 
-             if referenced_node.nil?
+              if referenced_node.nil?
                 t.rollback_and_return! ServiceResponse.error(
                   message: 'Referenced node function not found',
                   error_code: :referenced_value_not_found

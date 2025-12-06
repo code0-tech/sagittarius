@@ -58,7 +58,7 @@ class ServiceResponse
                             case message
                             when String
                               { message: message }
-                            when Namespaces::Projects::Flows::Validation::Validation::ValidationResult
+                            when Namespaces::Projects::Flows::Validation::ValidationResult
                               message
                             else
                               raise "Unsupported error detail type: #{message.class.name}"

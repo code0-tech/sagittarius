@@ -129,8 +129,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     it 'updates flow' do
       mutate!
 
-      p parsed_response
-
       updated_flow_id = graphql_data_at(:namespaces_projects_flows_update, :flow, :id)
       expect(updated_flow_id).to be_present
       flow = SagittariusSchema.object_from_id(updated_flow_id)
