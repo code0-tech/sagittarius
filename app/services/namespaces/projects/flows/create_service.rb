@@ -132,6 +132,9 @@ module Namespaces
               next
             end
 
+            # This will be broken, because we cant reference nodes that arent created yet
+            # And we will need to put all parameter nodes inside the flowinput.nodes
+            # So we can reference them here because we will not recursively search for them
             referenced_node = NodeFunction.joins(:runtime_function).find_by(
               id: parameter.value.reference_value.node_function_id.model_id,
               runtime_function_definitions: { runtime_id: namespace_project.primary_runtime.id }
