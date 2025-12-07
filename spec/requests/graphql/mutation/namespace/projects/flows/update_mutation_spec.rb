@@ -117,7 +117,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     }
   end
 
- let(:variables) { { input: input } }
+  let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
 
   context 'when user has the permission' do
