@@ -213,7 +213,7 @@ module Namespaces
               db_parameters[index].reference_value ||= ReferenceValue.new
               reference_value = db_parameters[index].reference_value
 
-              reference_paths_input = parameter.value.reference_value.reference_paths
+              reference_paths_input = parameter.value.reference_value.reference_path
               reference_paths = reference_value.reference_paths.first(reference_paths_input.length)
               reference_paths_input.each_with_index do |path, i|
                 reference_paths[i] ||= reference_value.reference_paths.build

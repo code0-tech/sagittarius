@@ -95,18 +95,21 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
             parameters: [
               runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
               value: {
-                # https://github.com/code0-tech/sagittarius/issues/756
-                literalValue: 42,
-                #   referenceValue: {
-                #     depth: 1,
-                #     node: 1,
-                #     scope: [],
-                #     referencePath: [],
-                #     nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
-                #     dataTypeIdentifier: {
-                # genericKey: 'K',
-                #  },
-                # },
+                referenceValue: {
+                  depth: 1,
+                  node: 1,
+                  scope: [],
+                  referencePath: [
+                    {
+                      arrayIndex: 0,
+                      path: 'some.path',
+                    }
+                  ],
+                  nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+                  dataTypeIdentifier: {
+                    genericKey: 'K',
+                  },
+                },
               }
             ],
           }
