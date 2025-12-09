@@ -7,6 +7,7 @@ RSpec.describe SagittariusSchema.types['Application'] do
     %w[
       settings
       metadata
+      user_abilities
     ]
   end
 

@@ -10,4 +10,5 @@ Represents the application instance
 |------|------|-------------|
 | `metadata` | [`Metadata!`](../object/metadata.md) | Metadata about the application |
 | `settings` | [`ApplicationSettings`](../object/applicationsettings.md) | Global application settings |
+| `userAbilities` | [`ApplicationUserAbilities!`](../object/applicationuserabilities.md) | Abilities for the current user on this Application |
 
