@@ -23,8 +23,15 @@ end
 # terminating a worker in development environments.
 worker_timeout 3600 if ENV.fetch('RAILS_ENV', 'development') == 'development'
 
-# Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-port Sagittarius::Configuration.config[:rails][:web][:port]
+# Specify either a `bind` or `port` to listen on.
+bind_uri = Sagittarius::Configuration.config[:rails][:web][:bind]
+port_number = Sagittarius::Configuration.config[:rails][:web][:port]
+
+if bind_uri
+  bind bind_uri
+else
+  port port_number
+end
 
 # Specifies the `environment` that Puma will run in.
 environment ENV.fetch('RAILS_ENV', 'development')
