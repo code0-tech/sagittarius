@@ -13,6 +13,9 @@ module Types
     field :namespace, Types::NamespaceType, null: true, description: 'The parent namespace for the runtime'
     field :projects, Types::NamespaceProjectType.connection_type, null: false,
                                                                   description: 'Projects associated with the runtime'
+    field :runtime_function_definitions, Types::RuntimeFunctionDefinitionType.connection_type,
+          null: false,
+          description: 'Functions of the runtime'
     field :status, Types::RuntimeStatusType, null: false, description: 'The status of the runtime'
 
     field :token, String, null: true, description: 'Token belonging to the runtime, only present on creation'

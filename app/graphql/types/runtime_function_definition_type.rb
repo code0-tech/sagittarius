@@ -4,7 +4,7 @@ module Types
   class RuntimeFunctionDefinitionType < Types::BaseObject
     description 'Represents a runtime function definition'
 
-    authorize :read_flow
+    authorize :read_runtime_function_definition
 
     field :runtime, Types::RuntimeType,
           null: false, description: 'The runtime this runtime function definition belongs to'
