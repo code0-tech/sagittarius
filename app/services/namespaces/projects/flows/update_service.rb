@@ -105,10 +105,16 @@ module Namespaces
           delete_old_nodes(t, all_nodes.reject { |node| updated_nodes.pluck(:node).pluck(:id).include?(node.id) })
         end
 
-        def update_starting_node(_t, all_nodes)
+        def update_starting_node(t, all_nodes)
           starting_node = all_nodes.find { |n| n[:input].id == flow_input.starting_node_id }
 
-          return nil if starting_node.nil?
+          if starting_node.nil? && flow_input.starting_node_id.present?
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Starting node not found',
+              error_code: :node_not_found
+            )
+          end
+          return if starting_node.nil?
 
           flow.starting_node = starting_node[:node]
         end
