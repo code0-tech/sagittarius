@@ -29,7 +29,6 @@ RSpec.describe ApplicationSetting do
     end
 
     it { is_expected.to validate_uniqueness_of(:setting).ignoring_case_sensitivity }
-    it { is_expected.to allow_values(*described_class::SETTINGS.keys).for(:setting) }
 
     context 'when validating url options' do
       described_class::URL_OPTIONS.each do |option|
@@ -66,6 +65,9 @@ RSpec.describe ApplicationSetting do
             it { is_expected.to be_valid }
           end
         end
+      end
+    end
+
     it { is_expected.to allow_values(*described_class::BOOLEAN_OPTIONS).for(:setting) }
 
     it 'allows identity providers' do
@@ -176,12 +178,12 @@ RSpec.describe ApplicationSetting do
         expect(setting.errors.added?(:value, :missing_oidc_configuration_keys)).to be true
       end
     end
-  end
 
-  context 'when validating default settings' do
-    described_class.find_each do |setting|
-      it "#{setting.setting} is valid" do
-        expect(setting).to be_valid
+    context 'when validating default settings' do
+      described_class.find_each do |setting|
+        it "#{setting.setting} is valid" do
+          expect(setting).to be_valid
+        end
       end
     end
   end

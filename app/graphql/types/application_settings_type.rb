@@ -28,7 +28,7 @@ module Types
     field :legal_notice_url, String,
           null: true,
           description: 'URL to the legal notice page'
-    
+
     field :identity_providers, Types::IdentityProviderType.connection_type,
           null: false,
           description: 'List of configured identity providers'

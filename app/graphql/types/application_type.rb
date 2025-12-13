@@ -21,7 +21,7 @@ module Types
     field :legal_notice_url, String,
           null: true,
           description: 'URL to the legal notice page'
-    
+
     expose_abilities %i[
       create_organization
       create_runtime
