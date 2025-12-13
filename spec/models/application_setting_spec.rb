@@ -21,9 +21,53 @@ RSpec.describe ApplicationSetting do
     subject(:setting) { create(:application_setting, setting: :user_registration_enabled, value: true) }
 
     it { is_expected.to validate_presence_of(:setting) }
-    it { is_expected.to validate_presence_of(:value) }
+
+    context 'when not a url option' do
+      subject { build(:application_setting, setting: :user_registration_enabled, value: nil) }
+
+      it { is_expected.not_to be_valid }
+    end
 
     it { is_expected.to validate_uniqueness_of(:setting).ignoring_case_sensitivity }
+
+    context 'when validating url options' do
+      described_class::URL_OPTIONS.each do |option|
+        context "with #{option}" do
+          context 'with a long valid url' do
+            subject { create(:application_setting, setting: option, value: "http://#{'a' * 2030}.com") }
+
+            it { is_expected.to be_valid }
+          end
+
+          context 'when the value is too long' do
+            subject { build(:application_setting, setting: option, value: "http://#{'a' * 2049}.com") }
+
+            it { is_expected.not_to be_valid }
+          end
+
+          context 'with invalid url' do
+            subject(:setting) { build(:application_setting, setting: option, value: 'invalid-url') }
+
+            it 'is invalid' do
+              expect(setting).not_to be_valid
+            end
+          end
+
+          context 'with valid url' do
+            subject { create(:application_setting, setting: option, value: 'https://example.com') }
+
+            it { is_expected.to be_valid }
+          end
+
+          context 'with nil value' do
+            subject { create(:application_setting, setting: option, value: nil) }
+
+            it { is_expected.to be_valid }
+          end
+        end
+      end
+    end
+
     it { is_expected.to allow_values(*described_class::BOOLEAN_OPTIONS).for(:setting) }
 
     it 'allows identity providers' do
@@ -134,12 +178,12 @@ RSpec.describe ApplicationSetting do
         expect(setting.errors.added?(:value, :missing_oidc_configuration_keys)).to be true
       end
     end
-  end
 
-  context 'when validating default settings' do
-    described_class.find_each do |setting|
-      it "#{setting.setting} is valid" do
-        expect(setting).to be_valid
+    context 'when validating default settings' do
+      described_class.find_each do |setting|
+        it "#{setting.setting} is valid" do
+          expect(setting).to be_valid
+        end
       end
     end
   end
