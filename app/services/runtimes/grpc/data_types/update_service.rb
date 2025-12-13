@@ -53,9 +53,9 @@ module Runtimes
             # find the next datatype that doesn't have a dependency on an unsorted type
             next_datatype = unsorted_types.find do |to_sort|
               unsorted_types.none? do |to_search|
-                extract_data_type_identifier_string(to_sort.rules.find do |rule|
+                extract_data_type_identifier_strings(to_sort.rules.find do |rule|
                   rule.variant == :parent_type
-                end.rule_config) == to_search.identifier
+                end.rule_config).include?(to_search.identifier)
               end
             end
             sorted_types << next_datatype
@@ -66,9 +66,24 @@ module Runtimes
           sorted_types + unsorted_types
         end
 
-        def extract_data_type_identifier_string(parent_type_rule_config)
+        def extract_data_type_identifier_strings(parent_type_rule_config)
+          types = []
           data_type = parent_type_rule_config.parent_type
-          data_type.data_type_identifier || data_type.generic_type.data_type_identifier
+
+          if data_type.generic_type.nil?
+            types << data_type.data_type_identifier
+          else
+            types << data_type.generic_type.data_type_identifier
+            data_type.generic_type.generic_mappers.to_a.each do |mapper|
+              mapper.source.each do |source_identifier|
+                types += extract_data_type_identifier_strings(
+                  Tucana::Shared::DefinitionDataTypeParentTypeRuleConfig.new(parent_type: source_identifier)
+                )
+              end
+            end
+          end
+
+          types
         end
 
         def parent?(data_type)

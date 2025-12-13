@@ -21,6 +21,15 @@ module Types
     field :legal_notice_url, String,
           null: true,
           description: 'URL to the legal notice page'
+    
+    expose_abilities %i[
+      create_organization
+      create_runtime
+      delete_runtime
+      update_runtime
+      rotate_runtime_token
+      update_application_setting
+    ], subject_resolver: -> { :global }
 
     def metadata
       {}

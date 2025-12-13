@@ -5,6 +5,7 @@ module Namespaces
     module Flows
       class CreateService
         include Sagittarius::Database::Transactional
+        include FlowServiceHelper
 
         attr_reader :current_authentication, :namespace_project, :params
 
@@ -120,13 +121,20 @@ module Namespaces
               next
             end
             if parameter.value.function_value.present?
+              # A little bit hacky but okay
               params << NodeParameter.create(
                 runtime_parameter: runtime_parameter,
-                function_value: create_node_function(parameter.value.function_value, t)
+                function_value: create_node_function(
+                  parameter.value.function_value.id,
+                  [parameter.value.function_value], t
+                )
               )
               next
             end
 
+            # This will be broken, because we cant reference nodes that arent created yet
+            # And we will need to put all parameter nodes inside the flowinput.nodes
+            # So we can reference them here because we will not recursively search for them
             referenced_node = NodeFunction.joins(:runtime_function).find_by(
               id: parameter.value.reference_value.node_function_id.model_id,
               runtime_function_definitions: { runtime_id: namespace_project.primary_runtime.id }
@@ -143,7 +151,11 @@ module Namespaces
               runtime_parameter: runtime_parameter,
               reference_value: ReferenceValue.create(
                 node_function: referenced_node,
-                data_type_identifier: get_data_type_identifier(parameter.value.reference_value.data_type_identifier, t),
+                data_type_identifier: get_data_type_identifier(
+                  namespace_project.primary_runtime,
+                  parameter.value.reference_value.data_type_identifier,
+                  t
+                ),
                 depth: parameter.value.reference_value.depth,
                 node: parameter.value.reference_value.node,
                 scope: parameter.value.reference_value.scope,
@@ -166,47 +178,6 @@ module Namespaces
             runtime_function: runtime_function_definition,
             node_parameters: params
           )
-        end
-
-        private
-
-        def get_data_type_identifier(identifier, t)
-          return DataTypeIdentifier.create(generic_key: identifier.generic_key) if identifier.generic_key.present?
-
-          if identifier.generic_type.present?
-            data_type = namespace_project.primary_runtime.data_types.find_by(
-              id: identifier.generic_type.data_type_id.model_id
-            )
-
-            if data_type.nil?
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Data type not found',
-                error_code: :data_type_not_found
-              )
-            end
-
-            mappers = identifier.generic_type.mappers.map do |mapper|
-              GenericMapper.create(
-                generic_mapper_id: mapper.generic_mapper_id,
-                source: mapper.source,
-                target: mapper.target
-              )
-            end
-            return DataTypeIdentifier.create(generic_type: GenericType.create(data_type: data_type, mappers: mappers))
-          end
-
-          return if identifier.data_type_id.blank?
-
-          data_type = namespace_project.primary_runtime.data_types.find_by(id: identifier.data_type_id.model_id)
-
-          if data_type.nil?
-            t.rollback_and_return! ServiceResponse.error(
-              message: 'Data type not found',
-              error_code: :data_type_not_found
-            )
-          end
-
-          DataTypeIdentifier.create(data_type: data_type)
         end
       end
     end

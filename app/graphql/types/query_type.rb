@@ -52,15 +52,6 @@ module Types
 
     field :global_runtimes, Types::RuntimeType.connection_type, null: false, description: 'Find runtimes'
 
-    expose_abilities %i[
-      create_organization
-      create_runtime
-      delete_runtime
-      update_runtime
-      rotate_runtime_token
-      update_application_setting
-    ], entity_name: 'Instance', subject_resolver: -> { :global }
-
     def node(id:)
       context.schema.object_from_id(id, context)
     end

@@ -8,7 +8,7 @@ Represents a user
 
 | Name | Type | Description |
 |------|------|-------------|
-| `admin` | [`Boolean!`](../scalar/boolean.md) | Global admin status of the user |
+| `admin` | [`Boolean`](../scalar/boolean.md) | Global admin status of the user |
 | `avatarPath` | [`String`](../scalar/string.md) | The avatar if present of the user |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this User was created |
 | `email` | [`String`](../scalar/string.md) | Email of the user |

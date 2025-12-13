@@ -59,7 +59,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
       flow: {
         name: generate(:flow_name),
         type: flow_type.to_global_id.to_s,
-        startingNodeId: 'gid://sagittarius/NodeFunction/999',
+        startingNodeId: 'gid://sagittarius/NodeFunction/1000',
         settings: {
           flowSettingIdentifier: 'key',
           value: {
@@ -68,23 +68,46 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
         },
         nodes: [
           {
-            id: 'gid://sagittarius/NodeFunction/999',
+            id: 'gid://sagittarius/NodeFunction/1000',
             runtimeFunctionId: runtime_function.to_global_id.to_s,
             parameters: [
               runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
               value: {
-                literalValue: 'test_value',
+                functionValue: {
+                  id: 'gid://sagittarius/NodeFunction/2000',
+                  runtimeFunctionId: runtime_function.to_global_id.to_s,
+                  nextNodeId: nil,
+                  parameters: [
+                    {
+                      runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
+                      value: {
+                        literalValue: 100,
+                      },
+                    }
+                  ],
+                },
               }
             ],
-            nextNodeId: 'gid://sagittarius/NodeFunction/991',
+            nextNodeId: 'gid://sagittarius/NodeFunction/1001',
           },
           {
-            id: 'gid://sagittarius/NodeFunction/991',
+            id: 'gid://sagittarius/NodeFunction/1001',
             runtimeFunctionId: runtime_function.to_global_id.to_s,
             parameters: [
               runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
               value: {
-                literalValue: 'test_value2',
+                # https://github.com/code0-tech/sagittarius/issues/756
+                literalValue: 42,
+                #   referenceValue: {
+                #     depth: 1,
+                #     node: 1,
+                #     scope: [],
+                #     referencePath: [],
+                #     nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+                #     dataTypeIdentifier: {
+                # genericKey: 'K',
+                #  },
+                # },
               }
             ],
           }
