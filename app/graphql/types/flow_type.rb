@@ -28,7 +28,7 @@ module Types
     field :nodes, Types::NodeFunctionType.connection_type,
           null: false,
           description: 'Nodes of the flow',
-          method: :collect_node_functions
+          method: :node_functions
 
     expose_abilities %i[
       delete_flow

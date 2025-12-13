@@ -4,17 +4,28 @@ require 'rails_helper'
 
 RSpec.describe Namespaces::Projects::Flows::CreateService do
   subject(:service_response) do
-    described_class.new(create_authentication(current_user), namespace_project: namespace_project, **params).execute
+    described_class.new(create_authentication(current_user), namespace_project: namespace_project,
+                                                             flow_input: flow_input).execute
   end
 
   let(:runtime) { create(:runtime) }
   let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
-  let(:starting_node) do
-    create(:node_function, runtime_function: create(:runtime_function_definition, runtime: runtime))
-  end
-  let(:params) do
-    { project: namespace_project, name: generate(:flow_name), flow_type: create(:flow_type, runtime: runtime),
-      starting_node: starting_node }
+
+  let(:flow_input) do
+    Struct.new(:settings, :type, :starting_node_id, :nodes, :name).new(
+      [],
+      create(:flow_type, runtime: runtime).to_global_id,
+      'gid://sagittarius/NodeFunction/12345',
+      [
+        Struct.new(:id, :runtime_function_id, :next_node_id, :parameters).new(
+          'gid://sagittarius/NodeFunction/12345',
+          create(:runtime_function_definition, runtime: runtime).to_global_id,
+          nil,
+          []
+        )
+      ],
+      generate(:flow_name)
+    )
   end
 
   shared_examples 'does not create' do
@@ -27,19 +38,38 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
     it { expect { service_response }.not_to create_audit_event }
   end
 
-  context 'when user does not exist' do
-    let(:current_user) { nil }
+  context 'when user cannot create flow in project' do
+    let(:current_user) { create(:user) }
 
     it_behaves_like 'does not create'
   end
 
-  context 'when params are invalid' do
+  context 'when starting node is nil' do
     let(:current_user) { create(:user) }
+    let(:flow_input) do
+      Struct.new(:settings, :type, :starting_node_id, :nodes, :name).new(
+        [],
+        create(:flow_type, runtime: runtime).to_global_id,
+        nil,
+        [
+          Struct.new(:id, :runtime_function_id, :next_node_id, :parameters).new(
+            'gid://sagittarius/NodeFunction/12345',
+            create(:runtime_function_definition, runtime: runtime).to_global_id,
+            nil,
+            []
+          )
+        ],
+        generate(:flow_name)
+      )
+    end
 
-    context 'when starting node is nil' do
-      let(:params) { { project: namespace_project, flow_type: create(:flow_type), starting_node: nil } }
+    before do
+      stub_allowed_ability(NamespaceProjectPolicy, :create_flow, user: current_user, subject: namespace_project)
+    end
 
-      it_behaves_like 'does not create'
+    it do
+      is_expected.to be_success
+      expect(service_response.payload).to be_valid
     end
   end
 

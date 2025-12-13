@@ -6,7 +6,7 @@ FactoryBot.define do
   factory :flow do
     project factory: :namespace_project
     flow_type
-    starting_node factory: :node_function
+    starting_node { nil }
     flow_settings { [] }
     input_type { nil }
     return_type { nil }

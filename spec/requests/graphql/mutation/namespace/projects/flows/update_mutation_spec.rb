@@ -54,13 +54,14 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
                                          ])
   end
+
   let(:input) do
     {
       flowId: flow.to_global_id.to_s,
       flowInput: {
         name: generate(:flow_name),
         type: flow_type.to_global_id.to_s,
-        startingNodeId: 'gid://sagittarius/NodeFunction/999',
+        startingNodeId: 'gid://sagittarius/NodeFunction/1000',
         settings: {
           flowSettingIdentifier: 'key',
           value: {
@@ -68,24 +69,44 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
           },
         },
         nodes: [
+          { id: 'gid://sagittarius/NodeFunction/2000',
+            runtimeFunctionId: runtime_function.to_global_id.to_s,
+            nextNodeId: nil,
+            parameters: [
+              {
+                runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
+                value: {
+                  literalValue: 100,
+                },
+              }
+            ] },
           {
-            id: 'gid://sagittarius/NodeFunction/999',
+            id: 'gid://sagittarius/NodeFunction/1000',
             runtimeFunctionId: runtime_function.to_global_id.to_s,
             parameters: [
               runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
               value: {
-                literalValue: 'test_value',
+                nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
               }
             ],
-            nextNodeId: 'gid://sagittarius/NodeFunction/991',
+            nextNodeId: 'gid://sagittarius/NodeFunction/1001',
           },
           {
-            id: 'gid://sagittarius/NodeFunction/991',
+            id: 'gid://sagittarius/NodeFunction/1001',
             runtimeFunctionId: runtime_function.to_global_id.to_s,
             parameters: [
               runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
               value: {
-                literalValue: 'test_value2',
+                referenceValue: {
+                  depth: 1,
+                  node: 1,
+                  scope: [],
+                  referencePath: [],
+                  nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+                  dataTypeIdentifier: {
+                    genericKey: 'K',
+                  },
+                },
               }
             ],
           }
@@ -120,7 +141,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
       expect(flow).to be_present
       expect(project.flows).to include(flow)
-      expect(flow.collect_node_functions.count).to eq(2)
+      expect(flow.node_functions.count).to eq(3)
 
       is_expected.to create_audit_event(
         :flow_updated,
@@ -133,6 +154,59 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
         target_id: project.id,
         target_type: 'NamespaceProject'
       )
+    end
+  end
+
+  context 'when removing nodes' do
+    before do
+      stub_allowed_ability(NamespaceProjectPolicy, :update_flow, user: current_user, subject: project)
+      stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: project)
+    end
+
+    let(:flow) do
+      create(:flow, project: project, flow_type: flow_type).tap do |f|
+        node1 = create(:node_function, flow: f, runtime_function: runtime_function)
+        node2 = create(:node_function, flow: f, runtime_function: runtime_function)
+        f.starting_node = node1
+        node1.next_node = node2
+        node1.save!
+        f.save!
+      end
+    end
+
+    let(:input) do
+      {
+        flowId: flow.to_global_id.to_s,
+        flowInput: {
+          name: generate(:flow_name),
+          type: flow_type.to_global_id.to_s,
+          startingNodeId: flow.starting_node.to_global_id.to_s,
+          settings: [],
+          nodes: [
+            {
+              id: flow.starting_node.to_global_id.to_s,
+              runtimeFunctionId: flow.starting_node.runtime_function.to_global_id.to_s,
+              nextNodeId: nil,
+              parameters: [],
+            }
+          ],
+        },
+      }
+    end
+
+    it 'updates flow by removing all nodes' do
+      expect { mutate! }.to change { flow.node_functions.size }.from(2).to(1)
+
+      updated_flow_id = graphql_data_at(:namespaces_projects_flows_update, :flow, :id)
+      expect(updated_flow_id).to be_present
+      flow = SagittariusSchema.object_from_id(updated_flow_id)
+
+      nodes = graphql_data_at(:namespaces_projects_flows_update, :flow, :nodes, :nodes)
+      expect(nodes.size).to eq(1)
+
+      expect(flow).to be_present
+      expect(project.flows).to include(flow)
+      expect(flow.node_functions.count).to eq(1)
     end
   end
 
