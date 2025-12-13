@@ -43,7 +43,8 @@ module Types
     field :user, Types::UserType, null: true, description: 'Find a user' do
       argument :id, Types::GlobalIdType[::User], required: false, description: 'GlobalID of the target user'
 
-      argument :username, GraphQL::Types::String, required: false, description: 'Username of the target user'
+      argument :username, GraphQL::Types::String, required: false,
+                                                  description: 'Username of the target user (case insensitive)'
 
       require_one_of %i[id username]
     end
@@ -88,7 +89,7 @@ module Types
       if id.present?
         SagittariusSchema.object_from_id(id)
       elsif username.present?
-        User.find_by(username: username)
+        User.find_by('LOWER(username) = ?', username.downcase)
       end
     end
 
