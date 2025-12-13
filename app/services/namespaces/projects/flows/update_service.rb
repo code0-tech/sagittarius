@@ -71,7 +71,7 @@ module Namespaces
         end
 
         def update_nodes(t)
-          all_nodes = flow.collect_node_functions
+          all_nodes = flow.node_functions
 
           flow_input.starting_node_id
           node_index = 0
@@ -79,7 +79,7 @@ module Namespaces
           updated_nodes = []
 
           flow_input.nodes.each do |node_input|
-            current_node = all_nodes[node_index] || NodeFunction.new
+            current_node = all_nodes[node_index] || NodeFunction.new(flow: flow)
 
             update_node(t, current_node, node_input)
             updated_nodes << { node: current_node, input: node_input }
@@ -105,15 +105,10 @@ module Namespaces
           delete_old_nodes(t, all_nodes.reject { |node| updated_nodes.pluck(:node).pluck(:id).include?(node.id) })
         end
 
-        def update_starting_node(t, all_nodes)
+        def update_starting_node(_t, all_nodes)
           starting_node = all_nodes.find { |n| n[:input].id == flow_input.starting_node_id }
 
-          if starting_node.nil?
-            t.rollback_and_return! ServiceResponse.error(
-              message: 'Starting node not found',
-              error_code: :node_not_found
-            )
-          end
+          return nil if starting_node.nil?
 
           flow.starting_node = starting_node[:node]
         end

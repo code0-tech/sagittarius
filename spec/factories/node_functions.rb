@@ -5,5 +5,6 @@ FactoryBot.define do
     runtime_function factory: :runtime_function_definition
     next_node { nil }
     node_parameters { [] }
+    flow factory: :flow
   end
 end

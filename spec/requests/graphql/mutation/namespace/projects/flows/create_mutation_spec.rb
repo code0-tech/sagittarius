@@ -131,7 +131,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
       create(:namespace_member_role, role: namespace_role, member: namespace_member)
     end
 
-    it 'creates namespace project' do
+    it 'creates flow' do
       mutate!
 
       created_flow_id = graphql_data_at(:namespaces_projects_flows_create, :flow, :id)
@@ -148,7 +148,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
 
       expect(flow).to be_present
       expect(project.flows).to include(flow)
-      expect(flow.collect_node_functions.count).to eq(2)
+      expect(flow.node_functions.count).to eq(3)
 
       is_expected.to create_audit_event(
         :flow_created,

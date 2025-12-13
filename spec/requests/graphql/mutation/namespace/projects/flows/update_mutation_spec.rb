@@ -141,7 +141,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
       expect(flow).to be_present
       expect(project.flows).to include(flow)
-      expect(flow.collect_node_functions.count).to eq(2)
+      expect(flow.node_functions.count).to eq(3)
 
       is_expected.to create_audit_event(
         :flow_updated,
@@ -195,7 +195,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     end
 
     it 'updates flow by removing all nodes' do
-      expect { mutate! }.to change { flow.collect_node_functions.size }.from(2).to(1)
+      expect { mutate! }.to change { flow.node_functions.size }.from(2).to(1)
 
       updated_flow_id = graphql_data_at(:namespaces_projects_flows_update, :flow, :id)
       expect(updated_flow_id).to be_present
@@ -206,7 +206,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
       expect(flow).to be_present
       expect(project.flows).to include(flow)
-      expect(flow.collect_node_functions.count).to eq(1)
+      expect(flow.node_functions.count).to eq(1)
     end
   end
 
