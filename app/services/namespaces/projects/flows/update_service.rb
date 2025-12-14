@@ -21,20 +21,7 @@ module Namespaces
           end
 
           transactional do |t|
-            update_settings(t)
-            update_nodes(t)
-
-            unless flow.save
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Flow is invalid',
-                error_code: :invalid_flow,
-                details: flow.errors
-              )
-            end
-
-            validate_flow(t)
-
-            UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+            update_flow(t)
 
             create_audit_event
 
@@ -42,7 +29,29 @@ module Namespaces
           end
         end
 
+        def update_flow(t)
+          update_settings(t)
+          update_nodes(t)
+          update_flow_attributes
+
+          unless flow.save
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Flow is invalid',
+              error_code: :invalid_flow,
+              details: flow.errors
+            )
+          end
+
+          validate_flow(t)
+
+          UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+        end
+
         private
+
+        def update_flow_attributes
+          flow.name = flow_input.name
+        end
 
         def update_settings(t)
           flow_input.settings.each do |setting|
@@ -62,21 +71,19 @@ module Namespaces
         end
 
         def update_nodes(t)
-          all_nodes = flow.collect_node_functions
+          all_nodes = flow.node_functions
 
-          current_node_input_id = flow_input.starting_node_id
+          flow_input.starting_node_id
           node_index = 0
 
           updated_nodes = []
 
-          until current_node_input_id.nil?
-            current_node = all_nodes[node_index] || NodeFunction.new
-            current_node_input = flow_input.nodes.find { |n| n.id == current_node_input_id }
+          flow_input.nodes.each do |node_input|
+            current_node = all_nodes[node_index] || NodeFunction.new(flow: flow)
 
-            update_node(t, current_node, current_node_input)
-            updated_nodes << { node: current_node, input: current_node_input }
+            update_node(t, current_node, node_input)
+            updated_nodes << { node: current_node, input: node_input }
 
-            current_node_input_id = current_node_input.next_node_id
             node_index += 1
           end
 
@@ -101,12 +108,13 @@ module Namespaces
         def update_starting_node(t, all_nodes)
           starting_node = all_nodes.find { |n| n[:input].id == flow_input.starting_node_id }
 
-          if starting_node.nil?
+          if starting_node.nil? && flow_input.starting_node_id.present?
             t.rollback_and_return! ServiceResponse.error(
               message: 'Starting node not found',
               error_code: :node_not_found
             )
           end
+          return if starting_node.nil?
 
           flow.starting_node = starting_node[:node]
         end
@@ -170,8 +178,8 @@ module Namespaces
 
             db_parameters[index].literal_value = parameter.value.literal_value.presence
 
-            if parameter.value.function_value.present?
-              node = all_nodes.find { |n| n[:input].id == parameter.value.function_value.runtime_function_id }
+            if parameter.value.node_function_id.present?
+              node = all_nodes.find { |n| n[:input].id == parameter.value.node_function_id }
 
               if node.nil?
                 t.rollback_and_return! ServiceResponse.error(
@@ -192,13 +200,9 @@ module Namespaces
                 t
               )
 
-              # This will be broken, because we cant reference nodes that arent created yet
-              # And we will need to put all parameter nodes inside the flowinput.nodes
-              # So we can reference them here because we will not recursively search for them
-              referenced_node = NodeFunction.joins(:runtime_function).find_by(
-                id: parameter.value.reference_value.node_function_id.model_id,
-                runtime_function_definitions: { runtime_id: flow.project.primary_runtime.id }
-              )
+              referenced_node = all_nodes.find do |n|
+                n[:input].id == parameter.value.reference_value.node_function_id
+              end
 
               if referenced_node.nil?
                 t.rollback_and_return! ServiceResponse.error(
@@ -210,7 +214,7 @@ module Namespaces
               db_parameters[index].reference_value ||= ReferenceValue.new
               reference_value = db_parameters[index].reference_value
 
-              reference_paths_input = parameter.value.reference_value.reference_paths
+              reference_paths_input = parameter.value.reference_value.reference_path
               reference_paths = reference_value.reference_paths.first(reference_paths_input.length)
               reference_paths_input.each_with_index do |path, i|
                 reference_paths[i] ||= reference_value.reference_paths.build
@@ -219,7 +223,7 @@ module Namespaces
 
               reference_value.assign_attributes(
                 data_type_identifier: data_type_identifier,
-                node_function: reference_value,
+                node_function: referenced_node[:node],
                 depth: parameter.value.reference_value.depth,
                 node: parameter.value.reference_value.node,
                 scope: parameter.value.reference_value.scope,

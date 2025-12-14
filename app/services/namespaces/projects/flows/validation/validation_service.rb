@@ -56,7 +56,7 @@ module Namespaces
             # ---
             # All nodes
             # ---
-            flow.collect_node_functions.each do |node_function|
+            flow.node_functions.each do |node_function|
               errors += Namespaces::Projects::Flows::Validation::NodeFunction::NodeFunctionValidationService.new(
                 current_authentication,
                 flow,

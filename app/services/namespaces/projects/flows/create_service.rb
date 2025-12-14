@@ -7,12 +7,12 @@ module Namespaces
         include Sagittarius::Database::Transactional
         include FlowServiceHelper
 
-        attr_reader :current_authentication, :namespace_project, :params
+        attr_reader :current_authentication, :namespace_project, :flow_input
 
-        def initialize(current_authentication, namespace_project:, **params)
+        def initialize(current_authentication, namespace_project:, flow_input:)
           @current_authentication = current_authentication
           @namespace_project = namespace_project
-          @params = params
+          @flow_input = flow_input
         end
 
         def execute
@@ -26,53 +26,29 @@ module Namespaces
               error_code: :no_primary_runtime
             )
           end
-
           transactional do |t|
-            settings = []
-            if params.key?(:flow_settings)
-              params[:flow_settings].each do |graphql_setting|
-                setting = FlowSetting.new(flow_setting_id: graphql_setting.flow_setting_identifier,
-                                          object: graphql_setting.value)
-                if setting.invalid?
-                  t.rollback_and_return! ServiceResponse.error(
-                    message: 'Invalid flow setting',
-                    error_code: :invalid_flow_setting,
-                    details: setting.errors
-                  )
-                end
+            flow_type = FlowType.find_by(id: flow_input.type.model_id, runtime_id: namespace_project.primary_runtime.id)
 
-                settings << setting
-              end
-              params[:flow_settings] = settings
-            end
-
-            if params.key?(:starting_node_id)
-              params[:starting_node] = create_node_function(params[:starting_node_id], params[:nodes], t)
-
-              params.delete(:starting_node_id)
-              params.delete(:nodes)
-            end
-
-            flow = Flow.create(project: namespace_project, **params)
-            unless flow.persisted?
+            if flow_type.nil?
               t.rollback_and_return! ServiceResponse.error(
-                message: 'Failed to create flow',
-                error_code: :invalid_flow,
-                details: flow.errors
+                message: 'Invalid flow type for the project runtime',
+                error_code: :invalid_flow_type
               )
             end
 
-            res = Validation::ValidationService.new(current_authentication, flow).execute
+            flow = Flow.new(
+              project: namespace_project,
+              name: flow_input.name,
+              flow_type: flow_type,
+              input_type: flow_type.input_type,
+              return_type: flow_type.return_type
+            )
 
-            if res.error?
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Flow validation failed',
-                error_code: :flow_validation_failed,
-                details: res.payload
-              )
-            end
-
-            UpdateRuntimesForProjectJob.perform_later(namespace_project.id)
+            UpdateService.new(
+              current_authentication,
+              flow,
+              flow_input
+            ).update_flow(t)
 
             AuditService.audit(
               :flow_created,
@@ -86,98 +62,6 @@ module Namespaces
 
             ServiceResponse.success(message: 'Created new flow', payload: flow)
           end
-        end
-
-        def create_node_function(node_function_id, input_nodes, t)
-          node_function = input_nodes.find { |n| n.id == node_function_id }
-
-          runtime_function_definition = namespace_project.primary_runtime.runtime_function_definitions.find_by(
-            id: node_function.runtime_function_id.model_id
-          )
-          if runtime_function_definition.nil?
-            t.rollback_and_return! ServiceResponse.error(
-              message: 'Invalid runtime function id',
-              error_code: :invalid_runtime_function_id
-            )
-          end
-
-          params = []
-          node_function.parameters.each do |parameter|
-            runtime_parameter = runtime_function_definition.parameters.find_by(
-              id: parameter.runtime_parameter_definition_id.model_id
-            )
-            if runtime_parameter.nil?
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Invalid runtime parameter id',
-                error_code: :invalid_runtime_parameter_id
-              )
-            end
-
-            if parameter.value.literal_value.present?
-              params << NodeParameter.create(
-                runtime_parameter: runtime_parameter,
-                literal_value: parameter.value.literal_value
-              )
-              next
-            end
-            if parameter.value.function_value.present?
-              # A little bit hacky but okay
-              params << NodeParameter.create(
-                runtime_parameter: runtime_parameter,
-                function_value: create_node_function(
-                  parameter.value.function_value.id,
-                  [parameter.value.function_value], t
-                )
-              )
-              next
-            end
-
-            # This will be broken, because we cant reference nodes that arent created yet
-            # And we will need to put all parameter nodes inside the flowinput.nodes
-            # So we can reference them here because we will not recursively search for them
-            referenced_node = NodeFunction.joins(:runtime_function).find_by(
-              id: parameter.value.reference_value.node_function_id.model_id,
-              runtime_function_definitions: { runtime_id: namespace_project.primary_runtime.id }
-            )
-
-            if referenced_node.nil?
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Referenced node function not found',
-                error_code: :referenced_value_not_found
-              )
-            end
-
-            params << NodeParameter.create(
-              runtime_parameter: runtime_parameter,
-              reference_value: ReferenceValue.create(
-                node_function: referenced_node,
-                data_type_identifier: get_data_type_identifier(
-                  namespace_project.primary_runtime,
-                  parameter.value.reference_value.data_type_identifier,
-                  t
-                ),
-                depth: parameter.value.reference_value.depth,
-                node: parameter.value.reference_value.node,
-                scope: parameter.value.reference_value.scope,
-                reference_paths: parameter.value.reference_value.reference_paths.map do |path|
-                  ReferencePath.create(
-                    path: path.path,
-                    array_index: path.array_index
-                  )
-                end
-              )
-            )
-          end
-
-          next_node = if node_function.next_node_id.present?
-                        create_node_function(node_function.next_node_id, input_nodes, t)
-                      end
-
-          NodeFunction.create(
-            next_node: next_node,
-            runtime_function: runtime_function_definition,
-            node_parameters: params
-          )
         end
       end
     end

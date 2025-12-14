@@ -14,7 +14,7 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
   end
   let(:flow) { create(:flow, project: namespace_project, flow_type: create(:flow_type, runtime: runtime)) }
   let(:flow_input) do
-    Struct.new(:settings, :starting_node_id, :nodes).new(
+    Struct.new(:settings, :starting_node_id, :nodes, :name).new(
       [],
       starting_node.to_global_id,
       [
@@ -24,7 +24,8 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
           nil,
           []
         )
-      ]
+      ],
+      "updated #{flow.name}"
     )
   end
 
@@ -63,6 +64,10 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
 
     it { is_expected.to be_success }
     it { expect(service_response.payload.reload).to be_valid }
+
+    it 'updates flow attributes' do
+      expect { service_response }.to change { flow.reload.name }.to(flow_input.name)
+    end
 
     it do
       is_expected.to create_audit_event(

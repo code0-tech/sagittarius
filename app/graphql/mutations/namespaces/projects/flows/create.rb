@@ -24,22 +24,10 @@ module Mutations
               }
             end
 
-            flow_type = SagittariusSchema.object_from_id(flow.type)
-            if flow_type.nil?
-              return {
-                flow: nil,
-                errors: [create_error(:flow_type_not_found, 'Invalid flow type id')],
-              }
-            end
-
             ::Namespaces::Projects::Flows::CreateService.new(
               current_authentication,
               namespace_project: project,
-              flow_type: flow_type,
-              starting_node_id: flow.starting_node_id,
-              nodes: flow.nodes,
-              flow_settings: flow.settings || [],
-              name: flow.name
+              flow_input: flow
             ).execute.to_mutation_response(success_key: :flow)
           end
         end

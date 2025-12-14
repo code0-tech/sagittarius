@@ -8,11 +8,12 @@ RSpec.describe Flow do
   describe 'associations' do
     it { is_expected.to belong_to(:project).class_name('NamespaceProject') }
     it { is_expected.to belong_to(:flow_type) }
-    it { is_expected.to belong_to(:starting_node).class_name('NodeFunction') }
+    it { is_expected.to belong_to(:starting_node).class_name('NodeFunction').optional }
     it { is_expected.to belong_to(:input_type).class_name('DataType').optional }
     it { is_expected.to belong_to(:return_type).class_name('DataType').optional }
 
     it { is_expected.to have_many(:flow_settings) }
+    it { is_expected.to have_many(:node_functions) }
   end
 
   describe 'validations' do
@@ -30,23 +31,29 @@ RSpec.describe Flow do
             flow_setting_id: 'example_key',
             object: { some_key: 'some_value' }
           )
-        ],
-        starting_node: create(
-          :node_function,
-          node_parameters: [
-            create(
-              :node_parameter,
-              runtime_parameter: create(
-                :runtime_parameter_definition,
-                data_type: create(
-                  :data_type_identifier,
-                  generic_key: 'T'
-                )
+        ]
+      )
+    end
+
+    before do
+      func = create(
+        :node_function,
+        flow: flow,
+        node_parameters: [
+          build(
+            :node_parameter,
+            runtime_parameter: build(
+              :runtime_parameter_definition,
+              data_type: build(
+                :data_type_identifier,
+                generic_key: 'T'
               )
             )
-          ]
-        )
+          )
+        ]
       )
+
+      flow.update!(starting_node: func)
     end
 
     it 'matches the model' do
@@ -89,23 +96,6 @@ RSpec.describe Flow do
           ],
         }
       )
-    end
-  end
-
-  describe '#collect_node_functions' do
-    let(:nodes) do
-      runtime = create(:runtime)
-      definition = create(:runtime_function_definition, runtime: runtime)
-      node3 = create(:node_function, runtime_function: definition)
-      node2 = create(:node_function, runtime_function: definition, next_node: node3)
-      node1 = create(:node_function, runtime_function: definition, next_node: node2)
-      [node1, node2, node3]
-    end
-
-    let(:flow) { create(:flow, starting_node: nodes.first) }
-
-    it 'returns all nodes' do
-      expect(flow.collect_node_functions).to match_array(nodes)
     end
   end
 end

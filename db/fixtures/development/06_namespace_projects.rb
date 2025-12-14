@@ -5,4 +5,5 @@ NamespaceProject.seed_once :namespace_id, :name do |np|
   np.name = 'First Project'
   np.description = 'A sample project for Code1 organization.'
   np.primary_runtime = Runtime.find_by(name: 'Code1-Runtime')
+  np.runtimes = [Runtime.find_by(name: 'Code1-Runtime')]
 end

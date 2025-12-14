@@ -13,10 +13,11 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
                                     runtime: runtime,
                                     input_type: create(:data_type, runtime: runtime),
                                     return_type: create(:data_type, runtime: runtime)),
-                  project: namespace_project,
-                  starting_node: create(:node_function,
-                                        runtime_function: create(:runtime_function_definition,
-                                                                 runtime: runtime)))
+                  project: namespace_project)
+  end
+
+  let(:node) do
+    create(:node_function, flow: flow, runtime_function: create(:runtime_function_definition, runtime: runtime))
   end
 
   context 'when primary runtime is set and return and input and settings empty' do
@@ -77,12 +78,11 @@ RSpec.describe Namespaces::Projects::Flows::Validation::ValidationService do
   context 'with real unmocked examples' do
     let(:runtime) { create(:runtime) }
     let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
-    let(:starting_node) do
-      create(:node_function, runtime_function: create(:runtime_function_definition, runtime: runtime))
-    end
     let(:flow) do
-      create(:flow, project: namespace_project, flow_type: create(:flow_type, runtime: runtime),
-                    starting_node: starting_node)
+      create(:flow, project: namespace_project, flow_type: create(:flow_type, runtime: runtime))
+    end
+    let(:starting_node) do
+      create(:node_function, runtime_function: create(:runtime_function_definition, runtime: runtime), flow: flow)
     end
 
     context 'with simplest flow' do

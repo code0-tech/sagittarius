@@ -249,7 +249,7 @@ CREATE TABLE flows (
     flow_type_id bigint NOT NULL,
     input_type_id bigint,
     return_type_id bigint,
-    starting_node_id bigint NOT NULL,
+    starting_node_id bigint,
     name text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
@@ -572,7 +572,8 @@ CREATE TABLE node_functions (
     runtime_function_id bigint NOT NULL,
     next_node_id bigint,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    flow_id bigint NOT NULL
 );
 
 CREATE SEQUENCE node_functions_id_seq
@@ -1180,6 +1181,8 @@ CREATE UNIQUE INDEX "index_namespace_roles_on_namespace_id_LOWER_name" ON namesp
 
 CREATE UNIQUE INDEX index_namespaces_on_parent_id_and_parent_type ON namespaces USING btree (parent_id, parent_type);
 
+CREATE INDEX index_node_functions_on_flow_id ON node_functions USING btree (flow_id);
+
 CREATE INDEX index_node_functions_on_next_node_id ON node_functions USING btree (next_node_id);
 
 CREATE INDEX index_node_functions_on_runtime_function_id ON node_functions USING btree (runtime_function_id);
@@ -1329,7 +1332,10 @@ ALTER TABLE ONLY namespace_projects
     ADD CONSTRAINT fk_rails_79012c5895 FOREIGN KEY (primary_runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY flows
-    ADD CONSTRAINT fk_rails_7de9ce6578 FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_7de9ce6578 FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY node_functions
+    ADD CONSTRAINT fk_rails_8615bd0635 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY node_functions
     ADD CONSTRAINT fk_rails_8953e1d86a FOREIGN KEY (runtime_function_id) REFERENCES runtime_function_definitions(id) ON DELETE RESTRICT;

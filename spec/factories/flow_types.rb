@@ -6,8 +6,12 @@ FactoryBot.define do
   factory :flow_type do
     runtime
     identifier { generate(:flow_type_identifier) }
-    input_type factory: :data_type
-    return_type factory: :data_type
+    input_type do
+      association :data_type, runtime: runtime
+    end
+    return_type do
+      association :data_type, runtime: runtime
+    end
     editable { false }
     version { '0.0.0' }
   end
