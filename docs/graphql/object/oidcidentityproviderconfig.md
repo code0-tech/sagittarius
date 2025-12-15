@@ -4,7 +4,7 @@ title: OidcIdentityProviderConfig
 
 Represents an OIDC identity provider configuration
 
-For more information see: https://github.com/code0-tech/code0-identities/blob/0.0.2/README.md#oauth-based
+For more information see: https://github.com/code0-tech/code0-identities/blob/0.0.3/README.md#oauth-based
 
 ## Fields without arguments
 
