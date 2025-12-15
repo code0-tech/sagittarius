@@ -8,7 +8,7 @@ module Types
       next if provider_class == :BaseOauth
 
       provider_type = provider_class.to_s.downcase
-      value provider_type.upcase, "Identity provider of type #{provider_type}", value: provider_type.to_sym
+      value provider_type.upcase, "Identity provider of type #{provider_type}", value: provider_type.to_s
     end
   end
 end
