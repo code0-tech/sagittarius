@@ -76,7 +76,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
               {
                 runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
                 value: {
-                  literalValue: 100,
+                  literalValue: [],
                 },
               }
             ] },
