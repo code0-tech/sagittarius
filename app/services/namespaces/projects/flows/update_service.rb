@@ -176,7 +176,7 @@ module Namespaces
 
             db_parameters[index].runtime_parameter = runtime_parameter
 
-            db_parameters[index].literal_value = parameter.value.literal_value.presence
+            db_parameters[index].literal_value = parameter.value.literal_value
 
             if parameter.value.node_function_id.present?
               node = all_nodes.find { |n| n[:input].id == parameter.value.node_function_id }

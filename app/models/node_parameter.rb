@@ -30,7 +30,7 @@ class NodeParameter < ApplicationRecord
   private
 
   def only_one_value_present
-    values = [literal_value.present?, reference_value.present?, function_value.present?]
+    values = [!literal_value.nil?, reference_value.present?, function_value.present?]
     return if values.count(true) == 1
 
     errors.add(:value,
