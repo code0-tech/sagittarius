@@ -131,6 +131,21 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
       create(:namespace_member_role, role: namespace_role, member: namespace_member)
     end
 
+    context 'when flow name is taken' do
+      before do
+        create(:flow, name: input[:flow][:name], project: project)
+      end
+
+      it 'returns an error' do
+        mutate!
+
+        expect(graphql_data_at(:namespaces_projects_flows_create, :errors)).to be_present
+        expect(graphql_data_at(:namespaces_projects_flows_create, :flow)).to be_nil
+        expect(graphql_data_at(:namespaces_projects_flows_create, :errors,
+                               :error_code)).to contain_exactly('INVALID_FLOW')
+      end
+    end
+
     it 'creates flow' do
       mutate!
 

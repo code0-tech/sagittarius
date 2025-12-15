@@ -44,6 +44,14 @@ module Namespaces
               return_type: flow_type.return_type
             )
 
+            unless flow.save
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Flow is invalid',
+                error_code: :invalid_flow,
+                details: flow.errors
+              )
+            end
+
             UpdateService.new(
               current_authentication,
               flow,
