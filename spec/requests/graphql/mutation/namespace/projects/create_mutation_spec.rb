@@ -61,7 +61,7 @@ RSpec.describe 'namespacesProjectsCreate Mutation' do
         author_id: current_user.id,
         entity_id: namespace_project.id,
         entity_type: 'NamespaceProject',
-        details: { name: input[:name] },
+        details: { name: input[:name], slug: namespace_project.slug },
         target_id: namespace.id,
         target_type: 'Namespace'
       )
@@ -104,7 +104,7 @@ RSpec.describe 'namespacesProjectsCreate Mutation' do
           author_id: current_user.id,
           entity_id: namespace_project.id,
           entity_type: 'NamespaceProject',
-          details: { name: input[:name] },
+          details: { name: input[:name], slug: namespace_project.slug },
           target_id: namespace.id,
           target_type: 'Namespace'
         )

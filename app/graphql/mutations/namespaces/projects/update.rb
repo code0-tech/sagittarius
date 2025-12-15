@@ -15,6 +15,7 @@ module Mutations
         argument :name, String, required: false, description: 'Name for the updated project.'
         argument :primary_runtime_id, Types::GlobalIdType[::Runtime],
                  required: false, description: 'The primary runtime for the updated project.'
+        argument :slug, String, required: false, description: 'Slug for the updated project.'
 
         def resolve(namespace_project_id:, **params)
           project = SagittariusSchema.object_from_id(namespace_project_id)
