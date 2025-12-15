@@ -10,7 +10,7 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
       name
       dataTypes
       flowTypes
-      runtimeFunctionDefinitions
+      functionDefinitions
       description
       projects
       status
