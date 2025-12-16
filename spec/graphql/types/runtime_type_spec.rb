@@ -13,6 +13,7 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
       functionDefinitions
       description
       projects
+      statuses
       status
       token
       userAbilities

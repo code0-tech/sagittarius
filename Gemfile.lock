@@ -1,3 +1,9 @@
+PATH
+  remote: ../tucana/build/ruby
+  specs:
+    tucana (0.0.0)
+      grpc (~> 1.64)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -377,8 +383,6 @@ GEM
     thor (1.4.0)
     timeout (0.6.0)
     tsort (0.2.0)
-    tucana (0.0.49)
-      grpc (~> 1.64)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.6.0)
@@ -431,7 +435,7 @@ DEPENDENCIES
   simplecov (~> 0.22.0)
   simplecov-cobertura (~> 3.0)
   test-prof (~> 1.0)
-  tucana (= 0.0.49)
+  tucana (= 0.0.0)!
   tzinfo-data
 
 RUBY VERSION

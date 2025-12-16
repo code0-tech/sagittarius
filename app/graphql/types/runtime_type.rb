@@ -20,6 +20,13 @@ module Types
 
     field :token, String, null: true, description: 'Token belonging to the runtime, only present on creation'
 
+    field :status, Types::RuntimeStatusStatusEnum,
+          null: false,
+          description: 'Wheater the last heartbeat was recent enough to consider the runtime as connected'
+    field :statuses, Types::RuntimeStatusType.connection_type, null: false,
+                                                               description: 'Statuses of the runtime',
+                                                               method: :runtime_statuses
+
     expose_abilities %i[
       delete_runtime
       update_runtime
@@ -28,6 +35,17 @@ module Types
 
     id_field Runtime
     timestamps
+
+    # If the last heartbeat was within the last 10 minutes, consider the runtime as 'running'
+    def status
+      last_heartbeat = object.last_heartbeat
+
+      if last_heartbeat && last_heartbeat >= 10.minutes.ago
+        :connected
+      else
+        :disconnected
+      end
+    end
 
     def token
       object.token if object.token_previously_changed?

@@ -2,9 +2,9 @@
 title: RuntimeStatusType
 ---
 
-Represent all available types of statuses of a runtime
+The type of runtime status
 
 | Value | Description |
 |-------|-------------|
-| `CONNECTED` | No problem with connection, everything works as expected |
-| `DISCONNECTED` | The runtime is disconnected, cause unknown |
+| `ADAPTER` | Indicates that the runtime status is related to an adapter. |
+| `EXECUTION` | Indicates that the runtime status is related to an execution. |
