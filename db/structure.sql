@@ -726,6 +726,44 @@ CREATE SEQUENCE runtime_parameter_definitions_id_seq
 
 ALTER SEQUENCE runtime_parameter_definitions_id_seq OWNED BY runtime_parameter_definitions.id;
 
+CREATE TABLE runtime_status_configurations (
+    id bigint NOT NULL,
+    runtime_status_id bigint NOT NULL,
+    endpoint text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE runtime_status_configurations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE runtime_status_configurations_id_seq OWNED BY runtime_status_configurations.id;
+
+CREATE TABLE runtime_statuses (
+    id bigint NOT NULL,
+    runtime_id bigint NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
+    status_type integer DEFAULT 0 NOT NULL,
+    last_heartbeat timestamp with time zone,
+    identifier text NOT NULL,
+    feature_set text[] DEFAULT '{}'::text[] NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE runtime_statuses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE runtime_statuses_id_seq OWNED BY runtime_statuses.id;
+
 CREATE TABLE runtimes (
     id bigint NOT NULL,
     name text NOT NULL,
@@ -734,7 +772,7 @@ CREATE TABLE runtimes (
     namespace_id bigint,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    status integer DEFAULT 0 NOT NULL,
+    last_heartbeat timestamp with time zone,
     CONSTRAINT check_090cd49d30 CHECK ((char_length(name) <= 50)),
     CONSTRAINT check_f3c2ba8db3 CHECK ((char_length(description) <= 500))
 );
@@ -903,6 +941,10 @@ ALTER TABLE ONLY runtime_function_definitions ALTER COLUMN id SET DEFAULT nextva
 
 ALTER TABLE ONLY runtime_parameter_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_parameter_definitions_id_seq'::regclass);
 
+ALTER TABLE ONLY runtime_status_configurations ALTER COLUMN id SET DEFAULT nextval('runtime_status_configurations_id_seq'::regclass);
+
+ALTER TABLE ONLY runtime_statuses ALTER COLUMN id SET DEFAULT nextval('runtime_statuses_id_seq'::regclass);
+
 ALTER TABLE ONLY runtimes ALTER COLUMN id SET DEFAULT nextval('runtimes_id_seq'::regclass);
 
 ALTER TABLE ONLY translations ALTER COLUMN id SET DEFAULT nextval('translations_id_seq'::regclass);
@@ -1032,6 +1074,12 @@ ALTER TABLE ONLY runtime_function_definitions
 
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT runtime_parameter_definitions_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY runtime_status_configurations
+    ADD CONSTRAINT runtime_status_configurations_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY runtime_statuses
+    ADD CONSTRAINT runtime_statuses_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY runtimes
     ADD CONSTRAINT runtimes_pkey PRIMARY KEY (id);
@@ -1217,6 +1265,10 @@ CREATE INDEX index_runtime_function_definitions_on_return_type_id ON runtime_fun
 
 CREATE INDEX index_runtime_parameter_definitions_on_data_type_id ON runtime_parameter_definitions USING btree (data_type_id);
 
+CREATE INDEX index_runtime_status_configurations_on_runtime_status_id ON runtime_status_configurations USING btree (runtime_status_id);
+
+CREATE INDEX index_runtime_statuses_on_runtime_id ON runtime_statuses USING btree (runtime_id);
+
 CREATE INDEX index_runtimes_on_namespace_id ON runtimes USING btree (namespace_id);
 
 CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
@@ -1274,6 +1326,9 @@ ALTER TABLE ONLY node_parameters
 
 ALTER TABLE ONLY namespace_licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY runtime_statuses
+    ADD CONSTRAINT fk_rails_3af887feb9 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT fk_rails_3b02763f84 FOREIGN KEY (runtime_parameter_definition_id) REFERENCES runtime_parameter_definitions(id) ON DELETE CASCADE;
@@ -1394,6 +1449,9 @@ ALTER TABLE ONLY generic_mappers
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT fk_rails_ca0a397b6f FOREIGN KEY (data_type_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
+
+ALTER TABLE ONLY runtime_status_configurations
+    ADD CONSTRAINT fk_rails_d3eeb850ed FOREIGN KEY (runtime_status_id) REFERENCES runtime_statuses(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_projects
     ADD CONSTRAINT fk_rails_d4f50e2f00 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;

@@ -88,6 +88,7 @@ class ErrorCode
       function_value_not_found: { description: 'The id for the function value node does not exist' },
       invalid_node_parameter: { description: 'The node parameter is invalid' },
       invalid_node_function: { description: 'The node function is invalid' },
+      invalid_runtime_status: { description: 'The runtime status is invalid because of active model errors' },
 
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },

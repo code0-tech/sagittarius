@@ -1,3 +1,9 @@
+PATH
+  remote: ../tucana/build/ruby
+  specs:
+    tucana (0.0.0)
+      grpc (~> 1.64)
+
 GEM
   remote: https://rubygems.org/
   specs:
