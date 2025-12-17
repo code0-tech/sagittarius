@@ -8,8 +8,8 @@ class RuntimeStatusHandler < Tucana::Sagittarius::RuntimeStatusService::Service
     current_runtime = Runtime.find(Code0::ZeroTrack::Context.current[:runtime][:id])
 
     response = Runtimes::Grpc::RuntimeStatusUpdateService.new(
-      current_runtime,
-      request.status
+      runtime: current_runtime,
+      status_info: request.send(request.status)
     ).execute
 
     logger.debug("RuntimeFunctionHandler#update response: #{response.inspect}")

@@ -17,15 +17,14 @@ module Types
     field :projects, Types::NamespaceProjectType.connection_type, null: false,
                                                                   description: 'Projects associated with the runtime'
     field :status, Types::RuntimeStatusType, null: false, description: 'The status of the runtime'
-
-    field :token, String, null: true, description: 'Token belonging to the runtime, only present on creation'
-
     field :status, Types::RuntimeStatusStatusEnum,
           null: false,
           description: 'Wheater the last heartbeat was recent enough to consider the runtime as connected'
+
     field :statuses, Types::RuntimeStatusType.connection_type, null: false,
                                                                description: 'Statuses of the runtime',
                                                                method: :runtime_statuses
+    field :token, String, null: true, description: 'Token belonging to the runtime, only present on creation'
 
     expose_abilities %i[
       delete_runtime

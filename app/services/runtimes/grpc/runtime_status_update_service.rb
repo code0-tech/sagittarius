@@ -4,6 +4,7 @@ module Runtimes
   module Grpc
     class RuntimeStatusUpdateService
       include Sagittarius::Database::Transactional
+      include Code0::ZeroTrack::Loggable
 
       attr_reader :runtime, :status_info
 
@@ -24,34 +25,18 @@ module Runtimes
             )
           end
 
-          db_status = RuntimeStatus.find_or_initialize_by(runtime: current_runtime,
+          db_status = RuntimeStatus.find_or_initialize_by(runtime: runtime,
                                                           identifier: status_info.identifier)
 
-          db_status.last_heartbeat = Time.zone.at(status_info.last_heartbeat.seconds)
+          db_status.last_heartbeat = Time.zone.at(status_info.timestamp.to_i)
           db_status.status_type = if status_info.is_a?(Tucana::Shared::AdapterRuntimeStatus)
                                     :adapter
                                   else
                                     :execution
                                   end
-          db_status.feature_set = status_info.feature_set.to_a
+          db_status.features = status_info.features.to_a
 
-          case status_info.status
-          when Tucana::Shared::Status::NOT_RESPONDING
-            db_status.status = :not_responding
-          when Tucana::Shared::Status::NOT_READY
-            db_status.status = :not_ready
-          when Tucana::Shared::Status::RUNNING
-            db_status.status = :running
-          when Tucana::Shared::Status::STOPPED
-            db_status.status = :stopped
-          else
-            logger.error("Unknown status received: #{status_info.status}")
-            t.rollback_and_return ServiceResponse.error(
-              message: 'Unknown status received',
-              error_code: :invalid_runtime_status,
-              details: { status: status_info.status }
-            )
-          end
+          db_status.status = status_info.status.downcase
 
           db_configs = db_status.runtime_status_configurations.first(status_info.configurations.size)
 
@@ -59,10 +44,18 @@ module Runtimes
             db_configs[index] ||= db_status.runtime_status_configurations.build
 
             db_configs[index].endpoint = config.endpoint
+
+            next if db_configs[index].save
+
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Failed to save runtime status configuration',
+              error_code: :invalid_runtime_status_configuration,
+              details: db_configs.errors
+            )
           end
 
           unless db_status.save
-            t.rollback_and_return ServiceResponse.error(
+            t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to save runtime status',
               error_code: :invalid_runtime_status,
               details: db_status.errors

@@ -6,7 +6,7 @@ FactoryBot.define do
     last_heartbeat { Time.zone.today }
     status_type { :adapter }
     identifier { SecureRandom.uuid }
-    feature_set { [] }
+    features { [] }
     runtime
   end
 end
