@@ -304,6 +304,7 @@ CREATE TABLE flows (
     input_type text,
     return_type text,
     validation_status integer DEFAULT 0 NOT NULL,
+    disabled_reason text,
     CONSTRAINT check_1c805d704f CHECK ((char_length(input_type) <= 2000)),
     CONSTRAINT check_b2f3f83908 CHECK ((char_length(return_type) <= 2000))
 );
@@ -1182,6 +1183,8 @@ CREATE INDEX index_flow_settings_on_flow_id ON flow_settings USING btree (flow_i
 CREATE UNIQUE INDEX index_flow_type_settings_on_flow_type_id_and_identifier ON flow_type_settings USING btree (flow_type_id, identifier);
 
 CREATE UNIQUE INDEX index_flow_types_on_runtime_id_and_identifier ON flow_types USING btree (runtime_id, identifier);
+
+CREATE INDEX index_flows_on_disabled_reason ON flows USING btree (disabled_reason);
 
 CREATE INDEX index_flows_on_flow_type_id ON flows USING btree (flow_type_id);
 

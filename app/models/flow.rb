@@ -32,6 +32,17 @@ class Flow < ApplicationRecord
   validates :input_type, length: { maximum: 2000 }, allow_nil: true
   validates :return_type, length: { maximum: 2000 }, allow_nil: true
 
+  validates :disabled_reason, presence: false,
+                              allow_blank: true,
+                              length: { maximum: 100, minimum: 0 }
+
+  scope :enabled, -> { where(disabled_reason: nil) }
+  scope :disabled, -> { where.not(disabled_reason: nil) }
+
+  def disabled?
+    disabled_reason.present?
+  end
+
   def to_grpc
     Tucana::Shared::ValidationFlow.new(
       flow_id: id,
@@ -39,6 +50,7 @@ class Flow < ApplicationRecord
       project_slug: project.slug,
       type: flow_type.identifier,
       data_types: [], # TODO: when data types are creatable
+      disabled_reason: disabled_reason,
       input_type: input_type,
       return_type: return_type,
       settings: flow_settings.map(&:to_grpc),
