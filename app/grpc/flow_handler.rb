@@ -8,6 +8,9 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
   grpc_stream :update
 
   def self.update_runtime(runtime)
+    runtime.last_heartbeat = Time.zone.now
+    runtime.save!
+
     flows = []
     runtime.project_assignments.compatible.each do |assignment|
       assignment.namespace_project.flows.each do |flow|

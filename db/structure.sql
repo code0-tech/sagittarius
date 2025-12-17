@@ -750,7 +750,7 @@ CREATE TABLE runtime_statuses (
     status_type integer DEFAULT 0 NOT NULL,
     last_heartbeat timestamp with time zone,
     identifier text NOT NULL,
-    feature_set text[] DEFAULT '{}'::text[] NOT NULL,
+    features text[] DEFAULT '{}'::text[] NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
