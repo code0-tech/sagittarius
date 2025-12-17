@@ -25,7 +25,20 @@ RSpec.describe 'applicationSettingsUpdate Mutation' do
     QUERY
   end
 
-  let(:input) { { userRegistrationEnabled: false } }
+  let(:input) do
+    { userRegistrationEnabled: false, identityProviders: [
+      { type: 'SAML', id: 'saml-id-123', config: {
+        providerName: 'ExampleSAML',
+      } },
+      {
+        type: 'GOOGLE', id: 'oidc-id-456', config: {
+          clientId: 'example-client-id',
+          clientSecret: 'example-client-secret',
+          redirectUri: 'https://example.com/oauth2/callback',
+        }
+      }
+    ] }
+  end
 
   let(:variables) { { input: input } }
   let(:current_user) { create(:user, :admin) }
@@ -35,6 +48,8 @@ RSpec.describe 'applicationSettingsUpdate Mutation' do
   it 'updates application settings' do
     expect(graphql_data_at(:application_settings_update, :application_settings)).to be_present
     expect(graphql_data_at(:application_settings_update, :application_settings, :user_registration_enabled)).to be false
+    expect(graphql_data_at(:application_settings_update, :application_settings, :identity_providers,
+                           :nodes).size).to eq(2)
 
     is_expected.to create_audit_event(
       :application_setting_updated,
