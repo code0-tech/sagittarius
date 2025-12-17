@@ -8,6 +8,10 @@ module Types
 
     field :name, String, null: false, description: 'Name of the flow'
 
+    field :disabled_reason, String,
+          null: true,
+          description: 'The reason why the flow is disabled, if it is disabled'
+
     field :input_type, Types::DataTypeType,
           null: true,
           description: 'The input data type of the flow'
@@ -19,7 +23,7 @@ module Types
           method: :flow_settings,
           description: 'The settings of the flow'
     field :starting_node_id, Types::GlobalIdType[::NodeFunction],
-          null: false,
+          null: true,
           description: 'The ID of the starting node of the flow'
     field :type, Types::FlowTypeType,
           null: false,
@@ -38,7 +42,7 @@ module Types
     timestamps
 
     def starting_node_id
-      object.starting_node.to_global_id
+      object.starting_node&.to_global_id
     end
   end
 end

@@ -9,7 +9,7 @@ module Types
 
       argument :settings, [Types::Input::FlowSettingInputType], required: false,
                                                                 description: 'The settings of the flow'
-      argument :starting_node_id, Types::GlobalIdType[::NodeFunction], required: true,
+      argument :starting_node_id, Types::GlobalIdType[::NodeFunction], required: false,
                                                                        description: 'The starting node of the flow'
 
       argument :nodes, [Types::Input::NodeFunctionInputType], required: true,
@@ -17,6 +17,9 @@ module Types
 
       argument :type, Types::GlobalIdType[::FlowType], required: true,
                                                        description: 'The identifier of the flow type'
+
+      argument :disabled_reason, String, required: false,
+                                         description: 'The reason why the flow is disabled, if applicable, if not set the flow is enabled'
     end
   end
 end

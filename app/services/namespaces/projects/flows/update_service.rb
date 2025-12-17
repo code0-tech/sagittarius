@@ -51,6 +51,7 @@ module Namespaces
 
         def update_flow_attributes
           flow.name = flow_input.name
+          flow.disabled_reason = flow_input.disabled_reason
         end
 
         def update_settings(t)
