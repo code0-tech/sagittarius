@@ -20,3 +20,14 @@ Represents a Namespace
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Namespace was last updated |
 | `userAbilities` | [`NamespaceUserAbilities!`](../object/namespaceuserabilities.md) | Abilities for the current user on this Namespace |
 
+## Fields with arguments
+
+### project
+
+Query a project by its id
+
+Returns [`NamespaceProject`](../object/namespaceproject.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `id` | [`NamespaceProjectID!`](../scalar/namespaceprojectid.md) | GlobalID of the target project |

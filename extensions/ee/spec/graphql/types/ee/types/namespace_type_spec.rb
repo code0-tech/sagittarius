@@ -10,6 +10,7 @@ RSpec.describe SagittariusSchema.types['Namespace'] do
       members
       roles
       runtimes
+      project
       projects
       createdAt
       updatedAt
