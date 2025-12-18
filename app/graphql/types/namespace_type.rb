@@ -37,7 +37,7 @@ module Types
     timestamps
 
     def project(id:)
-      object.projects.find_by(id: id)
+      object.projects.find_by(id: id.model_id)
     end
   end
 end
