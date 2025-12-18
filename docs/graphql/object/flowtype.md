@@ -19,5 +19,6 @@ Represents a flow type
 | `inputType` | [`DataType`](../object/datatype.md) | Input type of the flow type |
 | `names` | [`TranslationConnection`](../object/translationconnection.md) | Names of the flow type |
 | `returnType` | [`DataType`](../object/datatype.md) | Return type of the flow type |
+| `runtime` | [`Runtime!`](../object/runtime.md) | Runtime of the flow type |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this FlowType was last updated |
 
