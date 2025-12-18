@@ -8,6 +8,10 @@ module Types
 
     field :parent, Types::NamespaceParentType, null: false, description: 'Parent of this namespace'
 
+    field :project, Types::NamespaceProjectType, null: true, description: 'Query a project by its id' do
+      argument :id, Types::GlobalIdType[::NamespaceProject], required: true,
+                                                             description: 'GlobalID of the target project'
+    end
     field :projects, ::Types::NamespaceProjectType.connection_type,
           null: false,
           description: 'Projects of the namespace'
@@ -31,6 +35,10 @@ module Types
 
     id_field Namespace
     timestamps
+
+    def project(id:)
+      object.projects.find_by(id: id)
+    end
   end
 end
 
