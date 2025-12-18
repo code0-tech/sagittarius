@@ -14,6 +14,7 @@ RSpec.describe SagittariusSchema.types['FlowType'] do
       display_messages
       aliases
       descriptions
+      runtime
       id
       created_at
       updated_at
