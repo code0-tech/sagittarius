@@ -252,7 +252,8 @@ CREATE TABLE flows (
     starting_node_id bigint,
     name text NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    last_execution_duration bigint
 );
 
 CREATE SEQUENCE flows_id_seq

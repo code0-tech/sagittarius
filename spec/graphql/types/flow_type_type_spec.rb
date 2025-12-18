@@ -10,6 +10,7 @@ RSpec.describe SagittariusSchema.types['FlowType'] do
       input_type
       return_type
       flow_type_settings
+      last_execution_duration
       names
       display_messages
       aliases

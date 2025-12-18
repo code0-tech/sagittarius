@@ -11,6 +11,9 @@ module Types
     field :input_type, Types::DataTypeType,
           null: true,
           description: 'The input data type of the flow'
+    field :last_execution_duration, Integer,
+          null: true,
+          description: 'The duration of the last execution of the flow in nanoseconds'
     field :return_type, Types::DataTypeType,
           null: true,
           description: 'The return data type of the flow'
