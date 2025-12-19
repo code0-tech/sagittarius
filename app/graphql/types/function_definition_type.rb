@@ -14,16 +14,16 @@ module Types
           null: true,
           description: 'Parameters of the function'
 
-    field :aliases, Types::TranslationType.connection_type, null: true, description: 'Name of the function'
-    field :descriptions, Types::TranslationType.connection_type, null: true, description: 'Description of the function'
-    field :display_messages, Types::TranslationType.connection_type, null: true,
-                                                                     description: 'Display message of the function'
-    field :names, Types::TranslationType.connection_type, null: true, description: 'Name of the function'
+    field :aliases, [Types::TranslationType], null: true, description: 'Name of the function'
+    field :descriptions, [Types::TranslationType], null: true, description: 'Description of the function'
+    field :display_messages, [Types::TranslationType], null: true,
+                                                       description: 'Display message of the function'
+    field :names, [Types::TranslationType], null: true, description: 'Name of the function'
 
-    field :deprecation_messages, Types::TranslationType.connection_type,
+    field :deprecation_messages, [Types::TranslationType],
           null: true,
           description: 'Deprecation message of the function'
-    field :documentations, Types::TranslationType.connection_type,
+    field :documentations, [Types::TranslationType],
           null: true,
           description: 'Documentation of the function'
 
