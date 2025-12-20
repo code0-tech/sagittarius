@@ -46,7 +46,7 @@ module Sagittarius
         after_id = Integer(decode(@after_value), exception: false)
         raise GraphQL::ExecutionError, "Invalid cursor '#{@after_value}' provided" if after_id.nil?
 
-        @items = @items.where('id > ?', after_id)
+        @items = @items.where(id: (after_id + 1)..)
       end
 
       def nodes
