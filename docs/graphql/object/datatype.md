@@ -15,7 +15,7 @@ Represents a DataType
 | `id` | [`DataTypeID!`](../scalar/datatypeid.md) | Global ID of this DataType |
 | `identifier` | [`String!`](../scalar/string.md) | The identifier scoped to the namespace |
 | `name` | [`[Translation!]!`](../object/translation.md) | Names of the flow type setting |
-| `rules` | [`[DataTypeRule!]!`](../object/datatyperule.md) | Rules of the datatype |
+| `rules` | [`DataTypeRuleConnection!`](../object/datatyperuleconnection.md) | Rules of the datatype |
 | `runtime` | [`Runtime`](../object/runtime.md) | The runtime where this datatype belongs to |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this DataType was last updated |
 | `variant` | [`DataTypeVariant!`](../enum/datatypevariant.md) | The type of the datatype |
