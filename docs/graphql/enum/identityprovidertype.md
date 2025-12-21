@@ -8,6 +8,7 @@ The available identity provider types.
 |-------|-------------|
 | `DISCORD` | Identity provider of type discord |
 | `GITHUB` | Identity provider of type github |
+| `GITLAB` | Identity provider of type gitlab |
 | `GOOGLE` | Identity provider of type google |
 | `MICROSOFT` | Identity provider of type microsoft |
 | `OIDC` | Identity provider of type oidc |

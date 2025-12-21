@@ -81,7 +81,7 @@ gem 'rotp'
 gem 'grpc', '~> 1.67'
 gem 'tucana', '0.0.47'
 
-gem 'code0-identities', '~> 0.0.2'
+gem 'code0-identities', '~> 0.0.3'
 
 gem 'pry', '~> 0.15.0'
 gem 'pry-byebug', '~> 3.10'
