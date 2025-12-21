@@ -1133,7 +1133,7 @@ CREATE INDEX index_good_job_jobs_for_candidate_lookup ON good_jobs USING btree (
 
 CREATE UNIQUE INDEX index_good_job_settings_on_key ON good_job_settings USING btree (key);
 
-CREATE INDEX index_good_jobs_jobs_on_finished_at ON good_jobs USING btree (finished_at) WHERE ((retried_good_job_id IS NULL) AND (finished_at IS NOT NULL));
+CREATE INDEX index_good_jobs_jobs_on_finished_at_only ON good_jobs USING btree (finished_at) WHERE (finished_at IS NOT NULL);
 
 CREATE INDEX index_good_jobs_jobs_on_priority_created_at_when_unfinished ON good_jobs USING btree (priority DESC NULLS LAST, created_at) WHERE (finished_at IS NULL);
 
