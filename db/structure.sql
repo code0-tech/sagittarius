@@ -488,6 +488,7 @@ CREATE TABLE namespace_projects (
     primary_runtime_id bigint,
     slug text NOT NULL,
     CONSTRAINT check_09e881e641 CHECK ((char_length(name) <= 50)),
+    CONSTRAINT check_34f7fad2d8 CHECK ((char_length(slug) <= 50)),
     CONSTRAINT check_a77bf7c685 CHECK ((char_length(description) <= 500))
 );
 
