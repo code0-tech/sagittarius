@@ -54,7 +54,7 @@ module Namespaces
         end
 
         def update_settings(t)
-          flow_input.settings.each do |setting|
+          flow_input.settings&.each do |setting|
             flow_setting = flow.flow_settings.find_or_initialize_by(flow_setting_id: setting.flow_setting_identifier)
             flow_setting.object = setting.value
 

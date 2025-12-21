@@ -10,10 +10,10 @@ module Types
 
     field :data_type_identifier, Types::DataTypeIdentifierType, null: true, description: 'Data type of the parameter'
 
-    field :descriptions, Types::TranslationType.connection_type, null: true, description: 'Description of the parameter'
-    field :names, Types::TranslationType.connection_type, null: true, description: 'Name of the parameter'
+    field :descriptions, [Types::TranslationType], null: true, description: 'Description of the parameter'
+    field :names, [Types::TranslationType], null: true, description: 'Name of the parameter'
 
-    field :documentations, Types::TranslationType.connection_type,
+    field :documentations, [Types::TranslationType],
           null: true,
           description: 'Documentation of the parameter'
 

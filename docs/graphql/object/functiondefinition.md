@@ -8,16 +8,16 @@ Represents a function definition
 
 | Name | Type | Description |
 |------|------|-------------|
-| `aliases` | [`TranslationConnection`](../object/translationconnection.md) | Name of the function |
+| `aliases` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this FunctionDefinition was created |
-| `deprecationMessages` | [`TranslationConnection`](../object/translationconnection.md) | Deprecation message of the function |
-| `descriptions` | [`TranslationConnection`](../object/translationconnection.md) | Description of the function |
-| `displayMessages` | [`TranslationConnection`](../object/translationconnection.md) | Display message of the function |
-| `documentations` | [`TranslationConnection`](../object/translationconnection.md) | Documentation of the function |
+| `deprecationMessages` | [`[Translation!]`](../object/translation.md) | Deprecation message of the function |
+| `descriptions` | [`[Translation!]`](../object/translation.md) | Description of the function |
+| `displayMessages` | [`[Translation!]`](../object/translation.md) | Display message of the function |
+| `documentations` | [`[Translation!]`](../object/translation.md) | Documentation of the function |
 | `genericKeys` | [`[String!]`](../scalar/string.md) | Generic keys of the function |
 | `id` | [`FunctionDefinitionID!`](../scalar/functiondefinitionid.md) | Global ID of this FunctionDefinition |
 | `identifier` | [`String!`](../scalar/string.md) | Identifier of the function |
-| `names` | [`TranslationConnection`](../object/translationconnection.md) | Name of the function |
+| `names` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `parameterDefinitions` | [`ParameterDefinitionConnection`](../object/parameterdefinitionconnection.md) | Parameters of the function |
 | `returnType` | [`DataTypeIdentifier`](../object/datatypeidentifier.md) | Return type of the function |
 | `runtimeFunctionDefinition` | [`RuntimeFunctionDefinition`](../object/runtimefunctiondefinition.md) | Runtime function definition |

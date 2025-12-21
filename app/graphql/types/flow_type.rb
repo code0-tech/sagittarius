@@ -11,6 +11,9 @@ module Types
     field :input_type, Types::DataTypeType,
           null: true,
           description: 'The input data type of the flow'
+    field :project, Types::NamespaceProjectType,
+          null: false,
+          description: 'The project the flow belongs to'
     field :return_type, Types::DataTypeType,
           null: true,
           description: 'The return data type of the flow'
