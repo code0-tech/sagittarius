@@ -25,11 +25,12 @@ RSpec.describe Flow do
     let(:flow) do
       create(
         :flow,
+        flow_type: create(:flow_type, identifier: 'HTTP'),
         flow_settings: [
           create(
             :flow_setting,
-            flow_setting_id: 'example_key',
-            object: { some_key: 'some_value' }
+            flow_setting_id: 'HTTP_URL',
+            object: { url: '/some-url' }
           )
         ]
       )
@@ -63,6 +64,7 @@ RSpec.describe Flow do
         {
           flow_id: flow.id,
           project_id: flow.project.id,
+          project_slug: flow.project.slug,
           type: flow.flow_type.identifier,
           node_functions: [
             {
@@ -88,8 +90,8 @@ RSpec.describe Flow do
             flow_setting_id: flow.flow_settings.first.flow_setting_id,
             object: {
               fields: {
-                'some_key' => {
-                  string_value: flow.flow_settings.first.object['some_key'],
+                'url' => {
+                  string_value: flow.flow_settings.first.object['url'],
                 },
               },
             }

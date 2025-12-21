@@ -10,6 +10,8 @@ module Types
 
     field :name, String, null: false, description: 'Name of the project'
 
+    field :slug, String, null: false, description: 'Slug of the project used in URLs to identify flows'
+
     field :runtimes, Types::RuntimeType.connection_type, null: false, description: 'Runtimes assigned to this project'
 
     field :roles, Types::NamespaceRoleType.connection_type, null: false,

@@ -486,7 +486,9 @@ CREATE TABLE namespace_projects (
     updated_at timestamp with time zone NOT NULL,
     namespace_id bigint NOT NULL,
     primary_runtime_id bigint,
+    slug text NOT NULL,
     CONSTRAINT check_09e881e641 CHECK ((char_length(name) <= 50)),
+    CONSTRAINT check_34f7fad2d8 CHECK ((char_length(slug) <= 50)),
     CONSTRAINT check_a77bf7c685 CHECK ((char_length(description) <= 500))
 );
 
@@ -1174,6 +1176,8 @@ CREATE INDEX index_namespace_members_on_user_id ON namespace_members USING btree
 CREATE INDEX index_namespace_projects_on_namespace_id ON namespace_projects USING btree (namespace_id);
 
 CREATE INDEX index_namespace_projects_on_primary_runtime_id ON namespace_projects USING btree (primary_runtime_id);
+
+CREATE UNIQUE INDEX index_namespace_projects_on_slug ON namespace_projects USING btree (slug);
 
 CREATE INDEX index_namespace_role_project_assignments_on_project_id ON namespace_role_project_assignments USING btree (project_id);
 

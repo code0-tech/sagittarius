@@ -20,6 +20,17 @@ module Namespaces
         end
 
         transactional do |t|
+          unless params.key?(:slug)
+            slug = name.parameterize
+
+            tries_left = 5
+            while NamespaceProject.exists?(slug: slug) && tries_left.positive?
+              slug = "#{slug}-#{SecureRandom.hex(4)}"
+              tries_left -= 1
+            end
+            params[:slug] = slug
+          end
+
           project = NamespaceProject.create(namespace: namespace, name: name, **params)
           unless project.persisted?
             t.rollback_and_return! ServiceResponse.error(

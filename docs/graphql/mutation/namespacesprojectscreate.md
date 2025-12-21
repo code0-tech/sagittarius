@@ -12,6 +12,7 @@ Creates a new namespace project.
 | `description` | [`String`](../scalar/string.md) | Description for the new project. |
 | `name` | [`String!`](../scalar/string.md) | Name for the new project. |
 | `namespaceId` | [`NamespaceID!`](../scalar/namespaceid.md) | The id of the namespace which this project will belong to |
+| `slug` | [`String`](../scalar/string.md) | Slug for the new project. |
 
 ## Fields
 

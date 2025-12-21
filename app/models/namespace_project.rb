@@ -14,6 +14,12 @@ class NamespaceProject < ApplicationRecord
                             source: :role
   has_many :flows, class_name: 'Flow', inverse_of: :project
 
+  validates :slug, presence: true,
+                   length: { minimum: 3, maximum: 50 },
+                   allow_blank: false,
+                   uniqueness: { case_sensitive: true },
+                   format: { with: /\A[a-zA-Z0-9_-]+\z/ }
+
   validates :name, presence: true,
                    length: { minimum: 3, maximum: 50 },
                    allow_blank: false,

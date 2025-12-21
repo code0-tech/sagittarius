@@ -29,6 +29,12 @@ RSpec.describe NamespaceProject do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive.scoped_to(:namespace_id) }
     it { is_expected.to validate_length_of(:name).is_at_most(50) }
+    it { is_expected.to validate_presence_of(:slug) }
+    it { is_expected.to validate_uniqueness_of(:slug) }
+    it { is_expected.to validate_length_of(:slug).is_at_most(50) }
+    it { is_expected.to allow_value('valid-slug_123').for(:slug) }
+    it { is_expected.not_to allow_value('invalid slug!').for(:slug) }
+
     it { is_expected.to validate_length_of(:description).is_at_most(500) }
     it { is_expected.to allow_value(' ').for(:description) }
     it { is_expected.to allow_value('').for(:description) }

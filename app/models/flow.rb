@@ -18,6 +18,7 @@ class Flow < ApplicationRecord
     Tucana::Shared::ValidationFlow.new(
       flow_id: id,
       project_id: project.id,
+      project_slug: project.slug,
       type: flow_type.identifier,
       data_types: [], # TODO: when data types are creatable
       input_type_identifier: input_type&.identifier,

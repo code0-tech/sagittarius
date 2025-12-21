@@ -7,6 +7,7 @@ RSpec.describe SagittariusSchema.types['NamespaceProject'] do
     %w[
       id
       name
+      slug
       description
       namespace
       primary_runtime

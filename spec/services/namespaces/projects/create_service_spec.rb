@@ -62,10 +62,43 @@ RSpec.describe Namespaces::Projects::CreateService do
         entity_type: 'NamespaceProject',
         details: {
           name: params[:name],
+          slug: service_response.payload.slug,
         },
         target_id: namespace.id,
         target_type: 'Namespace'
       )
+    end
+
+    context 'when slug is duplicated' do
+      let(:params) do
+        { namespace: namespace, name: generate(:namespace_project_name), slug: 'some-slug' }
+      end
+
+      before do
+        create(:namespace_project, slug: 'some-slug')
+      end
+
+      it 'fails to create project' do
+        expect(service_response).to be_error
+        expect(service_response.payload[:error_code]).to eq(:invalid_namespace_project)
+      end
+
+      context 'when slug is not set' do
+        let(:params) do
+          { namespace: namespace, name: generate(:namespace_project_name) }
+        end
+
+        before do
+          create(:namespace_project, slug: params[:name].parameterize)
+        end
+
+        it 'creates project with unique slug' do
+          expect(service_response).to be_success
+          expect(service_response.payload.reload).to be_valid
+          expect(service_response.payload.slug).not_to eq(params[:name].parameterize)
+          expect(service_response.payload.slug).to match(/^#{params[:name].parameterize}-[a-f0-9]{8}$/)
+        end
+      end
     end
   end
 end

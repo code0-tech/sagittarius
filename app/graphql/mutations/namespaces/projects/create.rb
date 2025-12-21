@@ -13,6 +13,7 @@ module Mutations
 
         argument :description, String, required: false, description: 'Description for the new project.'
         argument :name, String, required: true, description: 'Name for the new project.'
+        argument :slug, String, required: false, description: 'Slug for the new project.'
 
         def resolve(namespace_id:, **params)
           namespace = SagittariusSchema.object_from_id(namespace_id)
