@@ -32,6 +32,7 @@ Represents the available error responses
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_FLOW_TYPE` | The flow type is invalid because of active model errors |
+| `INVALID_FLOW_TYPE_SETTING` | The flow type setting is invalid because of active model errors |
 | `INVALID_GENERIC_MAPPER` | The generic mapper is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
 | `INVALID_NAMESPACE_LICENSE` | The namespace license is invalid because of active model errors |
