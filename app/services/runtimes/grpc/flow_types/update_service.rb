@@ -63,8 +63,35 @@ module Runtimes
           db_object.display_messages = update_translations(flow_type.display_message, db_object.display_messages)
           db_object.aliases = update_translations(flow_type.alias, db_object.aliases)
           db_object.version = flow_type.version
+          db_object.flow_type_settings = update_settings(flow_type.settings, db_object, t)
           db_object.save
           db_object
+        end
+
+        def update_settings(flow_type_settings, flow_type, t)
+          flow_type.flow_type_settings = flow_type_settings.map do |setting|
+            db_setting = FlowTypeSetting.find_or_initialize_by(flow_type: flow_type, identifier: setting.identifier)
+            db_setting.unique = setting.unique
+            db_setting.default_value = setting.default_value.to_ruby
+            db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
+            db_setting.names = update_translations(setting.name, db_setting.names)
+            db_setting.data_type = find_data_type(setting.data_type_identifier, t)
+
+            unless db_setting.save
+              logger.error(
+                message: 'Failed to update flow type setting',
+                runtime_id: current_runtime.id,
+                flow_type_identifier: flow_type.identifier,
+                setting_identifier: setting.identifier,
+                errors: db_setting.errors.full_messages
+              )
+              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update flow type setting',
+                                                           error_code: :invalid_flow_type_setting,
+                                                           details: db_setting.errors)
+            end
+
+            db_setting
+          end
         end
       end
     end

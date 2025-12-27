@@ -18,6 +18,20 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
       [
         {
           identifier: 'some_flow_type_identifier',
+          settings: [
+            {
+              identifier: 'some_setting_identifier',
+              unique: true,
+              data_type_identifier: create(:data_type, runtime: runtime).identifier,
+              default_value: Tucana::Shared::Value.from_ruby({ 'value' => 'some default value' }),
+              name: [
+                { code: 'en_US', content: 'Some Setting' }
+              ],
+              description: [
+                { code: 'en_US', content: 'This is a setting' }
+              ],
+            }
+          ],
           name: [
             { code: 'de_DE', content: 'Keine Ahnung man' }
           ],
@@ -65,6 +79,18 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
       expect(flow_type.editable).to be true
       expect(flow_type.return_type.identifier).to eq('some_return_type_identifier')
       expect(flow_type.version).to eq('0.0.0')
+
+      expect(flow_type.flow_type_settings.count).to eq(1)
+      setting = flow_type.flow_type_settings.first
+      expect(setting.identifier).to eq('some_setting_identifier')
+      expect(setting.unique).to be true
+      expect(setting.default_value).to eq('value' => 'some default value')
+      expect(setting.names.count).to eq(1)
+      expect(setting.names.first.code).to eq('en_US')
+      expect(setting.names.first.content).to eq('Some Setting')
+      expect(setting.descriptions.count).to eq(1)
+      expect(setting.descriptions.first.code).to eq('en_US')
+      expect(setting.descriptions.first.content).to eq('This is a setting')
     end
 
     context 'when removing datatypes' do
