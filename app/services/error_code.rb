@@ -94,6 +94,7 @@ class ErrorCode
       missing_primary_runtime: { description: 'The project is missing a primary runtime' },
       missing_definition: { description: 'The primary runtime has more definitions than this one' },
       outdated_definition: { description: 'The primary runtime has a newer definition than this one' },
+      invalid_flow_type_setting: { description: 'The flow type setting is invalid because of active model errors' },
     }
   end
   # rubocop:enable Layout/LineLength
