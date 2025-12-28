@@ -27,7 +27,11 @@ module Namespaces
                              flow: flow.id,
                              data_type: data_type.id,
                              errors: data_type.errors.full_messages)
-                errors << ValidationResult.error(:data_type_model_invalid, data_type.errors)
+                errors << ValidationResult.error(
+                  :data_type_model_invalid,
+                  details: data_type.errors,
+                  location: data_type
+                )
               end
 
               primary_runtime = flow.project.primary_runtime
@@ -38,7 +42,10 @@ module Namespaces
                              given_runtime: data_type.runtime.id,
                              flow: flow.id,
                              data_type: data_type.id)
-                errors << ValidationResult.error(:data_type_runtime_mismatch)
+                errors << ValidationResult.error(
+                  :data_type_runtime_mismatch,
+                  location: data_type
+                )
               end
 
               data_type.parent_type&.tap do |parent_type|

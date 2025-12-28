@@ -28,7 +28,11 @@ module Namespaces
                              flow: flow.id,
                              data_type_identifier: data_type_identifier.id,
                              errors: data_type_identifier.errors.full_messages)
-                errors << ValidationResult.error(:data_type_identifier_model_invalid, data_type_identifier.errors)
+                errors << ValidationResult.error(
+                  :data_type_identifier_model_invalid,
+                  details: data_type_identifier.errors,
+                  location: data_type_identifier
+                )
               end
               if data_type_identifier.runtime != flow.project.primary_runtime
                 logger.debug(message: 'Data type identifier runtime mismatch',
@@ -36,12 +40,18 @@ module Namespaces
                              given_runtime: data_type_identifier.runtime.id,
                              flow: flow.id,
                              data_type_identifier: data_type_identifier.id)
-                errors << ValidationResult.error(:data_type_identifier_runtime_mismatch)
+                errors << ValidationResult.error(
+                  :data_type_identifier_runtime_mismatch,
+                  location: data_type_identifier
+                )
               end
 
               if data_type_identifier.generic_key.present?
                 unless node.runtime_function.generic_keys.include?(data_type_identifier.generic_key)
-                  errors << ValidationResult.error(:data_type_identifier_generic_key_not_found)
+                  errors << ValidationResult.error(
+                    :data_type_identifier_generic_key_not_found,
+                    location: data_type_identifier
+                  )
                 end
               elsif data_type_identifier.generic_type.present?
                 errors += ::NodeFunction::GenericTypeValidationService.new(

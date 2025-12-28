@@ -26,7 +26,10 @@ module Namespaces
 
               # Validate the target the identifier gets validated later
               unless parameter.node_function.runtime_function.generic_keys.include?(target)
-                errors << ValidationResult.error(:generic_key_not_found)
+                errors << ValidationResult.error(
+                  :generic_key_not_found,
+                  location: generic_mapper
+                )
               end
 
               generic_mapper.generic_combination_strategies.each do |_strategy|

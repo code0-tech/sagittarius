@@ -24,17 +24,27 @@ module Namespaces
               if node_function.invalid?
                 logger.debug(message: 'Node function validation failed',
                              errors: node_function.errors.full_messages)
-                errors << ValidationResult.error(:node_function_model_invalid, node_function.errors)
+                errors << ValidationResult.error(
+                  :node_function_model_invalid,
+                  details: node_function.errors,
+                  location: node_function
+                )
               end
               if node_function.runtime_function.runtime != flow.project.primary_runtime
-                errors << ValidationResult.error(:node_function_runtime_mismatch)
+                errors << ValidationResult.error(
+                  :node_function_runtime_mismatch,
+                  location: node_function
+                )
               end
 
               node_function.runtime_function.tap do |runtime_function|
                 logger
                   .debug("Validating runtime function: #{runtime_function.id} for node function: #{node_function.id}")
                 if runtime_function.runtime != flow.project.primary_runtime
-                  errors << ValidationResult.error(:node_function_runtime_mismatch)
+                  errors << ValidationResult.error(
+                    :node_function_runtime_mismatch,
+                    location: node_function
+                  )
                 end
               end
 
@@ -46,7 +56,10 @@ module Namespaces
                                node_function: node_function.id,
                                runtime_parameter: parameter.runtime_parameter.id,
                                flow: flow.id)
-                  errors << ValidationResult.error(:parameter_mismatch)
+                  errors << ValidationResult.error(
+                    :parameter_mismatch,
+                    location: parameter
+                  )
                 end
 
                 errors += NodeFunctionParameterValidationService.new(

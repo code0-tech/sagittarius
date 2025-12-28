@@ -29,7 +29,11 @@ module Namespaces
                                data_type: data_type.id,
                                rule: rule.id,
                                errors: rule.errors.full_messages)
-                  errors << ValidationResult.error(:data_type_rule_model_invalid, rule.errors)
+                  errors << ValidationResult.error(
+                    :data_type_rule_model_invalid,
+                    details: rule.errors,
+                    location: rule
+                  )
                 end
               end
               errors

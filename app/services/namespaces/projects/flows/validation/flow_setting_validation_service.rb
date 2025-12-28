@@ -22,7 +22,11 @@ module Namespaces
 
             if setting.invalid?
               logger.debug("Invalid setting: #{setting.errors.full_messages.join(', ')}")
-              errors << ValidationResult.error(:flow_setting_model_invalid, setting.errors)
+              errors << ValidationResult.error(
+                :flow_setting_model_invalid,
+                details: setting.errors,
+                location: setting
+              )
             end
             errors
           end
