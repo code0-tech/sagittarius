@@ -18,7 +18,12 @@ module Namespaces
             errors = []
 
             primary_runtime = flow.project.primary_runtime
-            errors << ValidationResult.error(:no_primary_runtime) if primary_runtime.nil?
+            if primary_runtime.nil?
+              errors << ValidationResult.error(
+                :no_primary_runtime,
+                location: flow.project
+              )
+            end
 
             # ---
             # Input Type Validation

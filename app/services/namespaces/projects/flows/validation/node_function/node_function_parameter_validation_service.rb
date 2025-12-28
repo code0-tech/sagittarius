@@ -25,10 +25,17 @@ module Namespaces
               if parameter.invalid?
                 logger.debug(message: 'Node parameter validation failed',
                              errors: parameter.errors.full_messages)
-                errors << ValidationResult.error(:node_parameter_model_invalid, parameter.errors)
+                errors << ValidationResult.error(
+                  :node_parameter_model_invalid,
+                  details: parameter.errors,
+                  location: parameter
+                )
               end
               if parameter.runtime_parameter.runtime_function_definition.runtime != flow.project.primary_runtime
-                errors << ValidationResult.error(:node_parameter_runtime_mismatch)
+                errors << ValidationResult.error(
+                  :node_parameter_runtime_mismatch,
+                  location: parameter
+                )
               end
 
               if parameter.literal_value.present?

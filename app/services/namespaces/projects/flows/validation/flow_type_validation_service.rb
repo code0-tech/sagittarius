@@ -21,7 +21,10 @@ module Namespaces
             logger.debug("Validating flow_type: #{flow_type.inspect} for flow: #{flow.id}")
 
             if flow_type.runtime != flow.project.primary_runtime
-              errors << ValidationResult.error(:flow_type_runtime_mismatch)
+              errors << ValidationResult.error(
+                :flow_type_runtime_mismatch,
+                location: flow_type
+              )
             end
             errors
           end
