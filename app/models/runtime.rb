@@ -3,21 +3,11 @@
 class Runtime < ApplicationRecord
   include TokenAttr
 
-  STATUS_TYPES = {
-    disconnected: 0,
-    connected: 1,
-  }.with_indifferent_access
-
   belongs_to :namespace, optional: true
 
   token_attr :token, prefix: 's_rt_', length: 48
 
-  enum :status, STATUS_TYPES, default: :disconnected
-
-  validates :status, presence: true,
-                     inclusion: {
-                       in: STATUS_TYPES.keys.map(&:to_s),
-                     }
+  has_many :runtime_statuses, inverse_of: :runtime
 
   has_many :project_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :runtime
   has_many :projects, class_name: 'NamespaceProject', through: :project_assignments, source: :namespace_project,
