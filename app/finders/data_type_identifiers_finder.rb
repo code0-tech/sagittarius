@@ -6,7 +6,7 @@ class DataTypeIdentifiersFinder < ApplicationFinder
     data_type_identifiers = by_runtime(data_type_identifiers)
     data_type_identifiers = by_related_to_function_definition(data_type_identifiers)
 
-    data_type_identifiers = add_related_identifiers(data_type_identifiers)
+    data_type_identifiers = add_related_identifiers(data_type_identifiers, add_related_identifiers_generics_case)
 
     super(data_type_identifiers)
   end
@@ -31,32 +31,39 @@ class DataTypeIdentifiersFinder < ApplicationFinder
       .or(data_type_identifiers.where(id: params[:function_definition].parameter_definitions.pluck(:data_type_id)))
   end
 
-  def add_related_identifiers(data_type_identifiers)
+  def add_related_identifiers(data_type_identifiers, recursive_query_case)
     return data_type_identifiers unless params[:expand_recursively]
 
-    sql = <<~SQL
-      WITH RECURSIVE data_type_identifier_tree AS (
-        -- Base case: starting identifiers
-        SELECT *
-        FROM data_type_identifiers
-        WHERE id IN (?)
+    tree = Arel::Table.new(:data_type_identifier_tree)
 
-        UNION ALL
+    DataTypeIdentifier
+      .with_recursive(data_type_identifier_tree: [
+                        data_type_identifiers,
+                        recursive_query_case
+                      ])
+      .from(tree)
+      .select(tree[Arel.star])
+      .distinct
+      .order(:id)
+  end
 
-        -- Recursive case: find child identifiers
-        SELECT dti.*
-        FROM data_type_identifier_tree tree
-          INNER JOIN generic_types gt
-            ON tree.generic_type_id = gt.id
-          INNER JOIN generic_mappers gm
-            ON gt.id = gm.generic_type_id
-          INNER JOIN data_type_identifiers dti
-            ON dti.generic_mapper_id = gm.id
+  def add_related_identifiers_generics_case
+    tree = Arel::Table.new(:data_type_identifier_tree)
+    dti = DataTypeIdentifier.arel_table
+    gt = GenericType.arel_table
+    gm = GenericMapper.arel_table
+
+    DataTypeIdentifier
+      .from(tree)
+      .joins(
+        tree.join(gt, Arel::Nodes::InnerJoin)
+            .on(tree[:generic_type_id].eq(gt[:id]))
+            .join(gm, Arel::Nodes::InnerJoin)
+            .on(gt[:id].eq(gm[:generic_type_id]))
+            .join(dti, Arel::Nodes::InnerJoin)
+            .on(dti[:generic_mapper_id].eq(gm[:id]))
+            .join_sources
       )
-
-      SELECT DISTINCT * FROM data_type_identifier_tree ORDER BY id
-    SQL
-
-    DataTypeIdentifier.find_by_sql([sql, data_type_identifiers.pluck(:id)])
+      .select(dti[Arel.star])
   end
 end
