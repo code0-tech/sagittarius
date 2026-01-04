@@ -18,6 +18,7 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
       runtimeFunctionDefinition
       genericKeys
       throwsError
+      dataTypeIdentifiers
       createdAt
       updatedAt
     ]
