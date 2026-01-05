@@ -10,6 +10,7 @@ Represents a function definition
 |------|------|-------------|
 | `aliases` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this FunctionDefinition was created |
+| `dataTypeIdentifiers` | [`DataTypeIdentifierConnection!`](../object/datatypeidentifierconnection.md) | All data type identifiers used within this Node Function |
 | `deprecationMessages` | [`[Translation!]`](../object/translation.md) | Deprecation message of the function |
 | `descriptions` | [`[Translation!]`](../object/translation.md) | Description of the function |
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display message of the function |

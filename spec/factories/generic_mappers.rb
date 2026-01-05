@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :generic_mapper do
     runtime
     target { nil }
-    sources { nil }
+    sources { [] }
     generic_combination_strategies { [] }
   end
 end

@@ -6,9 +6,10 @@ module Types
 
     authorize :read_datatype
 
-    field :source_data_type_identifiers, [Types::DataTypeIdentifierType],
+    field :source_data_type_identifier_ids, [Types::GlobalIdType[::DataTypeIdentifier]],
           null: false,
           description: 'The source data type identifier.'
+
     field :target, String,
           null: false,
           description: 'The target key for the generic value.'
@@ -19,5 +20,9 @@ module Types
 
     id_field GenericMapper
     timestamps
+
+    def source_data_type_identifier_ids
+      object.sources.map(&:to_global_id)
+    end
   end
 end
