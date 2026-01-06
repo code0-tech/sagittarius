@@ -8,10 +8,17 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["data_type_identifier", "input_identifier"],
+        "required": [
+          "data_type_identifier",
+          "data_type_identifier_id",
+          "input_identifier"
+        ],
         "properties": {
           "data_type_identifier": {
             "$ref": "../DataTypeIdentifier.json"
+          },
+          "data_type_identifier_id": {
+            "type": "integer"
           },
           "input_identifier": {
             "type": "string"

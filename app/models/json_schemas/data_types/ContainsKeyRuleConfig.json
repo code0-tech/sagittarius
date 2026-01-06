@@ -3,13 +3,20 @@
   "$id": "https://example.com/schemas/DataTypeContainsKeyRuleConfig.json",
   "title": "DataTypeContainsKeyRuleConfig",
   "type": "object",
-  "required": ["key", "data_type_identifier"],
+  "required": [
+    "key",
+    "data_type_identifier",
+    "data_type_identifier_id"
+  ],
   "properties": {
     "key": {
       "type": "string"
     },
     "data_type_identifier": {
       "$ref": "../DataTypeIdentifier.json"
+    },
+    "data_type_identifier_id": {
+      "type": "integer"
     }
   }
 }
