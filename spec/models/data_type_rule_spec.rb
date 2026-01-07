@@ -22,6 +22,7 @@ RSpec.describe DataTypeRule do
             data_type_identifier: {
               data_type_identifier: 'User',
             },
+            data_type_identifier_id: 1,
           }
           is_expected.to be_valid
         end
@@ -46,6 +47,7 @@ RSpec.describe DataTypeRule do
             data_type_identifier: {
               data_type_identifier: 'User',
             },
+            data_type_identifier_id: 1,
           }
           is_expected.to be_valid
         end

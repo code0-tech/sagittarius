@@ -34,7 +34,7 @@ class DataType < ApplicationRecord
 
   validate :generic_keys_length
 
-  validate :validate_recursion, if: :parent_type_changed?
+  validate :validate_parent, if: :parent_type_changed?
 
   def validate_version
     return errors.add(:version, :blank) if version.blank?
@@ -48,10 +48,12 @@ class DataType < ApplicationRecord
     Gem::Version.new(version)
   end
 
-  def validate_recursion
+  def validate_parent
+    errors.add(:parent_type, :no_generic_key) if parent_type.generic_key.present?
+
     current_type = self
     until current_type.parent_type&.data_type.nil?
-      current_type = current_type.parent_type&.data_type
+      current_type = current_type.parent_type&.data_type || current_type.parent_type&.generic_type&.data_type
 
       if current_type == self
         errors.add(:parent_type, :recursion)

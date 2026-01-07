@@ -58,7 +58,12 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
       expect(data_type.display_messages.first.content).to eq('Zahl: ${0}')
       expect(data_type.rules.count).to eq(1)
       expect(data_type.rules.first.variant).to eq('contains_type')
-      expect(data_type.rules.first.config).to eq({ 'data_type_identifier' => { 'generic_key' => 'T' } })
+      expect(data_type.rules.first.config).to eq(
+        {
+          'data_type_identifier' => { 'generic_key' => 'T' },
+          'data_type_identifier_id' => data_type.rules.first.id,
+        }
+      )
     end
 
     context 'with more rules' do
@@ -67,6 +72,11 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
           {
             variant: :PRIMITIVE,
             identifier: 'parent_type_identifier',
+            version: '0.0.0',
+          },
+          {
+            variant: :PRIMITIVE,
+            identifier: 'some_type',
             version: '0.0.0',
           },
           {
@@ -97,14 +107,14 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
               Tucana::Shared::DefinitionDataTypeRule.create(:input_types, {
                                                               input_types: [{
                                                                 data_type_identifier: {
-                                                                  data_type_identifier: 'input_type_1',
+                                                                  data_type_identifier: 'some_type',
                                                                 },
                                                                 input_identifier: 'input_1',
                                                               }],
                                                             }),
               Tucana::Shared::DefinitionDataTypeRule.create(:return_type, {
                                                               data_type_identifier: {
-                                                                data_type_identifier: 'another_type',
+                                                                data_type_identifier: 'some_type',
                                                               },
                                                             }),
               Tucana::Shared::DefinitionDataTypeRule.create(:parent_type, {

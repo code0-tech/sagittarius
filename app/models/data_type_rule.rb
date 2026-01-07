@@ -23,31 +23,31 @@ class DataTypeRule < ApplicationRecord
 
   validates :config, if: :variant_contains_key?,
                      'sagittarius/validators/json_schema': {
-                       filename: 'data_types/DataTypeContainsKeyRuleConfig',
+                       filename: 'data_types/ContainsKeyRuleConfig',
                        hash_conversion: true,
                      }
 
   validates :config, if: :variant_contains_type?,
                      'sagittarius/validators/json_schema': {
-                       filename: 'data_types/DataTypeContainsTypeRuleConfig',
+                       filename: 'data_types/ContainsTypeRuleConfig',
                        hash_conversion: true,
                      }
 
   validates :config, if: :variant_item_of_collection?,
                      'sagittarius/validators/json_schema': {
-                       filename: 'data_types/DataTypeItemOfCollectionRuleConfig',
+                       filename: 'data_types/ItemOfCollectionRuleConfig',
                        hash_conversion: true,
                      }
 
   validates :config, if: :variant_number_range?,
                      'sagittarius/validators/json_schema': {
-                       filename: 'data_types/DataTypeNumberRangeRuleConfig',
+                       filename: 'data_types/NumberRangeRuleConfig',
                        hash_conversion: true,
                      }
 
   validates :config, if: :variant_regex?,
                      'sagittarius/validators/json_schema': {
-                       filename: 'data_types/DataTypeRegexRuleConfig',
+                       filename: 'data_types/RegexRuleConfig',
                        hash_conversion: true,
                      }
 
@@ -62,4 +62,10 @@ class DataTypeRule < ApplicationRecord
                        filename: 'data_types/InputTypesRuleConfig',
                        hash_conversion: true,
                      }
+
+  validate :no_parent_type_config, if: :variant_parent_type?
+
+  def no_parent_type_config
+    errors.add(:config, :not_blank) if config.present?
+  end
 end

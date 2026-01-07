@@ -101,7 +101,7 @@ module Runtimes
           if parent?(data_type)
             db_object.parent_type = find_data_type_identifier(find_parent_rule(data_type).rule_config.parent_type, t)
           end
-          db_object.rules = update_rules(data_type.rules, db_object)
+          db_object.rules = update_rules(data_type.rules, db_object, t)
           db_object.names = update_translations(data_type.name, db_object.names)
           db_object.aliases = update_translations(data_type.alias, db_object.aliases)
           db_object.display_messages = update_translations(data_type.display_message, db_object.display_messages)
@@ -115,14 +115,44 @@ module Runtimes
         # It ensures that existing rules are updated and new rules are created as needed.
         # @param rules [Array<Tucana::Shared::DefinitionDataTypeRule>] The list of rules to update.
         # @param data_type [DataType] The data type to which the rules belong.
-        def update_rules(rules, data_type)
+        def update_rules(rules, data_type, t)
           db_rules = data_type.rules.first(rules.length)
           rules.each_with_index do |rule, index|
             db_rules[index] ||= DataTypeRule.new
-            db_rules[index].assign_attributes(variant: rule.variant.to_s.downcase, config: rule.rule_config.to_h)
+            db_rules[index].assign_attributes(variant: rule.variant.to_s.downcase, config: extend_rule_config(rule, t))
           end
 
           db_rules
+        end
+
+        def extend_rule_config(rule, t)
+          case rule.variant
+          when :parent_type
+            {}
+          when :contains_key
+            {
+              key: rule.rule_config.key,
+              data_type_identifier: rule.rule_config.data_type_identifier,
+              data_type_identifier_id: find_data_type_identifier(rule.rule_config.data_type_identifier, t).id,
+            }
+          when :contains_type, :return_type
+            {
+              data_type_identifier: rule.rule_config.data_type_identifier,
+              data_type_identifier_id: find_data_type_identifier(rule.rule_config.data_type_identifier, t).id,
+            }
+          when :input_types
+            {
+              input_types: rule.rule_config.input_types.map do |input_type|
+                {
+                  input_identifier: input_type.input_identifier,
+                  data_type_identifier: input_type.data_type_identifier,
+                  data_type_identifier_id: find_data_type_identifier(input_type.data_type_identifier, t).id,
+                }
+              end,
+            }
+          else
+            rule.rule_config.to_h
+          end
         end
       end
     end
