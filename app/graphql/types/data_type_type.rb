@@ -20,6 +20,10 @@ module Types
     field :variant, Types::DataTypeVariantEnum, null: false,
                                                 description: 'The type of the datatype'
 
+    field :data_type_identifiers, Types::DataTypeIdentifierType.connection_type,
+          null: false,
+          description: 'The data type identifiers that are referenced in this data type and its rules'
+
     id_field DataType
     timestamps
   end

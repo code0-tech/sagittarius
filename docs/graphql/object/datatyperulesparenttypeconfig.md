@@ -8,5 +8,5 @@ Represents a rule that can be applied to a data type.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `dataTypeIdentifier` | [`DataTypeIdentifier!`](../object/datatypeidentifier.md) | The data type identifier for the parent type. |
+| `dataTypeIdentifierId` | [`DataTypeIdentifierID!`](../scalar/datatypeidentifierid.md) | ID of the data type identifier for the parent type. |
 

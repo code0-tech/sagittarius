@@ -10,6 +10,7 @@ Represents a DataType
 |------|------|-------------|
 | `aliases` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this DataType was created |
+| `dataTypeIdentifiers` | [`DataTypeIdentifierConnection!`](../object/datatypeidentifierconnection.md) | The data type identifiers that are referenced in this data type and its rules |
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display message of the function |
 | `genericKeys` | [`[String!]`](../scalar/string.md) | Generic keys of the datatype |
 | `id` | [`DataTypeID!`](../scalar/datatypeid.md) | Global ID of this DataType |
