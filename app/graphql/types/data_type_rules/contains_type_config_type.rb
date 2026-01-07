@@ -5,8 +5,8 @@ module Types
     class ContainsTypeConfigType < Types::BaseObject
       description 'Represents a rule that can be applied to a data type.'
 
-      field :data_type_identifier, Types::DataTypeIdentifierType,
-            null: false, description: 'The identifier of the data type this rule belongs to'
+      field :data_type_identifier_id, Types::GlobalIdType[::DataTypeIdentifier],
+            null: false, description: 'ID of the identifier of the data type this rule belongs to'
     end
   end
 end
