@@ -155,6 +155,34 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
         target_type: 'NamespaceProject'
       )
     end
+
+    context 'when flow is disabled' do
+      let(:input) do
+        {
+          flowId: flow.to_global_id.to_s,
+          flowInput: {
+            name: generate(:flow_name),
+            disabledReason: 'Some reason',
+            type: flow_type.to_global_id.to_s,
+            startingNodeId: nil,
+            settings: [],
+            nodes: [],
+          },
+        }
+      end
+
+      it 'updates flow as disabled' do
+        mutate!
+
+        updated_flow_id = graphql_data_at(:namespaces_projects_flows_update, :flow, :id)
+        expect(updated_flow_id).to be_present
+        flow = SagittariusSchema.object_from_id(updated_flow_id)
+
+        expect(flow).to be_present
+        expect(project.flows).to include(flow)
+        expect(flow.disabled_reason).to eq('Some reason')
+      end
+    end
   end
 
   context 'when removing nodes' do
