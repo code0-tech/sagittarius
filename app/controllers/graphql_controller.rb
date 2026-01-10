@@ -22,6 +22,7 @@ class GraphqlController < ApplicationController
     operation_name = params[:operationName]
     context = {
       current_authentication: current_authentication,
+      visibility_profile: :execution,
     }
 
     Code0::ZeroTrack::Context.with_context(user: { id: current_user&.id, username: current_user&.username }) do
@@ -62,7 +63,12 @@ class GraphqlController < ApplicationController
   end
 
   def query(query_string = params[:query], operation_name = params[:operationName])
-    @query ||= ::GraphQL::Query.new(SagittariusSchema, query_string, operation_name: operation_name)
+    @query ||= ::GraphQL::Query.new(
+      SagittariusSchema,
+      query_string,
+      operation_name: operation_name,
+      context: { visibility_profile: :execution }
+    )
   end
 
   def mutation?

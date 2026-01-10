@@ -26,5 +26,9 @@ module Types
 
     id_field DataType
     timestamps
+
+    def data_type_identifiers
+      DataTypeIdentifiersFinder.new({ data_type: object, expand_recursively: true }).execute
+    end
   end
 end
