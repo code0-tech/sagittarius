@@ -6,6 +6,7 @@ module Tooling
       class Parser # rubocop:disable GraphQL/ObjectDescription -- this is not a graphql object
         ViolatedAssumption = Class.new(StandardError)
         SLUGIFY_PRETTY_REGEXP = Regexp.new("[^[:alnum:]._~!$&'()+,;=@]+").freeze
+        GQL_CONTEXT = { visibility_profile: :docs }.freeze
 
         attr_reader :schema, :elements
 
@@ -15,7 +16,7 @@ module Tooling
         end
 
         def parse
-          schema.types.each_value do |type|
+          schema.types(GQL_CONTEXT).each_value do |type|
             element = {
               name: type.graphql_name,
               description: type.description,
@@ -112,7 +113,7 @@ module Tooling
         def build_fields(object_fields)
           fields = []
 
-          object_fields.each_value do |field|
+          object_fields.select { |_, field| field.visible?(GQL_CONTEXT) }.each_value do |field|
             data = {
               name: field.graphql_name,
               description: field.description,
