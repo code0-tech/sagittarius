@@ -10,6 +10,7 @@ module Types
 
     def initialize(**kwargs, &block)
       @authorize = Array.wrap(kwargs.delete(:authorize))
+      @visibility_profile = Array.wrap(kwargs.delete(:visibility_profile))
 
       super
     end
@@ -21,6 +22,14 @@ module Types
       @authorize.all? do |ability|
         Ability.allowed?(context[:current_authentication], ability, subject)
       end
+    end
+
+    def visible?(context)
+      super && (
+        @visibility_profile.empty? ||
+          context[:visibility_profile] == :full ||
+          @visibility_profile.include?(context[:visibility_profile])
+      )
     end
   end
 end

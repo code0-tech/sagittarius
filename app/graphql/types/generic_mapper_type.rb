@@ -6,9 +6,16 @@ module Types
 
     authorize :read_datatype
 
+    # rubocop:disable GraphQL/ExtractType -- one of the fields is types-only
     field :source_data_type_identifier_ids, [Types::GlobalIdType[::DataTypeIdentifier]],
           null: false,
           description: 'The source data type identifier.'
+
+    field :source_data_type_identifiers, [Types::DataTypeIdentifierType],
+          null: false,
+          description: 'types-only field',
+          visibility_profile: :types
+    # rubocop:enable GraphQL/ExtractType
 
     field :target, String,
           null: false,

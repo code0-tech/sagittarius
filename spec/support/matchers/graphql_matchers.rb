@@ -110,3 +110,21 @@ RSpec::Matchers.define :expose_abilities do |*expected|
     )[:message].call
   end
 end
+
+RSpec::Matchers.define :have_visibility_profile do |*expected|
+  match do |field|
+    expect(field.instance_variable_get(:@visibility_profile)).to match_array(expected.compact)
+  end
+
+  failure_message do |field|
+    actual = field.instance_variable_get(:@visibility_profile)
+    missing = expected - actual
+    extra = actual - expected
+
+    message = []
+    message << "is missing visibility profiles: #{missing.inspect}" if missing.any?
+    message << "contained unexpected visibility profiles: #{extra.inspect}" if extra.any?
+
+    message.join("\n")
+  end
+end

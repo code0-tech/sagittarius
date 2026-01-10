@@ -127,6 +127,44 @@ RSpec.describe DataTypeIdentifiersFinder do
     end
 
     context 'with expand_recursively parameter' do
+      let!(:data_type_identifier_in_contains_type_rule) do
+        create(:data_type_identifier, data_type: data_type3, runtime: runtime).tap do |dti|
+          create(
+            :data_type_rule,
+            data_type: data_type1,
+            variant: :contains_type,
+            config: {
+              data_type_identifier: {
+                data_type_identifier: data_type3.identifier,
+              },
+              data_type_identifier_id: dti.id,
+            }
+          )
+        end
+      end
+
+      let!(:data_type_identifier_in_input_types_rule) do
+        create(:data_type_identifier, data_type: data_type3, runtime: runtime).tap do |dti|
+          create(
+            :data_type_rule,
+            data_type: data_type1,
+            variant: :input_types,
+            config: {
+              input_types: [
+                {
+                  data_type_identifier: {
+                    data_type_identifier: data_type3.identifier,
+                  },
+                  data_type_identifier_id: dti.id,
+                  input_identifier: 'something',
+                }
+              ],
+
+            }
+          )
+        end
+      end
+
       let!(:data_type_identifier_in_generic_mapper_source) do
         create(:data_type_identifier, data_type: data_type1, runtime: runtime)
       end
@@ -164,7 +202,9 @@ RSpec.describe DataTypeIdentifiersFinder do
         expect(result.map(&:id)).to contain_exactly(
           data_type_identifier_with_nested_generic_mapper.id,
           data_type_identifier_with_generic_mapper.id,
-          data_type_identifier_in_generic_mapper_source.id
+          data_type_identifier_in_generic_mapper_source.id,
+          data_type_identifier_in_contains_type_rule.id,
+          data_type_identifier_in_input_types_rule.id
         )
       end
 
@@ -231,7 +271,9 @@ RSpec.describe DataTypeIdentifiersFinder do
           second_data_type_identifier_with_generic_mapper.id,
           data_type_identifier_with_generic_mapper.id,
           second_data_type_identifier_in_generic_mapper_source.id,
-          data_type_identifier_in_generic_mapper_source.id
+          data_type_identifier_in_generic_mapper_source.id,
+          data_type_identifier_in_contains_type_rule.id,
+          data_type_identifier_in_input_types_rule.id
         )
       end
     end

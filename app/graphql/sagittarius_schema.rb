@@ -12,7 +12,12 @@ class SagittariusSchema < GraphQL::Schema
   # For batch-loading (see https://graphql-ruby.org/dataloader/overview.html)
   use GraphQL::Dataloader
 
-  use GraphQL::Schema::AlwaysVisible
+  use GraphQL::Schema::Visibility, profiles: {
+    execution: {},
+    types: {},
+    docs: {},
+    full: {},
+  }
 
   # rubocop:enable GraphQL/MaxComplexitySchema
   # rubocop:disable Lint/UselessMethodDefinition
