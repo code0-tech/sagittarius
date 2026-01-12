@@ -71,8 +71,8 @@ module Runtimes
         def update_settings(flow_type_settings, flow_type, t)
           flow_type.flow_type_settings = flow_type_settings.map do |setting|
             db_setting = FlowTypeSetting.find_or_initialize_by(flow_type: flow_type, identifier: setting.identifier)
-            db_setting.unique = setting.unique
-            db_setting.default_value = setting.default_value.to_ruby
+            db_setting.unique = setting.unique.to_s.downcase
+            db_setting.default_value = setting.default_value&.to_ruby
             db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
             db_setting.names = update_translations(setting.name, db_setting.names)
             db_setting.data_type = find_data_type(setting.data_type_identifier, t)

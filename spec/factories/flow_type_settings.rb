@@ -6,7 +6,7 @@ FactoryBot.define do
   factory :flow_type_setting do
     flow_type
     identifier { generate(:flow_type_setting_identifier) }
-    unique { false }
+    unique { :none }
     data_type
     default_value { '' }
   end

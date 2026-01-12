@@ -21,9 +21,21 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
           settings: [
             {
               identifier: 'some_setting_identifier',
-              unique: true,
+              unique: :PROJECT,
               data_type_identifier: create(:data_type, runtime: runtime).identifier,
               default_value: Tucana::Shared::Value.from_ruby({ 'value' => 'some default value' }),
+              name: [
+                { code: 'en_US', content: 'Some Setting' }
+              ],
+              description: [
+                { code: 'en_US', content: 'This is a setting' }
+              ],
+            },
+            {
+              identifier: 'without_default',
+              unique: :NONE,
+              data_type_identifier: create(:data_type, runtime: runtime).identifier,
+              default_value: nil,
               name: [
                 { code: 'en_US', content: 'Some Setting' }
               ],
@@ -80,10 +92,10 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
       expect(flow_type.return_type.identifier).to eq('some_return_type_identifier')
       expect(flow_type.version).to eq('0.0.0')
 
-      expect(flow_type.flow_type_settings.count).to eq(1)
+      expect(flow_type.flow_type_settings.count).to eq(2)
       setting = flow_type.flow_type_settings.first
       expect(setting.identifier).to eq('some_setting_identifier')
-      expect(setting.unique).to be true
+      expect(setting.unique).to eq('project')
       expect(setting.default_value).to eq('value' => 'some default value')
       expect(setting.names.count).to eq(1)
       expect(setting.names.first.code).to eq('en_US')
