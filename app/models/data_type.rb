@@ -49,8 +49,6 @@ class DataType < ApplicationRecord
   end
 
   def validate_parent
-    errors.add(:parent_type, :no_generic_key) if parent_type.generic_key.present?
-
     current_type = self
     until current_type.parent_type&.data_type.nil?
       current_type = current_type.parent_type&.data_type || current_type.parent_type&.generic_type&.data_type

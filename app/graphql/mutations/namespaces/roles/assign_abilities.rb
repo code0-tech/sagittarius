@@ -21,7 +21,7 @@ module Mutations
           ::Namespaces::Roles::AssignAbilitiesService.new(
             current_authentication,
             role,
-            abilities
+            abilities.map(&:to_sym)
           ).execute.to_mutation_response(success_key: :abilities)
         end
       end

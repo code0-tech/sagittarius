@@ -21,20 +21,21 @@ module Namespaces
 
         transactional do |t|
           current_abilities = role.abilities
-          old_abilities_for_audit_event = current_abilities.map(&:ability)
+          old_abilities_for_audit_event = current_abilities.map(&:ability).map(&:to_sym)
 
           check_admin_existing(t)
 
           current_abilities.where.not(ability: abilities).delete_all
 
-          (abilities - current_abilities.map(&:ability)).map do |ability|
+          (abilities - current_abilities.map(&:ability).map(&:to_sym)).map do |ability|
             organization_role_ability = NamespaceRoleAbility.create(namespace_role: role, ability: ability)
 
             next if organization_role_ability.persisted?
 
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to save namespace role ability',
-              payload: organization_role_ability.errors
+              error_code: :invalid_namespace_role,
+              details: organization_role_ability.errors
             )
           end
 
