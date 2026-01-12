@@ -135,7 +135,7 @@ GEM
       fugit (>= 1.11.0)
       railties (>= 6.1.0)
       thor (>= 1.0.0)
-    google-protobuf (4.33.2)
+    google-protobuf (4.33.4)
       bigdecimal
       rake (>= 13)
     googleapis-common-protos-types (1.22.0)
@@ -377,7 +377,7 @@ GEM
     thor (1.4.0)
     timeout (0.6.0)
     tsort (0.2.0)
-    tucana (0.0.49)
+    tucana (0.0.50)
       grpc (~> 1.64)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -431,7 +431,7 @@ DEPENDENCIES
   simplecov (~> 0.22.0)
   simplecov-cobertura (~> 3.0)
   test-prof (~> 1.0)
-  tucana (= 0.0.49)
+  tucana (= 0.0.50)
   tzinfo-data
 
 RUBY VERSION

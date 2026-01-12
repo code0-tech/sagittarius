@@ -205,11 +205,11 @@ CREATE TABLE flow_type_settings (
     id bigint NOT NULL,
     flow_type_id bigint NOT NULL,
     identifier text NOT NULL,
-    "unique" boolean DEFAULT false NOT NULL,
     data_type_id bigint NOT NULL,
     default_value jsonb,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    "unique" integer DEFAULT 0 NOT NULL
 );
 
 CREATE SEQUENCE flow_type_settings_id_seq
