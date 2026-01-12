@@ -25,9 +25,10 @@ module Sagittarius
         value = JSON.parse(value.to_s) if options[:parse_json] == true && !value.nil?
 
         if options[:detail_errors]
-          JSON::Validator.validate(schema, value).each do |error|
-            message = format_error_message(error)
-            record.errors.add(attribute, message)
+          begin
+            JSON::Validator.validate!(schema_path, value)
+          rescue JSON::Schema::ValidationError, JSON::Schema::SchemaError => e
+            record.errors.add(attribute, e.message)
           end
         else
           record.errors.add(attribute, error_message) unless valid_schema?(value)
