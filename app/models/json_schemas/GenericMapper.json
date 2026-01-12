@@ -3,13 +3,29 @@
   "$id": "https://example.com/schemas/GenericMapper.json",
   "title": "GenericMapper",
   "type": "object",
-  "required": ["source", "target"],
+  "required": [
+    "source",
+    "target",
+    "generic_combinations"
+  ],
   "properties": {
     "source": {
-      "$ref": "DataTypeIdentifier.json"
+      "type": "array",
+      "items": {
+        "$ref": "DataTypeIdentifier.json"
+      }
     },
     "target": {
       "type": "string"
+    },
+    "generic_combinations": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "AND",
+          "OR"
+        ]
+      }
     }
   }
 }

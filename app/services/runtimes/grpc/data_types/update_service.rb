@@ -46,16 +46,14 @@ module Runtimes
 
         def sort_data_types(data_types)
           # types without parent are already "in order" because they don't have a dependency
-          sorted_types = data_types.reject { |dt| parent?(dt) }
+          sorted_types = data_types.reject { |dt| contains_sortable_rule?(dt) }
           unsorted_types = data_types - sorted_types
 
           unsorted_types.size.times do
             # find the next datatype that doesn't have a dependency on an unsorted type
             next_datatype = unsorted_types.find do |to_sort|
               unsorted_types.none? do |to_search|
-                extract_data_type_identifier_strings(to_sort.rules.find do |rule|
-                  rule.variant == :parent_type
-                end.rule_config).include?(to_search.identifier)
+                find_sortable_data_type_identifiers(find_sortable_rules(to_sort)).include?(to_search.identifier)
               end
             end
             sorted_types << next_datatype
@@ -66,24 +64,49 @@ module Runtimes
           sorted_types + unsorted_types
         end
 
-        def extract_data_type_identifier_strings(parent_type_rule_config)
+        def find_sortable_data_type_identifiers(rules)
           types = []
-          data_type = parent_type_rule_config.parent_type
 
-          if data_type.generic_type.nil?
-            types << data_type.data_type_identifier
-          else
-            types << data_type.generic_type.data_type_identifier
-            data_type.generic_type.generic_mappers.to_a.each do |mapper|
-              mapper.source.each do |source_identifier|
-                types += extract_data_type_identifier_strings(
-                  Tucana::Shared::DefinitionDataTypeParentTypeRuleConfig.new(parent_type: source_identifier)
-                )
+          rules.each do |rule|
+            # noinspection RubyCaseWithoutElseBlockInspection
+            case rule.variant
+            when :contains_key, :contains_type, :return_type
+              extract_data_type_identifier_strings(rule.rule_config.data_type_identifier, types)
+            when :parent_type
+              extract_data_type_identifier_strings(rule.rule_config.parent_type, types)
+            when :input_types
+              rule.rule_config.input_types.each do |input_type|
+                extract_data_type_identifier_strings(input_type.data_type_identifier, types)
               end
             end
           end
 
           types
+        end
+
+        def extract_data_type_identifier_strings(data_type_identifier, collector)
+          data_type = data_type_identifier
+
+          if data_type.generic_type.nil?
+            collector << data_type.data_type_identifier
+          else
+            collector << data_type.generic_type.data_type_identifier
+            data_type.generic_type.generic_mappers.each do |mapper|
+              mapper.source.each do |source_identifier|
+                extract_data_type_identifier_strings(source_identifier, collector)
+              end
+            end
+          end
+        end
+
+        SORTABLE_RULES = %i[contains_key contains_type parent_type input_types return_type].freeze
+
+        def contains_sortable_rule?(data_type)
+          data_type.rules.any? { |rule| SORTABLE_RULES.include?(rule.variant) }
+        end
+
+        def find_sortable_rules(data_type)
+          data_type.rules.select { |rule| SORTABLE_RULES.include?(rule.variant) }
         end
 
         def parent?(data_type)
