@@ -165,6 +165,13 @@ RSpec.describe DataTypeIdentifiersFinder do
         end
       end
 
+      let!(:data_type_identifier_as_parent_type) do
+        create(:data_type_identifier, data_type: data_type3, runtime: runtime).tap do |dti|
+          data_type1.parent_type = dti
+          data_type1.save!
+        end
+      end
+
       let!(:data_type_identifier_in_generic_mapper_source) do
         create(:data_type_identifier, data_type: data_type1, runtime: runtime)
       end
@@ -204,7 +211,8 @@ RSpec.describe DataTypeIdentifiersFinder do
           data_type_identifier_with_generic_mapper.id,
           data_type_identifier_in_generic_mapper_source.id,
           data_type_identifier_in_contains_type_rule.id,
-          data_type_identifier_in_input_types_rule.id
+          data_type_identifier_in_input_types_rule.id,
+          data_type_identifier_as_parent_type.id
         )
       end
 
@@ -273,7 +281,8 @@ RSpec.describe DataTypeIdentifiersFinder do
           second_data_type_identifier_in_generic_mapper_source.id,
           data_type_identifier_in_generic_mapper_source.id,
           data_type_identifier_in_contains_type_rule.id,
-          data_type_identifier_in_input_types_rule.id
+          data_type_identifier_in_input_types_rule.id,
+          data_type_identifier_as_parent_type.id
         )
       end
     end
