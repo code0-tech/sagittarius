@@ -65,6 +65,8 @@ module Runtimes
                                                            db_object.display_messages)
           db_object.aliases = update_translations(runtime_function_definition.alias, db_object.aliases)
 
+          db_object.generic_keys = runtime_function_definition.generic_keys.to_a
+
           db_object.throws_error = runtime_function_definition.throws_error
           db_object.version = runtime_function_definition.version
 
