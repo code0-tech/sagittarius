@@ -8,7 +8,10 @@ module Types
 
     field :identifier, String, null: false, description: 'Identifier of the parameter'
 
-    field :data_type_identifier, Types::DataTypeIdentifierType, null: true, description: 'Data type of the parameter'
+    field :data_type_identifier, Types::DataTypeIdentifierType,
+          null: true,
+          description: 'Data type of the parameter',
+          method: :data_type
 
     field :descriptions, [Types::TranslationType], null: true, description: 'Description of the parameter'
     field :names, [Types::TranslationType], null: true, description: 'Name of the parameter'
@@ -19,5 +22,9 @@ module Types
 
     id_field ParameterDefinition
     timestamps
+
+    def identifier
+      object.runtime_parameter_definition&.runtime_name
+    end
   end
 end

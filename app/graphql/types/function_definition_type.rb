@@ -46,6 +46,10 @@ module Types
       object.runtime_function_definition&.runtime_name
     end
 
+    def generic_keys
+      object.runtime_function_definition&.generic_keys
+    end
+
     def data_type_identifiers
       DataTypeIdentifiersFinder.new({ function_definition: object, expand_recursively: true }).execute
     end
