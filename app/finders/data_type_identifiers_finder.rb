@@ -107,10 +107,11 @@ class DataTypeIdentifiersFinder < ApplicationFinder
   end
 
   def data_type_identifier_by_data_type_condition
+    dt = DataType.arel_table
     dti = DataTypeIdentifier.arel_table
     dtr = DataTypeRule.arel_table
 
-    config_id_condition = dti[:id].eq(
+    basic_rule_condition = dti[:id].eq(
       Arel::Nodes::NamedFunction.new(
         'CAST',
         [
@@ -122,7 +123,7 @@ class DataTypeIdentifiersFinder < ApplicationFinder
       )
     )
 
-    array_condition = Arel::Nodes::NamedFunction.new(
+    input_types_any_condition = Arel::Nodes::NamedFunction.new(
       'ANY',
       [
         Arel::Nodes::NamedFunction.new(
@@ -140,10 +141,12 @@ class DataTypeIdentifiersFinder < ApplicationFinder
       ]
     )
 
-    array_id_condition = dti[:id].eq(array_condition)
+    input_types_rule_condition = dti[:id].eq(input_types_any_condition)
+
+    parent_type_condition = dt[:parent_type_id].eq(dti[:id])
 
     Arel::Nodes::Grouping.new(
-      config_id_condition.or(array_id_condition)
+      basic_rule_condition.or(input_types_rule_condition).or(parent_type_condition)
     )
   end
 end
