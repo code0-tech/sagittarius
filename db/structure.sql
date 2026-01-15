@@ -571,11 +571,11 @@ ALTER SEQUENCE namespaces_id_seq OWNED BY namespaces.id;
 
 CREATE TABLE node_functions (
     id bigint NOT NULL,
-    runtime_function_id bigint NOT NULL,
     next_node_id bigint,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    flow_id bigint NOT NULL
+    flow_id bigint NOT NULL,
+    function_definition_id bigint NOT NULL
 );
 
 CREATE SEQUENCE node_functions_id_seq
@@ -589,13 +589,13 @@ ALTER SEQUENCE node_functions_id_seq OWNED BY node_functions.id;
 
 CREATE TABLE node_parameters (
     id bigint NOT NULL,
-    runtime_parameter_id bigint NOT NULL,
     node_function_id bigint NOT NULL,
     literal_value jsonb,
     reference_value_id bigint,
     function_value_id bigint,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
+    parameter_definition_id bigint NOT NULL,
     CONSTRAINT check_fdac0ea550 CHECK ((num_nonnulls(literal_value, reference_value_id, function_value_id) = 1))
 );
 
@@ -1187,17 +1187,17 @@ CREATE UNIQUE INDEX index_namespaces_on_parent_id_and_parent_type ON namespaces 
 
 CREATE INDEX index_node_functions_on_flow_id ON node_functions USING btree (flow_id);
 
-CREATE INDEX index_node_functions_on_next_node_id ON node_functions USING btree (next_node_id);
+CREATE INDEX index_node_functions_on_function_definition_id ON node_functions USING btree (function_definition_id);
 
-CREATE INDEX index_node_functions_on_runtime_function_id ON node_functions USING btree (runtime_function_id);
+CREATE INDEX index_node_functions_on_next_node_id ON node_functions USING btree (next_node_id);
 
 CREATE INDEX index_node_parameters_on_function_value_id ON node_parameters USING btree (function_value_id);
 
 CREATE INDEX index_node_parameters_on_node_function_id ON node_parameters USING btree (node_function_id);
 
-CREATE INDEX index_node_parameters_on_reference_value_id ON node_parameters USING btree (reference_value_id);
+CREATE INDEX index_node_parameters_on_parameter_definition_id ON node_parameters USING btree (parameter_definition_id);
 
-CREATE INDEX index_node_parameters_on_runtime_parameter_id ON node_parameters USING btree (runtime_parameter_id);
+CREATE INDEX index_node_parameters_on_reference_value_id ON node_parameters USING btree (reference_value_id);
 
 CREATE UNIQUE INDEX "index_organizations_on_LOWER_name" ON organizations USING btree (lower(name));
 
@@ -1251,9 +1251,6 @@ ALTER TABLE ONLY function_definitions
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_0d79310cfa FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY node_parameters
-    ADD CONSTRAINT fk_rails_0ff4fd0049 FOREIGN KEY (runtime_parameter_id) REFERENCES runtime_parameter_definitions(id) ON DELETE CASCADE;
-
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT fk_rails_118c914ed0 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
@@ -1272,6 +1269,9 @@ ALTER TABLE ONLY runtime_parameter_definitions
 ALTER TABLE ONLY generic_types
     ADD CONSTRAINT fk_rails_275446d9e6 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY node_parameters
+    ADD CONSTRAINT fk_rails_2ed7c53167 FOREIGN KEY (parameter_definition_id) REFERENCES parameter_definitions(id) ON DELETE RESTRICT;
+
 ALTER TABLE ONLY namespace_licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
@@ -1289,6 +1289,9 @@ ALTER TABLE ONLY function_definitions
 
 ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT fk_rails_5161ff47e6 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY node_functions
+    ADD CONSTRAINT fk_rails_53cf3476d6 FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY backup_codes
     ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
@@ -1340,9 +1343,6 @@ ALTER TABLE ONLY flows
 
 ALTER TABLE ONLY node_functions
     ADD CONSTRAINT fk_rails_8615bd0635 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY node_functions
-    ADD CONSTRAINT fk_rails_8953e1d86a FOREIGN KEY (runtime_function_id) REFERENCES runtime_function_definitions(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY reference_values
     ADD CONSTRAINT fk_rails_8b9d8f68cc FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE RESTRICT;

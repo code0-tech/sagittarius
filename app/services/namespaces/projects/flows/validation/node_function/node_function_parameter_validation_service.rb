@@ -31,7 +31,8 @@ module Namespaces
                   location: parameter
                 )
               end
-              if parameter.runtime_parameter.runtime_function_definition.runtime != flow.project.primary_runtime
+              runtime_parameter_definition = parameter.parameter_definition.runtime_parameter_definition
+              if runtime_parameter_definition.runtime_function_definition.runtime != flow.project.primary_runtime
                 errors << ValidationResult.error(
                   :node_parameter_runtime_mismatch,
                   location: parameter

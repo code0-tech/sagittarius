@@ -4,7 +4,6 @@ module Types
   class NodeFunctionIdWrapperType < Types::BaseObject
     description 'Represents a Node Function id wrapper.'
 
-    authorize :read_flow
     id_field NodeFunction
   end
 end

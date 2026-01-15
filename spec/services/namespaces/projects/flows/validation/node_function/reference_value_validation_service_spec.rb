@@ -13,33 +13,65 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::ReferenceV
   let(:flow) { create(:flow, project: namespace_project, starting_node: first_node) }
 
   let(:first_node) do
-    create(:node_function,
-           runtime_function: create(:runtime_function_definition, runtime: runtime),
-           node_parameters: [
-             create(:node_parameter,
-                    runtime_parameter: create(:runtime_parameter_definition, data_type: data_type_identifier),
-                    literal_value: nil,
-                    function_value: create(:node_function))
-           ],
-           next_node: second_node)
+    create(
+      :node_function,
+      function_definition: create(
+        :function_definition,
+        runtime_function_definition: create(:runtime_function_definition, runtime: runtime)
+      ),
+      node_parameters: [
+        create(
+          :node_parameter,
+          parameter_definition: create(
+            :parameter_definition,
+            data_type: data_type_identifier
+          ),
+          literal_value: nil,
+          function_value: create(:node_function)
+        )
+      ],
+      next_node: second_node
+    )
   end
   let(:second_node) do
-    create(:node_function,
-           runtime_function: create(:runtime_function_definition, runtime: runtime),
-           node_parameters: [
-             create(:node_parameter,
-                    runtime_parameter: create(:runtime_parameter_definition, data_type: data_type_identifier),
-                    literal_value: nil,
-                    function_value: create(:node_function, node_parameters: [
-                                             create(:node_parameter,
-                                                    runtime_parameter: create(:runtime_parameter_definition,
-                                                                              data_type: data_type_identifier))
-                                           ])),
-             create(:node_parameter,
-                    runtime_parameter: create(:runtime_parameter_definition, data_type: data_type_identifier),
-                    literal_value: nil,
-                    function_value: create(:node_function))
-           ])
+    create(
+      :node_function,
+      function_definition: create(
+        :function_definition,
+        runtime_function_definition: create(:runtime_function_definition, runtime: runtime)
+      ),
+      node_parameters: [
+        create(
+          :node_parameter,
+          parameter_definition: create(
+            :parameter_definition,
+            data_type: data_type_identifier
+          ),
+          literal_value: nil,
+          function_value: create(
+            :node_function,
+            node_parameters: [
+              create(
+                :node_parameter,
+                parameter_definition: create(
+                  :parameter_definition,
+                  data_type: data_type_identifier
+                )
+              )
+            ]
+          )
+        ),
+        create(
+          :node_parameter,
+          parameter_definition: create(
+            :parameter_definition,
+            data_type: data_type_identifier
+          ),
+          literal_value: nil,
+          function_value: create(:node_function)
+        )
+      ]
+    )
   end
   let(:data_type_identifier) do
     create(:data_type_identifier, data_type: create(:data_type, runtime: runtime), runtime: runtime)

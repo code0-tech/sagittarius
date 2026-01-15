@@ -6,6 +6,8 @@ class ParameterDefinition < ApplicationRecord
 
   belongs_to :function_definition, inverse_of: :parameter_definitions
 
+  has_many :node_parameters, inverse_of: :parameter_definition
+
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :documentations, -> { by_purpose(:documentation) }, class_name: 'Translation', as: :owner, inverse_of: :owner

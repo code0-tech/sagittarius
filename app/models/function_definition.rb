@@ -4,6 +4,7 @@ class FunctionDefinition < ApplicationRecord
   belongs_to :runtime_function_definition
   belongs_to :return_type, class_name: 'DataTypeIdentifier', optional: true
 
+  has_many :node_functions, inverse_of: :function_definition
   has_many :parameter_definitions, inverse_of: :function_definition
 
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner

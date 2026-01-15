@@ -2,8 +2,11 @@
 
 FactoryBot.define do
   factory :parameter_definition do
-    runtime_parameter_definition
-    data_type
+    data_type factory: :data_type_identifier
+
+    runtime_parameter_definition do
+      association :runtime_parameter_definition, data_type: data_type
+    end
 
     function_definition do
       association :function_definition,

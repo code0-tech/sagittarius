@@ -47,7 +47,8 @@ module Namespaces
               end
 
               if data_type_identifier.generic_key.present?
-                unless node.runtime_function.generic_keys.include?(data_type_identifier.generic_key)
+                runtime_function_definition = node.function_definition.runtime_function_definition
+                unless runtime_function_definition.generic_keys.include?(data_type_identifier.generic_key)
                   errors << ValidationResult.error(
                     :data_type_identifier_generic_key_not_found,
                     location: data_type_identifier

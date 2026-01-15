@@ -41,11 +41,11 @@ RSpec.describe Flow do
         :node_function,
         flow: flow,
         node_parameters: [
-          build(
+          create(
             :node_parameter,
-            runtime_parameter: build(
-              :runtime_parameter_definition,
-              data_type: build(
+            parameter_definition: create(
+              :parameter_definition,
+              data_type: create(
                 :data_type_identifier,
                 generic_key: 'T'
               )
@@ -60,6 +60,9 @@ RSpec.describe Flow do
     it 'matches the model' do
       grpc_object = flow.to_grpc
 
+      starting_node = flow.starting_node
+      parameter_definition = starting_node.node_parameters.first.parameter_definition
+
       expect(grpc_object.to_h).to eq(
         {
           flow_id: flow.id,
@@ -68,23 +71,22 @@ RSpec.describe Flow do
           type: flow.flow_type.identifier,
           node_functions: [
             {
-              database_id: flow.starting_node.id,
-              runtime_function_id: flow.starting_node.runtime_function.runtime_name,
+              database_id: starting_node.id,
+              runtime_function_id: starting_node.function_definition.runtime_function_definition.runtime_name,
               parameters: [
                 {
-                  database_id: flow.starting_node.node_parameters.first.id,
-                  runtime_parameter_id:
-                    flow.starting_node.node_parameters.first.runtime_parameter.runtime_name,
+                  database_id: starting_node.node_parameters.first.id,
+                  runtime_parameter_id: parameter_definition.runtime_parameter_definition.runtime_name,
                   value: {
                     literal_value: {
-                      string_value: flow.starting_node.node_parameters.first.literal_value,
+                      string_value: starting_node.node_parameters.first.literal_value,
                     },
                   },
                 }
               ],
             }
           ],
-          starting_node_id: flow.starting_node.id,
+          starting_node_id: starting_node.id,
           settings: [
             database_id: flow.flow_settings.first.id,
             flow_setting_id: flow.flow_settings.first.flow_setting_id,

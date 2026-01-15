@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class NodeParameter < ApplicationRecord
-  belongs_to :runtime_parameter, class_name: 'RuntimeParameterDefinition'
-  belongs_to :reference_value, optional: true
+  belongs_to :parameter_definition, inverse_of: :node_parameters
+  belongs_to :reference_value, optional: true, autosave: true
   belongs_to :function_value, class_name: 'NodeFunction', optional: true, inverse_of: :node_parameter_values
   belongs_to :node_function, class_name: 'NodeFunction', inverse_of: :node_parameters
 
@@ -11,7 +11,7 @@ class NodeParameter < ApplicationRecord
   def to_grpc
     param = Tucana::Shared::NodeParameter.new(
       database_id: id,
-      runtime_parameter_id: runtime_parameter.runtime_name
+      runtime_parameter_id: parameter_definition.runtime_parameter_definition.runtime_name
     )
 
     param.value = Tucana::Shared::NodeValue.new(literal_value: Tucana::Shared::Value.from_ruby({}))

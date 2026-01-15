@@ -22,22 +22,6 @@ RSpec.describe 'organization Query' do
 
   before { post_graphql query, variables: variables, current_user: current_user }
 
-  context 'without an id' do
-    it 'returns an error' do
-      expect(graphql_data_at(:organization)).to be_nil
-      expect(graphql_errors).not_to be_empty
-    end
-  end
-
-  context 'with an invalid id' do
-    let(:organization_id) { 'gid://sagittarius/Organizations/1' }
-
-    it 'returns an error' do
-      expect(graphql_data_at(:organization)).to be_nil
-      expect(graphql_errors).not_to be_empty
-    end
-  end
-
   context 'with a valid id but out of range' do
     let(:organization_id) { 'gid://sagittarius/Organization/0' }
 

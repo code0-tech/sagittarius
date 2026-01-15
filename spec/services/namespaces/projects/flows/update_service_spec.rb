@@ -10,7 +10,16 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
   let(:runtime) { create(:runtime) }
   let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
   let(:starting_node) do
-    create(:node_function, runtime_function: create(:runtime_function_definition, runtime: runtime))
+    create(
+      :node_function,
+      function_definition: create(
+        :function_definition,
+        runtime_function_definition: create(
+          :runtime_function_definition,
+          runtime: runtime
+        )
+      )
+    )
   end
   let(:flow) { create(:flow, project: namespace_project, flow_type: create(:flow_type, runtime: runtime)) }
   let(:flow_input) do
@@ -18,9 +27,9 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
       [],
       starting_node.to_global_id,
       [
-        Struct.new(:id, :runtime_function_id, :next_node_id, :parameters).new(
+        Struct.new(:id, :function_definition_id, :next_node_id, :parameters).new(
           starting_node.to_global_id,
-          starting_node.runtime_function.to_global_id,
+          starting_node.function_definition.to_global_id,
           nil,
           []
         )

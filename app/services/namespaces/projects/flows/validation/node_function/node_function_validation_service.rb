@@ -30,14 +30,14 @@ module Namespaces
                   location: node_function
                 )
               end
-              if node_function.runtime_function.runtime != flow.project.primary_runtime
+              if node_function.function_definition.runtime_function_definition.runtime != flow.project.primary_runtime
                 errors << ValidationResult.error(
                   :node_function_runtime_mismatch,
                   location: node_function
                 )
               end
 
-              node_function.runtime_function.tap do |runtime_function|
+              node_function.function_definition.runtime_function_definition.tap do |runtime_function|
                 logger
                   .debug("Validating runtime function: #{runtime_function.id} for node function: #{node_function.id}")
                 if runtime_function.runtime != flow.project.primary_runtime
@@ -50,8 +50,9 @@ module Namespaces
 
               node_function.node_parameters.each do |parameter|
                 logger.debug("Validating node parameter: #{parameter.id} for function: #{node_function.id}")
+                parameter_function_definition = parameter.parameter_definition.function_definition
 
-                if parameter.runtime_parameter.runtime_function_definition != node_function.runtime_function
+                if parameter_function_definition != node_function.function_definition
                   logger.debug(message: 'Node parameter does not match its function',
                                node_function: node_function.id,
                                runtime_parameter: parameter.runtime_parameter.id,
