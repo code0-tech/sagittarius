@@ -8,8 +8,8 @@ module Types
       argument :id, Types::GlobalIdType[::NodeFunction],
                required: true, description: 'The identifier of the Node Function used to create/update the flow'
 
-      argument :runtime_function_id, Types::GlobalIdType[::RuntimeFunctionDefinition],
-               required: true, description: 'The identifier of the Runtime Function Definition'
+      argument :function_definition_id, Types::GlobalIdType[::FunctionDefinition],
+               required: true, description: 'The identifier of the Function Definition'
 
       argument :next_node_id, Types::GlobalIdType[::NodeFunction], required: false,
                                                                    description: 'The next Node Function in the flow'

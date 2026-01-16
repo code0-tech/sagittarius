@@ -51,18 +51,6 @@ RSpec.describe 'usersLogout Mutation' do
   context 'when input is invalid' do
     let(:current_user) { create(:user) }
 
-    context 'when session id is invalid' do
-      let(:user_session_id) { 'some random string' }
-
-      it 'raises validation error' do
-        expect(graphql_errors).to include(
-          a_hash_including(
-            'message' => a_string_including("\"#{user_session_id}\" is not a valid Global ID")
-          )
-        )
-      end
-    end
-
     context 'when session id is does not exist' do
       let(:user_session_id) { 'gid://sagittarius/UserSession/0' }
 

@@ -35,6 +35,9 @@ module GraphqlHelpers
     expect(graphql_errors).not_to include(
       a_hash_including('message' => a_string_including("isn't a defined input type"))
     )
+    expect(graphql_errors).not_to include(
+      a_hash_including('message' => a_string_including('was provided invalid value'))
+    )
     expect(graphql_errors).not_to include(a_hash_including('backtrace'))
   end
 
@@ -57,7 +60,7 @@ module GraphqlHelpers
       if acc.is_a?(Array) && cur.is_a?(Integer)
         acc[cur]
       elsif acc.is_a?(Array)
-        acc.compact.pluck(cur)
+        acc.flatten.compact.pluck(cur)
       else
         acc&.dig(cur)
       end

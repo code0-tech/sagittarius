@@ -6,8 +6,8 @@ module Types
 
     authorize :read_flow
 
-    field :runtime_parameter, Types::RuntimeParameterDefinitionType, null: false,
-                                                                     description: 'The definition of the parameter'
+    field :parameter_definition, Types::ParameterDefinitionType, null: false,
+                                                                 description: 'The definition of the parameter'
     field :value, Types::NodeParameterValueType, null: true, description: 'The value of the parameter'
 
     def value

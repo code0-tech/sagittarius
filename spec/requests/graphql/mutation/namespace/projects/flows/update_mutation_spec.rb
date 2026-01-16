@@ -23,6 +23,27 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                   count
                   nodes {
                     id
+                    value {
+                      __typename
+                      ...on LiteralValue {
+                        value
+                      }
+                      ...on ReferenceValue {
+                        createdAt
+                        dataTypeIdentifier { id }
+                        depth
+                        id
+                        node
+                        nodeFunctionId
+                        referencePath {
+                          arrayIndex
+                          id
+                          path
+                        }
+                        scope
+                        updatedAt
+                      }
+                    }
                   }
                 }
               }
@@ -44,15 +65,25 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
   let(:project) { create(:namespace_project, primary_runtime: runtime) }
   let(:flow_type) { create(:flow_type, runtime: runtime) }
   let(:flow) { create(:flow, project: project, flow_type: flow_type) }
-  let(:runtime_function) do
-    create(:runtime_function_definition, runtime: runtime,
-                                         parameters: [
+  let(:function_definition) do
+    rfd = create(:runtime_function_definition, runtime: runtime)
+    rpd = create(
+      :runtime_parameter_definition,
+      runtime_function_definition: rfd,
+      data_type: create(
+        :data_type_identifier,
+        data_type: create(:data_type)
+      )
+    )
 
-                                           create(:runtime_parameter_definition,
-                                                  data_type: create(:data_type_identifier,
-                                                                    data_type: create(:data_type)))
-
-                                         ])
+    create(:function_definition, runtime_function_definition: rfd).tap do |fd|
+      create(
+        :parameter_definition,
+        runtime_parameter_definition: rpd,
+        function_definition: fd,
+        data_type: rpd.data_type
+      )
+    end
   end
 
   let(:input) do
@@ -69,22 +100,24 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
           },
         },
         nodes: [
-          { id: 'gid://sagittarius/NodeFunction/2000',
-            runtimeFunctionId: runtime_function.to_global_id.to_s,
+          {
+            id: 'gid://sagittarius/NodeFunction/2000',
+            functionDefinitionId: function_definition.to_global_id.to_s,
             nextNodeId: nil,
             parameters: [
               {
-                runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
+                parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
                 value: {
-                  literalValue: [],
+                  literalValue: 100,
                 },
               }
-            ] },
+            ],
+          },
           {
             id: 'gid://sagittarius/NodeFunction/1000',
-            runtimeFunctionId: runtime_function.to_global_id.to_s,
+            functionDefinitionId: function_definition.to_global_id.to_s,
             parameters: [
-              runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
+              parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
               value: {
                 nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
               }
@@ -93,15 +126,20 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
           },
           {
             id: 'gid://sagittarius/NodeFunction/1001',
-            runtimeFunctionId: runtime_function.to_global_id.to_s,
+            functionDefinitionId: function_definition.to_global_id.to_s,
             parameters: [
-              runtimeParameterDefinitionId: runtime_function.parameters.first.to_global_id.to_s,
+              parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
               value: {
                 referenceValue: {
                   depth: 1,
                   node: 1,
                   scope: [],
-                  referencePath: [],
+                  referencePath: [
+                    {
+                      arrayIndex: 0,
+                      path: 'some.path',
+                    }
+                  ],
                   nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
                   dataTypeIdentifier: {
                     genericKey: 'K',
@@ -143,6 +181,20 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       expect(project.flows).to include(flow)
       expect(flow.node_functions.count).to eq(3)
 
+      parameter_values = graphql_data_at(
+        :namespaces_projects_flows_update,
+        :flow,
+        :nodes,
+        :nodes,
+        :parameters,
+        :nodes,
+        :value
+      )
+      expect(parameter_values).to include(a_hash_including('value' => 100))
+      expect(parameter_values).to include(
+        a_hash_including('referencePath' => [a_hash_including('arrayIndex' => 0, 'path' => 'some.path')])
+      )
+
       is_expected.to create_audit_event(
         :flow_updated,
         author_id: current_user.id,
@@ -165,8 +217,8 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
     let(:flow) do
       create(:flow, project: project, flow_type: flow_type).tap do |f|
-        node1 = create(:node_function, flow: f, runtime_function: runtime_function)
-        node2 = create(:node_function, flow: f, runtime_function: runtime_function)
+        node1 = create(:node_function, flow: f, function_definition: function_definition)
+        node2 = create(:node_function, flow: f, function_definition: function_definition)
         f.starting_node = node1
         node1.next_node = node2
         node1.save!
@@ -185,7 +237,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
           nodes: [
             {
               id: flow.starting_node.to_global_id.to_s,
-              runtimeFunctionId: flow.starting_node.runtime_function.to_global_id.to_s,
+              functionDefinitionId: flow.starting_node.function_definition.to_global_id.to_s,
               nextNodeId: nil,
               parameters: [],
             }

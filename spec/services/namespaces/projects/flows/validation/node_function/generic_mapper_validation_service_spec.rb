@@ -13,24 +13,39 @@ Rspec.describe Namespaces::Projects::Flows::Validation::NodeFunction::GenericMap
   let(:flow) { create(:flow, project: namespace_project, starting_node: node) }
 
   let(:parameter) do
-    create(:node_parameter,
-           runtime_parameter:
-             create(:runtime_parameter_definition,
-                    data_type: create(:data_type_identifier,
-                                      generic_type: create(:generic_type,
-                                                           data_type: create(:data_type),
-                                                           generic_mappers: [generic_mapper]))),
-           literal_value: nil,
-           function_value: create(:node_function))
+    data_type_identifier = create(
+      :data_type_identifier,
+      generic_type: create(
+        :generic_type,
+        data_type: create(:data_type),
+        generic_mappers: [generic_mapper]
+      )
+    )
+    create(
+      :node_parameter,
+      parameter_definition: create(
+        :parameter_definition,
+        data_type: data_type_identifier
+      ),
+      literal_value: nil,
+      function_value: create(:node_function)
+    )
   end
   let(:node) do
-    create(:node_function,
-           runtime_function: create(:runtime_function_definition,
-                                    generic_keys: ['T'],
-                                    runtime: runtime),
-           node_parameters: [
-             parameter
-           ])
+    create(
+      :node_function,
+      function_definition: create(
+        :function_definition,
+        runtime_function_definition: create(
+          :runtime_function_definition,
+          generic_keys: ['T'],
+          runtime: runtime
+        )
+      ),
+      node_parameters: [
+        parameter
+      ]
+    )
   end
   let(:data_type_identifier) do
     create(:data_type_identifier, generic_key: 'T', runtime: runtime)

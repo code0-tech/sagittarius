@@ -90,7 +90,11 @@ module Namespaces
           updated_nodes.each do |node|
             update_node_parameters(t, node[:node], node[:input], updated_nodes)
             update_next_node(t, node[:node], node[:input], updated_nodes)
+          end
 
+          # rubocop:disable Style/CombinableLoops -- this loop has to be separate
+          # A node can be invalid during the loop, but be valid again after all nodes have been processed
+          updated_nodes.each do |node|
             next if node[:node].save
 
             t.rollback_and_return! ServiceResponse.error(
@@ -99,6 +103,7 @@ module Namespaces
               details: node[:node].errors
             )
           end
+          # rubocop:enable Style/CombinableLoops
 
           update_starting_node(t, updated_nodes)
 
@@ -133,17 +138,17 @@ module Namespaces
         end
 
         def update_node(t, current_node, current_node_input)
-          runtime_function_definition = flow.project.primary_runtime.runtime_function_definitions.find_by(
-            id: current_node_input.runtime_function_id.model_id
+          function_definition = flow.project.primary_runtime.function_definitions.find_by(
+            id: current_node_input.function_definition_id.model_id
           )
-          if runtime_function_definition.nil?
+          if function_definition.nil?
             t.rollback_and_return! ServiceResponse.error(
-              message: 'Invalid runtime function id',
-              error_code: :invalid_runtime_function_id
+              message: 'Invalid function id',
+              error_code: :invalid_function_id
             )
           end
 
-          current_node.runtime_function = runtime_function_definition
+          current_node.function_definition = function_definition
         end
 
         def update_next_node(t, current_node, current_node_input, all_nodes)
@@ -164,17 +169,17 @@ module Namespaces
           current_node_input.parameters.each_with_index do |parameter, index|
             db_parameters[index] ||= current_node.node_parameters.build
 
-            runtime_parameter = current_node.runtime_function.parameters.find_by(
-              id: parameter.runtime_parameter_definition_id.model_id
+            parameter_definition = current_node.function_definition.parameter_definitions.find_by(
+              id: parameter.parameter_definition_id.model_id
             )
-            if runtime_parameter.nil?
+            if parameter_definition.nil?
               t.rollback_and_return! ServiceResponse.error(
-                message: 'Invalid runtime parameter id',
-                error_code: :invalid_runtime_parameter_id
+                message: 'Invalid parameter id',
+                error_code: :invalid_parameter_id
               )
             end
 
-            db_parameters[index].runtime_parameter = runtime_parameter
+            db_parameters[index].parameter_definition = parameter_definition
 
             db_parameters[index].literal_value = parameter.value.literal_value
 

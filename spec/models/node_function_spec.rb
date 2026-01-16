@@ -6,7 +6,7 @@ RSpec.describe NodeFunction do
   subject { create(:node_function) }
 
   describe 'associations' do
-    it { is_expected.to belong_to(:runtime_function).class_name('RuntimeFunctionDefinition') }
+    it { is_expected.to belong_to(:function_definition).class_name('FunctionDefinition') }
     it { is_expected.to belong_to(:next_node).class_name('NodeFunction').optional }
     it { is_expected.to belong_to(:flow).class_name('Flow') }
 

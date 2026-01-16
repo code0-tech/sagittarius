@@ -17,9 +17,15 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
       create(:flow_type, runtime: runtime).to_global_id,
       'gid://sagittarius/NodeFunction/12345',
       [
-        Struct.new(:id, :runtime_function_id, :next_node_id, :parameters).new(
+        Struct.new(:id, :function_definition_id, :next_node_id, :parameters).new(
           'gid://sagittarius/NodeFunction/12345',
-          create(:runtime_function_definition, runtime: runtime).to_global_id,
+          create(
+            :function_definition,
+            runtime_function_definition: create(
+              :runtime_function_definition,
+              runtime: runtime
+            )
+          ).to_global_id,
           nil,
           []
         )
@@ -52,9 +58,15 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
         create(:flow_type, runtime: runtime).to_global_id,
         nil,
         [
-          Struct.new(:id, :runtime_function_id, :next_node_id, :parameters).new(
+          Struct.new(:id, :function_definition_id, :next_node_id, :parameters).new(
             'gid://sagittarius/NodeFunction/12345',
-            create(:runtime_function_definition, runtime: runtime).to_global_id,
+            create(
+              :function_definition,
+              runtime_function_definition: create(
+                :runtime_function_definition,
+                runtime: runtime
+              )
+            ).to_global_id,
             nil,
             []
           )

@@ -25,7 +25,8 @@ module Namespaces
               target = generic_mapper.target
 
               # Validate the target the identifier gets validated later
-              unless parameter.node_function.runtime_function.generic_keys.include?(target)
+              runtime_function_definition = parameter.node_function.function_definition.runtime_function_definition
+              unless runtime_function_definition.generic_keys.include?(target)
                 errors << ValidationResult.error(
                   :generic_key_not_found,
                   location: generic_mapper

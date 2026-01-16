@@ -11,13 +11,28 @@ RSpec.describe Namespaces::Projects::Flows::Validation::DataType::DataTypeIdenti
   let(:runtime) { create(:runtime) }
   let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
   let(:node) do
-    create(:node_function,
-           runtime_function: create(:runtime_function_definition, generic_keys: ['T'], runtime: runtime))
+    create(
+      :node_function,
+      function_definition: create(
+        :function_definition,
+        runtime_function_definition: create(
+          :runtime_function_definition,
+          generic_keys: ['T'],
+          runtime: runtime
+        )
+      )
+    )
   end
   let(:parameter) do
     create(
       :node_parameter,
-      runtime_parameter: create(:runtime_parameter_definition, data_type: data_type_identifier),
+      parameter_definition: create(
+        :parameter_definition,
+        runtime_parameter_definition: create(
+          :runtime_parameter_definition,
+          data_type: data_type_identifier
+        )
+      ),
       node_function: node
     )
   end
@@ -51,8 +66,17 @@ RSpec.describe Namespaces::Projects::Flows::Validation::DataType::DataTypeIdenti
 
   context 'when T is contained in the function definition' do
     let(:node) do
-      create(:node_function,
-             runtime_function: create(:runtime_function_definition, generic_keys: ['T'], runtime: runtime))
+      create(
+        :node_function,
+        function_definition: create(
+          :function_definition,
+          runtime_function_definition: create(
+            :runtime_function_definition,
+            generic_keys: ['T'],
+            runtime: runtime
+          )
+        )
+      )
     end
 
     it { expect(service_response).to be_empty }
@@ -60,8 +84,17 @@ RSpec.describe Namespaces::Projects::Flows::Validation::DataType::DataTypeIdenti
 
   context 'when T is not contained in the function definition' do
     let(:node) do
-      create(:node_function,
-             runtime_function: create(:runtime_function_definition, generic_keys: [], runtime: runtime))
+      create(
+        :node_function,
+        function_definition: create(
+          :function_definition,
+          runtime_function_definition: create(
+            :runtime_function_definition,
+            generic_keys: [],
+            runtime: runtime
+          )
+        )
+      )
     end
 
     it { expect(service_response).to include(have_attributes(error_code: :data_type_identifier_generic_key_not_found)) }
