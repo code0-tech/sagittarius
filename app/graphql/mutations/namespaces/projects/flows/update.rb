@@ -14,7 +14,7 @@ module Mutations
 
           argument :flow_input, Types::Input::FlowInputType, description: 'The updated flow', required: true
 
-          def resolve(flow_id:, flow_input:, **_params)
+          def resolve(flow_id:, flow_input:)
             flow = SagittariusSchema.object_from_id(flow_id)
 
             return { errors: [create_error(:flow_not_found, 'Flow does not exist')] } if flow.nil?

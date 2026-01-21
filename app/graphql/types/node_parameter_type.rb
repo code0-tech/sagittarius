@@ -11,12 +11,12 @@ module Types
     field :value, Types::NodeParameterValueType, null: true, description: 'The value of the parameter'
 
     def value
-      if object.literal_value.present?
-        object.literal_value
-      elsif object.reference_value.present?
+      if object.reference_value.present?
         object.reference_value
       elsif object.function_value_id.present?
         object.function_value
+      else
+        object.literal_value
       end
     end
 

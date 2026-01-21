@@ -28,8 +28,8 @@ RSpec.describe NodeParameter do
     it 'validates only one of the value fields is present' do
       param = build(
         :node_parameter,
-        literal_value: nil,
-        reference_value: nil,
+        literal_value: 1,
+        reference_value: create(:reference_value),
         function_value: nil,
         parameter_definition: create(
           :parameter_definition,
@@ -41,7 +41,24 @@ RSpec.describe NodeParameter do
       )
       expect(param).not_to be_valid
       expect(param.errors[:value])
-        .to include('Exactly one of literal_value, reference_value, or function_value must be present')
+        .to include('Only one of literal_value, reference_value, or function_value must be present')
+    end
+
+    it 'allows all values to be empty' do
+      param = build(
+        :node_parameter,
+        literal_value: nil,
+        reference_value: nil,
+        function_value: nil,
+        parameter_definition: create(
+          :parameter_definition,
+          data_type: create(
+            :data_type_identifier,
+            data_type: create(:data_type)
+          )
+        )
+      )
+      expect(param).to be_valid
     end
   end
 end

@@ -8,7 +8,7 @@ module Types
       argument :parameter_definition_id, Types::GlobalIdType[::ParameterDefinition],
                required: true, description: 'The identifier of the Parameter Definition'
 
-      argument :value, Types::Input::NodeParameterValueInputType, required: false,
+      argument :value, Types::Input::NodeParameterValueInputType, required: true,
                                                                   description: 'The value of the parameter'
     end
   end
