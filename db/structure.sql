@@ -596,7 +596,7 @@ CREATE TABLE node_parameters (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     parameter_definition_id bigint NOT NULL,
-    CONSTRAINT check_fdac0ea550 CHECK ((num_nonnulls(literal_value, reference_value_id, function_value_id) = 1))
+    CONSTRAINT check_46b42221bc CHECK ((num_nonnulls(literal_value, reference_value_id, function_value_id) <= 1))
 );
 
 CREATE SEQUENCE node_parameters_id_seq

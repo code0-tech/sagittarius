@@ -16,12 +16,12 @@ class NodeParameter < ApplicationRecord
 
     param.value = Tucana::Shared::NodeValue.new(literal_value: Tucana::Shared::Value.from_ruby({}))
 
-    if literal_value.present?
-      param.value.literal_value = Tucana::Shared::Value.from_ruby(literal_value)
-    elsif reference_value.present?
+    if reference_value.present?
       param.value.reference_value = reference_value.to_grpc
     elsif function_value.present?
       param.value.node_function_id = function_value.id
+    else
+      param.value.literal_value = Tucana::Shared::Value.from_ruby(literal_value)
     end
 
     param
@@ -31,9 +31,8 @@ class NodeParameter < ApplicationRecord
 
   def only_one_value_present
     values = [!literal_value.nil?, reference_value.present?, function_value.present?]
-    return if values.count(true) == 1
+    return if values.count(true) <= 1
 
-    errors.add(:value,
-               'Exactly one of literal_value, reference_value, or function_value must be present')
+    errors.add(:value, 'Only one of literal_value, reference_value, or function_value must be present')
   end
 end
