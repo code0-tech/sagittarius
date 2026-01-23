@@ -72,7 +72,8 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       runtime_function_definition: rfd,
       data_type: create(
         :data_type_identifier,
-        data_type: create(:data_type)
+        runtime: runtime,
+        data_type: create(:data_type, runtime: runtime)
       )
     )
 
@@ -142,7 +143,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                   ],
                   nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
                   dataTypeIdentifier: {
-                    genericKey: 'K',
+                    dataTypeId: function_definition.parameter_definitions.first.data_type.data_type.to_global_id,
                   },
                 },
               }
