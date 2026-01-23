@@ -26,7 +26,10 @@ class GraphqlController < ApplicationController
     }
 
     Code0::ZeroTrack::Context.with_context(user: { id: current_user&.id, username: current_user&.username }) do
-      result = SagittariusSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
+      result = with_performance_tracking(current_user) do
+        SagittariusSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
+      end
+
       render json: result
     rescue StandardError => e
       logger.error message: e.message, backtrace: e.backtrace, exception_class: e.class
@@ -88,5 +91,49 @@ class GraphqlController < ApplicationController
       usersPasswordResetRequest
       usersPasswordReset
     ].include?(mutation_name)
+  end
+
+  def with_performance_tracking(current_user)
+    return yield unless current_user&.admin
+
+    PerformanceCollector.start_performance_tracking
+
+    result = yield
+
+    queries = PerformanceCollector.sql_queries || []
+    total_duration = ((Sagittarius::Utils.monotonic_time - PerformanceCollector.query_start_time) * 1000).round(2)
+
+    include_queries = request.headers['X-Sagittarius-Performance-Details']&.include?('queries')
+
+    result['extensions'] ||= {}
+    result['extensions']['performance'] = {
+      total_duration_ms: total_duration,
+      query_count: queries.size,
+      query_duration_ms: queries.sum { |q| q[:duration_ms] }.round(2),
+      queries: include_queries ? queries : nil,
+    }.compact
+
+    PerformanceCollector.end_performance_tracking
+
+    result
+  end
+
+  class PerformanceCollector < ActiveSupport::CurrentAttributes
+    attribute :sql_queries, :query_start_time
+
+    def self.start_performance_tracking
+      self.sql_queries = []
+      self.query_start_time = Sagittarius::Utils.monotonic_time
+    end
+
+    def self.end_performance_tracking
+      self.sql_queries = nil
+      self.query_start_time = nil
+    end
+
+    def self.add_query(sql:, duration_ms:, name:, cached:)
+      self.sql_queries ||= []
+      self.sql_queries << { sql: sql, duration_ms: duration_ms, name: name, cached: !!cached }
+    end
   end
 end
