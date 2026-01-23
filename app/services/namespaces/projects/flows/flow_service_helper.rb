@@ -11,7 +11,7 @@ module Namespaces
           end
 
           if identifier.generic_type.present?
-            data_type = namespace_project.primary_runtime.data_types.find_by(
+            data_type = runtime.data_types.find_by(
               id: identifier.generic_type.data_type_id.model_id
             )
 
@@ -35,7 +35,7 @@ module Namespaces
             return DataTypeIdentifier.find_or_create_by(runtime: runtime, generic_type: generic_type)
           end
 
-          data_type = namespace_project.primary_runtime.data_types.find_by(id: identifier.data_type_id.model_id)
+          data_type = runtime.data_types.find_by(id: identifier.data_type_id.model_id)
 
           if data_type.nil?
             t.rollback_and_return! ServiceResponse.error(
