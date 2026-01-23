@@ -11,10 +11,25 @@ RSpec.describe 'sagittarius.RuntimeStatusServiceRuntimeFunctionDefinitionService
     let(:runtime) { create(:runtime) }
     let(:to_update_status) do
       Tucana::Shared::AdapterRuntimeStatus.new(
-        status: Tucana::Shared::RuntimeStatus::RUNNING,
-        timestamp: Time.now.to_i.to_s,
+        status: Tucana::Shared::AdapterRuntimeStatus::Status::RUNNING,
+        timestamp: Time.now.to_i,
         identifier: 'adapter_status_1',
-        features: ['http'],
+        features: [
+          Tucana::Shared::RuntimeFeature.new(
+            name: [
+              Tucana::Shared::Translation.new(
+                code: 'de_DE',
+                content: 'http'
+              )
+            ],
+            description: [
+              Tucana::Shared::Translation.new(
+                code: 'de_DE',
+                content: 'HTTP support'
+              )
+            ]
+          )
+        ],
         configurations: [
           Tucana::Shared::AdapterConfiguration.new(
             endpoint: 'http://localhost:3000'
@@ -34,7 +49,7 @@ RSpec.describe 'sagittarius.RuntimeStatusServiceRuntimeFunctionDefinitionService
       expect(db_status.identifier).to eq('adapter_status_1')
       expect(db_status.status_type).to eq('adapter')
       expect(db_status.status).to eq('running')
-      expect(db_status.features).to eq(['http'])
+      expect(db_status.runtime_features.size).to eq(1)
       expect(db_status.runtime_status_configurations.count).to eq(1)
       expect(db_status.runtime_status_configurations.first.endpoint).to eq('http://localhost:3000')
     end

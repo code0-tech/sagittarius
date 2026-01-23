@@ -17,9 +17,6 @@ module Types
     field :projects, Types::NamespaceProjectType.connection_type, null: false,
                                                                   description: 'Projects associated with the runtime'
     field :status, Types::RuntimeStatusType, null: false, description: 'The status of the runtime'
-    field :status, Types::RuntimeStatusStatusEnum,
-          null: false,
-          description: 'Wheater the last heartbeat was recent enough to consider the runtime as connected'
 
     field :statuses, Types::RuntimeStatusType.connection_type, null: false,
                                                                description: 'Statuses of the runtime',

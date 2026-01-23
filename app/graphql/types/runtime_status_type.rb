@@ -8,10 +8,11 @@ module Types
           null: false,
           description: 'The detailed configuration entries for this runtime status (only for adapters)',
           method: :runtime_status_configurations
-    field :features, [String], null: false, description: 'The set of features supported by the runtime'
     field :identifier, String, null: false, description: 'The unique identifier for this runtime status'
     field :last_heartbeat, Types::TimeType, null: true,
                                             description: 'The timestamp of the last heartbeat received from the runtime'
+    field :runtime_features, [Types::RuntimeFeatureType], null: false,
+                                                          description: 'The set of features supported by the runtime'
     field :status, Types::RuntimeStatusStatusEnum,
           null: false,
           description: 'The current status of the runtime (e.g. running, stopped)'

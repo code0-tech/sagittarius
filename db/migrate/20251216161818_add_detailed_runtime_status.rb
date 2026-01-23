@@ -11,7 +11,13 @@ class AddDetailedRuntimeStatus < Code0::ZeroTrack::Database::Migration[1.0]
       t.integer :status_type, null: false, default: 0
       t.datetime_with_timezone :last_heartbeat
       t.text :identifier, null: false
-      t.text :features, array: true, default: [], null: false
+
+      t.timestamps_with_timezone
+    end
+
+    create_table :runtime_features do |t|
+      t.references :runtime_status, null: false,
+                                    foreign_key: { to_table: :runtime_statuses, on_delete: :cascade }
 
       t.timestamps_with_timezone
     end

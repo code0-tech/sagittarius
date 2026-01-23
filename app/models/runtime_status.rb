@@ -3,6 +3,7 @@
 class RuntimeStatus < ApplicationRecord
   belongs_to :runtime, inverse_of: :runtime_statuses
   has_many :runtime_status_configurations, inverse_of: :runtime_status
+  has_many :runtime_features, inverse_of: :runtime_status
 
   STATUS_TYPES = {
     not_responding: 0,

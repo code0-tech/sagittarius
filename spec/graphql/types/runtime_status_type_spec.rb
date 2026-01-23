@@ -8,7 +8,7 @@ RSpec.describe SagittariusSchema.types['RuntimeStatus'] do
       id
       status
       configurations
-      featureSet
+      runtimeFeatures
       lastHeartbeat
       type
       identifier

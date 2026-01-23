@@ -682,6 +682,22 @@ CREATE SEQUENCE reference_values_id_seq
 
 ALTER SEQUENCE reference_values_id_seq OWNED BY reference_values.id;
 
+CREATE TABLE runtime_features (
+    id bigint NOT NULL,
+    runtime_status_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE runtime_features_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE runtime_features_id_seq OWNED BY runtime_features.id;
+
 CREATE TABLE runtime_function_definitions (
     id bigint NOT NULL,
     runtime_id bigint NOT NULL,
@@ -750,7 +766,6 @@ CREATE TABLE runtime_statuses (
     status_type integer DEFAULT 0 NOT NULL,
     last_heartbeat timestamp with time zone,
     identifier text NOT NULL,
-    features text[] DEFAULT '{}'::text[] NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
@@ -937,6 +952,8 @@ ALTER TABLE ONLY reference_paths ALTER COLUMN id SET DEFAULT nextval('reference_
 
 ALTER TABLE ONLY reference_values ALTER COLUMN id SET DEFAULT nextval('reference_values_id_seq'::regclass);
 
+ALTER TABLE ONLY runtime_features ALTER COLUMN id SET DEFAULT nextval('runtime_features_id_seq'::regclass);
+
 ALTER TABLE ONLY runtime_function_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_function_definitions_id_seq'::regclass);
 
 ALTER TABLE ONLY runtime_parameter_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_parameter_definitions_id_seq'::regclass);
@@ -1068,6 +1085,9 @@ ALTER TABLE ONLY reference_paths
 
 ALTER TABLE ONLY reference_values
     ADD CONSTRAINT reference_values_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY runtime_features
+    ADD CONSTRAINT runtime_features_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT runtime_function_definitions_pkey PRIMARY KEY (id);
@@ -1261,6 +1281,8 @@ CREATE INDEX index_reference_values_on_data_type_identifier_id ON reference_valu
 
 CREATE INDEX index_reference_values_on_node_function_id ON reference_values USING btree (node_function_id);
 
+CREATE INDEX index_runtime_features_on_runtime_status_id ON runtime_features USING btree (runtime_status_id);
+
 CREATE INDEX index_runtime_function_definitions_on_return_type_id ON runtime_function_definitions USING btree (return_type_id);
 
 CREATE INDEX index_runtime_parameter_definitions_on_data_type_id ON runtime_parameter_definitions USING btree (data_type_id);
@@ -1326,6 +1348,9 @@ ALTER TABLE ONLY node_parameters
 
 ALTER TABLE ONLY namespace_licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY runtime_features
+    ADD CONSTRAINT fk_rails_39d4643cc0 FOREIGN KEY (runtime_status_id) REFERENCES runtime_statuses(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_statuses
     ADD CONSTRAINT fk_rails_3af887feb9 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
