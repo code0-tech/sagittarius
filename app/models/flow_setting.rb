@@ -7,7 +7,7 @@ class FlowSetting < ApplicationRecord
     Tucana::Shared::FlowSetting.new(
       database_id: id,
       flow_setting_id: flow_setting_id,
-      object: Tucana::Shared::Struct.from_hash(object)
+      object: Tucana::Shared::Value.from_ruby(object)
     )
   end
 end
