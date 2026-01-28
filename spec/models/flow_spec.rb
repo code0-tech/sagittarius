@@ -90,10 +90,12 @@ RSpec.describe Flow do
           settings: [
             database_id: flow.flow_settings.first.id,
             flow_setting_id: flow.flow_settings.first.flow_setting_id,
-            object: {
-              fields: {
-                'url' => {
-                  string_value: flow.flow_settings.first.object['url'],
+            value: {
+              struct_value: {
+                fields: {
+                  'url' => {
+                    string_value: flow.flow_settings.first.object['url'],
+                  },
                 },
               },
             }
