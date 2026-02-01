@@ -6,15 +6,18 @@ module Runtimes
       # This method updates or creates GenericMappers based on the provided gRPC GenericMapper objects
       # within the current runtime.
       # @param generic_mappers [Array<Tucana::Shared::GenericMapper>] An array of gRPC GenericMapper objects.
-      def update_mappers(generic_mappers, t)
+      def update_mappers(generic_mappers, generic_type, t)
         raise 'Including class must define current_runtime' unless respond_to?(:current_runtime)
 
         generic_mappers.to_a.map do |generic_mapper|
-          mapper = GenericMapper.create_or_find_by(runtime: current_runtime,
-                                                   target: generic_mapper.target,
-                                                   sources: generic_mapper.source.map do |source|
-                                                     find_data_type_identifier(source, t)
-                                                   end)
+          mapper = GenericMapper.find_by(runtime: current_runtime, generic_type: generic_type)
+
+          mapper = GenericMapper.new(runtime: current_runtime, generic_type: generic_type) if mapper.nil?
+
+          mapper.target = generic_mapper.target
+          mapper.sources = generic_mapper.source.map do |source|
+            find_data_type_identifier(source, mapper, t, additional_dti_kwargs: { generic_mapper: mapper })
+          end
 
           if mapper.nil? || !mapper.save
             t.rollback_and_return! ServiceResponse.error(
@@ -28,22 +31,19 @@ module Runtimes
 
       # This method finds or creates a DataTypeIdentifier based on the provided identifier within the current runtime.
       # @param identifier [Tucana::Sagittarius::DataTypeIdentifier] The gRPC DataTypeIdentifier object.
-      def find_data_type_identifier(identifier, t)
+      def find_data_type_identifier(identifier, owner, t, additional_dti_kwargs: {})
         if identifier.data_type_identifier.present?
-          return create_data_type_identifier(t, data_type_id: find_data_type(identifier.data_type_identifier, t).id)
+          return create_data_type_identifier(
+            t,
+            **additional_dti_kwargs,
+            data_type_id: find_data_type(identifier.data_type_identifier, t).id
+          )
         end
 
         if identifier.generic_type.present?
           data_type = find_data_type(identifier.generic_type.data_type_identifier, t)
 
-          generic_type = GenericType.find_by(
-            data_type: data_type
-          )
-          if generic_type.nil?
-            generic_type = GenericType.create(
-              data_type: data_type
-            )
-          end
+          generic_type = owner.owned_generic_types.find_or_initialize_by(data_type: data_type)
 
           if generic_type.nil?
             t.rollback_and_return! ServiceResponse.error(
@@ -52,13 +52,14 @@ module Runtimes
             )
           end
 
-          generic_type.assign_attributes(generic_mappers: update_mappers(identifier.generic_type.generic_mappers,
-                                                                         t))
+          generic_type.generic_mappers = update_mappers(identifier.generic_type.generic_mappers, generic_type, t)
 
-          return create_data_type_identifier(t, generic_type_id: generic_type.id)
+          return create_data_type_identifier(t, **additional_dti_kwargs, generic_type_id: generic_type.id)
         end
 
-        return create_data_type_identifier(t, generic_key: identifier.generic_key) if identifier.generic_key.present?
+        if identifier.generic_key.present?
+          return create_data_type_identifier(t, **additional_dti_kwargs, generic_key: identifier.generic_key)
+        end
 
         raise ArgumentError, "Invalid identifier: #{identifier.inspect}"
       end

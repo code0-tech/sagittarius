@@ -18,6 +18,8 @@ class RuntimeFunctionDefinition < ApplicationRecord
            class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :aliases, -> { by_purpose(:alias) }, class_name: 'Translation', as: :owner, inverse_of: :owner
 
+  has_many :owned_generic_types, class_name: 'GenericType', inverse_of: :owner
+
   validates :runtime_name, presence: true,
                            length: { minimum: 3, maximum: 50 },
                            uniqueness: { case_sensitive: false, scope: :runtime_id }

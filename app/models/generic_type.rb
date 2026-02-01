@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class GenericType < ApplicationRecord
+  belongs_to :owner, polymorphic: true
   belongs_to :data_type, class_name: 'DataType', inverse_of: :generic_types
 
   has_many :generic_mappers, inverse_of: :generic_type

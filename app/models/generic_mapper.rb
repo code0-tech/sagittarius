@@ -8,6 +8,8 @@ class GenericMapper < ApplicationRecord
   has_many :sources, class_name: 'DataTypeIdentifier', inverse_of: :generic_mapper
   has_many :generic_combination_strategies, class_name: 'GenericCombinationStrategy', inverse_of: :generic_mapper
 
+  has_many :owned_generic_types, class_name: 'GenericType', inverse_of: :owner
+
   validates :target, presence: true
 
   def to_grpc

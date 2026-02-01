@@ -16,6 +16,8 @@ class DataTypeRule < ApplicationRecord
 
   belongs_to :data_type, inverse_of: :rules
 
+  has_many :owned_generic_types, class_name: 'GenericType', inverse_of: :owner
+
   validates :variant, presence: true,
                       inclusion: {
                         in: VARIANTS.keys.map(&:to_s),
