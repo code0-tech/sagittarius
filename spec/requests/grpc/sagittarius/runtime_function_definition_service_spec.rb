@@ -14,10 +14,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         create(:data_type_identifier, runtime: runtime, data_type: create(:data_type, runtime: runtime))
       end
 
-      let!(:generic_type) do
-        create(:generic_type, data_type: create(:data_type, runtime: runtime))
-      end
-      let!(:return_type) { create(:data_type_identifier, runtime: runtime, generic_type: generic_type.reload).reload }
+      let!(:generic_base_type) { create(:data_type, runtime: runtime) }
 
       let(:runtime_functions) do
         [
@@ -43,7 +40,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
             ],
             return_type_identifier: {
               generic_type: {
-                data_type_identifier: return_type.generic_type.data_type.identifier,
+                data_type_identifier: generic_base_type.identifier,
                 generic_mappers: [{ source: [{ generic_key: 'T' }], target: 'V', generic_combinations: [] }],
               },
             },
@@ -87,7 +84,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         function = RuntimeFunctionDefinition.last
         expect(function.runtime_name).to eq('runtime_function_id')
         expect(function.return_type.generic_type.reload.data_type.identifier)
-          .to eq(return_type.generic_type.data_type.identifier)
+          .to eq(generic_base_type.identifier)
         expect(function.names.first.content).to eq('Eine Funktion')
         expect(function.descriptions.first.content).to eq('Eine Funktionsbeschreibung')
         expect(function.documentations.first.content).to eq('Eine Funktionsdokumentation')
@@ -111,7 +108,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function_definition.aliases.first.content).to eq('Ein Funktionsalias')
         expect(function_definition.display_messages.first.content).to eq('Eine Funktionsanzeige')
         expect(function_definition.return_type.generic_type.reload.data_type.identifier)
-          .to eq(return_type.generic_type.data_type.identifier)
+          .to eq(generic_base_type.identifier)
         parameter_definition = ParameterDefinition.first
         expect(parameter_definition.data_type.data_type.identifier).to eq(parameter_type.data_type.identifier)
         expect(parameter_definition.names.first.content).to eq('Ein Parameter')

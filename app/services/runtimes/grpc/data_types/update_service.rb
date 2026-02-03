@@ -122,7 +122,11 @@ module Runtimes
           db_object.removed_at = nil
           db_object.variant = data_type.variant.to_s.downcase
           if parent?(data_type)
-            db_object.parent_type = find_data_type_identifier(find_parent_rule(data_type).rule_config.parent_type, t)
+            db_object.parent_type = find_data_type_identifier(
+              find_parent_rule(data_type).rule_config.parent_type,
+              db_object,
+              t
+            )
           end
           db_object.rules = update_rules(data_type.rules, db_object, t)
           db_object.names = update_translations(data_type.name, db_object.names)
@@ -142,13 +146,16 @@ module Runtimes
           db_rules = data_type.rules.first(rules.length)
           rules.each_with_index do |rule, index|
             db_rules[index] ||= DataTypeRule.new
-            db_rules[index].assign_attributes(variant: rule.variant.to_s.downcase, config: extend_rule_config(rule, t))
+            db_rules[index].assign_attributes(
+              variant: rule.variant.to_s.downcase,
+              config: extend_rule_config(rule, db_rules[index], t)
+            )
           end
 
           db_rules
         end
 
-        def extend_rule_config(rule, t)
+        def extend_rule_config(rule, db_rule, t)
           case rule.variant
           when :parent_type
             {}
@@ -156,12 +163,12 @@ module Runtimes
             {
               key: rule.rule_config.key,
               data_type_identifier: rule.rule_config.data_type_identifier,
-              data_type_identifier_id: find_data_type_identifier(rule.rule_config.data_type_identifier, t).id,
+              data_type_identifier_id: find_data_type_identifier(rule.rule_config.data_type_identifier, db_rule, t).id,
             }
           when :contains_type, :return_type
             {
               data_type_identifier: rule.rule_config.data_type_identifier,
-              data_type_identifier_id: find_data_type_identifier(rule.rule_config.data_type_identifier, t).id,
+              data_type_identifier_id: find_data_type_identifier(rule.rule_config.data_type_identifier, db_rule, t).id,
             }
           when :input_types
             {
@@ -169,7 +176,7 @@ module Runtimes
                 {
                   input_identifier: input_type.input_identifier,
                   data_type_identifier: input_type.data_type_identifier,
-                  data_type_identifier_id: find_data_type_identifier(input_type.data_type_identifier, t).id,
+                  data_type_identifier_id: find_data_type_identifier(input_type.data_type_identifier, db_rule, t).id,
                 }
               end,
             }

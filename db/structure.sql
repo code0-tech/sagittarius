@@ -320,7 +320,9 @@ CREATE TABLE generic_types (
     id bigint NOT NULL,
     data_type_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    owner_type character varying,
+    owner_id bigint
 );
 
 CREATE SEQUENCE generic_types_id_seq
@@ -1124,6 +1126,8 @@ CREATE INDEX index_generic_mappers_on_generic_type_id ON generic_mappers USING b
 CREATE INDEX index_generic_mappers_on_runtime_id ON generic_mappers USING btree (runtime_id);
 
 CREATE INDEX index_generic_types_on_data_type_id ON generic_types USING btree (data_type_id);
+
+CREATE INDEX index_generic_types_on_owner ON generic_types USING btree (owner_type, owner_id);
 
 CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON good_job_executions USING btree (active_job_id, created_at);
 

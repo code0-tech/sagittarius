@@ -53,7 +53,11 @@ module Runtimes
           )
           db_object.removed_at = nil
           db_object.return_type = if runtime_function_definition.return_type_identifier.present?
-                                    find_data_type_identifier(runtime_function_definition.return_type_identifier, t)
+                                    find_data_type_identifier(
+                                      runtime_function_definition.return_type_identifier,
+                                      db_object,
+                                      t
+                                    )
                                   end
           db_object.names = update_translations(runtime_function_definition.name, db_object.names)
           db_object.descriptions = update_translations(runtime_function_definition.description, db_object.descriptions)
@@ -106,7 +110,7 @@ module Runtimes
             db_param.runtime_function_definition = runtime_function_definition
             db_param.runtime_name = real_param.runtime_name
             db_param.removed_at = nil
-            db_param.data_type = find_data_type_identifier(real_param.data_type_identifier, t)
+            db_param.data_type = find_data_type_identifier(real_param.data_type_identifier, db_param, t)
 
             db_param.names = update_translations(real_param.name, db_param.names)
             db_param.descriptions = update_translations(real_param.description, db_param.descriptions)
