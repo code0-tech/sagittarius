@@ -30,17 +30,13 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                       }
                       ...on ReferenceValue {
                         createdAt
-                        dataTypeIdentifier { id }
-                        depth
                         id
-                        node
                         nodeFunctionId
                         referencePath {
                           arrayIndex
                           id
                           path
                         }
-                        scope
                         updatedAt
                       }
                     }
@@ -132,9 +128,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
               parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
               value: {
                 referenceValue: {
-                  depth: 1,
-                  node: 1,
-                  scope: [],
                   referencePath: [
                     {
                       arrayIndex: 0,
@@ -142,9 +135,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                     }
                   ],
                   nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
-                  dataTypeIdentifier: {
-                    dataTypeId: function_definition.parameter_definitions.first.data_type.data_type.to_global_id,
-                  },
                 },
               }
             ],

@@ -201,12 +201,6 @@ module Namespaces
             end
 
             if parameter.value.reference_value.present?
-              data_type_identifier = get_data_type_identifier(
-                flow.project.primary_runtime,
-                parameter.value.reference_value.data_type_identifier,
-                t
-              )
-
               referenced_node = all_nodes.find do |n|
                 n[:input].id == parameter.value.reference_value.node_function_id
               end
@@ -229,11 +223,7 @@ module Namespaces
               end
 
               reference_value.assign_attributes(
-                data_type_identifier: data_type_identifier,
                 node_function: referenced_node[:node],
-                depth: parameter.value.reference_value.depth,
-                node: parameter.value.reference_value.node,
-                scope: parameter.value.reference_value.scope,
                 reference_paths: reference_paths
               )
             else
