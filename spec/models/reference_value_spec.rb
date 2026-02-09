@@ -9,7 +9,6 @@ RSpec.describe ReferenceValue do
 
   describe 'associations' do
     it { is_expected.to belong_to(:node_function) }
-    it { is_expected.to belong_to(:data_type_identifier) }
     it { is_expected.to have_many(:reference_paths) }
   end
 end

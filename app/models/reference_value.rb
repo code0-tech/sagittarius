@@ -2,7 +2,6 @@
 
 class ReferenceValue < ApplicationRecord
   belongs_to :node_function # real value association
-  belongs_to :data_type_identifier
   has_many :reference_paths, inverse_of: :reference_value, autosave: true, dependent: :destroy
   has_many :node_parameters, inverse_of: :reference_value
 
