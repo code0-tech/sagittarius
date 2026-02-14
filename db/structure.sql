@@ -1343,7 +1343,7 @@ ALTER TABLE ONLY node_functions
     ADD CONSTRAINT fk_rails_8615bd0635 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY reference_values
-    ADD CONSTRAINT fk_rails_8b9d8f68cc FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_8b9d8f68cc FOREIGN KEY (node_function_id) REFERENCES node_functions(id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE ONLY data_type_identifiers
     ADD CONSTRAINT fk_rails_8d8385e8ec FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
@@ -1415,4 +1415,4 @@ ALTER TABLE ONLY flow_type_settings
     ADD CONSTRAINT fk_rails_f6af7d8edf FOREIGN KEY (flow_type_id) REFERENCES flow_types(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY node_functions
-    ADD CONSTRAINT fk_rails_fbc91a3407 FOREIGN KEY (next_node_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_fbc91a3407 FOREIGN KEY (next_node_id) REFERENCES node_functions(id) DEFERRABLE INITIALLY DEFERRED;
