@@ -197,7 +197,7 @@ module Namespaces
 
               db_parameters[index].function_value = node[:node]
             else
-              db_parameters[index].function_value = nil
+              db_parameters[index].function_value&.destroy
             end
 
             if parameter.value.reference_value.present?
@@ -227,7 +227,7 @@ module Namespaces
                 reference_paths: reference_paths
               )
             else
-              db_parameters[index].reference_value = nil
+              db_parameters[index].reference_value&.destroy
             end
 
             next if db_parameters[index].valid?

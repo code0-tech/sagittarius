@@ -8,6 +8,8 @@ class NodeParameter < ApplicationRecord
 
   validate :only_one_value_present
 
+  before_destroy :destroy_value_objects
+
   def to_grpc
     param = Tucana::Shared::NodeParameter.new(
       database_id: id,
@@ -34,5 +36,10 @@ class NodeParameter < ApplicationRecord
     return if values.count(true) <= 1
 
     errors.add(:value, 'Only one of literal_value, reference_value, or function_value must be present')
+  end
+
+  def destroy_value_objects
+    reference_value.destroy if reference_value.present?
+    function_value.destroy if function_value.present?
   end
 end
