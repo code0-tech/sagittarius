@@ -56,8 +56,9 @@ module Types
 
       field :user_abilities, type_class,
             null: false,
-            description: "Abilities for the current user on this #{entity_name}",
-            method: :itself
+            description: "Abilities for the current user on this #{entity_name}"
+
+      define_method(:user_abilities) { object || {} }
     end
 
     def self.lookahead_field(field, base_scope:, lookaheads: [], conditional_lookaheads: {})
