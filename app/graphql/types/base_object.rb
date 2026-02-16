@@ -81,7 +81,7 @@ module Types
         return object.instance_variable_get(:@sagittarius_object_authorization_bypass)
       end
 
-      subject = object.try(:declarative_policy_subject) || object
+      subject = object.try(:declarative_policy_subject) || @declarative_policy_subject.try(:call, object) || object
 
       authorize.all? do |ability|
         Ability.allowed?(context[:current_authentication], ability, subject)
@@ -93,6 +93,12 @@ module Types
 
       @authorize_args = args.freeze if args.any?
       @authorize_args || (superclass.respond_to?(:authorize) ? superclass.authorize : [])
+    end
+
+    def self.declarative_policy_subject(&block)
+      raise 'Cannot redefine declarative_policy_subject' if @declarative_policy_subject && block
+
+      @declarative_policy_subject = block
     end
 
     def current_authentication

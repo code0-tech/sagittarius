@@ -28,7 +28,7 @@ RSpec.describe 'application Query' do
     post_graphql(query, current_user: current_user)
   end
 
-  context 'when querying application settings' do
+  context 'when querying as admin' do
     let(:current_user) { create(:user, :admin) }
 
     it 'returns the application settings' do
@@ -39,23 +39,44 @@ RSpec.describe 'application Query' do
       expect(settings['organizationCreationRestricted'])
         .to eq(ApplicationSetting.current['organization_creation_restricted'])
     end
+
+    it 'returns the application version' do
+      expect(graphql_data_at(:application, :metadata, :version)).to eq(Sagittarius::Version)
+    end
+
+    it 'returns the list of active extensions' do
+      expected_extensions = Sagittarius::Extensions.active.map(&:to_s)
+      expect(graphql_data_at(:application, :metadata, :extensions)).to match_array(expected_extensions)
+    end
   end
 
-  it 'returns null application settings because of permissions' do
-    settings = graphql_data_at(:application, :settings)
-    expect(settings).to be_nil
+  context 'when querying as user' do
+    let(:current_user) { create(:user) }
+
+    it 'returns null application settings' do
+      settings = graphql_data_at(:application, :settings)
+      expect(settings).to be_nil
+    end
+
+    it 'returns the application version' do
+      expect(graphql_data_at(:application, :metadata, :version)).to eq(Sagittarius::Version)
+    end
+
+    it 'returns the list of active extensions' do
+      expected_extensions = Sagittarius::Extensions.active.map(&:to_s)
+      expect(graphql_data_at(:application, :metadata, :extensions)).to match_array(expected_extensions)
+    end
   end
 
-  it 'returns the application version' do
-    expect(graphql_data_at(:application, :metadata, :version)).to eq(Sagittarius::Version)
-  end
+  context 'when querying without authentication' do
+    it 'returns null application settings' do
+      settings = graphql_data_at(:application, :settings)
+      expect(settings).to be_nil
+    end
 
-  it 'returns the list of active extensions' do
-    expected_extensions = Sagittarius::Extensions.active.map(&:to_s)
-    expect(graphql_data_at(:application, :metadata, :extensions)).to match_array(expected_extensions)
-  end
-
-  it 'does not require authentication' do
-    expect(graphql_errors).to be_nil
+    it 'return null metadata' do
+      metadata = graphql_data_at(:application, :metadata)
+      expect(metadata).to be_nil
+    end
   end
 end

@@ -11,6 +11,7 @@ class GlobalPolicy < BasePolicy
     enable :read_runtime
     enable :read_flow_type
     enable :read_flow_type_setting
+    enable :read_metadata
   end
 
   rule { admin }.policy do

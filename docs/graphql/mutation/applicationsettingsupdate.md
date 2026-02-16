@@ -21,6 +21,7 @@ Update application settings.
 
 | Name | Type | Description |
 |------|------|-------------|
+| `application` | [`Application`](../object/application.md) | The whole updated application object. |
 | `applicationSettings` | [`ApplicationSettings`](../object/applicationsettings.md) | The updated application settings. |
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |

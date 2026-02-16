@@ -4,7 +4,7 @@ module Types
   class ApplicationType < Types::BaseObject
     description 'Represents the application instance'
 
-    field :metadata, Types::MetadataType, null: false,
+    field :metadata, Types::MetadataType, null: true,
                                           description: 'Metadata about the application'
 
     field :settings, Types::ApplicationSettingsType, null: true,
@@ -40,15 +40,15 @@ module Types
     end
 
     def privacy_url
-      ApplicationSetting.current.privacy_url
+      ApplicationSetting.current[:privacy_url]
     end
 
     def terms_and_conditions_url
-      ApplicationSetting.current.terms_and_conditions_url
+      ApplicationSetting.current[:terms_and_conditions_url]
     end
 
     def legal_notice_url
-      ApplicationSetting.current.legal_notice_url
+      ApplicationSetting.current[:legal_notice_url]
     end
   end
 end

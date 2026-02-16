@@ -5,6 +5,8 @@ module Mutations
     class Update < BaseMutation
       description 'Update application settings.'
 
+      field :application, Types::ApplicationType, null: true,
+                                                  description: 'The whole updated application object.'
       field :application_settings, Types::ApplicationSettingsType, null: true,
                                                                    description: 'The updated application settings.'
 
@@ -31,10 +33,14 @@ module Mutations
                description: 'Set if user registration is enabled.'
 
       def resolve(params)
-        ApplicationSettingsUpdateService.new(
+        response = ApplicationSettingsUpdateService.new(
           current_authentication,
           params
-        ).execute.to_mutation_response(success_key: :application_settings)
+        ).execute
+
+        return response.to_mutation_response(success_key: :application_settings) if response.error?
+
+        response.to_mutation_response(success_key: :application_settings).merge({ application: {} })
       end
     end
   end
