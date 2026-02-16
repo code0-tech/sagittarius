@@ -4,6 +4,9 @@ module Types
   class MetadataType < Types::BaseObject
     description 'Application metadata'
 
+    authorize :read_metadata
+    declarative_policy_subject { :global }
+
     field :extensions, [GraphQL::Types::String], null: false, description: 'List of loaded extensions'
     field :version, GraphQL::Types::String, null: false, description: 'Application version'
 

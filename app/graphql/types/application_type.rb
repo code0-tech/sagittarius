@@ -4,7 +4,7 @@ module Types
   class ApplicationType < Types::BaseObject
     description 'Represents the application instance'
 
-    field :metadata, Types::MetadataType, null: false,
+    field :metadata, Types::MetadataType, null: true,
                                           description: 'Metadata about the application'
 
     field :settings, Types::ApplicationSettingsType, null: true,
