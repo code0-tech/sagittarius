@@ -40,6 +40,5 @@ class NodeParameter < ApplicationRecord
 
   def destroy_value_objects
     reference_value.destroy if reference_value.present?
-    function_value.destroy if function_value.present?
   end
 end
