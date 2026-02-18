@@ -60,7 +60,7 @@ module Namespaces
             flow_setting = flow.flow_settings.find_or_initialize_by(flow_setting_id: setting.flow_setting_identifier)
             flow_setting.object = setting.value
 
-            next if flow_setting.valid?
+            next if flow_setting.save
 
             t.rollback_and_return! ServiceResponse.error(
               message: 'Invalid flow settings',
@@ -198,6 +198,7 @@ module Namespaces
               db_parameters[index].function_value = node[:node]
             else
               db_parameters[index].function_value&.destroy
+              db_parameters[index].function_value = nil
             end
 
             if parameter.value.reference_value.present?
@@ -228,6 +229,7 @@ module Namespaces
               )
             else
               db_parameters[index].reference_value&.destroy
+              db_parameters[index].reference_value = nil
             end
 
             next if db_parameters[index].valid?
