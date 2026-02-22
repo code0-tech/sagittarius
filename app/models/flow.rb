@@ -21,8 +21,8 @@ class Flow < ApplicationRecord
       project_slug: project.slug,
       type: flow_type.identifier,
       data_types: [], # TODO: when data types are creatable
-      input_type_identifier: input_type&.identifier,
-      return_type_identifier: return_type&.identifier,
+      input_type: Tucana::Shared::DataTypeIdentifier.from_hash({ data_type_identifier: input_type&.identifier }),
+      return_type: Tucana::Shared::DataTypeIdentifier.from_hash({ data_type_identifier: return_type&.identifier }),
       settings: flow_settings.map(&:to_grpc),
       starting_node_id: starting_node.id,
       node_functions: node_functions.map(&:to_grpc)

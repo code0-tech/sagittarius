@@ -377,7 +377,7 @@ GEM
     thor (1.4.0)
     timeout (0.6.0)
     tsort (0.2.0)
-    tucana (0.0.52)
+    tucana (0.0.53)
       grpc (~> 1.64)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -431,7 +431,7 @@ DEPENDENCIES
   simplecov (~> 0.22.0)
   simplecov-cobertura (~> 3.0)
   test-prof (~> 1.0)
-  tucana (= 0.0.52)
+  tucana (= 0.0.53)
   tzinfo-data
 
 RUBY VERSION

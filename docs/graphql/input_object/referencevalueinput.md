@@ -8,5 +8,7 @@ Input type for reference value
 
 | Name | Type | Description |
 |------|------|-------------|
-| `nodeFunctionId` | [`NodeFunctionID!`](../scalar/nodefunctionid.md) | The referenced value |
+| `inputIndex` | [`Int`](../scalar/int.md) | The index of the referenced input |
+| `nodeFunctionId` | [`NodeFunctionID`](../scalar/nodefunctionid.md) | The referenced value unless referencing the flow input |
+| `parameterIndex` | [`Int`](../scalar/int.md) | The index of the referenced parameter |
 | `referencePath` | [`[ReferencePathInput!]!`](../input_object/referencepathinput.md) | The paths associated with this reference value |

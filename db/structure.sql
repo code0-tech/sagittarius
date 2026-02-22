@@ -668,7 +668,10 @@ CREATE TABLE reference_values (
     id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    node_function_id bigint NOT NULL
+    node_function_id bigint,
+    parameter_index integer,
+    input_index integer,
+    CONSTRAINT check_a2e3734389 CHECK ((num_nonnulls(parameter_index, input_index) = ANY (ARRAY[0, 2])))
 );
 
 CREATE SEQUENCE reference_values_id_seq
