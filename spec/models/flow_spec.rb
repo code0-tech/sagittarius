@@ -69,6 +69,8 @@ RSpec.describe Flow do
           project_id: flow.project.id,
           project_slug: flow.project.slug,
           type: flow.flow_type.identifier,
+          input_type: {},
+          return_type: {},
           node_functions: [
             {
               database_id: starting_node.id,
