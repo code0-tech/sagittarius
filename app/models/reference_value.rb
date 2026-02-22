@@ -16,9 +16,22 @@ class ReferenceValue < ApplicationRecord
   end
 
   def to_grpc
-    Tucana::Shared::ReferenceValue.new(
-      node_id: node_function.id,
+    reference_value = Tucana::Shared::ReferenceValue.new(
       paths: reference_paths.map(&:to_grpc)
     )
+
+    if node_function.nil?
+      reference_value.flow_input = Tucana::Shared::FlowInput.new
+    elsif parameter_index.present? && input_index.present?
+      reference_value.input_type = Tucana::Shared::InputType.new(
+        node_id: node_function.id,
+        parameter_index: parameter_index,
+        input_index: input_index
+      )
+    else
+      reference_value.node_id = node_function.id
+    end
+
+    reference_value
   end
 end
