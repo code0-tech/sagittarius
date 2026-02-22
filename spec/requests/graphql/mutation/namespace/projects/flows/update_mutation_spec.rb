@@ -37,6 +37,8 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                           id
                           path
                         }
+                        parameterIndex
+                        inputIndex
                         updatedAt
                       }
                     }
@@ -125,16 +127,33 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
             id: 'gid://sagittarius/NodeFunction/1001',
             functionDefinitionId: function_definition.to_global_id.to_s,
             parameters: [
-              parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
-              value: {
-                referenceValue: {
-                  referencePath: [
-                    {
-                      arrayIndex: 0,
-                      path: 'some.path',
-                    }
-                  ],
-                  nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+              {
+                parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
+                value: {
+                  referenceValue: {
+                    referencePath: [
+                      {
+                        arrayIndex: 0,
+                        path: 'some.path',
+                      }
+                    ],
+                    nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+                    parameterIndex: 1,
+                    inputIndex: 1,
+                  },
+                },
+              },
+              {
+                parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
+                value: {
+                  referenceValue: {
+                    referencePath: [
+                      {
+                        arrayIndex: 1,
+                        path: 'some.path',
+                      }
+                    ],
+                  },
                 },
               }
             ],
@@ -181,9 +200,26 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
         :nodes,
         :value
       )
-      expect(parameter_values).to include(a_hash_including('value' => 100))
       expect(parameter_values).to include(
-        a_hash_including('referencePath' => [a_hash_including('arrayIndex' => 0, 'path' => 'some.path')])
+        a_hash_including(
+          '__typename' => 'LiteralValue',
+          'value' => 100
+        )
+      )
+      expect(parameter_values).to include(
+        a_hash_including(
+          '__typename' => 'ReferenceValue',
+          'nodeFunctionId' => a_string_matching(%r{gid://sagittarius/NodeFunction/\d+}),
+          'referencePath' => [a_hash_including('arrayIndex' => 0, 'path' => 'some.path')],
+          'parameterIndex' => 1,
+          'inputIndex' => 1
+        )
+      )
+      expect(parameter_values).to include(
+        a_hash_including(
+          '__typename' => 'ReferenceValue',
+          'referencePath' => [a_hash_including('arrayIndex' => 1, 'path' => 'some.path')]
+        )
       )
 
       is_expected.to create_audit_event(

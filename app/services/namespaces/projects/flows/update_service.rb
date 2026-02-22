@@ -202,15 +202,19 @@ module Namespaces
             end
 
             if parameter.value.reference_value.present?
-              referenced_node = all_nodes.find do |n|
-                n[:input].id == parameter.value.reference_value.node_function_id
-              end
+              if parameter.value.reference_value.node_function_id.present?
+                referenced_node = all_nodes.find do |n|
+                  n[:input].id == parameter.value.reference_value.node_function_id
+                end
 
-              if referenced_node.nil?
-                t.rollback_and_return! ServiceResponse.error(
-                  message: 'Referenced node function not found',
-                  error_code: :referenced_value_not_found
-                )
+                if referenced_node.nil?
+                  t.rollback_and_return! ServiceResponse.error(
+                    message: 'Referenced node function not found',
+                    error_code: :referenced_value_not_found
+                  )
+                end
+              else
+                referenced_node = { node: nil }
               end
 
               db_parameters[index].reference_value ||= ReferenceValue.new
@@ -225,7 +229,9 @@ module Namespaces
 
               reference_value.assign_attributes(
                 node_function: referenced_node[:node],
-                reference_paths: reference_paths
+                reference_paths: reference_paths,
+                parameter_index: parameter.value.reference_value.parameter_index,
+                input_index: parameter.value.reference_value.input_index
               )
             else
               db_parameters[index].reference_value&.destroy

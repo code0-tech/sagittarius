@@ -10,7 +10,9 @@ Represents a reference value in the system.
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this ReferenceValue was created |
 | `id` | [`ReferenceValueID!`](../scalar/referencevalueid.md) | Global ID of this ReferenceValue |
-| `nodeFunctionId` | [`NodeFunctionID!`](../scalar/nodefunctionid.md) | The referenced value. |
+| `inputIndex` | [`Int`](../scalar/int.md) | The index of the referenced input |
+| `nodeFunctionId` | [`NodeFunctionID`](../scalar/nodefunctionid.md) | The referenced value unless referencing the flow input. |
+| `parameterIndex` | [`Int`](../scalar/int.md) | The index of the referenced parameter |
 | `referencePath` | [`[ReferencePath!]!`](../object/referencepath.md) | The paths associated with this reference value. |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this ReferenceValue was last updated |
 
