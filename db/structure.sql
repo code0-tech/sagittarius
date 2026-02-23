@@ -1331,7 +1331,7 @@ ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT fk_rails_73ca8569ea FOREIGN KEY (return_type_id) REFERENCES data_type_identifiers(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY node_parameters
-    ADD CONSTRAINT fk_rails_74b7800b37 FOREIGN KEY (function_value_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_74b7800b37 FOREIGN KEY (function_value_id) REFERENCES node_functions(id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE ONLY data_type_rules
     ADD CONSTRAINT fk_rails_7759633ff8 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
