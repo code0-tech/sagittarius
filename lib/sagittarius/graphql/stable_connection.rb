@@ -33,20 +33,20 @@ module Sagittarius
       end
 
       def paginate_backward
-        before_id = Integer(decode(@before_value), exception: false)
-        if before_id.nil? && !@before_value.nil?
-          raise GraphQL::ExecutionError, "Invalid cursor '#{@before_value}' provided"
+        unless @before_value.nil?
+          before_id = Integer(decode(@before_value), exception: false)
+          raise GraphQL::ExecutionError, "Invalid cursor '#{@before_value}' provided" if before_id.nil?
         end
 
         @items = @items.where(id: ...before_id) unless before_id.nil?
-        @items = @items.reverse_order
+        @items = @items.order(id: :desc)
       end
 
       def paginate_forward
         after_id = Integer(decode(@after_value), exception: false)
         raise GraphQL::ExecutionError, "Invalid cursor '#{@after_value}' provided" if after_id.nil?
 
-        @items = @items.where(id: (after_id + 1)..)
+        @items = @items.where(id: (after_id + 1)..).order(id: :asc)
       end
 
       def nodes
