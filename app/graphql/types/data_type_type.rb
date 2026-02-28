@@ -10,7 +10,7 @@ module Types
     field :display_messages, [Types::TranslationType], null: true,
                                                        description: 'Display message of the function'
     field :generic_keys, [String], null: true, description: 'Generic keys of the datatype'
-    field :identifier, String, null: false, description: 'The identifier scoped to the namespace'
+    field :identifier, String, null: false, description: 'The identifier of the datatype'
     field :name, [Types::TranslationType], method: :names, null: false,
                                            description: 'Names of the flow type setting'
     field :rules, Types::DataTypeRuleType.connection_type, null: false,

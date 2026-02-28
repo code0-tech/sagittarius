@@ -3,14 +3,17 @@
 module Types
   module Input
     class DataTypeIdentifierInputType < Types::BaseInputObject
-      description 'Input type for data type identifier'
+      description 'Input for creation of a new DataTypeIdentifier'
 
-      argument :data_type_id, Types::GlobalIdType[::DataType], required: false,
-                                                               description: 'Data type ID'
-      argument :generic_key, String, required: false,
-                                     description: 'Generic key value'
-      argument :generic_type, Types::Input::GenericTypeInputType, required: false,
-                                                                  description: 'Generic type information'
+      argument :data_type, Types::Input::DataTypeInputType,
+               required: false,
+               description: 'Data type'
+      argument :generic_key, String,
+               required: false,
+               description: 'Generic key value'
+      argument :generic_type, Types::Input::GenericTypeInputType,
+               required: false,
+               description: 'Generic type information'
     end
   end
 end
