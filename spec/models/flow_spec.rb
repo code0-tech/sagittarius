@@ -37,19 +37,32 @@ RSpec.describe Flow do
     end
 
     before do
+      runtime = create(:runtime, namespace: flow.project.namespace)
+      rfd = create(:runtime_function_definition, runtime: runtime)
+      fd = create(:function_definition, runtime_function_definition: rfd)
+      rpd = create(
+        :runtime_parameter_definition,
+        runtime_function_definition: rfd,
+        data_type: create(
+          :data_type_identifier,
+          generic_key: 'T'
+        )
+      )
+      pd = create(
+        :parameter_definition,
+        function_definition: fd,
+        runtime_parameter_definition: rpd,
+        data_type: rpd.data_type
+      )
+
       func = create(
         :node_function,
+        function_definition: fd,
         flow: flow,
         node_parameters: [
           create(
             :node_parameter,
-            parameter_definition: create(
-              :parameter_definition,
-              data_type: create(
-                :data_type_identifier,
-                generic_key: 'T'
-              )
-            )
+            parameter_definition: pd
           )
         ]
       )
