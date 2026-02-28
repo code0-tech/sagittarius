@@ -9,6 +9,7 @@ Represents a flow
 | Name | Type | Description |
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Flow was created |
+| `disabledReason` | [`String`](../scalar/string.md) | The reason why the flow is disabled, if it is disabled |
 | `id` | [`FlowID!`](../scalar/flowid.md) | Global ID of this Flow |
 | `inputType` | [`DataType`](../object/datatype.md) | The input data type of the flow |
 | `name` | [`String!`](../scalar/string.md) | Name of the flow |

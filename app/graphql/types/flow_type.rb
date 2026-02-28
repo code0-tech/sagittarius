@@ -8,6 +8,10 @@ module Types
 
     field :name, String, null: false, description: 'Name of the flow'
 
+    field :disabled_reason, String,
+          null: true,
+          description: 'The reason why the flow is disabled, if it is disabled'
+
     field :input_type, Types::DataTypeType,
           null: true,
           description: 'The input data type of the flow'

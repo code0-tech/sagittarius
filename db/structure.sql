@@ -252,7 +252,8 @@ CREATE TABLE flows (
     starting_node_id bigint,
     name text NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    disabled_reason text
 );
 
 CREATE SEQUENCE flows_id_seq
@@ -1101,6 +1102,8 @@ CREATE INDEX index_flow_types_on_input_type_id ON flow_types USING btree (input_
 CREATE INDEX index_flow_types_on_return_type_id ON flow_types USING btree (return_type_id);
 
 CREATE UNIQUE INDEX index_flow_types_on_runtime_id_and_identifier ON flow_types USING btree (runtime_id, identifier);
+
+CREATE INDEX index_flows_on_disabled_reason ON flows USING btree (disabled_reason);
 
 CREATE INDEX index_flows_on_flow_type_id ON flows USING btree (flow_type_id);
 
