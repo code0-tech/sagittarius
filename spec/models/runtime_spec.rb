@@ -21,6 +21,8 @@ RSpec.describe Runtime do
       is_expected.to have_many(:projects).class_name('NamespaceProject').through(:project_assignments)
                                          .inverse_of(:runtimes)
     }
+
+    it { is_expected.to have_many(:runtime_statuses).inverse_of(:runtime) }
   end
 
   describe 'validations' do
