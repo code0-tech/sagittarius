@@ -24,6 +24,8 @@ module Namespaces
           end
 
           namespace_project.runtimes = runtimes
+          namespace_project.primary_runtime = runtimes.first if runtimes.size == 1
+
           unless namespace_project.save
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to assign runtimes to project',
