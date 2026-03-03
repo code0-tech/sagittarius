@@ -21,8 +21,13 @@ module Namespaces
         params[:primary_runtime_id] = params.delete(:primary_runtime)&.id if params.key?(:primary_runtime)
 
         transactional do |t|
-          success = namespace_project.update(params)
-          unless success
+          namespace_project.assign_attributes(params)
+
+          if namespace_project.primary_runtime_changed?
+            UpdateRuntimeCompatibilityJob.perform_later({ namespace_project_id: namespace_project.id })
+          end
+
+          unless namespace_project.save
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to update namespace project',
               error_code: :invalid_namespace_project,

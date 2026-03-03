@@ -70,5 +70,27 @@ RSpec.describe Namespaces::Projects::UpdateService do
         target_type: 'NamespaceProject'
       )
     end
+
+    it 'queues job to update runtimes' do
+      allow(UpdateRuntimeCompatibilityJob).to receive(:perform_later)
+
+      service_response
+
+      expect(UpdateRuntimeCompatibilityJob).to have_received(:perform_later).with(
+        { namespace_project_id: namespace_project.id }
+      )
+    end
+
+    context 'without changing the primary runtime' do
+      let(:params) { { name: namespace_project_name } }
+
+      it 'does not queue job to update runtimes' do
+        allow(UpdateRuntimeCompatibilityJob).to receive(:perform_later)
+
+        service_response
+
+        expect(UpdateRuntimeCompatibilityJob).not_to have_received(:perform_later)
+      end
+    end
   end
 end
