@@ -57,9 +57,27 @@ RSpec.describe Namespaces::Projects::AssignRuntimesService do
           target_type: 'NamespaceProject'
         )
       end
+
+      it 'queues job to update runtimes' do
+        allow(UpdateRuntimeCompatibilityJob).to receive(:perform_later)
+
+        service_response
+
+        expect(UpdateRuntimeCompatibilityJob).to have_received(:perform_later).with(
+          { namespace_project_id: project.id }
+        )
+      end
+
+      it { expect { service_response }.to change { project.reload.primary_runtime }.to(runtimes.first) }
+
+      context 'when adding multiple runtimes' do
+        let(:runtimes) { 2.times.map { create(:runtime, namespace: project.namespace) } }
+
+        it { expect { service_response }.not_to change { project.reload.primary_runtime } }
+      end
     end
 
-    context 'when removing a project' do
+    context 'when removing a runtime' do
       let(:runtime) { create(:runtime, namespace: project.namespace) }
       let!(:namespace_project_runtime_assignment) do
         create(:namespace_project_runtime_assignment, namespace_project: project, runtime: runtime)
@@ -88,9 +106,19 @@ RSpec.describe Namespaces::Projects::AssignRuntimesService do
           target_type: 'NamespaceProject'
         )
       end
+
+      it 'queues job to update runtimes' do
+        allow(UpdateRuntimeCompatibilityJob).to receive(:perform_later)
+
+        service_response
+
+        expect(UpdateRuntimeCompatibilityJob).to have_received(:perform_later).with(
+          { namespace_project_id: project.id }
+        )
+      end
     end
 
-    context 'when adding and removing a project' do
+    context 'when adding and removing a runtime' do
       let(:runtime) { create(:runtime, namespace: project.namespace) }
       let!(:namespace_project_runtime_assignment) do
         create(:namespace_project_runtime_assignment, namespace_project: project, runtime: runtime)
@@ -117,6 +145,16 @@ RSpec.describe Namespaces::Projects::AssignRuntimesService do
           },
           target_id: project.id,
           target_type: 'NamespaceProject'
+        )
+      end
+
+      it 'queues job to update runtimes' do
+        allow(UpdateRuntimeCompatibilityJob).to receive(:perform_later)
+
+        service_response
+
+        expect(UpdateRuntimeCompatibilityJob).to have_received(:perform_later).with(
+          { namespace_project_id: project.id }
         )
       end
     end
