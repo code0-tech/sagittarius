@@ -13,10 +13,10 @@ root = User.new(
   admin: true
 )
 
-# rubocop:disable ZeroTrack/Logs/RailsLogger -- we can't include a module here
+# rubocop:disable Code0/ZeroTrack/Logs/RailsLogger -- we can't include a module here
 if root.save
   Rails.logger.info(message: 'Initial root user created', email: initial_root_email, password: initial_root_password)
 else
   Rails.logger.warn(message: 'Failed to create initial root user', errors: root.errors.full_messages)
 end
-# rubocop:enable ZeroTrack/Logs/RailsLogger
+# rubocop:enable Code0/ZeroTrack/Logs/RailsLogger
