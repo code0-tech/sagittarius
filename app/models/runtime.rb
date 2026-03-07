@@ -12,6 +12,7 @@ class Runtime < ApplicationRecord
   has_many :project_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :runtime
   has_many :projects, class_name: 'NamespaceProject', through: :project_assignments, source: :namespace_project,
                       inverse_of: :runtimes
+  has_many :primary_projects, class_name: 'NamespaceProject', inverse_of: :primary_runtime
 
   has_many :data_types, inverse_of: :runtime
   has_many :data_type_identifiers, inverse_of: :runtime

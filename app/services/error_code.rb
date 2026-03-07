@@ -22,6 +22,7 @@ class ErrorCode
       runtime_mismatch: { description: 'Resources are from different runtimes' },
       generic_key_not_found: { description: 'The given key was not found in the data type' },
       no_primary_runtime: { description: 'The project does not have a primary runtime' },
+      is_primary_runtime: { description: 'This runtime is the primary runtime of a project' },
       invalid_external_identity: { description: 'This external identity is invalid' },
       external_identity_does_not_exist: { description: 'This external identity does not exist' },
       identity_validation_failed: { description: 'Failed to validate the external identity' },

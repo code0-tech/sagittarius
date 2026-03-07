@@ -58,6 +58,7 @@ Represents the available error responses
 | `INVALID_USER_IDENTITY` | The user identity is invalid because of active model errors |
 | `INVALID_USER_SESSION` | The user session is invalid because of active model errors |
 | `INVALID_VERIFICATION_CODE` | Invalid verification code provided |
+| `IS_PRIMARY_RUNTIME` | This runtime is the primary runtime of a project |
 | `LICENSE_NOT_FOUND` | The namespace license with the given identifier was not found |
 | `LOADING_IDENTITY_FAILED` | Failed to load user identity from external provider |
 | `MFA_FAILED` | Invalid MFA data provided |
