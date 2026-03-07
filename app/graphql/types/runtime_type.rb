@@ -16,7 +16,7 @@ module Types
     field :namespace, Types::NamespaceType, null: true, description: 'The parent namespace for the runtime'
     field :projects, Types::NamespaceProjectType.connection_type, null: false,
                                                                   description: 'Projects associated with the runtime'
-    field :status, Types::RuntimeStatusType, null: false, description: 'The status of the runtime'
+    field :status, Types::RuntimeConnectionStatusEnum, null: false, description: 'The status of the runtime'
 
     field :statuses, Types::RuntimeStatusType.connection_type, null: false,
                                                                description: 'Statuses of the runtime',

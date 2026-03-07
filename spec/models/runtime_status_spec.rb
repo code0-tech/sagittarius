@@ -11,7 +11,7 @@ RSpec.describe RuntimeStatus do
   end
 
   describe 'validations' do
-    context 'when status information exist' do
+    context 'when status configuration exists' do
       before do
         create(:runtime_status_configuration, runtime_status: runtime_status)
       end

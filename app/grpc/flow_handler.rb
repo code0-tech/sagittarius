@@ -8,9 +8,6 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
   grpc_stream :update
 
   def self.update_runtime(runtime)
-    runtime.last_heartbeat = Time.zone.now
-    runtime.save!
-
     flows = []
     runtime.project_assignments.compatible.each do |assignment|
       assignment.namespace_project.flows.each do |flow|
@@ -28,7 +25,10 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
     )
   end
 
-  def self.update_started(_runtime_id)
+  def self.update_started(runtime_id)
+    runtime = Runtime.find_by(id: runtime_id)
+    return if runtime.nil?
+
     logger.info(message: 'Runtime connected', runtime_id: runtime.id)
 
     update_runtime(runtime)

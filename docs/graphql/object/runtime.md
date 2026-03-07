@@ -17,7 +17,7 @@ Represents a runtime
 | `name` | [`String!`](../scalar/string.md) | The name for the runtime |
 | `namespace` | [`Namespace`](../object/namespace.md) | The parent namespace for the runtime |
 | `projects` | [`NamespaceProjectConnection!`](../object/namespaceprojectconnection.md) | Projects associated with the runtime |
-| `status` | [`RuntimeStatus!`](../object/runtimestatus.md) | The status of the runtime |
+| `status` | [`RuntimeConnectionStatus!`](../enum/runtimeconnectionstatus.md) | The status of the runtime |
 | `statuses` | [`RuntimeStatusConnection!`](../object/runtimestatusconnection.md) | Statuses of the runtime |
 | `token` | [`String`](../scalar/string.md) | Token belonging to the runtime, only present on creation |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Runtime was last updated |

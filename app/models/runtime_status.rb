@@ -25,14 +25,14 @@ class RuntimeStatus < ApplicationRecord
                          allow_blank: false,
                          uniqueness: { case_sensitive: false, scope: :runtime_id }
 
-  validate :runtime_status_informations_only_for_adapter
+  validate :runtime_status_configurations_only_for_adapter
 
   private
 
-  def runtime_status_informations_only_for_adapter
+  def runtime_status_configurations_only_for_adapter
     return if adapter?
     return if runtime_status_configurations.empty?
 
-    errors.add(:runtime_status_informations, :only_allowed_for_adapters)
+    errors.add(:runtime_status_configurations, :only_allowed_for_adapters)
   end
 end

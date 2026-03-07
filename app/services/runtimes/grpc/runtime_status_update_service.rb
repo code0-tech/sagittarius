@@ -26,8 +26,7 @@ module Runtimes
             )
           end
 
-          db_status = RuntimeStatus.find_or_initialize_by(runtime: runtime,
-                                                          identifier: status_info.identifier)
+          db_status = runtime.runtime_statuses.find_or_initialize_by(identifier: status_info.identifier)
 
           db_status.last_heartbeat = Time.zone.at(status_info.timestamp.to_i)
           db_status.status_type = if status_info.is_a?(Tucana::Shared::AdapterRuntimeStatus)
@@ -36,20 +35,21 @@ module Runtimes
                                     :execution
                                   end
 
-          db_status.runtime_features.clear
+          db_features = db_status.runtime_features.first(status_info.features.length)
+          db_status.runtime_features.where.not(id: db_features.map(&:id)).destroy_all
 
-          status_info.features.each do |feature|
-            db_feature = db_status.runtime_features.new
+          status_info.features.each_with_index do |feature, index|
+            db_features[index] ||= db_status.runtime_features.build
 
-            db_feature.names = update_translations(feature.name, db_feature.names)
-            db_feature.descriptions = update_translations(feature.description, db_feature.descriptions)
+            db_features[index].names = update_translations(feature.name, db_features[index].names)
+            db_features[index].descriptions = update_translations(feature.description, db_features[index].descriptions)
 
-            next if db_feature.save
+            next if db_features[index].save
 
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to save runtime feature',
               error_code: :invalid_runtime_feature,
-              details: db_feature.errors
+              details: db_features[index].errors
             )
           end
 

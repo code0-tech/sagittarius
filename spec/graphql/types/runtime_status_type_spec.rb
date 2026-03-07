@@ -19,4 +19,5 @@ RSpec.describe SagittariusSchema.types['RuntimeStatus'] do
 
   it { expect(described_class.graphql_name).to eq('RuntimeStatus') }
   it { expect(described_class).to have_graphql_fields(fields) }
+  it { expect(described_class).to require_graphql_authorizations(:read_runtime) }
 end
