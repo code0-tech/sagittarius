@@ -29,6 +29,7 @@ class NamespaceProject < ApplicationRecord
 
   before_validation :strip_whitespace
 
+  validates :primary_runtime, presence: true, if: -> { flows.any? }
   validate :validate_primary_runtime, if: :primary_runtime_changed?
 
   def validate_primary_runtime
