@@ -52,6 +52,7 @@ module Types
     expose_abilities %i[
       manage_mfa
       update_user
+      delete_user
     ]
 
     id_field User
