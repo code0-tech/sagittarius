@@ -86,6 +86,7 @@ module GrpcStreamHandler
 
         begin
           y << item
+          Runtime.update(runtime_id, last_heartbeat: Time.zone.now)
         rescue GRPC::Core::CallError
           logger.info(message: 'Stream was closed from client side (probably)')
           clazz.try("#{method}_died", runtime_id)

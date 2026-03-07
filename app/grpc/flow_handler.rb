@@ -26,19 +26,12 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
   end
 
   def self.update_started(runtime_id)
-    runtime = Runtime.find(runtime_id)
-    runtime.connected!
-    runtime.save
+    runtime = Runtime.find_by(id: runtime_id)
+    return if runtime.nil?
 
     logger.info(message: 'Runtime connected', runtime_id: runtime.id)
 
     update_runtime(runtime)
-  end
-
-  def self.update_died(runtime_id)
-    runtime = Runtime.find(runtime_id)
-    runtime.disconnected!
-    runtime.save
   end
 
   def self.encoders = { update: ->(grpc_object) { Tucana::Sagittarius::FlowResponse.encode(grpc_object) } }
