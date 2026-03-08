@@ -8,7 +8,7 @@ module Types
       For more information see: https://github.com/code0-tech/code0-identities/blob/#{Code0::Identities::VERSION}/README.md#oauth-based
     MARKDOWN
 
-    # rubocop:disable Graphql/ExtractType
+    # rubocop:disable GraphQL/ExtractType
     field :client_id, String,
           null: false,
           description: 'The client ID for the OIDC identity provider'
@@ -16,7 +16,7 @@ module Types
     field :client_secret, String,
           null: false,
           description: 'The client secret for the OIDC identity provider'
-    # rubocop:enable Graphql/ExtractType
+    # rubocop:enable GraphQL/ExtractType
 
     field :redirect_uri, String,
           null: false,

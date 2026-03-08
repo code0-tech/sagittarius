@@ -1417,7 +1417,7 @@ ALTER TABLE ONLY data_type_rules
     ADD CONSTRAINT fk_rails_7759633ff8 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_projects
-    ADD CONSTRAINT fk_rails_79012c5895 FOREIGN KEY (primary_runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_79012c5895 FOREIGN KEY (primary_runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_7de9ce6578 FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) ON DELETE SET NULL;

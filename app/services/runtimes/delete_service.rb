@@ -16,11 +16,18 @@ module Runtimes
         return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
       end
 
+      if runtime.primary_projects.any?
+        return ServiceResponse.error(
+          message: 'Runtime is primary runtime in some projects',
+          error_code: :is_primary_runtime
+        )
+      end
+
       transactional do |t|
         runtime.delete
 
         if runtime.persisted?
-          t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete organization',
+          t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete runtime',
                                                        error_code: :invalid_runtime,
                                                        details: runtime.errors)
         end

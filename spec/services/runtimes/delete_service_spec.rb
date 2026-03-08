@@ -65,5 +65,13 @@ RSpec.describe Runtimes::DeleteService do
         target_type: 'Namespace'
       )
     end
+
+    context 'when runtime is primary runtime of a project' do
+      before do
+        create(:namespace_project, primary_runtime: runtime, namespace: runtime.namespace)
+      end
+
+      it { expect(service_response.payload[:error_code]).to eq(:is_primary_runtime) }
+    end
   end
 end
