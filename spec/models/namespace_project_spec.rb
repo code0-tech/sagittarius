@@ -52,5 +52,15 @@ RSpec.describe NamespaceProject do
       project.primary_runtime = runtime
       is_expected.to be_valid
     end
+
+    it 'requires primary runtime if containing flows' do
+      is_expected.to be_valid
+
+      create(:flow, project: project)
+      is_expected.not_to be_valid
+
+      project.primary_runtime = create(:runtime, namespace: nil)
+      is_expected.to be_valid
+    end
   end
 end
