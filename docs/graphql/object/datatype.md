@@ -11,6 +11,7 @@ Represents a DataType
 | `aliases` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this DataType was created |
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display message of the function |
+| `genericKeys` | [`[String!]!`](../scalar/string.md) | The generic keys of the datatype |
 | `id` | [`DataTypeID!`](../scalar/datatypeid.md) | Global ID of this DataType |
 | `identifier` | [`String!`](../scalar/string.md) | The identifier scoped to the namespace |
 | `name` | [`[Translation!]!`](../object/translation.md) | Names of the flow type setting |

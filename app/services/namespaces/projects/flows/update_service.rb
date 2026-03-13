@@ -42,8 +42,6 @@ module Namespaces
             )
           end
 
-          validate_flow(t)
-
           UpdateRuntimesForProjectJob.perform_later(flow.project.id)
         end
 
@@ -248,18 +246,6 @@ module Namespaces
           end
 
           current_node.node_parameters = db_parameters
-        end
-
-        def validate_flow(t)
-          res = Validation::ValidationService.new(current_authentication, flow).execute
-
-          return unless res.error?
-
-          t.rollback_and_return! ServiceResponse.error(
-            message: 'Flow validation failed',
-            error_code: res.payload[:error_code],
-            details: res.payload[:details]
-          )
         end
 
         def create_audit_event

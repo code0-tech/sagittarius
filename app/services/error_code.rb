@@ -51,7 +51,6 @@ class ErrorCode
       invalid_organization: { description: 'The organization is invalid because of active model errors' },
       invalid_namespace_role: { description: 'The namespace role is invalid because of active model errors' },
       invalid_namespace_project: { description: 'The namespace project is invalid because of active model errors' },
-      flow_validation_failed: { description: 'The flow validation has failed' },
       failed_to_reset_password: { description: 'Failed to reset the user password' },
       loading_identity_failed: { description: 'Failed to load user identity from external provider' },
       invalid_flow_setting: { description: 'The flow setting is invalid because of active model errors' },

@@ -20,7 +20,6 @@ Represents the available error responses
 | `FAILED_TO_SAVE_VALID_BACKUP_CODE` | The new backup codes could not be saved |
 | `FLOW_NOT_FOUND` | The flow with the given identifier was not found |
 | `FLOW_TYPE_NOT_FOUND` | The flow type with the given identifier was not found |
-| `FLOW_VALIDATION_FAILED` | The flow validation has failed |
 | `FUNCTION_VALUE_NOT_FOUND` | The id for the function value node does not exist |
 | `GENERIC_KEY_NOT_FOUND` | The given key was not found in the data type |
 | `IDENTITY_NOT_FOUND` | The external identity with the given identifier was not found |
@@ -28,6 +27,7 @@ Represents the available error responses
 | `INCONSISTENT_NAMESPACE` | Resources are from different namespaces |
 | `INVALID_ATTACHMENT` | The attachment is invalid because of active model errors |
 | `INVALID_DATA_TYPE` | The data type is invalid because of active model errors |
+| `INVALID_DATA_TYPE_LINK` | The data type link is invalid because of active model errors |
 | `INVALID_EXTERNAL_IDENTITY` | This external identity is invalid |
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |

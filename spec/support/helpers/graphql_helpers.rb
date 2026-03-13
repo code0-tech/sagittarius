@@ -84,7 +84,6 @@ module GraphqlHelpers
 			  details {
           ...on ActiveModelError { attribute type }
           ...on MessageError { message }
-          ...on FlowValidationError { errorCode severity details { attribute type } }
 			  }
       }
     )
