@@ -8,13 +8,13 @@ module Types
 
     field :name, String, null: false, description: 'Name of the flow'
 
-    field :input_type, Types::DataTypeType,
+    field :input_type, String,
           null: true,
           description: 'The input data type of the flow'
     field :project, Types::NamespaceProjectType,
           null: false,
           description: 'The project the flow belongs to'
-    field :return_type, Types::DataTypeType,
+    field :return_type, String,
           null: true,
           description: 'The return data type of the flow'
     field :settings, Types::FlowSettingType.connection_type,
@@ -33,6 +33,10 @@ module Types
           description: 'Nodes of the flow',
           method: :node_functions
 
+    field :referenced_data_types, Types::DataTypeType.connection_type,
+          null: false,
+          description: 'The data types that are referenced in this flow'
+
     expose_abilities %i[
       delete_flow
     ]
@@ -42,6 +46,10 @@ module Types
 
     def starting_node_id
       object.starting_node&.to_global_id
+    end
+
+    def referenced_data_types
+      DataTypesFinder.new({ flow: object, expand_recursively: true }).execute
     end
   end
 end

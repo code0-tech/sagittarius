@@ -19,11 +19,7 @@ module Types
     end
 
     def config
-      if object.variant_parent_type?
-        object
-      else
-        object.config.merge(variant: object.variant)
-      end
+      object.config.merge(variant: object.variant)
     end
   end
 end

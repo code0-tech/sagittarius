@@ -6,15 +6,15 @@ RSpec.describe SagittariusSchema.types['DataType'] do
   let(:fields) do
     %w[
       identifier
-      variant
+      type
       id
       rules
       name
       display_messages
       aliases
       runtime
+      referenced_data_types
       generic_keys
-      data_type_identifiers
       createdAt
       updatedAt
     ]

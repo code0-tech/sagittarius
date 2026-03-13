@@ -16,9 +16,10 @@ Represents a flow type
 | `flowTypeSettings` | [`[FlowTypeSetting!]!`](../object/flowtypesetting.md) | Flow type settings of the flow type |
 | `id` | [`FlowTypeID!`](../scalar/flowtypeid.md) | Global ID of this FlowType |
 | `identifier` | [`String!`](../scalar/string.md) | Identifier of the flow type |
-| `inputType` | [`DataType`](../object/datatype.md) | Input type of the flow type |
+| `inputType` | [`String`](../scalar/string.md) | Input type of the flow type |
 | `names` | [`[Translation!]`](../object/translation.md) | Names of the flow type |
-| `returnType` | [`DataType`](../object/datatype.md) | Return type of the flow type |
+| `referencedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this flow type |
+| `returnType` | [`String`](../scalar/string.md) | Return type of the flow type |
 | `runtime` | [`Runtime!`](../object/runtime.md) | Runtime of the flow type |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this FlowType was last updated |
 

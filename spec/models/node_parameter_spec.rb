@@ -4,13 +4,7 @@ require 'rails_helper'
 
 RSpec.describe NodeParameter do
   subject do
-    create(
-      :node_parameter,
-      parameter_definition: create(
-        :parameter_definition,
-        data_type: create(:data_type_identifier, data_type: create(:data_type))
-      )
-    )
+    create(:node_parameter)
   end
 
   describe 'associations' do
@@ -30,14 +24,7 @@ RSpec.describe NodeParameter do
         :node_parameter,
         literal_value: 1,
         reference_value: create(:reference_value),
-        function_value: nil,
-        parameter_definition: create(
-          :parameter_definition,
-          data_type: create(
-            :data_type_identifier,
-            data_type: create(:data_type)
-          )
-        )
+        function_value: nil
       )
       expect(param).not_to be_valid
       expect(param.errors[:value])
@@ -49,14 +36,7 @@ RSpec.describe NodeParameter do
         :node_parameter,
         literal_value: nil,
         reference_value: nil,
-        function_value: nil,
-        parameter_definition: create(
-          :parameter_definition,
-          data_type: create(
-            :data_type_identifier,
-            data_type: create(:data_type)
-          )
-        )
+        function_value: nil
       )
       expect(param).to be_valid
     end
