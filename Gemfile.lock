@@ -84,7 +84,8 @@ GEM
     bootsnap (1.20.1)
       msgpack (~> 1.2)
     builder (3.3.0)
-    byebug (12.0.0)
+    byebug (13.0.0)
+      reline (>= 0.6.0)
     code0-identities (0.0.3)
       base64 (~> 0.3.0)
       httparty (~> 0.22)
@@ -216,12 +217,13 @@ GEM
       parser
       rouge
       unparser
-    pry (0.15.2)
+    pry (0.16.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry-byebug (3.11.0)
-      byebug (~> 12.0)
-      pry (>= 0.13, < 0.16)
+      reline (>= 0.6.0)
+    pry-byebug (3.12.0)
+      byebug (~> 13.0)
+      pry (>= 0.13, < 0.17)
     psych (5.3.1)
       date
       stringio
@@ -413,7 +415,7 @@ DEPENDENCIES
   json-schema (~> 6.0)
   lograge (~> 0.14.0)
   pg (~> 1.1)
-  pry (~> 0.15.0)
+  pry (~> 0.16.0)
   pry-byebug (~> 3.10)
   puma (>= 5.0)
   rails (~> 8.0.0)
