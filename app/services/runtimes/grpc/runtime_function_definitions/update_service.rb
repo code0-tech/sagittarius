@@ -27,7 +27,7 @@ module Runtimes
 
               logger.error(message: 'Failed to update runtime function definition',
                            runtime_id: current_runtime.id,
-                           definition_identifier: runtime_function_definition.identifier,
+                           definition_identifier: runtime_function_definition.runtime_name,
                            errors: response.errors.full_messages)
 
               t.rollback_and_return! ServiceResponse.error(message: 'Failed to update runtime function definition',
@@ -52,13 +52,9 @@ module Runtimes
             runtime_name: runtime_function_definition.runtime_name
           )
           db_object.removed_at = nil
-          db_object.return_type = if runtime_function_definition.return_type_identifier.present?
-                                    find_data_type_identifier(
-                                      runtime_function_definition.return_type_identifier,
-                                      db_object,
-                                      t
-                                    )
-                                  end
+          db_object.signature = runtime_function_definition.signature
+          db_object.throws_error = runtime_function_definition.throws_error
+          db_object.version = runtime_function_definition.version
           db_object.names = update_translations(runtime_function_definition.name, db_object.names)
           db_object.descriptions = update_translations(runtime_function_definition.description, db_object.descriptions)
           db_object.documentations = update_translations(runtime_function_definition.documentation,
@@ -69,10 +65,7 @@ module Runtimes
                                                            db_object.display_messages)
           db_object.aliases = update_translations(runtime_function_definition.alias, db_object.aliases)
 
-          db_object.generic_keys = runtime_function_definition.generic_keys.to_a
-
-          db_object.throws_error = runtime_function_definition.throws_error
-          db_object.version = runtime_function_definition.version
+          db_object.save
 
           if db_object.function_definitions.empty?
             definition = FunctionDefinition.new
@@ -84,7 +77,6 @@ module Runtimes
             definition.display_messages = update_translations(runtime_function_definition.display_message,
                                                               definition.display_messages)
             definition.aliases = update_translations(runtime_function_definition.alias, definition.aliases)
-            definition.return_type = db_object.return_type
 
             db_object.function_definitions << definition
           end
@@ -92,7 +84,7 @@ module Runtimes
           db_object.parameters = update_parameters(db_object, runtime_function_definition.runtime_parameter_definitions,
                                                    db_object.parameters, t)
 
-          db_object.save
+          link_data_types(db_object, runtime_function_definition.linked_data_type_identifiers, t)
           db_object
         end
 
@@ -110,7 +102,6 @@ module Runtimes
             db_param.runtime_function_definition = runtime_function_definition
             db_param.runtime_name = real_param.runtime_name
             db_param.removed_at = nil
-            db_param.data_type = find_data_type_identifier(real_param.data_type_identifier, db_param, t)
 
             db_param.names = update_translations(real_param.name, db_param.names)
             db_param.descriptions = update_translations(real_param.description, db_param.descriptions)
@@ -132,7 +123,6 @@ module Runtimes
             definition.names = update_translations(real_param.name, definition.names)
             definition.descriptions = update_translations(real_param.description, definition.descriptions)
             definition.documentations = update_translations(real_param.documentation, definition.documentations)
-            definition.data_type = db_param.data_type
             definition.default_value = db_param.default_value
             definition.function_definition = runtime_function_definition.function_definitions.first
 

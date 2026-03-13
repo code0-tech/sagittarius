@@ -85,6 +85,7 @@ class ErrorCode
       data_type_not_found: { description: 'The data type with the given identifier was not found' },
       invalid_flow_type: { description: 'The flow type is invalid because of active model errors' },
       no_data_type_for_identifier: { description: 'No data type could be found for the given identifier' },
+      invalid_data_type_link: { description: 'The data type link is invalid because of active model errors' },
       node_not_found: { description: 'The node with this id does not exist' },
       function_value_not_found: { description: 'The id for the function value node does not exist' },
       invalid_node_parameter: { description: 'The node parameter is invalid' },

@@ -50,12 +50,8 @@ module Runtimes
         def update_flowtype(flow_type, t)
           db_object = FlowType.find_or_initialize_by(runtime: current_runtime, identifier: flow_type.identifier)
           db_object.removed_at = nil
-          if flow_type.input_type_identifier.present?
-            db_object.input_type = find_data_type(flow_type.input_type_identifier, t)
-          end
-          if flow_type.return_type_identifier.present?
-            db_object.return_type = find_data_type(flow_type.return_type_identifier, t)
-          end
+          db_object.input_type = flow_type.input_type.presence
+          db_object.return_type = flow_type.return_type.presence
           db_object.editable = flow_type.editable
           db_object.descriptions = update_translations(flow_type.description, db_object.descriptions)
           db_object.names = update_translations(flow_type.name, db_object.names)
@@ -64,6 +60,7 @@ module Runtimes
           db_object.aliases = update_translations(flow_type.alias, db_object.aliases)
           db_object.version = flow_type.version
           db_object.flow_type_settings = update_settings(flow_type.settings, db_object, t)
+          link_data_types(db_object, flow_type.linked_data_type_identifiers, t)
           db_object.save
           db_object
         end
@@ -72,10 +69,11 @@ module Runtimes
           flow_type.flow_type_settings = flow_type_settings.map do |setting|
             db_setting = FlowTypeSetting.find_or_initialize_by(flow_type: flow_type, identifier: setting.identifier)
             db_setting.unique = setting.unique.to_s.downcase
+            db_setting.type = setting.type
             db_setting.default_value = setting.default_value&.to_ruby
             db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
             db_setting.names = update_translations(setting.name, db_setting.names)
-            db_setting.data_type = find_data_type(setting.data_type_identifier, t)
+            link_data_types(db_setting, setting.linked_data_type_identifiers, t)
 
             unless db_setting.save
               logger.error(
