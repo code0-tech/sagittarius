@@ -17,6 +17,10 @@ module Types
 
       argument :type, Types::GlobalIdType[::FlowType], required: true,
                                                        description: 'The identifier of the flow type'
+
+      argument :disabled_reason, String,
+               required: false,
+               description: 'The reason why the flow is disabled, if applicable, if not set the flow is enabled'
     end
   end
 end

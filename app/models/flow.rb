@@ -14,6 +14,17 @@ class Flow < ApplicationRecord
                    allow_blank: false,
                    uniqueness: { case_sensitive: false, scope: :project_id }
 
+  validates :disabled_reason, presence: false,
+                              allow_blank: true,
+                              length: { maximum: 100, minimum: 0 }
+
+  scope :enabled, -> { where(disabled_reason: nil) }
+  scope :disabled, -> { where.not(disabled_reason: nil) }
+
+  def disabled?
+    disabled_reason.present?
+  end
+
   def to_grpc
     Tucana::Shared::ValidationFlow.new(
       flow_id: id,

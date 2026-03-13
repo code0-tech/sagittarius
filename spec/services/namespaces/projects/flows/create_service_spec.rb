@@ -12,7 +12,7 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
   let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
 
   let(:flow_input) do
-    Struct.new(:settings, :type, :starting_node_id, :nodes, :name).new(
+    Struct.new(:settings, :type, :starting_node_id, :nodes, :name, :disabled_reason).new(
       [],
       create(:flow_type, runtime: runtime).to_global_id,
       'gid://sagittarius/NodeFunction/12345',
@@ -30,7 +30,8 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
           []
         )
       ],
-      generate(:flow_name)
+      generate(:flow_name),
+      nil
     )
   end
 
@@ -53,7 +54,7 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
   context 'when starting node is nil' do
     let(:current_user) { create(:user) }
     let(:flow_input) do
-      Struct.new(:settings, :type, :starting_node_id, :nodes, :name).new(
+      Struct.new(:settings, :type, :starting_node_id, :nodes, :name, :disabled_reason).new(
         [],
         create(:flow_type, runtime: runtime).to_global_id,
         nil,
@@ -71,7 +72,8 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
             []
           )
         ],
-        generate(:flow_name)
+        generate(:flow_name),
+        nil
       )
     end
 

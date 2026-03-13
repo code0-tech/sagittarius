@@ -23,7 +23,7 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
   end
   let(:flow) { create(:flow, project: namespace_project, flow_type: create(:flow_type, runtime: runtime)) }
   let(:flow_input) do
-    Struct.new(:settings, :starting_node_id, :nodes, :name).new(
+    Struct.new(:settings, :starting_node_id, :nodes, :name, :disabled_reason).new(
       [],
       starting_node.to_global_id,
       [
@@ -34,7 +34,8 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
           []
         )
       ],
-      "updated #{flow.name}"
+      "updated #{flow.name}",
+      nil
     )
   end
 
