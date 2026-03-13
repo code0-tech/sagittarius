@@ -8,8 +8,8 @@ FactoryBot.define do
     flow_type
     starting_node { nil }
     flow_settings { [] }
-    input_type { nil }
-    return_type { nil }
+    input_type { 'string' }
+    return_type { 'string' }
     name { generate(:flow_name) }
   end
 end

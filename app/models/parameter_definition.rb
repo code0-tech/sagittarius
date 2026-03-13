@@ -2,7 +2,6 @@
 
 class ParameterDefinition < ApplicationRecord
   belongs_to :runtime_parameter_definition
-  belongs_to :data_type, class_name: 'DataTypeIdentifier'
 
   belongs_to :function_definition, inverse_of: :parameter_definitions
 

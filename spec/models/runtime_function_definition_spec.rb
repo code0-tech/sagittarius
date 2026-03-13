@@ -12,17 +12,8 @@ RSpec.describe RuntimeFunctionDefinition do
     it { is_expected.to validate_uniqueness_of(:runtime_name).case_insensitive.scoped_to(:runtime_id) }
     it { is_expected.to validate_length_of(:runtime_name).is_at_most(50) }
 
-    context 'when generic keys are too long' do
-      before do
-        function.generic_keys = Array.new(31, 'a' * 51) # 31 keys, each 51 characters long
-      end
-
-      it 'is expected to be invalid' do
-        expect(function).not_to be_valid
-        expect(function.errors[:generic_keys]).to include('each key must be 50 characters or fewer')
-        expect(function.errors[:generic_keys]).to include('must be 30 or fewer')
-      end
-    end
+    it { is_expected.to validate_presence_of(:signature) }
+    it { is_expected.to validate_length_of(:signature).is_at_most(500) }
 
     describe '#validate_version' do
       it 'adds an error if version is blank' do
@@ -52,6 +43,16 @@ RSpec.describe RuntimeFunctionDefinition do
       is_expected.to have_many(:parameters)
         .class_name('RuntimeParameterDefinition')
         .inverse_of(:runtime_function_definition)
+    end
+
+    it do
+      is_expected.to have_many(:runtime_function_definition_data_type_links).inverse_of(:runtime_function_definition)
+    end
+
+    it do
+      is_expected.to have_many(:referenced_data_types)
+        .through(:runtime_function_definition_data_type_links)
+        .source(:referenced_data_type)
     end
 
     it { is_expected.to have_many(:names).class_name('Translation').inverse_of(:owner) }
