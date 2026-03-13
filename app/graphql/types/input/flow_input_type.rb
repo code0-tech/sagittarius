@@ -17,6 +17,14 @@ module Types
 
       argument :type, Types::GlobalIdType[::FlowType], required: true,
                                                        description: 'The identifier of the flow type'
+
+      argument :input_type, Types::Input::DataTypeIdentifierInputType,
+               required: false,
+               description: 'The input data type'
+
+      argument :return_type, Types::Input::DataTypeIdentifierInputType,
+               required: false,
+               description: 'The return data type'
     end
   end
 end
