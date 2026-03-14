@@ -5,7 +5,6 @@ module Namespaces
     module Flows
       class UpdateService
         include Sagittarius::Database::Transactional
-        include FlowServiceHelper
 
         attr_reader :current_authentication, :flow, :flow_input
 
