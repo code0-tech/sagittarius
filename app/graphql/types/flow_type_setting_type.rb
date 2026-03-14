@@ -14,14 +14,14 @@ module Types
     field :type, String, null: false, description: 'Type of the flow type setting'
     field :unique, Boolean, null: false, description: 'Unique status of the flow type setting'
 
-    field :referenced_data_types, Types::DataTypeType.connection_type,
+    field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,
           description: 'The data types that are referenced in this flow type setting'
 
     id_field FlowTypeSetting
     timestamps
 
-    def referenced_data_types
+    def linked_data_types
       DataTypesFinder.new({ flow_type_setting: object, expand_recursively: true }).execute
     end
   end

@@ -11,10 +11,10 @@ Represents a flow
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Flow was created |
 | `id` | [`FlowID!`](../scalar/flowid.md) | Global ID of this Flow |
 | `inputType` | [`String`](../scalar/string.md) | The input data type of the flow |
+| `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this flow |
 | `name` | [`String!`](../scalar/string.md) | Name of the flow |
 | `nodes` | [`NodeFunctionConnection!`](../object/nodefunctionconnection.md) | Nodes of the flow |
 | `project` | [`NamespaceProject!`](../object/namespaceproject.md) | The project the flow belongs to |
-| `referencedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this flow |
 | `returnType` | [`String`](../scalar/string.md) | The return data type of the flow |
 | `settings` | [`FlowSettingConnection!`](../object/flowsettingconnection.md) | The settings of the flow |
 | `startingNodeId` | [`NodeFunctionID`](../scalar/nodefunctionid.md) | The ID of the starting node of the flow |

@@ -33,7 +33,7 @@ module Types
     field :throws_error, Boolean,
           null: false, description: 'Indicates if the function can throw an error'
 
-    field :referenced_data_types, Types::DataTypeType.connection_type,
+    field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,
           description: 'All data types referenced within this function definition'
 
@@ -52,7 +52,7 @@ module Types
       object.runtime_function_definition&.throws_error
     end
 
-    def referenced_data_types
+    def linked_data_types
       return [] unless object.runtime_function_definition
 
       DataTypesFinder.new({ runtime_function_definition: object.runtime_function_definition,

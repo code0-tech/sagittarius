@@ -17,7 +17,7 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
       runtimeFunctionDefinition
       signature
       throwsError
-      referencedDataTypes
+      linkedDataTypes
       createdAt
       updatedAt
     ]

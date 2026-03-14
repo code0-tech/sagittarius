@@ -16,9 +16,9 @@ Represents a function definition
 | `documentations` | [`[Translation!]`](../object/translation.md) | Documentation of the function |
 | `id` | [`FunctionDefinitionID!`](../scalar/functiondefinitionid.md) | Global ID of this FunctionDefinition |
 | `identifier` | [`String!`](../scalar/string.md) | Identifier of the function |
+| `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | All data types referenced within this function definition |
 | `names` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `parameterDefinitions` | [`ParameterDefinitionConnection`](../object/parameterdefinitionconnection.md) | Parameters of the function |
-| `referencedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | All data types referenced within this function definition |
 | `runtimeFunctionDefinition` | [`RuntimeFunctionDefinition`](../object/runtimefunctiondefinition.md) | Runtime function definition |
 | `signature` | [`String!`](../scalar/string.md) | Signature of the function |
 | `throwsError` | [`Boolean!`](../scalar/boolean.md) | Indicates if the function can throw an error |

@@ -11,7 +11,7 @@ RSpec.describe SagittariusSchema.types['RuntimeFunctionDefinition'] do
       runtimeParameterDefinitions
       runtime
       signature
-      referencedDataTypes
+      linkedDataTypes
       createdAt
       updatedAt
     ]
