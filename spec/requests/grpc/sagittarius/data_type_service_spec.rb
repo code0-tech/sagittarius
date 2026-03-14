@@ -11,8 +11,8 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
     let(:data_types) do
       [
         {
-          variant: :PRIMITIVE,
           identifier: 'positive_number',
+          type: 'number',
           name: [
             { code: 'de_DE', content: 'Positive Zahl' }
           ],
@@ -23,11 +23,9 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
             { code: 'de_DE', content: 'Zahl: ${0}' }
           ],
           rules: [
-            Tucana::Shared::DefinitionDataTypeRule.create(
-              :contains_type,
-              { data_type_identifier: { generic_key: 'T' } }
-            )
+            Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1, to: 100 })
           ],
+          linked_data_type_identifiers: [],
           version: '0.0.0',
         }
       ]
@@ -45,7 +43,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
 
       data_type = DataType.last
       expect(data_type.runtime).to eq(runtime)
-      expect(data_type.variant).to eq('primitive')
+      expect(data_type.type).to eq('number')
       expect(data_type.identifier).to eq('positive_number')
       expect(data_type.names.count).to eq(1)
       expect(data_type.names.first.code).to eq('de_DE')
@@ -57,72 +55,24 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
       expect(data_type.display_messages.first.code).to eq('de_DE')
       expect(data_type.display_messages.first.content).to eq('Zahl: ${0}')
       expect(data_type.rules.count).to eq(1)
-      expect(data_type.rules.first.variant).to eq('contains_type')
-      expect(data_type.rules.first.config).to eq(
-        {
-          'data_type_identifier' => { 'generic_key' => 'T' },
-          'data_type_identifier_id' => DataTypeIdentifier.find_by(runtime: runtime, generic_key: 'T').id,
-        }
-      )
+      expect(data_type.rules.first.variant).to eq('number_range')
+      expect(data_type.rules.first.config).to eq({ 'from' => 1, 'to' => 100, 'steps' => 0 })
     end
 
     context 'with more rules' do
       let(:data_types) do
         [
           {
-            variant: :PRIMITIVE,
-            identifier: 'parent_type_identifier',
-            version: '0.0.0',
-          },
-          {
-            variant: :PRIMITIVE,
-            identifier: 'some_type',
-            version: '0.0.0',
-          },
-          {
-            variant: :PRIMITIVE,
             identifier: 'positive_number',
+            type: 'number',
             name: [
               { code: 'de_DE', content: 'Positive Zahl' }
             ],
-            alias: [
-              { code: 'de_DE', content: 'Positive Nummer' }
-            ],
-            display_message: [
-              { code: 'de_DE', content: 'Zahl: ${0}' }
-            ],
             rules: [
-              Tucana::Shared::DefinitionDataTypeRule.create(:contains_key, {
-                                                              key: 'example_key',
-                                                              data_type_identifier: {
-                                                                data_type_identifier: 'some_type',
-                                                              },
-                                                            }),
-              Tucana::Shared::DefinitionDataTypeRule.create(:contains_type, {
-                                                              data_type_identifier: { generic_key: 'T' },
-                                                            }),
-              Tucana::Shared::DefinitionDataTypeRule.create(:item_of_collection, { items: [] }),
               Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1, to: 100, steps: 1 }),
-              Tucana::Shared::DefinitionDataTypeRule.create(:regex, { pattern: '^\d+$' }),
-              Tucana::Shared::DefinitionDataTypeRule.create(:input_types, {
-                                                              input_types: [{
-                                                                data_type_identifier: {
-                                                                  data_type_identifier: 'some_type',
-                                                                },
-                                                                input_identifier: 'input_1',
-                                                              }],
-                                                            }),
-              Tucana::Shared::DefinitionDataTypeRule.create(:return_type, {
-                                                              data_type_identifier: {
-                                                                data_type_identifier: 'some_type',
-                                                              },
-                                                            }),
-              Tucana::Shared::DefinitionDataTypeRule.create(:parent_type, {
-                                                              parent_type: {
-                                                                data_type_identifier: 'parent_type_identifier',
-                                                              },
-                                                            })
+              Tucana::Shared::DefinitionDataTypeRule.create(:regex, { pattern: '^\d+$' })
             ],
+            linked_data_type_identifiers: [],
             version: '0.0.0',
           }
         ]
@@ -131,301 +81,88 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
       it 'creates a correct datatype with all rules' do
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-        expect(DataType.last.rules.count).to eq(8)
+        expect(DataType.last.rules.count).to eq(2)
       end
     end
 
-    context 'with dependent data types' do
-      context 'with parent_type rule' do
-        let(:data_types) do
-          [
-            {
-              variant: :PRIMITIVE,
-              identifier: 'small_positive_number',
-              name: [
-                { code: 'de_DE', content: 'Kleine positive Zahl' }
-              ],
-              rules: [
-                Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 9 }),
-                Tucana::Shared::DefinitionDataTypeRule.create(
-                  :parent_type,
-                  { parent_type: {
-                    generic_type: {
-                      data_type_identifier: 'positive_number',
-                      generic_mappers: [
-                        {
-                          source: [
-                            {
-                              data_type_identifier: 'some_other_dependency',
-                            }
-                          ],
-                          target: 'T',
-                          generic_combinations: [],
-                        }
-                      ],
-                    },
-                  } }
-                )
-              ],
-              generic_keys: ['T'],
-              version: '0.0.0',
-            },
-
-            {
-              variant: :PRIMITIVE,
-              identifier: 'some_other_dependency',
-              name: [
-                { code: 'de_DE', content: 'Positive Zahl' }
-              ],
-              rules: [
-                Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1 })
-              ],
-              version: '0.0.0',
-            },
-            {
-              variant: :PRIMITIVE,
-              identifier: 'positive_number',
-              name: [
-                { code: 'de_DE', content: 'Positive Zahl' }
-              ],
-              rules: [
-                Tucana::Shared::DefinitionDataTypeRule.create(:number_range, { from: 1 })
-              ],
-              version: '0.0.0',
-            }
-          ]
-        end
-
-        it 'creates data types' do
-          expect(stub.update(message, authorization(runtime)).success).to be(true)
-
-          positive_number = DataType.find_by(identifier: 'positive_number')
-          small_positive_number = DataType.find_by(identifier: 'small_positive_number')
-
-          expect(positive_number).to be_present
-          expect(small_positive_number).to be_present
-          expect(positive_number.generic_keys).to be_empty
-          expect(small_positive_number.generic_keys).to eq(['T'])
-          expect(small_positive_number.parent_type.generic_type.data_type).to eq(positive_number)
-        end
+    context 'with linked data types' do
+      let(:data_types) do
+        [
+          {
+            identifier: 'HTTP_METHOD',
+            type: 'string',
+            linked_data_type_identifiers: [],
+            version: '0.0.0',
+          },
+          {
+            identifier: 'HTTP_URL',
+            type: 'string',
+            linked_data_type_identifiers: [],
+            version: '0.0.0',
+          },
+          {
+            identifier: 'OBJECT',
+            type: 'T & {}',
+            generic_keys: ['T'],
+            linked_data_type_identifiers: [],
+            version: '0.0.0',
+          },
+          {
+            identifier: 'HTTP_REQUEST',
+            type: '{ method: HTTP_METHOD, url: HTTP_URL, body: T, headers: OBJECT<{}> }',
+            generic_keys: ['T'],
+            linked_data_type_identifiers: %w[HTTP_METHOD HTTP_URL OBJECT],
+            version: '0.0.0',
+          }
+        ]
       end
 
-      context 'with contains_key rule' do
-        let(:data_types) do
-          [
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type1',
-              rules: [
-                Tucana::Shared::DefinitionDataTypeRule.create(
-                  :contains_key,
-                  {
-                    key: 'test',
-                    data_type_identifier: {
-                      generic_type: {
-                        data_type_identifier: 'type2',
-                        generic_mappers: [
-                          {
-                            source: [
-                              {
-                                data_type_identifier: 'type3',
-                              }
-                            ],
-                            target: 'T',
-                            generic_combinations: [],
-                          }
-                        ],
-                      },
-                    },
-                  }
-                )
-              ],
-              generic_keys: ['T'],
-              version: '0.0.0',
-            },
+      it 'creates data types with links' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type2',
-              version: '0.0.0',
-            },
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type3',
-              version: '0.0.0',
-            }
-          ]
-        end
+        http_method = DataType.find_by(identifier: 'HTTP_METHOD')
+        http_url = DataType.find_by(identifier: 'HTTP_URL')
+        object = DataType.find_by(identifier: 'OBJECT')
+        http_request = DataType.find_by(identifier: 'HTTP_REQUEST')
 
-        it 'creates data types' do
-          expect(stub.update(message, authorization(runtime)).success).to be(true)
+        expect(http_request).to be_present
+        expect(http_request.referenced_data_types).to contain_exactly(http_method, http_url, object)
+      end
+    end
 
-          expect(DataType.find_by(identifier: 'type1')).to be_present
-        end
+    context 'with dependent data types in wrong order' do
+      let(:data_types) do
+        [
+          {
+            identifier: 'HTTP_REQUEST',
+            type: '{ method: HTTP_METHOD, url: HTTP_URL }',
+            linked_data_type_identifiers: %w[HTTP_METHOD HTTP_URL],
+            version: '0.0.0',
+          },
+          {
+            identifier: 'HTTP_URL',
+            type: 'string',
+            linked_data_type_identifiers: [],
+            version: '0.0.0',
+          },
+          {
+            identifier: 'HTTP_METHOD',
+            type: 'string',
+            linked_data_type_identifiers: [],
+            version: '0.0.0',
+          }
+        ]
       end
 
-      context 'with contains_type rule' do
-        let(:data_types) do
-          [
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type1',
-              rules: [
-                Tucana::Shared::DefinitionDataTypeRule.create(
-                  :contains_type,
-                  {
-                    data_type_identifier: {
-                      generic_type: {
-                        data_type_identifier: 'type2',
-                        generic_mappers: [
-                          {
-                            source: [
-                              {
-                                data_type_identifier: 'type3',
-                              }
-                            ],
-                            target: 'T',
-                            generic_combinations: [],
-                          }
-                        ],
-                      },
-                    },
-                  }
-                )
-              ],
-              generic_keys: ['T'],
-              version: '0.0.0',
-            },
+      it 'sorts and creates data types correctly' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type2',
-              version: '0.0.0',
-            },
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type3',
-              version: '0.0.0',
-            }
-          ]
-        end
+        http_request = DataType.find_by(identifier: 'HTTP_REQUEST')
+        http_method = DataType.find_by(identifier: 'HTTP_METHOD')
+        http_url = DataType.find_by(identifier: 'HTTP_URL')
 
-        it 'creates data types' do
-          expect(stub.update(message, authorization(runtime)).success).to be(true)
-
-          expect(DataType.find_by(identifier: 'type1')).to be_present
-        end
-      end
-
-      context 'with input_types rule' do
-        let(:data_types) do
-          [
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type1',
-              rules: [
-                Tucana::Shared::DefinitionDataTypeRule.create(
-                  :input_types,
-                  {
-                    input_types: [
-                      {
-                        data_type_identifier: {
-                          generic_type: {
-                            data_type_identifier: 'type2',
-                            generic_mappers: [
-                              {
-                                source: [
-                                  {
-                                    data_type_identifier: 'type3',
-                                  }
-                                ],
-                                target: 'T',
-                                generic_combinations: [],
-                              }
-                            ],
-                          },
-                        },
-                        input_identifier: 'input',
-                      }
-                    ],
-                  }
-                )
-              ],
-              generic_keys: ['T'],
-              version: '0.0.0',
-            },
-
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type2',
-              version: '0.0.0',
-            },
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type3',
-              version: '0.0.0',
-            }
-          ]
-        end
-
-        it 'creates data types' do
-          expect(stub.update(message, authorization(runtime)).success).to be(true)
-
-          expect(DataType.find_by(identifier: 'type1')).to be_present
-        end
-      end
-
-      context 'with return_type rule' do
-        let(:data_types) do
-          [
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type1',
-              rules: [
-                Tucana::Shared::DefinitionDataTypeRule.create(
-                  :return_type,
-                  {
-                    data_type_identifier: {
-                      generic_type: {
-                        data_type_identifier: 'type2',
-                        generic_mappers: [
-                          {
-                            source: [
-                              {
-                                data_type_identifier: 'type3',
-                              }
-                            ],
-                            target: 'T',
-                            generic_combinations: [],
-                          }
-                        ],
-                      },
-                    },
-                  }
-                )
-              ],
-              generic_keys: ['T'],
-              version: '0.0.0',
-            },
-
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type2',
-              version: '0.0.0',
-            },
-            {
-              variant: :PRIMITIVE,
-              identifier: 'type3',
-              version: '0.0.0',
-            }
-          ]
-        end
-
-        it 'creates data types' do
-          expect(stub.update(message, authorization(runtime)).success).to be(true)
-
-          expect(DataType.find_by(identifier: 'type1')).to be_present
-        end
+        expect(http_request).to be_present
+        expect(http_request.referenced_data_types).to contain_exactly(http_method, http_url)
       end
     end
 

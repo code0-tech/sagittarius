@@ -10,54 +10,58 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
   let(:runtime) { create(:runtime, namespace: namespace) }
 
   describe 'Update' do
-    let(:data_type) do
-      create(:data_type, identifier: 'some_return_type_identifier', runtime: runtime)
-    end
+    let!(:http_response_data_type) { create(:data_type, identifier: 'HTTP_RESPONSE', runtime: runtime) }
+    let!(:rest_adapter_input_data_type) { create(:data_type, identifier: 'REST_ADAPTER_INPUT', runtime: runtime) }
+    let!(:http_url_data_type) { create(:data_type, identifier: 'HTTP_URL', runtime: runtime) }
+    let!(:http_method_data_type) { create(:data_type, identifier: 'HTTP_METHOD', runtime: runtime) }
 
     let(:flow_types) do
       [
         {
-          identifier: 'some_flow_type_identifier',
+          identifier: 'REST',
           settings: [
             {
-              identifier: 'some_setting_identifier',
+              identifier: 'HTTP_URL',
               unique: :PROJECT,
-              data_type_identifier: create(:data_type, runtime: runtime).identifier,
-              default_value: Tucana::Shared::Value.from_ruby({ 'value' => 'some default value' }),
+              type: 'HTTP_URL',
+              linked_data_type_identifiers: ['HTTP_URL'],
               name: [
-                { code: 'en_US', content: 'Some Setting' }
+                { code: 'en_US', content: 'URL' }
               ],
               description: [
-                { code: 'en_US', content: 'This is a setting' }
+                { code: 'en_US', content: 'Specifies the HTTP URL endpoint.' }
               ],
             },
             {
-              identifier: 'without_default',
+              identifier: 'HTTP_METHOD',
               unique: :NONE,
-              data_type_identifier: create(:data_type, runtime: runtime).identifier,
-              default_value: nil,
+              type: 'HTTP_METHOD',
+              linked_data_type_identifiers: ['HTTP_METHOD'],
+              default_value: Tucana::Shared::Value.from_ruby('GET'),
               name: [
-                { code: 'en_US', content: 'Some Setting' }
+                { code: 'en_US', content: 'Method' }
               ],
               description: [
-                { code: 'en_US', content: 'This is a setting' }
+                { code: 'en_US', content: 'Specifies the HTTP request method.' }
               ],
             }
           ],
+          input_type: 'REST_ADAPTER_INPUT',
+          return_type: 'HTTP_RESPONSE',
+          linked_data_type_identifiers: %w[REST_ADAPTER_INPUT HTTP_RESPONSE],
           name: [
-            { code: 'de_DE', content: 'Keine Ahnung man' }
+            { code: 'en_US', content: 'Rest Endpoint' }
           ],
           description: [
-            { code: 'en_US', content: "That's a description" }
+            { code: 'en_US', content: 'A REST API endpoint' }
           ],
           display_message: [
-            { code: 'en_US', content: 'Flow Type: ${0}' }
+            { code: 'en_US', content: 'Trigger Rest-Flow on ${method} with a Request to ${route}' }
           ],
           alias: [
-            { code: 'de_DE', content: 'Irgendein Flow Typ' }
+            { code: 'en_US', content: 'http;rest;route' }
           ],
-          editable: true,
-          return_type_identifier: data_type.identifier,
+          editable: false,
           version: '0.0.0',
         }
       ]
@@ -71,41 +75,49 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
       expect(stub.update(message, authorization(runtime)).success).to be(true)
 
       flow_type = FlowType.last
-      expect(flow_type.identifier).to eq('some_flow_type_identifier')
+      expect(flow_type.identifier).to eq('REST')
+      expect(flow_type.input_type).to eq('REST_ADAPTER_INPUT')
+      expect(flow_type.return_type).to eq('HTTP_RESPONSE')
+      expect(flow_type.editable).to be false
+      expect(flow_type.version).to eq('0.0.0')
+      expect(flow_type.referenced_data_types).to contain_exactly(rest_adapter_input_data_type,
+                                                                 http_response_data_type)
+
       expect(flow_type.names.count).to eq(1)
-      expect(flow_type.names.first.code).to eq('de_DE')
-      expect(flow_type.names.first.content).to eq('Keine Ahnung man')
+      expect(flow_type.names.first.code).to eq('en_US')
+      expect(flow_type.names.first.content).to eq('Rest Endpoint')
 
       expect(flow_type.descriptions.count).to eq(1)
-      expect(flow_type.descriptions.first.code).to eq('en_US')
-      expect(flow_type.descriptions.first.content).to eq("That's a description")
+      expect(flow_type.descriptions.first.content).to eq('A REST API endpoint')
 
       expect(flow_type.display_messages.count).to eq(1)
-      expect(flow_type.display_messages.first.code).to eq('en_US')
-      expect(flow_type.display_messages.first.content).to eq('Flow Type: ${0}')
+      expect(flow_type.display_messages.first.content).to eq(
+        'Trigger Rest-Flow on ${method} with a Request to ${route}'
+      )
 
       expect(flow_type.aliases.count).to eq(1)
-      expect(flow_type.aliases.first.code).to eq('de_DE')
-      expect(flow_type.aliases.first.content).to eq('Irgendein Flow Typ')
-
-      expect(flow_type.editable).to be true
-      expect(flow_type.return_type.identifier).to eq('some_return_type_identifier')
-      expect(flow_type.version).to eq('0.0.0')
+      expect(flow_type.aliases.first.content).to eq('http;rest;route')
 
       expect(flow_type.flow_type_settings.count).to eq(2)
-      setting = flow_type.flow_type_settings.first
-      expect(setting.identifier).to eq('some_setting_identifier')
-      expect(setting.unique).to eq('project')
-      expect(setting.default_value).to eq('value' => 'some default value')
-      expect(setting.names.count).to eq(1)
-      expect(setting.names.first.code).to eq('en_US')
-      expect(setting.names.first.content).to eq('Some Setting')
-      expect(setting.descriptions.count).to eq(1)
-      expect(setting.descriptions.first.code).to eq('en_US')
-      expect(setting.descriptions.first.content).to eq('This is a setting')
+
+      url_setting = flow_type.flow_type_settings.find_by(identifier: 'HTTP_URL')
+      expect(url_setting.unique).to eq('project')
+      expect(url_setting.type).to eq('HTTP_URL')
+      expect(url_setting.default_value).to be_nil
+      expect(url_setting.names.first.content).to eq('URL')
+      expect(url_setting.descriptions.first.content).to eq('Specifies the HTTP URL endpoint.')
+      expect(url_setting.referenced_data_types).to contain_exactly(http_url_data_type)
+
+      method_setting = flow_type.flow_type_settings.find_by(identifier: 'HTTP_METHOD')
+      expect(method_setting.unique).to eq('none')
+      expect(method_setting.type).to eq('HTTP_METHOD')
+      expect(method_setting.default_value).to eq('GET')
+      expect(method_setting.names.first.content).to eq('Method')
+      expect(method_setting.descriptions.first.content).to eq('Specifies the HTTP request method.')
+      expect(method_setting.referenced_data_types).to contain_exactly(http_method_data_type)
     end
 
-    context 'when removing datatypes' do
+    context 'when removing flowtypes' do
       let!(:existing_flow_type) { create(:flow_type, runtime: runtime) }
       let(:flow_types) { [] }
 

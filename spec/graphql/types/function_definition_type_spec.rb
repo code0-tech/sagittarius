@@ -7,7 +7,6 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
     %w[
       id
       identifier
-      returnType
       parameterDefinitions
       names
       displayMessages
@@ -16,9 +15,9 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
       documentations
       deprecationMessages
       runtimeFunctionDefinition
-      genericKeys
+      signature
       throwsError
-      dataTypeIdentifiers
+      linkedDataTypes
       createdAt
       updatedAt
     ]

@@ -9,16 +9,21 @@ RSpec.describe Flow do
     it { is_expected.to belong_to(:project).class_name('NamespaceProject') }
     it { is_expected.to belong_to(:flow_type) }
     it { is_expected.to belong_to(:starting_node).class_name('NodeFunction').optional }
-    it { is_expected.to belong_to(:input_type).class_name('DataType').optional }
-    it { is_expected.to belong_to(:return_type).class_name('DataType').optional }
 
     it { is_expected.to have_many(:flow_settings) }
     it { is_expected.to have_many(:node_functions) }
+
+    it { is_expected.to have_many(:flow_data_type_links).inverse_of(:flow) }
+
+    it { is_expected.to have_many(:referenced_data_types).through(:flow_data_type_links).source(:referenced_data_type) }
   end
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive.scoped_to(:project_id) }
+
+    it { is_expected.to validate_length_of(:input_type).is_at_most(2000) }
+    it { is_expected.to validate_length_of(:return_type).is_at_most(2000) }
   end
 
   describe '#to_grpc' do
@@ -26,6 +31,8 @@ RSpec.describe Flow do
       create(
         :flow,
         flow_type: create(:flow_type, identifier: 'HTTP'),
+        input_type: 'string',
+        return_type: 'number',
         flow_settings: [
           create(
             :flow_setting,
@@ -42,17 +49,12 @@ RSpec.describe Flow do
       fd = create(:function_definition, runtime_function_definition: rfd)
       rpd = create(
         :runtime_parameter_definition,
-        runtime_function_definition: rfd,
-        data_type: create(
-          :data_type_identifier,
-          generic_key: 'T'
-        )
+        runtime_function_definition: rfd
       )
       pd = create(
         :parameter_definition,
         function_definition: fd,
-        runtime_parameter_definition: rpd,
-        data_type: rpd.data_type
+        runtime_parameter_definition: rpd
       )
 
       func = create(
@@ -82,8 +84,8 @@ RSpec.describe Flow do
           project_id: flow.project.id,
           project_slug: flow.project.slug,
           type: flow.flow_type.identifier,
-          input_type: {},
-          return_type: {},
+          input_type: flow.input_type,
+          return_type: flow.return_type,
           node_functions: [
             {
               database_id: starting_node.id,

@@ -62,22 +62,10 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
   let(:flow_type) { create(:flow_type, runtime: runtime) }
   let(:function_definition) do
     rfd = create(:runtime_function_definition, runtime: runtime)
-    rpd = create(
-      :runtime_parameter_definition,
-      runtime_function_definition: rfd,
-      data_type: create(
-        :data_type_identifier,
-        data_type: create(:data_type)
-      )
-    )
+    rpd = create(:runtime_parameter_definition, runtime_function_definition: rfd)
 
     create(:function_definition, runtime_function_definition: rfd).tap do |fd|
-      create(
-        :parameter_definition,
-        runtime_parameter_definition: rpd,
-        function_definition: fd,
-        data_type: rpd.data_type
-      )
+      create(:parameter_definition, runtime_parameter_definition: rpd, function_definition: fd)
     end
   end
   let(:input) do

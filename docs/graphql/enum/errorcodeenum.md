@@ -11,7 +11,6 @@ Represents the available error responses
 | `CANNOT_MODIFY_OWN_ADMIN` | Users cannot modify their own admin status |
 | `CANNOT_REMOVE_LAST_ADMINISTRATOR` | This action would remove the last administrator |
 | `CANNOT_REMOVE_LAST_ADMIN_ABILITY` | This action would remove the last administrative ability |
-| `DATA_TYPE_IDENTIFIER_NOT_FOUND` | The data type identifier with the given identifier was not found |
 | `DATA_TYPE_NOT_FOUND` | The data type with the given identifier was not found |
 | `EMAIL_VERIFICATION_SEND_FAILED` | Failed to send the email verification |
 | `EXTERNAL_IDENTITY_DOES_NOT_EXIST` | This external identity does not exist |
@@ -20,7 +19,6 @@ Represents the available error responses
 | `FAILED_TO_SAVE_VALID_BACKUP_CODE` | The new backup codes could not be saved |
 | `FLOW_NOT_FOUND` | The flow with the given identifier was not found |
 | `FLOW_TYPE_NOT_FOUND` | The flow type with the given identifier was not found |
-| `FLOW_VALIDATION_FAILED` | The flow validation has failed |
 | `FUNCTION_VALUE_NOT_FOUND` | The id for the function value node does not exist |
 | `GENERIC_KEY_NOT_FOUND` | The given key was not found in the data type |
 | `IDENTITY_NOT_FOUND` | The external identity with the given identifier was not found |
@@ -28,13 +26,13 @@ Represents the available error responses
 | `INCONSISTENT_NAMESPACE` | Resources are from different namespaces |
 | `INVALID_ATTACHMENT` | The attachment is invalid because of active model errors |
 | `INVALID_DATA_TYPE` | The data type is invalid because of active model errors |
+| `INVALID_DATA_TYPE_LINK` | The data type link is invalid because of active model errors |
 | `INVALID_EXTERNAL_IDENTITY` | This external identity is invalid |
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_FLOW_TYPE` | The flow type is invalid because of active model errors |
 | `INVALID_FLOW_TYPE_SETTING` | The flow type setting is invalid because of active model errors |
 | `INVALID_FUNCTION_ID` | The function ID is invalid |
-| `INVALID_GENERIC_MAPPER` | The generic mapper is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
 | `INVALID_NAMESPACE_LICENSE` | The namespace license is invalid because of active model errors |
 | `INVALID_NAMESPACE_MEMBER` | The namespace member is invalid because of active model errors |
@@ -73,10 +71,8 @@ Represents the available error responses
 | `NAMESPACE_PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
 | `NAMESPACE_ROLE_NOT_FOUND` | The namespace role with the given identifier was not found |
 | `NODE_NOT_FOUND` | The node with this id does not exist |
-| `NO_DATATYPE_IDENTIFIER_FOR_GENERIC_KEY` | No data type identifier could be found for the given generic key |
 | `NO_DATA_TYPE_FOR_IDENTIFIER` | No data type could be found for the given identifier |
 | `NO_FREE_LICENSE_SEATS` | There are no free license seats to complete this operation |
-| `NO_GENERIC_TYPE_FOR_IDENTIFIER` | No generic type could be found for the given identifier |
 | `NO_PRIMARY_RUNTIME` | The project does not have a primary runtime |
 | `ORGANIZATION_NOT_FOUND` | The organization with the given identifier was not found |
 | `OUTDATED_DEFINITION` | The primary runtime has a newer definition than this one |

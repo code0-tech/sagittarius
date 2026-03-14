@@ -17,13 +17,6 @@ RSpec.describe NodeFunction do
   describe '#ordered_parameters' do
     let(:runtime) { create(:runtime) }
 
-    let(:data_type_identifier) do
-      create(
-        :data_type_identifier,
-        data_type: create(:data_type, runtime: runtime)
-      )
-    end
-
     let(:runtime_function_definition) do
       create(
         :runtime_function_definition,
@@ -32,22 +25,19 @@ RSpec.describe NodeFunction do
         rfd.parameters << create(
           :runtime_parameter_definition,
           runtime_function_definition: rfd,
-          runtime_name: 'param1',
-          data_type: data_type_identifier
+          runtime_name: 'param1'
         )
 
         rfd.parameters << create(
           :runtime_parameter_definition,
           runtime_function_definition: rfd,
-          runtime_name: 'param2',
-          data_type: data_type_identifier
+          runtime_name: 'param2'
         )
 
         rfd.parameters << create(
           :runtime_parameter_definition,
           runtime_function_definition: rfd,
-          runtime_name: 'param3',
-          data_type: data_type_identifier
+          runtime_name: 'param3'
         )
       end
     end
@@ -69,7 +59,6 @@ RSpec.describe NodeFunction do
           node_function: node,
           parameter_definition: create(
             :parameter_definition,
-            data_type: data_type_identifier,
             runtime_parameter_definition: runtime_function_definition.parameters[1]
           )
         )
@@ -78,7 +67,6 @@ RSpec.describe NodeFunction do
           node_function: node,
           parameter_definition: create(
             :parameter_definition,
-            data_type: data_type_identifier,
             runtime_parameter_definition: runtime_function_definition.parameters[2]
           )
         )
@@ -87,7 +75,6 @@ RSpec.describe NodeFunction do
           node_function: node,
           parameter_definition: create(
             :parameter_definition,
-            data_type: data_type_identifier,
             runtime_parameter_definition: runtime_function_definition.parameters[0]
           )
         )

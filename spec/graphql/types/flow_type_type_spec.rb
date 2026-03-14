@@ -15,6 +15,7 @@ RSpec.describe SagittariusSchema.types['FlowType'] do
       aliases
       descriptions
       runtime
+      linked_data_types
       id
       created_at
       updated_at

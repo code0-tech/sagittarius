@@ -5,7 +5,6 @@ module Namespaces
     module Flows
       class CreateService
         include Sagittarius::Database::Transactional
-        include FlowServiceHelper
 
         attr_reader :current_authentication, :namespace_project, :flow_input
 

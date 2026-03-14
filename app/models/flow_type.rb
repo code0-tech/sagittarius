@@ -3,13 +3,16 @@
 class FlowType < ApplicationRecord
   belongs_to :runtime, inverse_of: :flow_types
 
-  belongs_to :input_type, class_name: 'DataType', optional: true
-  belongs_to :return_type, class_name: 'DataType', optional: true
-
   has_many :flow_type_settings, inverse_of: :flow_type
+
+  has_many :flow_type_data_type_links, inverse_of: :flow_type
+  has_many :referenced_data_types, through: :flow_type_data_type_links, source: :referenced_data_type
 
   validates :identifier, presence: true, uniqueness: { scope: :runtime_id }
   validates :editable, inclusion: { in: [true, false] }
+
+  validates :input_type, length: { maximum: 2000 }, allow_nil: true
+  validates :return_type, length: { maximum: 2000 }, allow_nil: true
 
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
