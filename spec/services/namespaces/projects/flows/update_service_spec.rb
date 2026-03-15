@@ -23,8 +23,10 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
   end
   let(:flow) { create(:flow, project: namespace_project, flow_type: create(:flow_type, runtime: runtime)) }
   let(:flow_input) do
-    Struct.new(:settings, :starting_node_id, :nodes, :name).new(
+    Struct.new(:settings, :input_type, :return_type, :starting_node_id, :nodes, :name).new(
       [],
+      'input_type',
+      'return_type',
       starting_node.to_global_id,
       [
         Struct.new(:id, :function_definition_id, :next_node_id, :parameters).new(

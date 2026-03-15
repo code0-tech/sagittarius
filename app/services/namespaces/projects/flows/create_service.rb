@@ -38,10 +38,11 @@ module Namespaces
             flow = Flow.new(
               project: namespace_project,
               name: flow_input.name,
-              flow_type: flow_type,
-              input_type: flow_type.input_type,
-              return_type: flow_type.return_type
+              flow_type: flow_type
             )
+
+            flow_input.send(:overwrite_argument, :input_type, flow_type.input_type) if flow_input.input_type.blank?
+            flow_input.send(:overwrite_argument, :return_type, flow_type.return_type) if flow_input.return_type.blank?
 
             unless flow.save
               t.rollback_and_return! ServiceResponse.error(

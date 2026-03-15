@@ -48,6 +48,8 @@ module Namespaces
 
         def update_flow_attributes
           flow.name = flow_input.name
+          flow.input_type = flow_input.input_type
+          flow.return_type = flow_input.return_type
         end
 
         def update_settings(t)
