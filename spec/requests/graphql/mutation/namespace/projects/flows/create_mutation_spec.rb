@@ -14,6 +14,8 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
           #{error_query}
           flow {
             id
+            inputType
+            returnType
             startingNodeId
             nodes {
               count
@@ -59,7 +61,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
 
   let(:runtime) { create(:runtime) }
   let(:project) { create(:namespace_project, primary_runtime: runtime) }
-  let(:flow_type) { create(:flow_type, runtime: runtime) }
+  let(:flow_type) { create(:flow_type, runtime: runtime, input_type: 'input_type', return_type: 'return_type') }
   let(:function_definition) do
     rfd = create(:runtime_function_definition, runtime: runtime)
     rpd = create(:runtime_parameter_definition, runtime_function_definition: rfd)
@@ -163,6 +165,18 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
       created_flow_id = graphql_data_at(:namespaces_projects_flows_create, :flow, :id)
       expect(created_flow_id).to be_present
       flow = SagittariusSchema.object_from_id(created_flow_id)
+
+      expect(
+        graphql_data_at(:namespaces_projects_flows_create, :flow)
+      ).to match a_graphql_entity_for(
+        flow,
+        :input_type,
+        :return_type,
+        starting_node_id: flow.starting_node.to_global_id.to_s
+      )
+
+      expect(flow.input_type).to eq(flow_type.input_type)
+      expect(flow.return_type).to eq(flow_type.return_type)
 
       expect(graphql_data_at(:namespaces_projects_flows_create, :flow, :settings).size).to eq(1)
 
