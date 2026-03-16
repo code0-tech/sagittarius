@@ -63,6 +63,7 @@ module Namespaces
 
         unless role.namespace.roles.where.not(id: role.id)
                    .joins(:abilities)
+                   .joins(:member_roles)
                    .exists?(abilities: { ability: :namespace_administrator }) ||
                abilities.include?(:namespace_administrator)
           t.rollback_and_return! ServiceResponse.error(

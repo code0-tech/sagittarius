@@ -20,6 +20,7 @@ module Namespaces
         if !namespace_role.namespace.has_owner? &&
            !namespace_role.namespace.roles.where.not(id: namespace_role.id)
                           .joins(:abilities)
+                          .joins(:member_roles)
                           .exists?(abilities: { ability: :namespace_administrator })
           return ServiceResponse.error(message: 'Cannot delete last administrator role',
                                        error_code: :cannot_delete_last_admin_role)
