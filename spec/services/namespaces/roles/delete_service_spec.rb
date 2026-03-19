@@ -48,6 +48,28 @@ RSpec.describe Namespaces::Roles::DeleteService do
     end
 
     it { is_expected.not_to be_success }
+    it { expect(service_response.payload[:error_code]).to eq(:cannot_delete_last_admin_role) }
+    it { expect { service_response }.not_to change { NamespaceRole.count } }
+
+    it do
+      expect { service_response }.not_to create_audit_event
+    end
+  end
+
+  context 'when another role has the namespace_administrator ability but no members' do
+    let(:current_user) { create(:user) }
+
+    before do
+      create(:namespace_member, namespace: namespace_role.namespace, user: current_user)
+      create(:namespace_role_ability, namespace_role: namespace_role, ability: :namespace_administrator)
+      create(:namespace_member_role, member: create(:namespace_member, namespace: namespace_role.namespace),
+                                     role: namespace_role)
+      stub_allowed_ability(NamespacePolicy, :delete_namespace_role, user: current_user,
+                                                                    subject: namespace_role.namespace)
+    end
+
+    it { is_expected.not_to be_success }
+    it { expect(service_response.payload[:error_code]).to eq(:cannot_delete_last_admin_role) }
     it { expect { service_response }.not_to change { NamespaceRole.count } }
 
     it do
@@ -59,7 +81,8 @@ RSpec.describe Namespaces::Roles::DeleteService do
     let(:current_user) { create(:user) }
 
     before do
-      create(:namespace_member, namespace: namespace_role.namespace, user: current_user)
+      member = create(:namespace_member, namespace: namespace_role.namespace, user: current_user)
+      create(:namespace_member_role, member: member, role: admin_role)
       stub_allowed_ability(NamespacePolicy, :delete_namespace_role, user: current_user,
                                                                     subject: namespace_role.namespace)
     end

@@ -9,10 +9,15 @@ RSpec.describe Namespaces::Roles::AssignAbilitiesService do
   let(:role) { create(:namespace_role) }
   let(:abilities) { [] }
 
-  let!(:admin_role) do
+  let(:admin_role) do
     create(:namespace_role, namespace: role.namespace).tap do |role|
       create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
     end
+  end
+
+  let!(:admin_role_member) do
+    member = create(:namespace_member, namespace: admin_role.namespace, user: create(:user))
+    create(:namespace_member_role, role: admin_role, member: member)
   end
 
   context 'when user is nil' do
@@ -64,6 +69,24 @@ RSpec.describe Namespaces::Roles::AssignAbilitiesService do
           stub_allowed_ability(NamespacePolicy, :assign_role_abilities, user: current_user, subject: role.namespace)
           create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
           admin_role.delete
+        end
+
+        it { is_expected.not_to be_success }
+        it { expect(service_response.payload[:error_code]).to eq(:cannot_remove_last_admin_ability) }
+        it { expect { service_response }.not_to change { NamespaceRoleAbility.count } }
+
+        it do
+          expect { service_response }.not_to create_audit_event
+        end
+      end
+
+      context 'when another role has the namespace_administrator ability but no members' do
+        let(:abilities) { [] }
+
+        before do
+          stub_allowed_ability(NamespacePolicy, :assign_role_abilities, user: current_user, subject: role.namespace)
+          create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
+          admin_role_member.delete
         end
 
         it { is_expected.not_to be_success }

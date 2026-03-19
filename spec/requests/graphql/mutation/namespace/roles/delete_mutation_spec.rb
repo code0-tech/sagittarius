@@ -38,6 +38,7 @@ RSpec.describe 'namespacesRolesDelete Mutation' do
   before do
     create(:namespace_role, namespace: namespace).tap do |role|
       create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
+      create(:namespace_member_role, role: role, member: create(:namespace_member, namespace: role.namespace))
     end
   end
 

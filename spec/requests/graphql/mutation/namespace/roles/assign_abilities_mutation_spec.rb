@@ -30,6 +30,7 @@ RSpec.describe 'namespacesRolesAssignAbilities Mutation' do
   before do
     create(:namespace_role, namespace: namespace_role.namespace).tap do |role|
       create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
+      create(:namespace_member_role, role: role, member: create(:namespace_member, namespace: role.namespace))
     end
   end
 
