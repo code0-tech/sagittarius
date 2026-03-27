@@ -41,7 +41,7 @@ module Namespaces
             )
           end
 
-          UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+          FlowValidationJob.perform_later(flow.id)
         end
 
         private
@@ -50,6 +50,7 @@ module Namespaces
           flow.name = flow_input.name
           flow.input_type = flow_input.input_type
           flow.return_type = flow_input.return_type
+          flow.validation_status = :unvalidated
         end
 
         def update_settings(t)

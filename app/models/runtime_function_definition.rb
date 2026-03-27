@@ -39,4 +39,21 @@ class RuntimeFunctionDefinition < ApplicationRecord
   def parsed_version
     Gem::Version.new(version)
   end
+
+  def to_grpc
+    Tucana::Shared::RuntimeFunctionDefinition.new(
+      runtime_name: runtime_name,
+      runtime_parameter_definitions: parameters.map(&:to_grpc),
+      signature: signature,
+      throws_error: throws_error,
+      name: names.map(&:to_grpc),
+      description: descriptions.map(&:to_grpc),
+      documentation: documentations.map(&:to_grpc),
+      deprecation_message: deprecation_messages.map(&:to_grpc),
+      display_message: display_messages.map(&:to_grpc),
+      alias: aliases.map(&:to_grpc),
+      linked_data_type_identifiers: referenced_data_types.map(&:identifier),
+      version: version
+    )
+  end
 end

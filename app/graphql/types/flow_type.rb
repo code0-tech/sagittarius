@@ -8,6 +8,10 @@ module Types
 
     field :name, String, null: false, description: 'Name of the flow'
 
+    field :validation_status, Types::FlowValidationStatusEnum,
+          null: false,
+          description: 'The validation status of the flow'
+
     field :input_type, String,
           null: true,
           description: 'The input data type of the flow'

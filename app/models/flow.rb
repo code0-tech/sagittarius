@@ -1,15 +1,29 @@
 # frozen_string_literal: true
 
 class Flow < ApplicationRecord
+  VALIDATION_STATUS = {
+    unvalidated: 0,
+    valid: 1,
+    invalid: 2,
+  }.with_indifferent_access
+
   belongs_to :project, class_name: 'NamespaceProject'
   belongs_to :flow_type
   belongs_to :starting_node, class_name: 'NodeFunction', optional: true
+
+  enum :validation_status, VALIDATION_STATUS, prefix: :validation_status
 
   has_many :flow_settings, class_name: 'FlowSetting', inverse_of: :flow
   has_many :node_functions, class_name: 'NodeFunction', inverse_of: :flow
 
   has_many :flow_data_type_links, inverse_of: :flow
   has_many :referenced_data_types, through: :flow_data_type_links, source: :referenced_data_type
+
+  validates :validation_status,
+            presence: true,
+            inclusion: {
+              in: VALIDATION_STATUS.keys.map(&:to_s),
+            }
 
   validates :name, presence: true,
                    allow_blank: false,

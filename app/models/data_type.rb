@@ -30,4 +30,18 @@ class DataType < ApplicationRecord
   def parsed_version
     Gem::Version.new(version)
   end
+
+  def to_grpc
+    Tucana::Shared::DefinitionDataType.new(
+      identifier: identifier,
+      name: names.map(&:to_grpc),
+      display_message: display_messages.map(&:to_grpc),
+      alias: aliases.map(&:to_grpc),
+      rules: rules.map(&:to_grpc),
+      generic_keys: generic_keys,
+      type: type,
+      linked_data_type_identifiers: referenced_data_types.map(&:identifier),
+      version: version
+    )
+  end
 end

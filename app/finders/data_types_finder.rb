@@ -29,7 +29,11 @@ class DataTypesFinder < ApplicationFinder
   def by_runtime_function_definition(data_types)
     return data_types unless params[:runtime_function_definition]
 
-    data_types.where(id: params[:runtime_function_definition].referenced_data_types.pluck(:id))
+    referenced_data_types_ids = RuntimeFunctionDefinitionDataTypeLink
+                                .where(runtime_function_definition: params[:runtime_function_definition])
+                                .select(:referenced_data_type_id)
+
+    data_types.where(id: referenced_data_types_ids)
   end
 
   def by_flow_type_setting(data_types)

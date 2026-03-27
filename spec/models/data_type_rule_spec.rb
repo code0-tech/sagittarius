@@ -56,4 +56,10 @@ RSpec.describe DataTypeRule do
       end
     end
   end
+
+  describe '#to_grpc' do
+    it 'returns a grpc rule' do
+      expect(rule.to_grpc).to be_a(Tucana::Shared::DefinitionDataTypeRule)
+    end
+  end
 end
