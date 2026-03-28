@@ -113,12 +113,12 @@ RSpec.describe Namespaces::Projects::Flows::CreateService do
       )
     end
 
-    it 'queues job to update runtimes' do
-      allow(UpdateRuntimesForProjectJob).to receive(:perform_later)
+    it 'queues job to validate flow' do
+      allow(FlowValidationJob).to receive(:perform_later)
 
-      service_response
+      flow_id = service_response.payload.id
 
-      expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
+      expect(FlowValidationJob).to have_received(:perform_later).with(flow_id)
     end
   end
 end

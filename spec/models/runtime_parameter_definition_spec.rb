@@ -22,4 +22,24 @@ RSpec.describe RuntimeParameterDefinition do
     it { is_expected.to have_many(:descriptions).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:documentations).class_name('Translation').inverse_of(:owner) }
   end
+
+  describe '#to_grpc' do
+    subject(:parameter) { create(:runtime_parameter_definition) }
+
+    let!(:name) { create(:translation, owner: parameter, purpose: :name, code: 'en', content: 'Name') }
+    let!(:description) { create(:translation, owner: parameter, purpose: :description, code: 'en', content: 'Desc') }
+    let!(:documentation) { create(:translation, owner: parameter, purpose: :documentation, code: 'en', content: 'Doc') }
+
+    it 'matches the model' do
+      grpc_object = parameter.to_grpc
+
+      expect(grpc_object.to_h).to eq(
+        runtime_name: parameter.runtime_name,
+        default_value: Tucana::Shared::Value.from_ruby(parameter.default_value).to_h,
+        name: [name.to_grpc.to_h],
+        description: [description.to_grpc.to_h],
+        documentation: [documentation.to_grpc.to_h]
+      )
+    end
+  end
 end

@@ -6,6 +6,7 @@ FactoryBot.define do
   factory :flow do
     project factory: :namespace_project
     flow_type
+    validation_status { :unvalidated }
     starting_node { nil }
     flow_settings { [] }
     input_type { 'string' }

@@ -42,4 +42,29 @@ RSpec.describe DataType do
       end
     end
   end
+
+  describe '#to_grpc' do
+    let!(:name) { create(:translation, owner: data_type, purpose: :name, code: 'en', content: 'Name') }
+    let!(:display) { create(:translation, owner: data_type, purpose: :display_message, code: 'en', content: 'Disp') }
+    let!(:alias_t) { create(:translation, owner: data_type, purpose: :alias, code: 'en', content: 'Ali') }
+    let!(:rule) { create(:data_type_rule, data_type: data_type) }
+    let!(:ref_data_type) { create(:data_type, runtime: data_type.runtime) }
+
+    before { create(:data_type_data_type_link, data_type: data_type, referenced_data_type: ref_data_type) }
+
+    it 'matches the model' do
+      grpc_object = data_type.to_grpc
+
+      expect(grpc_object.to_h).to eq(
+        identifier: data_type.identifier,
+        name: [name.to_grpc.to_h],
+        display_message: [display.to_grpc.to_h],
+        alias: [alias_t.to_grpc.to_h],
+        rules: [rule.to_grpc.to_h],
+        type: data_type.type,
+        linked_data_type_identifiers: [ref_data_type.identifier],
+        version: data_type.version
+      )
+    end
+  end
 end

@@ -19,11 +19,25 @@ RSpec.describe Flow do
   end
 
   describe 'validations' do
+    it { is_expected.to allow_values(*described_class::VALIDATION_STATUS.keys).for(:validation_status) }
+
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive.scoped_to(:project_id) }
 
     it { is_expected.to validate_length_of(:input_type).is_at_most(2000) }
     it { is_expected.to validate_length_of(:return_type).is_at_most(2000) }
+  end
+
+  describe 'scopes' do
+    describe 'validation status' do
+      let!(:unvalidated_flow) { create(:flow, validation_status: :unvalidated) }
+      let!(:valid_flow) { create(:flow, validation_status: :valid) }
+      let!(:invalid_flow) { create(:flow, validation_status: :invalid) }
+
+      it { expect(described_class.validation_status_unvalidated).to contain_exactly(unvalidated_flow) }
+      it { expect(described_class.validation_status_valid).to contain_exactly(valid_flow) }
+      it { expect(described_class.validation_status_invalid).to contain_exactly(invalid_flow) }
+    end
   end
 
   describe '#to_grpc' do

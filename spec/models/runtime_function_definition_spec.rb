@@ -60,4 +60,41 @@ RSpec.describe RuntimeFunctionDefinition do
     it { is_expected.to have_many(:documentations).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:deprecation_messages).class_name('Translation').inverse_of(:owner) }
   end
+
+  describe '#to_grpc' do
+    let!(:param) { create(:runtime_parameter_definition, runtime_function_definition: function) }
+    let!(:name) { create(:translation, owner: function, purpose: :name, code: 'en', content: 'Name') }
+    let!(:description) { create(:translation, owner: function, purpose: :description, code: 'en', content: 'Desc') }
+    let!(:documentation) { create(:translation, owner: function, purpose: :documentation, code: 'en', content: 'Doc') }
+    let!(:deprecation) do
+      create(:translation, owner: function, purpose: :deprecation_message, code: 'en', content: 'Dep')
+    end
+    let!(:display) { create(:translation, owner: function, purpose: :display_message, code: 'en', content: 'Disp') }
+    let!(:alias_t) { create(:translation, owner: function, purpose: :alias, code: 'en', content: 'Ali') }
+    let!(:data_type) { create(:data_type, runtime: function.runtime) }
+
+    before do
+      create(:runtime_function_definition_data_type_link,
+             runtime_function_definition: function, referenced_data_type: data_type)
+    end
+
+    it 'matches the model' do
+      grpc_object = function.to_grpc
+
+      expect(grpc_object.to_h).to eq(
+        runtime_name: function.runtime_name,
+        runtime_parameter_definitions: [param.to_grpc.to_h],
+        signature: function.signature,
+        throws_error: function.throws_error,
+        name: [name.to_grpc.to_h],
+        description: [description.to_grpc.to_h],
+        documentation: [documentation.to_grpc.to_h],
+        deprecation_message: [deprecation.to_grpc.to_h],
+        display_message: [display.to_grpc.to_h],
+        alias: [alias_t.to_grpc.to_h],
+        linked_data_type_identifiers: [data_type.identifier],
+        version: function.version
+      )
+    end
+  end
 end

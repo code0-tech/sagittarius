@@ -26,4 +26,8 @@ class DataTypeRule < ApplicationRecord
                        filename: 'data_types/RegexRuleConfig',
                        hash_conversion: true,
                      }
+
+  def to_grpc
+    Tucana::Shared::DefinitionDataTypeRule.create(variant.to_sym, config)
+  end
 end
