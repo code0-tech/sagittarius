@@ -2,7 +2,6 @@
 
 class AddDisabledReasonToFlows < Code0::ZeroTrack::Database::Migration[1.0]
   def change
-    add_column :flows, :disabled_reason, :text, null: true, default: nil
-    add_index :flows, :disabled_reason, length: 100
+    add_column :flows, :disabled_reason, :integer, null: true
   end
 end

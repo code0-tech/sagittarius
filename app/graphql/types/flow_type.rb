@@ -8,7 +8,7 @@ module Types
 
     field :name, String, null: false, description: 'Name of the flow'
 
-    field :disabled_reason, String,
+    field :disabled_reason, Types::FlowDisabledReasonEnum,
           null: true,
           description: 'The reason why the flow is disabled, if it is disabled'
 
