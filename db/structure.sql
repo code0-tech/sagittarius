@@ -304,6 +304,7 @@ CREATE TABLE flows (
     input_type text,
     return_type text,
     validation_status integer DEFAULT 0 NOT NULL,
+    disabled_reason integer,
     CONSTRAINT check_1c805d704f CHECK ((char_length(input_type) <= 2000)),
     CONSTRAINT check_b2f3f83908 CHECK ((char_length(return_type) <= 2000))
 );

@@ -9,6 +9,7 @@ Represents a flow
 | Name | Type | Description |
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Flow was created |
+| `disabledReason` | [`FlowDisabledReason`](../enum/flowdisabledreason.md) | The reason why the flow is disabled, if it is disabled |
 | `id` | [`FlowID!`](../scalar/flowid.md) | Global ID of this Flow |
 | `inputType` | [`String`](../scalar/string.md) | The input data type of the flow |
 | `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this flow |

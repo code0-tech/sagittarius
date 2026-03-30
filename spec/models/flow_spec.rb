@@ -21,6 +21,8 @@ RSpec.describe Flow do
   describe 'validations' do
     it { is_expected.to allow_values(*described_class::VALIDATION_STATUS.keys).for(:validation_status) }
 
+    it { is_expected.to allow_values(nil, *described_class::DISABLED_REASON.keys).for(:disabled_reason) }
+
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive.scoped_to(:project_id) }
 
@@ -47,6 +49,7 @@ RSpec.describe Flow do
         flow_type: create(:flow_type, identifier: 'HTTP'),
         input_type: 'string',
         return_type: 'number',
+        disabled_reason: 0,
         flow_settings: [
           create(
             :flow_setting,
@@ -131,6 +134,7 @@ RSpec.describe Flow do
               },
             }
           ],
+          disable_reason: '_dummy',
         }
       )
     end
