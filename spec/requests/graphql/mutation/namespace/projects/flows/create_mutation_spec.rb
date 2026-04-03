@@ -14,8 +14,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
           #{error_query}
           flow {
             id
-            inputType
-            returnType
+            signature
             startingNodeId
             nodes {
               count
@@ -61,7 +60,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
 
   let(:runtime) { create(:runtime) }
   let(:project) { create(:namespace_project, primary_runtime: runtime) }
-  let(:flow_type) { create(:flow_type, runtime: runtime, input_type: 'input_type', return_type: 'return_type') }
+  let(:flow_type) { create(:flow_type, runtime: runtime, signature: '(input: INPUT): OUTPUT') }
   let(:function_definition) do
     rfd = create(:runtime_function_definition, runtime: runtime)
     rpd = create(:runtime_parameter_definition, runtime_function_definition: rfd)
@@ -170,13 +169,11 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
         graphql_data_at(:namespaces_projects_flows_create, :flow)
       ).to match a_graphql_entity_for(
         flow,
-        :input_type,
-        :return_type,
+        :signature,
         starting_node_id: flow.starting_node.to_global_id.to_s
       )
 
-      expect(flow.input_type).to eq(flow_type.input_type)
-      expect(flow.return_type).to eq(flow_type.return_type)
+      expect(flow.signature).to eq(flow_type.signature)
 
       expect(graphql_data_at(:namespaces_projects_flows_create, :flow, :settings).size).to eq(1)
 

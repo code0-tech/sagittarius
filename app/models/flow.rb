@@ -40,8 +40,7 @@ class Flow < ApplicationRecord
                    allow_blank: false,
                    uniqueness: { case_sensitive: false, scope: :project_id }
 
-  validates :input_type, length: { maximum: 2000 }, allow_nil: true
-  validates :return_type, length: { maximum: 2000 }, allow_nil: true
+  validates :signature, presence: true, length: { maximum: 500 }
 
   scope :enabled, -> { where(disabled_reason: nil) }
   scope :disabled, -> { where.not(disabled_reason: nil) }
@@ -58,11 +57,10 @@ class Flow < ApplicationRecord
       type: flow_type.identifier,
       data_types: [], # TODO: when data types are creatable
       disable_reason: disabled_reason,
-      input_type: input_type,
-      return_type: return_type,
       settings: flow_settings.map(&:to_grpc),
       starting_node_id: starting_node.id,
-      node_functions: node_functions.map(&:to_grpc)
+      node_functions: node_functions.map(&:to_grpc),
+      signature: signature
     )
   end
 end

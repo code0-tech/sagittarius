@@ -15,11 +15,10 @@ module Types
     field :flow_type_settings, [Types::FlowTypeSettingType], null: false,
                                                              description: 'Flow type settings of the flow type'
     field :identifier, String, null: false, description: 'Identifier of the flow type'
-    field :input_type, String, null: true, description: 'Input type of the flow type'
     field :names, [Types::TranslationType], null: true, description: 'Names of the flow type'
-    field :return_type, String, null: true, description: 'Return type of the flow type'
     field :runtime, Types::RuntimeType, null: false,
                                         description: 'Runtime of the flow type'
+    field :signature, String, null: false, description: 'Signature of the flow type'
 
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,

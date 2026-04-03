@@ -10,9 +10,7 @@ class FlowType < ApplicationRecord
 
   validates :identifier, presence: true, uniqueness: { scope: :runtime_id }
   validates :editable, inclusion: { in: [true, false] }
-
-  validates :input_type, length: { maximum: 2000 }, allow_nil: true
-  validates :return_type, length: { maximum: 2000 }, allow_nil: true
+  validates :signature, presence: true, length: { maximum: 500 }
 
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner

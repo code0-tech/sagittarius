@@ -9,8 +9,7 @@ FactoryBot.define do
     validation_status { :unvalidated }
     starting_node { nil }
     flow_settings { [] }
-    input_type { 'string' }
-    return_type { 'string' }
+    signature { '(): undefined' }
     name { generate(:flow_name) }
   end
 end

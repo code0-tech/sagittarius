@@ -5,7 +5,6 @@ class DataTypesFinder < ApplicationFinder
     data_types = base_scope
     data_types = by_data_type(data_types)
     data_types = by_runtime_function_definition(data_types)
-    data_types = by_flow_type_setting(data_types)
     data_types = by_flow_type(data_types)
     data_types = by_flow(data_types)
 
@@ -34,12 +33,6 @@ class DataTypesFinder < ApplicationFinder
                                 .select(:referenced_data_type_id)
 
     data_types.where(id: referenced_data_types_ids)
-  end
-
-  def by_flow_type_setting(data_types)
-    return data_types unless params[:flow_type_setting]
-
-    data_types.where(id: params[:flow_type_setting].referenced_data_types.pluck(:id))
   end
 
   def by_flow_type(data_types)
