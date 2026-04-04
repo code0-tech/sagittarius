@@ -11,6 +11,7 @@ Represents a reference value in the system.
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this ReferenceValue was created |
 | `id` | [`ReferenceValueID!`](../scalar/referencevalueid.md) | Global ID of this ReferenceValue |
 | `inputIndex` | [`Int`](../scalar/int.md) | The index of the referenced input |
+| `inputTypeIdentifier` | [`String`](../scalar/string.md) | The identifier of the input type |
 | `nodeFunctionId` | [`NodeFunctionID`](../scalar/nodefunctionid.md) | The referenced value unless referencing the flow input. |
 | `parameterIndex` | [`Int`](../scalar/int.md) | The index of the referenced parameter |
 | `referencePath` | [`[ReferencePath!]!`](../object/referencepath.md) | The paths associated with this reference value. |
