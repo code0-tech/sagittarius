@@ -670,6 +670,7 @@ CREATE TABLE reference_values (
     node_function_id bigint,
     parameter_index integer,
     input_index integer,
+    input_type_identifier text,
     CONSTRAINT check_a2e3734389 CHECK ((num_nonnulls(parameter_index, input_index) = ANY (ARRAY[0, 2])))
 );
 

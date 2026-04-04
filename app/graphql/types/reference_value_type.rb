@@ -21,6 +21,12 @@ module Types
           null: true,
           description: 'The index of the referenced input'
 
+    # rubocop:disable GraphQL/ExtractType
+    field :input_type_identifier, GraphQL::Types::String,
+          null: true,
+          description: 'The identifier of the input type'
+    # rubocop:enable GraphQL/ExtractType
+
     id_field ReferenceValue
     timestamps
 

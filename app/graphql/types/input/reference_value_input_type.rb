@@ -20,6 +20,10 @@ module Types
       argument :input_index, GraphQL::Types::Int,
                required: false,
                description: 'The index of the referenced input'
+
+      argument :input_type_identifier, GraphQL::Types::String,
+               required: false,
+               description: 'The identifier of the input type'
     end
   end
 end

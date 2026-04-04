@@ -231,7 +231,8 @@ module Namespaces
                 node_function: referenced_node[:node],
                 reference_paths: reference_paths,
                 parameter_index: parameter.value.reference_value.parameter_index,
-                input_index: parameter.value.reference_value.input_index
+                input_index: parameter.value.reference_value.input_index,
+                input_type_identifier: parameter.value.reference_value.input_type_identifier
               )
             else
               db_parameters[index].reference_value&.destroy

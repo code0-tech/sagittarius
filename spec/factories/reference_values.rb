@@ -5,5 +5,6 @@ FactoryBot.define do
     node_function
     parameter_index { nil }
     input_index { nil }
+    input_type_identifier { nil }
   end
 end
