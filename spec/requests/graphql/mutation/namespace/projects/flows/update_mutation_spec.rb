@@ -14,8 +14,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
           #{error_query}
           flow {
             id
-            inputType
-            returnType
+            signature
             startingNodeId
             nodes {
               count
@@ -80,8 +79,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       flowInput: {
         name: generate(:flow_name),
         type: flow_type.to_global_id.to_s,
-        inputType: 'updated_input_type',
-        returnType: 'updated_return_type',
+        signature: 'updated_signature',
         startingNodeId: 'gid://sagittarius/NodeFunction/1000',
         settings: {
           flowSettingIdentifier: 'key',
@@ -174,13 +172,11 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
         graphql_data_at(:namespaces_projects_flows_update, :flow)
       ).to match a_graphql_entity_for(
         flow,
-        :input_type,
-        :return_type,
+        :signature,
         starting_node_id: flow.starting_node.to_global_id.to_s
       )
 
-      expect(flow.input_type).to eq(input[:flowInput][:inputType])
-      expect(flow.return_type).to eq(input[:flowInput][:returnType])
+      expect(flow.signature).to eq(input[:flowInput][:signature])
 
       expect(graphql_data_at(:namespaces_projects_flows_update, :flow, :settings).size).to eq(1)
 

@@ -54,24 +54,6 @@ RSpec.describe DataTypesFinder do
       end
     end
 
-    context 'with flow_type_setting parameter' do
-      let(:flow_type) { create(:flow_type, runtime: runtime) }
-      let(:flow_type_setting) { create(:flow_type_setting, flow_type: flow_type) }
-
-      before do
-        create(:flow_type_setting_data_type_link,
-               flow_type_setting: flow_type_setting,
-               referenced_data_type: data_type1)
-      end
-
-      it 'returns referenced data types' do
-        finder = described_class.new({ flow_type_setting: flow_type_setting })
-        result = finder.execute
-
-        expect(result).to contain_exactly(data_type1)
-      end
-    end
-
     context 'with flow_type parameter' do
       let(:flow_type) { create(:flow_type, runtime: runtime) }
 

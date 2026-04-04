@@ -7,8 +7,7 @@ RSpec.describe SagittariusSchema.types['FlowType'] do
     %w[
       identifier
       editable
-      input_type
-      return_type
+      signature
       flow_type_settings
       names
       display_messages

@@ -26,8 +26,8 @@ RSpec.describe Flow do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive.scoped_to(:project_id) }
 
-    it { is_expected.to validate_length_of(:input_type).is_at_most(2000) }
-    it { is_expected.to validate_length_of(:return_type).is_at_most(2000) }
+    it { is_expected.to validate_presence_of(:signature) }
+    it { is_expected.to validate_length_of(:signature).is_at_most(500) }
   end
 
   describe 'scopes' do
@@ -47,8 +47,7 @@ RSpec.describe Flow do
       create(
         :flow,
         flow_type: create(:flow_type, identifier: 'HTTP'),
-        input_type: 'string',
-        return_type: 'number',
+        signature: '(input: REST_ADAPTER_INPUT): HTTP_RESPONSE',
         disabled_reason: 0,
         flow_settings: [
           create(
@@ -101,8 +100,7 @@ RSpec.describe Flow do
           project_id: flow.project.id,
           project_slug: flow.project.slug,
           type: flow.flow_type.identifier,
-          input_type: flow.input_type,
-          return_type: flow.return_type,
+          signature: flow.signature,
           node_functions: [
             {
               database_id: starting_node.id,

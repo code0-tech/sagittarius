@@ -12,8 +12,6 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
   describe 'Update' do
     let!(:http_response_data_type) { create(:data_type, identifier: 'HTTP_RESPONSE', runtime: runtime) }
     let!(:rest_adapter_input_data_type) { create(:data_type, identifier: 'REST_ADAPTER_INPUT', runtime: runtime) }
-    let!(:http_url_data_type) { create(:data_type, identifier: 'HTTP_URL', runtime: runtime) }
-    let!(:http_method_data_type) { create(:data_type, identifier: 'HTTP_METHOD', runtime: runtime) }
 
     let(:flow_types) do
       [
@@ -23,8 +21,6 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
             {
               identifier: 'HTTP_URL',
               unique: :PROJECT,
-              type: 'HTTP_URL',
-              linked_data_type_identifiers: ['HTTP_URL'],
               name: [
                 { code: 'en_US', content: 'URL' }
               ],
@@ -35,8 +31,6 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
             {
               identifier: 'HTTP_METHOD',
               unique: :NONE,
-              type: 'HTTP_METHOD',
-              linked_data_type_identifiers: ['HTTP_METHOD'],
               default_value: Tucana::Shared::Value.from_ruby('GET'),
               name: [
                 { code: 'en_US', content: 'Method' }
@@ -46,8 +40,7 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
               ],
             }
           ],
-          input_type: 'REST_ADAPTER_INPUT',
-          return_type: 'HTTP_RESPONSE',
+          signature: '(input: REST_ADAPTER_INPUT): HTTP_RESPONSE',
           linked_data_type_identifiers: %w[REST_ADAPTER_INPUT HTTP_RESPONSE],
           name: [
             { code: 'en_US', content: 'Rest Endpoint' }
@@ -76,8 +69,7 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
 
       flow_type = FlowType.last
       expect(flow_type.identifier).to eq('REST')
-      expect(flow_type.input_type).to eq('REST_ADAPTER_INPUT')
-      expect(flow_type.return_type).to eq('HTTP_RESPONSE')
+      expect(flow_type.signature).to eq('(input: REST_ADAPTER_INPUT): HTTP_RESPONSE')
       expect(flow_type.editable).to be false
       expect(flow_type.version).to eq('0.0.0')
       expect(flow_type.referenced_data_types).to contain_exactly(rest_adapter_input_data_type,
@@ -102,19 +94,15 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
 
       url_setting = flow_type.flow_type_settings.find_by(identifier: 'HTTP_URL')
       expect(url_setting.unique).to eq('project')
-      expect(url_setting.type).to eq('HTTP_URL')
       expect(url_setting.default_value).to be_nil
       expect(url_setting.names.first.content).to eq('URL')
       expect(url_setting.descriptions.first.content).to eq('Specifies the HTTP URL endpoint.')
-      expect(url_setting.referenced_data_types).to contain_exactly(http_url_data_type)
 
       method_setting = flow_type.flow_type_settings.find_by(identifier: 'HTTP_METHOD')
       expect(method_setting.unique).to eq('none')
-      expect(method_setting.type).to eq('HTTP_METHOD')
       expect(method_setting.default_value).to eq('GET')
       expect(method_setting.names.first.content).to eq('Method')
       expect(method_setting.descriptions.first.content).to eq('Specifies the HTTP request method.')
-      expect(method_setting.referenced_data_types).to contain_exactly(http_method_data_type)
     end
 
     context 'when removing flowtypes' do

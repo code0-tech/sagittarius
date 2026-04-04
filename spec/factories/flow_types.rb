@@ -6,8 +6,7 @@ FactoryBot.define do
   factory :flow_type do
     runtime
     identifier { generate(:flow_type_identifier) }
-    input_type { 'string' }
-    return_type { 'string' }
+    signature { '(): undefined' }
     editable { false }
     version { '0.0.0' }
   end

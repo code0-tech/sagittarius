@@ -16,19 +16,16 @@ module Types
           null: false,
           description: 'The validation status of the flow'
 
-    field :input_type, String,
-          null: true,
-          description: 'The input data type of the flow'
     field :project, Types::NamespaceProjectType,
           null: false,
           description: 'The project the flow belongs to'
-    field :return_type, String,
-          null: true,
-          description: 'The return data type of the flow'
     field :settings, Types::FlowSettingType.connection_type,
           null: false,
           method: :flow_settings,
           description: 'The settings of the flow'
+    field :signature, String,
+          null: false,
+          description: 'The signature of the flow'
     field :starting_node_id, Types::GlobalIdType[::NodeFunction],
           null: true,
           description: 'The ID of the starting node of the flow'

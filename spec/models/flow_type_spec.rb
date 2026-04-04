@@ -26,8 +26,8 @@ RSpec.describe FlowType do
     it { is_expected.to validate_uniqueness_of(:identifier).scoped_to(:runtime_id) }
     it { is_expected.to allow_values(true, false).for(:editable) }
 
-    it { is_expected.to validate_length_of(:input_type).is_at_most(2000) }
-    it { is_expected.to validate_length_of(:return_type).is_at_most(2000) }
+    it { is_expected.to validate_presence_of(:signature) }
+    it { is_expected.to validate_length_of(:signature).is_at_most(500) }
 
     describe '#validate_version' do
       it 'adds an error if version is blank' do

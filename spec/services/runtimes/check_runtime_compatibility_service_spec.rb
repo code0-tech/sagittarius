@@ -49,14 +49,10 @@ RSpec.describe Runtimes::CheckRuntimeCompatibilityService do
       create(:data_type, runtime: runtime, identifier: 'dt1', version: '1.3.0')
       create(:flow_type,
              runtime: primary_runtime,
-             input_type: nil,
-             return_type: nil,
              identifier: 'ft1',
              version: '2.1.0')
       create(:flow_type,
              runtime: runtime,
-             input_type: nil,
-             return_type: nil,
              identifier: 'ft1',
              version: '2.2.0')
       create(:runtime_function_definition, runtime_name: 'rfd1', runtime: primary_runtime, version: '3.0.0')

@@ -79,14 +79,14 @@ gem 'good_job', '~> 4.0'
 gem 'rotp'
 
 gem 'grpc', '~> 1.67'
-gem 'tucana', '0.0.62'
+gem 'tucana', '0.0.66'
 
 gem 'code0-identities', '~> 0.0.3'
 
 gem 'pry', '~> 0.15.0'
 gem 'pry-byebug', '~> 3.10'
 
-gem 'code0-zero_track', '0.0.6'
+gem 'code0-zero_track', '0.0.7'
 
 gem 'image_processing', '>= 1.2'
 

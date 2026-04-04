@@ -231,23 +231,6 @@ CREATE SEQUENCE flow_type_data_type_links_id_seq
 
 ALTER SEQUENCE flow_type_data_type_links_id_seq OWNED BY flow_type_data_type_links.id;
 
-CREATE TABLE flow_type_setting_data_type_links (
-    id bigint NOT NULL,
-    flow_type_setting_id bigint NOT NULL,
-    referenced_data_type_id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE flow_type_setting_data_type_links_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE flow_type_setting_data_type_links_id_seq OWNED BY flow_type_setting_data_type_links.id;
-
 CREATE TABLE flow_type_settings (
     id bigint NOT NULL,
     flow_type_id bigint NOT NULL,
@@ -255,9 +238,7 @@ CREATE TABLE flow_type_settings (
     default_value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    "unique" integer DEFAULT 0 NOT NULL,
-    type text NOT NULL,
-    CONSTRAINT check_52136fe376 CHECK ((char_length(type) <= 2000))
+    "unique" integer DEFAULT 0 NOT NULL
 );
 
 CREATE SEQUENCE flow_type_settings_id_seq
@@ -278,10 +259,8 @@ CREATE TABLE flow_types (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     version text NOT NULL,
-    input_type text,
-    return_type text,
-    CONSTRAINT check_c6b1f013b0 CHECK ((char_length(input_type) <= 2000)),
-    CONSTRAINT check_f6a6997219 CHECK ((char_length(return_type) <= 2000))
+    signature text DEFAULT ''::text NOT NULL,
+    CONSTRAINT chk_rails_7fce2d945c CHECK ((char_length(signature) <= 500))
 );
 
 CREATE SEQUENCE flow_types_id_seq
@@ -301,12 +280,10 @@ CREATE TABLE flows (
     name text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    input_type text,
-    return_type text,
     validation_status integer DEFAULT 0 NOT NULL,
     disabled_reason integer,
-    CONSTRAINT check_1c805d704f CHECK ((char_length(input_type) <= 2000)),
-    CONSTRAINT check_b2f3f83908 CHECK ((char_length(return_type) <= 2000))
+    signature text DEFAULT ''::text NOT NULL,
+    CONSTRAINT chk_rails_8058ebff6e CHECK ((char_length(signature) <= 500))
 );
 
 CREATE SEQUENCE flows_id_seq
@@ -929,8 +906,6 @@ ALTER TABLE ONLY flow_settings ALTER COLUMN id SET DEFAULT nextval('flow_setting
 
 ALTER TABLE ONLY flow_type_data_type_links ALTER COLUMN id SET DEFAULT nextval('flow_type_data_type_links_id_seq'::regclass);
 
-ALTER TABLE ONLY flow_type_setting_data_type_links ALTER COLUMN id SET DEFAULT nextval('flow_type_setting_data_type_links_id_seq'::regclass);
-
 ALTER TABLE ONLY flow_type_settings ALTER COLUMN id SET DEFAULT nextval('flow_type_settings_id_seq'::regclass);
 
 ALTER TABLE ONLY flow_types ALTER COLUMN id SET DEFAULT nextval('flow_types_id_seq'::regclass);
@@ -1029,9 +1004,6 @@ ALTER TABLE ONLY flow_settings
 
 ALTER TABLE ONLY flow_type_data_type_links
     ADD CONSTRAINT flow_type_data_type_links_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY flow_type_setting_data_type_links
-    ADD CONSTRAINT flow_type_setting_data_type_links_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY flow_type_settings
     ADD CONSTRAINT flow_type_settings_pkey PRIMARY KEY (id);
@@ -1146,8 +1118,6 @@ CREATE UNIQUE INDEX idx_on_data_type_id_referenced_data_type_id_bb9b090c90 ON da
 CREATE UNIQUE INDEX idx_on_flow_id_referenced_data_type_id_14b02b52f8 ON flow_data_type_links USING btree (flow_id, referenced_data_type_id);
 
 CREATE UNIQUE INDEX idx_on_flow_type_id_referenced_data_type_id_70312c9382 ON flow_type_data_type_links USING btree (flow_type_id, referenced_data_type_id);
-
-CREATE UNIQUE INDEX idx_on_flow_type_setting_id_referenced_data_type_id_facda120ed ON flow_type_setting_data_type_links USING btree (flow_type_setting_id, referenced_data_type_id);
 
 CREATE UNIQUE INDEX idx_on_namespace_role_id_ability_a092da8841 ON namespace_role_abilities USING btree (namespace_role_id, ability);
 
@@ -1307,9 +1277,6 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(
 
 CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
 
-ALTER TABLE ONLY flow_type_setting_data_type_links
-    ADD CONSTRAINT fk_rails_0816d2665b FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
-
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_0d79310cfa FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
 
@@ -1429,9 +1396,6 @@ ALTER TABLE ONLY user_sessions
 
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY flow_type_setting_data_type_links
-    ADD CONSTRAINT fk_rails_a257bb7ffc FOREIGN KEY (flow_type_setting_id) REFERENCES flow_type_settings(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_ab927e0ecb FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;

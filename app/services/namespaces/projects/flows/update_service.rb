@@ -48,8 +48,7 @@ module Namespaces
 
         def update_flow_attributes
           flow.name = flow_input.name
-          flow.input_type = flow_input.input_type
-          flow.return_type = flow_input.return_type
+          flow.signature = flow_input.signature if flow_input.signature.present?
           flow.validation_status = :unvalidated
         end
 
