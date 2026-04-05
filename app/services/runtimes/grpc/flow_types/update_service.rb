@@ -58,6 +58,8 @@ module Runtimes
           db_object.display_messages = update_translations(flow_type.display_message, db_object.display_messages)
           db_object.aliases = update_translations(flow_type.alias, db_object.aliases)
           db_object.version = flow_type.version
+          db_object.definition_source = flow_type.definition_source
+          db_object.display_icon = flow_type.display_icon
           db_object.flow_type_settings = update_settings(flow_type.settings, db_object, t)
           link_data_types(db_object, flow_type.linked_data_type_identifiers, t)
           db_object.save

@@ -29,6 +29,9 @@ RSpec.describe FlowType do
     it { is_expected.to validate_presence_of(:signature) }
     it { is_expected.to validate_length_of(:signature).is_at_most(500) }
 
+    it { is_expected.to validate_length_of(:definition_source).is_at_most(50) }
+    it { is_expected.to validate_length_of(:display_icon).is_at_most(100) }
+
     describe '#validate_version' do
       it 'adds an error if version is blank' do
         flow_type.version = ''

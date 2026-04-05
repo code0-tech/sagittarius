@@ -12,6 +12,7 @@ Represents a function definition
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this FunctionDefinition was created |
 | `deprecationMessages` | [`[Translation!]`](../object/translation.md) | Deprecation message of the function |
 | `descriptions` | [`[Translation!]`](../object/translation.md) | Description of the function |
+| `displayIcon` | [`String`](../scalar/string.md) | Display icon of the function |
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display message of the function |
 | `documentations` | [`[Translation!]`](../object/translation.md) | Documentation of the function |
 | `id` | [`FunctionDefinitionID!`](../scalar/functiondefinitionid.md) | Global ID of this FunctionDefinition |

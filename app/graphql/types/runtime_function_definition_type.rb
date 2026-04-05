@@ -26,6 +26,10 @@ module Types
           null: false,
           description: 'Signature of the runtime function definition'
 
+    field :display_icon, String,
+          null: true,
+          description: 'Display icon of the runtime function definition'
+
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,
           description: 'The data types that are referenced in this runtime function definition'

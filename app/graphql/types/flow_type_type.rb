@@ -20,6 +20,10 @@ module Types
                                         description: 'Runtime of the flow type'
     field :signature, String, null: false, description: 'Signature of the flow type'
 
+    # rubocop:disable GraphQL/ExtractType
+    field :display_icon, String, null: true, description: 'Display icon of the flow type'
+    # rubocop:enable GraphQL/ExtractType
+
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,
           description: 'The data types that are referenced in this flow type'

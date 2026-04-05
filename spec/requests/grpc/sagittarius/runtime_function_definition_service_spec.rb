@@ -65,6 +65,8 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
               }
             ],
             version: '0.0.0',
+            definition_source: 'taurus',
+            display_icon: 'filter-icon',
           }
         ]
       end
@@ -87,6 +89,8 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function.display_messages.first.content).to eq('Filter elements in ${list} matching ${predicate}')
         expect(function.throws_error).to be(false)
         expect(function.version).to eq('0.0.0')
+        expect(function.definition_source).to eq('taurus')
+        expect(function.display_icon).to eq('filter-icon')
         expect(function.referenced_data_types).to contain_exactly(list_data_type, predicate_data_type)
 
         expect(function.parameters.count).to eq(2)

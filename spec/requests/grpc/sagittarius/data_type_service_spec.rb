@@ -27,6 +27,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
           ],
           linked_data_type_identifiers: [],
           version: '0.0.0',
+          definition_source: 'taurus',
         }
       ]
     end
@@ -45,6 +46,7 @@ RSpec.describe 'sagittarius.DataTypeService', :need_grpc_server do
       expect(data_type.runtime).to eq(runtime)
       expect(data_type.type).to eq('number')
       expect(data_type.identifier).to eq('positive_number')
+      expect(data_type.definition_source).to eq('taurus')
       expect(data_type.names.count).to eq(1)
       expect(data_type.names.first.code).to eq('de_DE')
       expect(data_type.names.first.content).to eq('Positive Zahl')

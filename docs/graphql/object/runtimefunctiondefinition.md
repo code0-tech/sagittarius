@@ -9,6 +9,7 @@ Represents a runtime function definition
 | Name | Type | Description |
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeFunctionDefinition was created |
+| `displayIcon` | [`String`](../scalar/string.md) | Display icon of the runtime function definition |
 | `functionDefinitions` | [`FunctionDefinitionConnection`](../object/functiondefinitionconnection.md) | Function definitions of the runtime function definition |
 | `id` | [`RuntimeFunctionDefinitionID!`](../scalar/runtimefunctiondefinitionid.md) | Global ID of this RuntimeFunctionDefinition |
 | `identifier` | [`String!`](../scalar/string.md) | Identifier of the runtime function definition |

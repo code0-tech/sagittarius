@@ -33,6 +33,11 @@ module Types
     field :throws_error, Boolean,
           null: false, description: 'Indicates if the function can throw an error'
 
+    # rubocop:disable GraphQL/ExtractType
+    field :display_icon, String,
+          null: true, description: 'Display icon of the function'
+    # rubocop:enable GraphQL/ExtractType
+
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,
           description: 'All data types referenced within this function definition'
@@ -50,6 +55,10 @@ module Types
 
     def throws_error
       object.runtime_function_definition&.throws_error
+    end
+
+    def display_icon
+      object.runtime_function_definition&.display_icon
     end
 
     def linked_data_types

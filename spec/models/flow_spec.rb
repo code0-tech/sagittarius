@@ -116,6 +116,7 @@ RSpec.describe Flow do
                   },
                 }
               ],
+              definition_source: 'sagittarius',
             }
           ],
           starting_node_id: starting_node.id,

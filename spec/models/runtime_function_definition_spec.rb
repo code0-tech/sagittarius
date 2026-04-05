@@ -15,6 +15,9 @@ RSpec.describe RuntimeFunctionDefinition do
     it { is_expected.to validate_presence_of(:signature) }
     it { is_expected.to validate_length_of(:signature).is_at_most(500) }
 
+    it { is_expected.to validate_length_of(:definition_source).is_at_most(50) }
+    it { is_expected.to validate_length_of(:display_icon).is_at_most(100) }
+
     describe '#validate_version' do
       it 'adds an error if version is blank' do
         function.version = ''
@@ -93,7 +96,8 @@ RSpec.describe RuntimeFunctionDefinition do
         display_message: [display.to_grpc.to_h],
         alias: [alias_t.to_grpc.to_h],
         linked_data_type_identifiers: [data_type.identifier],
-        version: function.version
+        version: function.version,
+        definition_source: 'sagittarius'
       )
     end
   end

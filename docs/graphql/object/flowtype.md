@@ -11,6 +11,7 @@ Represents a flow type
 | `aliases` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this FlowType was created |
 | `descriptions` | [`[Translation!]`](../object/translation.md) | Descriptions of the flow type |
+| `displayIcon` | [`String`](../scalar/string.md) | Display icon of the flow type |
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display message of the function |
 | `editable` | [`Boolean!`](../scalar/boolean.md) | Editable status of the flow type |
 | `flowTypeSettings` | [`[FlowTypeSetting!]!`](../object/flowtypesetting.md) | Flow type settings of the flow type |
