@@ -260,7 +260,7 @@ CREATE TABLE flow_types (
     updated_at timestamp with time zone NOT NULL,
     version text NOT NULL,
     signature text DEFAULT ''::text NOT NULL,
-    CONSTRAINT chk_rails_7fce2d945c CHECK ((char_length(signature) <= 500))
+    CONSTRAINT check_dfcfd661f1 CHECK ((char_length(signature) <= 500))
 );
 
 CREATE SEQUENCE flow_types_id_seq
@@ -283,7 +283,7 @@ CREATE TABLE flows (
     validation_status integer DEFAULT 0 NOT NULL,
     disabled_reason integer,
     signature text DEFAULT ''::text NOT NULL,
-    CONSTRAINT chk_rails_8058ebff6e CHECK ((char_length(signature) <= 500))
+    CONSTRAINT check_8c731c24ec CHECK ((char_length(signature) <= 500))
 );
 
 CREATE SEQUENCE flows_id_seq
