@@ -55,6 +55,8 @@ module Runtimes
           db_object.signature = runtime_function_definition.signature
           db_object.throws_error = runtime_function_definition.throws_error
           db_object.version = runtime_function_definition.version
+          db_object.definition_source = runtime_function_definition.definition_source
+          db_object.display_icon = runtime_function_definition.display_icon
           db_object.names = update_translations(runtime_function_definition.name, db_object.names)
           db_object.descriptions = update_translations(runtime_function_definition.description, db_object.descriptions)
           db_object.documentations = update_translations(runtime_function_definition.documentation,

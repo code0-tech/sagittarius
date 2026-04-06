@@ -25,6 +25,8 @@ class RuntimeFunctionDefinition < ApplicationRecord
                            uniqueness: { case_sensitive: false, scope: :runtime_id }
 
   validates :signature, presence: true, length: { maximum: 500 }
+  validates :definition_source, length: { maximum: 50 }
+  validates :display_icon, length: { maximum: 100 }
 
   validate :validate_version
 
@@ -53,7 +55,9 @@ class RuntimeFunctionDefinition < ApplicationRecord
       display_message: display_messages.map(&:to_grpc),
       alias: aliases.map(&:to_grpc),
       linked_data_type_identifiers: referenced_data_types.map(&:identifier),
-      version: version
+      version: version,
+      definition_source: definition_source,
+      display_icon: display_icon
     )
   end
 end

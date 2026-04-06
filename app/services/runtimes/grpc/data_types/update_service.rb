@@ -71,6 +71,7 @@ module Runtimes
           db_object.display_messages = update_translations(data_type.display_message, db_object.display_messages)
           db_object.generic_keys = data_type.generic_keys.to_a
           db_object.version = data_type.version
+          db_object.definition_source = data_type.definition_source
           link_data_types(db_object, data_type.linked_data_type_identifiers, t)
           db_object.save
           db_object

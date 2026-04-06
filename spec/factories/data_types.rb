@@ -8,5 +8,6 @@ FactoryBot.define do
     identifier { generate(:data_type_name) }
     type { 'string' }
     version { '0.0.0' }
+    definition_source { 'sagittarius' }
   end
 end

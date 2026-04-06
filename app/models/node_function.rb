@@ -39,7 +39,8 @@ class NodeFunction < ApplicationRecord
       database_id: id,
       runtime_function_id: function_definition.runtime_function_definition.runtime_name,
       parameters: ordered_parameters.map(&:to_grpc),
-      next_node_id: next_node&.id
+      next_node_id: next_node&.id,
+      definition_source: function_definition.runtime_function_definition.definition_source
     )
   end
 

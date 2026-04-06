@@ -7,6 +7,10 @@ RSpec.describe SagittariusSchema.types['RuntimeParameterDefinition'] do
     %w[
       id
       identifier
+      defaultValue
+      names
+      descriptions
+      documentations
       createdAt
       updatedAt
     ]

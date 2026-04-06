@@ -9,6 +9,7 @@ Represents a parameter definition
 | Name | Type | Description |
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this ParameterDefinition was created |
+| `defaultValue` | [`JSON`](../scalar/json.md) | Default value of the parameter |
 | `descriptions` | [`[Translation!]`](../object/translation.md) | Description of the parameter |
 | `documentations` | [`[Translation!]`](../object/translation.md) | Documentation of the parameter |
 | `id` | [`ParameterDefinitionID!`](../scalar/parameterdefinitionid.md) | Global ID of this ParameterDefinition |

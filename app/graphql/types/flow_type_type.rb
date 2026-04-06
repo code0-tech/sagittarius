@@ -11,6 +11,8 @@ module Types
                                                    description: 'Descriptions of the flow type'
     field :display_messages, [Types::TranslationType], null: true,
                                                        description: 'Display message of the function'
+    field :documentations, [Types::TranslationType], null: true,
+                                                     description: 'Documentations of the flow type'
     field :editable, Boolean, null: false, description: 'Editable status of the flow type'
     field :flow_type_settings, [Types::FlowTypeSettingType], null: false,
                                                              description: 'Flow type settings of the flow type'
@@ -19,6 +21,13 @@ module Types
     field :runtime, Types::RuntimeType, null: false,
                                         description: 'Runtime of the flow type'
     field :signature, String, null: false, description: 'Signature of the flow type'
+
+    # rubocop:disable GraphQL/ExtractType
+    field :display_icon, String, null: true, description: 'Display icon of the flow type'
+    # rubocop:enable GraphQL/ExtractType
+
+    field :definition_source, String, null: true, description: 'The source that defines this flow type'
+    field :version, String, null: false, description: 'Version of the flow type'
 
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,

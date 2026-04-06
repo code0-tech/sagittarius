@@ -21,6 +21,7 @@ RSpec.describe DataType do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:type) }
     it { is_expected.to validate_length_of(:type).is_at_most(2000) }
+    it { is_expected.to validate_length_of(:definition_source).is_at_most(50) }
 
     describe '#validate_version' do
       it 'adds an error if version is blank' do
@@ -63,7 +64,8 @@ RSpec.describe DataType do
         rules: [rule.to_grpc.to_h],
         type: data_type.type,
         linked_data_type_identifiers: [ref_data_type.identifier],
-        version: data_type.version
+        version: data_type.version,
+        definition_source: 'sagittarius'
       )
     end
   end

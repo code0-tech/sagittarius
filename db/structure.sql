@@ -166,8 +166,10 @@ CREATE TABLE data_types (
     generic_keys text[] DEFAULT '{}'::text[] NOT NULL,
     version text NOT NULL,
     type text NOT NULL,
+    definition_source text,
     CONSTRAINT check_01ca31b7b9 CHECK ((char_length(type) <= 2000)),
-    CONSTRAINT check_3a7198812e CHECK ((char_length(identifier) <= 50))
+    CONSTRAINT check_3a7198812e CHECK ((char_length(identifier) <= 50)),
+    CONSTRAINT check_a133157a46 CHECK ((char_length(definition_source) <= 50))
 );
 
 CREATE SEQUENCE data_types_id_seq
@@ -260,7 +262,11 @@ CREATE TABLE flow_types (
     updated_at timestamp with time zone NOT NULL,
     version text NOT NULL,
     signature text DEFAULT ''::text NOT NULL,
-    CONSTRAINT chk_rails_7fce2d945c CHECK ((char_length(signature) <= 500))
+    definition_source text,
+    display_icon text,
+    CONSTRAINT check_3311b57eb7 CHECK ((char_length(definition_source) <= 50)),
+    CONSTRAINT check_3f33e69ae0 CHECK ((char_length(display_icon) <= 100)),
+    CONSTRAINT check_dfcfd661f1 CHECK ((char_length(signature) <= 500))
 );
 
 CREATE SEQUENCE flow_types_id_seq
@@ -283,7 +289,7 @@ CREATE TABLE flows (
     validation_status integer DEFAULT 0 NOT NULL,
     disabled_reason integer,
     signature text DEFAULT ''::text NOT NULL,
-    CONSTRAINT chk_rails_8058ebff6e CHECK ((char_length(signature) <= 500))
+    CONSTRAINT check_8c731c24ec CHECK ((char_length(signature) <= 500))
 );
 
 CREATE SEQUENCE flows_id_seq
@@ -703,7 +709,11 @@ CREATE TABLE runtime_function_definitions (
     updated_at timestamp with time zone NOT NULL,
     version text NOT NULL,
     signature text NOT NULL,
+    definition_source text,
+    display_icon text,
+    CONSTRAINT check_4cf530fb6a CHECK ((char_length(definition_source) <= 50)),
     CONSTRAINT check_86da361565 CHECK ((char_length(signature) <= 500)),
+    CONSTRAINT check_ef62cf61e5 CHECK ((char_length(display_icon) <= 100)),
     CONSTRAINT check_fe8fff4f27 CHECK ((char_length(runtime_name) <= 50))
 );
 

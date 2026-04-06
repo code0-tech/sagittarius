@@ -9,5 +9,7 @@ FactoryBot.define do
     signature { '(): undefined' }
     editable { false }
     version { '0.0.0' }
+    definition_source { 'sagittarius' }
+    display_icon { nil }
   end
 end

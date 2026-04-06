@@ -16,6 +16,7 @@ class DataType < ApplicationRecord
   has_many :aliases, -> { by_purpose(:alias) }, class_name: 'Translation', as: :owner, inverse_of: :owner
 
   validates :type, presence: true, length: { maximum: 2000 }
+  validates :definition_source, length: { maximum: 50 }
 
   validate :validate_version
 
@@ -41,7 +42,8 @@ class DataType < ApplicationRecord
       generic_keys: generic_keys,
       type: type,
       linked_data_type_identifiers: referenced_data_types.map(&:identifier),
-      version: version
+      version: version,
+      definition_source: definition_source
     )
   end
 end

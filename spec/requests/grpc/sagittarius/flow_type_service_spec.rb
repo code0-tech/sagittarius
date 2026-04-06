@@ -56,6 +56,8 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
           ],
           editable: false,
           version: '0.0.0',
+          definition_source: 'draco-rest',
+          display_icon: 'rest-icon',
         }
       ]
     end
@@ -72,6 +74,8 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
       expect(flow_type.signature).to eq('(input: REST_ADAPTER_INPUT): HTTP_RESPONSE')
       expect(flow_type.editable).to be false
       expect(flow_type.version).to eq('0.0.0')
+      expect(flow_type.definition_source).to eq('draco-rest')
+      expect(flow_type.display_icon).to eq('rest-icon')
       expect(flow_type.referenced_data_types).to contain_exactly(rest_adapter_input_data_type,
                                                                  http_response_data_type)
 

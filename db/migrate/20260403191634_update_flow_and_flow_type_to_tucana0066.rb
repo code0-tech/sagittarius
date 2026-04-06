@@ -4,13 +4,11 @@ class UpdateFlowAndFlowTypeToTucana0066 < Code0::ZeroTrack::Database::Migration[
   def change
     remove_column :flow_types, :input_type, :text, limit: 2000
     remove_column :flow_types, :return_type, :text, limit: 2000
-    add_column :flow_types, :signature, :text, null: false, default: ''
-    add_check_constraint :flow_types, 'char_length(signature) <= 500'
+    add_column :flow_types, :signature, :text, null: false, default: '', limit: 500
 
     remove_column :flows, :input_type, :text, limit: 2000
     remove_column :flows, :return_type, :text, limit: 2000
-    add_column :flows, :signature, :text, null: false, default: ''
-    add_check_constraint :flows, 'char_length(signature) <= 500'
+    add_column :flows, :signature, :text, null: false, default: '', limit: 500
 
     remove_column :flow_type_settings, :type, :text, null: false, limit: 2000
 
