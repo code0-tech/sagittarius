@@ -26,9 +26,33 @@ module Types
           null: false,
           description: 'Signature of the runtime function definition'
 
+    field :throws_error, Boolean,
+          null: false,
+          description: 'Indicates if the function can throw an error'
+
     field :display_icon, String,
           null: true,
           description: 'Display icon of the runtime function definition'
+
+    field :version, String,
+          null: false,
+          description: 'Version of the runtime function definition'
+
+    field :definition_source, String,
+          null: true,
+          description: 'The source that defines this definition'
+
+    field :aliases, [Types::TranslationType], null: true, description: 'Aliases'
+    field :deprecation_messages, [Types::TranslationType], null: true,
+                                                           description: 'Deprecation messages'
+    field :descriptions, [Types::TranslationType], null: true,
+                                                   description: 'Descriptions of the runtime function definition'
+    # rubocop:disable GraphQL/ExtractType
+    field :display_messages, [Types::TranslationType], null: true, description: 'Display messages'
+    # rubocop:enable GraphQL/ExtractType
+    field :documentations, [Types::TranslationType], null: true,
+                                                     description: 'Documentations of the runtime function definition'
+    field :names, [Types::TranslationType], null: true, description: 'Names of the runtime function definition'
 
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,

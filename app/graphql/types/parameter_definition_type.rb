@@ -18,6 +18,9 @@ module Types
     field :runtime_parameter_definition, Types::RuntimeParameterDefinitionType,
           null: true, description: 'Runtime parameter definition'
 
+    field :default_value, GraphQL::Types::JSON,
+          null: true, description: 'Default value of the parameter'
+
     id_field ParameterDefinition
     timestamps
 

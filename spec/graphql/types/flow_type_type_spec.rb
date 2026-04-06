@@ -9,11 +9,14 @@ RSpec.describe SagittariusSchema.types['FlowType'] do
       editable
       signature
       displayIcon
+      version
+      definitionSource
       flow_type_settings
       names
       display_messages
       aliases
       descriptions
+      documentations
       runtime
       linked_data_types
       id

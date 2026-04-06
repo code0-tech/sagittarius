@@ -7,6 +7,7 @@ RSpec.describe SagittariusSchema.types['FlowTypeSetting'] do
     %w[
       identifier
       unique
+      defaultValue
       flow_type
       names
       descriptions

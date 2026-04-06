@@ -10,9 +10,11 @@ Represents a flow type
 |------|------|-------------|
 | `aliases` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this FlowType was created |
+| `definitionSource` | [`String`](../scalar/string.md) | The source that defines this flow type |
 | `descriptions` | [`[Translation!]`](../object/translation.md) | Descriptions of the flow type |
 | `displayIcon` | [`String`](../scalar/string.md) | Display icon of the flow type |
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display message of the function |
+| `documentations` | [`[Translation!]`](../object/translation.md) | Documentations of the flow type |
 | `editable` | [`Boolean!`](../scalar/boolean.md) | Editable status of the flow type |
 | `flowTypeSettings` | [`[FlowTypeSetting!]!`](../object/flowtypesetting.md) | Flow type settings of the flow type |
 | `id` | [`FlowTypeID!`](../scalar/flowtypeid.md) | Global ID of this FlowType |
@@ -22,4 +24,5 @@ Represents a flow type
 | `runtime` | [`Runtime!`](../object/runtime.md) | Runtime of the flow type |
 | `signature` | [`String!`](../scalar/string.md) | Signature of the flow type |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this FlowType was last updated |
+| `version` | [`String!`](../scalar/string.md) | Version of the flow type |
 

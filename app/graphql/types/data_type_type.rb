@@ -7,6 +7,7 @@ module Types
     authorize :read_datatype
 
     field :aliases, [Types::TranslationType], null: true, description: 'Name of the function'
+    field :definition_source, String, null: true, description: 'The source that defines this datatype'
     field :display_messages, [Types::TranslationType], null: true,
                                                        description: 'Display message of the function'
     field :generic_keys, [String], null: false, description: 'The generic keys of the datatype'
@@ -18,6 +19,7 @@ module Types
     field :runtime, Types::RuntimeType, null: true,
                                         description: 'The runtime where this datatype belongs to'
     field :type, String, null: false, description: 'The type of the datatype'
+    field :version, String, null: false, description: 'The version of the datatype'
 
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,

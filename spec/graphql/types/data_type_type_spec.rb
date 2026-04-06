@@ -7,6 +7,8 @@ RSpec.describe SagittariusSchema.types['DataType'] do
     %w[
       identifier
       type
+      version
+      definitionSource
       id
       rules
       name

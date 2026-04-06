@@ -10,6 +10,7 @@ Represents a DataType
 |------|------|-------------|
 | `aliases` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this DataType was created |
+| `definitionSource` | [`String`](../scalar/string.md) | The source that defines this datatype |
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display message of the function |
 | `genericKeys` | [`[String!]!`](../scalar/string.md) | The generic keys of the datatype |
 | `id` | [`DataTypeID!`](../scalar/datatypeid.md) | Global ID of this DataType |
@@ -20,4 +21,5 @@ Represents a DataType
 | `runtime` | [`Runtime`](../object/runtime.md) | The runtime where this datatype belongs to |
 | `type` | [`String!`](../scalar/string.md) | The type of the datatype |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this DataType was last updated |
+| `version` | [`String!`](../scalar/string.md) | The version of the datatype |
 

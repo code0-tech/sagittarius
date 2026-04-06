@@ -6,6 +6,7 @@ module Types
 
     authorize :read_flow_type_setting
 
+    field :default_value, GraphQL::Types::JSON, null: true, description: 'Default value of the flow type setting'
     field :descriptions, [Types::TranslationType], null: false,
                                                    description: 'Descriptions of the flow type setting'
     field :flow_type, Types::FlowTypeType, null: true, description: 'Flow type of the flow type setting'
