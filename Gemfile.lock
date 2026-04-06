@@ -377,13 +377,13 @@ GEM
     test-prof (1.5.0)
     thor (1.4.0)
     timeout (0.6.0)
-    triangulum (0.5.2)
+    triangulum (0.10.0)
       base64 (~> 0.3)
       json (~> 2.19)
       open3 (~> 0.2)
-      tucana (~> 0.0, >= 0.0.62)
+      tucana (~> 0.0, >= 0.0.67)
     tsort (0.2.0)
-    tucana (0.0.66)
+    tucana (0.0.67)
       grpc (~> 1.64)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -437,8 +437,8 @@ DEPENDENCIES
   simplecov (~> 0.22.0)
   simplecov-cobertura (~> 3.0)
   test-prof (~> 1.0)
-  triangulum (= 0.5.2)
-  tucana (= 0.0.66)
+  triangulum (= 0.10.0)
+  tucana (= 0.0.67)
   tzinfo-data
 
 RUBY VERSION
