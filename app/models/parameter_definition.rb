@@ -20,4 +20,14 @@ class ParameterDefinition < ApplicationRecord
 
     errors.add(:function_definition, :runtime_function_definition_mismatch)
   end
+
+  def to_grpc
+    Tucana::Shared::ParameterDefinition.new(
+      runtime_name: runtime_parameter_definition.runtime_name,
+      default_value: Tucana::Shared::Value.from_ruby(default_value),
+      name: names.map(&:to_grpc),
+      description: descriptions.map(&:to_grpc),
+      documentation: documentations.map(&:to_grpc)
+    )
+  end
 end
