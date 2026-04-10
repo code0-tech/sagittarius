@@ -3,7 +3,7 @@
 class FlowType < ApplicationRecord
   belongs_to :runtime, inverse_of: :flow_types
 
-  has_many :flow_type_settings, inverse_of: :flow_type
+  has_many :flow_type_settings, inverse_of: :flow_type, autosave: true
 
   has_many :flow_type_data_type_links, inverse_of: :flow_type
   has_many :referenced_data_types, through: :flow_type_data_type_links, source: :referenced_data_type

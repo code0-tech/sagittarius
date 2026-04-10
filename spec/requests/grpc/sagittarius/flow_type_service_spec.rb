@@ -119,5 +119,42 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
         expect(existing_flow_type.reload.removed_at).to be_present
       end
     end
+
+    context 'when updating flow type settings' do
+      let(:flow_type) do
+        create(:flow_type, runtime: runtime).tap do |ft|
+          create(:flow_type_setting, flow_type: ft, identifier: 'first_setting')
+          create(:flow_type_setting, flow_type: ft, identifier: 'second_setting')
+        end
+      end
+      let(:flow_types) do
+        [
+          {
+            identifier: flow_type.identifier,
+            settings: [
+              {
+                identifier: 'other_setting',
+                unique: :PROJECT,
+              }
+            ],
+            signature: '(input: NUMBER): NUMBER',
+            linked_data_type_identifiers: %w[],
+            editable: false,
+            version: '0.0.0',
+            definition_source: 'draco-rest',
+            display_icon: 'rest-icon',
+          }
+        ]
+      end
+
+      it 'updates the flow type settings' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+        flow_type.reload
+
+        expect(flow_type.flow_type_settings.size).to eq(1)
+        expect(flow_type.flow_type_settings.first.identifier).to eq(flow_types.first[:settings].first[:identifier])
+      end
+    end
   end
 end
