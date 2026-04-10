@@ -196,7 +196,6 @@ module Namespaces
 
               db_parameters[index].function_value = node[:node]
             else
-              db_parameters[index].function_value&.destroy
               db_parameters[index].function_value = nil
             end
 
