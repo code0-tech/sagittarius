@@ -9,7 +9,12 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
   let(:namespace_project) { create(:namespace_project) }
   let(:flow_type) { create(:flow_type, runtime: runtime) }
   let(:runtime_function_definition) { create(:runtime_function_definition, runtime: runtime) }
-  let(:function_definition) { create(:function_definition, runtime_function_definition: runtime_function_definition) }
+  let(:function_definition) do
+    create(:function_definition, runtime_function_definition: runtime_function_definition).tap do |fd|
+      rpd = create(:runtime_parameter_definition, runtime_function_definition: runtime_function_definition)
+      create(:parameter_definition, runtime_parameter_definition: rpd, function_definition: fd)
+    end
+  end
   let(:node_function) { create(:node_function, flow: flow, function_definition: function_definition) }
   let(:flow) do
     create(:flow, project: namespace_project, flow_type: flow_type, validation_status: :unvalidated,
