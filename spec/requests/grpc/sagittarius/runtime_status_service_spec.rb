@@ -42,7 +42,7 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
       Tucana::Sagittarius::RuntimeStatusUpdateRequest.new(adapter_runtime_status: to_update_status)
     end
 
-    it 'creates a correct functions' do
+    it 'creates a correct status' do
       expect(stub.update(message, authorization(runtime)).success).to be(true)
       db_status = RuntimeStatus.last
       expect(db_status.runtime).to eq(runtime)
@@ -67,6 +67,46 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
         expect(RuntimeStatusConfiguration.count).to eq(1)
         config = RuntimeStatusConfiguration.last
         expect(config.endpoint).to eq('http://localhost:3000')
+      end
+    end
+
+    context 'when execution runtime status' do
+      let(:to_update_status) do
+        Tucana::Shared::ExecutionRuntimeStatus.new(
+          status: Tucana::Shared::ExecutionRuntimeStatus::Status::RUNNING,
+          timestamp: Time.now.to_i,
+          identifier: 'execution_status_1',
+          features: [
+            Tucana::Shared::RuntimeFeature.new(
+              name: [
+                Tucana::Shared::Translation.new(
+                  code: 'de_DE',
+                  content: 'http'
+                )
+              ],
+              description: [
+                Tucana::Shared::Translation.new(
+                  code: 'de_DE',
+                  content: 'HTTP support'
+                )
+              ]
+            )
+          ]
+        )
+      end
+
+      let(:message) do
+        Tucana::Sagittarius::RuntimeStatusUpdateRequest.new(execution_runtime_status: to_update_status)
+      end
+
+      it 'creates a correct status' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+        db_status = RuntimeStatus.last
+        expect(db_status.runtime).to eq(runtime)
+        expect(db_status.identifier).to eq('execution_status_1')
+        expect(db_status.status_type).to eq('execution')
+        expect(db_status.status).to eq('running')
+        expect(db_status.runtime_features.size).to eq(1)
       end
     end
   end

@@ -55,21 +55,7 @@ module Runtimes
 
           db_status.status = status_info.status.downcase
 
-          db_configs = db_status.runtime_status_configurations.first(status_info.configurations.size)
-
-          status_info.configurations.each_with_index do |config, index|
-            db_configs[index] ||= db_status.runtime_status_configurations.build
-
-            db_configs[index].endpoint = config.endpoint
-
-            next if db_configs[index].save
-
-            t.rollback_and_return! ServiceResponse.error(
-              message: 'Failed to save runtime status configuration',
-              error_code: :invalid_runtime_status_configuration,
-              details: db_configs.errors
-            )
-          end
+          update_configurations(db_status, status_info, t) if status_info.is_a?(Tucana::Shared::AdapterRuntimeStatus)
 
           unless db_status.save
             t.rollback_and_return! ServiceResponse.error(
@@ -79,8 +65,26 @@ module Runtimes
             )
           end
 
-          return ServiceResponse.success(
-            message: 'Updated runtime status'
+          return ServiceResponse.success(message: 'Updated runtime status')
+        end
+      end
+
+      private
+
+      def update_configurations(db_status, status_info, t)
+        db_configs = db_status.runtime_status_configurations.first(status_info.configurations.size)
+
+        status_info.configurations.each_with_index do |config, index|
+          db_configs[index] ||= db_status.runtime_status_configurations.build
+
+          db_configs[index].endpoint = config.endpoint
+
+          next if db_configs[index].save
+
+          t.rollback_and_return! ServiceResponse.error(
+            message: 'Failed to save runtime status configuration',
+            error_code: :invalid_runtime_status_configuration,
+            details: db_configs.errors
           )
         end
       end
