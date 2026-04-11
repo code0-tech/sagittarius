@@ -53,22 +53,24 @@ module Namespaces
         end
 
         def update_settings(t)
-          return if flow_input.settings.blank?
+          db_settings = flow.flow_settings.first(flow_input.settings.length)
+          flow_type_settings = flow.flow_type.flow_type_settings
 
-          flow_input.settings.each do |setting|
-            flow_setting = flow.flow_settings.find_or_initialize_by(flow_setting_id: setting.flow_setting_identifier)
-            flow_setting.object = setting.value
+          flow_input.settings.each_with_index do |setting, index|
+            db_settings[index] ||= flow.flow_settings.build
+            db_settings[index].flow_setting_id = flow_type_settings[index]&.identifier
+            db_settings[index].object = setting.value
 
-            next if flow_setting.save
+            next if db_settings[index].save
 
             t.rollback_and_return! ServiceResponse.error(
               message: 'Invalid flow settings',
               error_code: :invalid_flow_setting,
-              details: flow_setting.errors
+              details: db_settings[index].errors
             )
           end
 
-          flow.flow_settings.where.not(flow_setting_id: flow_input.settings.map(&:flow_setting_identifier)).destroy_all
+          flow.flow_settings.excluding(*db_settings).destroy_all
         end
 
         def update_nodes(t)
