@@ -288,6 +288,76 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     end
   end
 
+  context 'when clearing function_value on a reused node' do
+    before do
+      stub_allowed_ability(NamespaceProjectPolicy, :update_flow, user: current_user, subject: project)
+      stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: project)
+    end
+
+    let(:flow) do
+      create(:flow, project: project, flow_type: flow_type).tap do |f|
+        node1 = create(:node_function, flow: f, function_definition: function_definition)
+        node2 = create(:node_function, flow: f, function_definition: function_definition)
+        create(:node_parameter,
+               node_function: node1,
+               parameter_definition: function_definition.parameter_definitions.first,
+               function_value: node2,
+               literal_value: nil)
+        f.starting_node = node1
+        node1.save!
+        f.save!
+      end
+    end
+
+    let(:input) do
+      {
+        flowId: flow.to_global_id.to_s,
+        flowInput: {
+          name: generate(:flow_name),
+          type: flow_type.to_global_id.to_s,
+          startingNodeId: flow.starting_node.to_global_id.to_s,
+          settings: [],
+          nodes: [
+            {
+              id: flow.starting_node.to_global_id.to_s,
+              functionDefinitionId: function_definition.to_global_id.to_s,
+              nextNodeId: nil,
+              parameters: [
+                {
+                  parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
+                  value: {
+                    literalValue: 42,
+                  },
+                }
+              ],
+            },
+            {
+              id: flow.node_functions.second.to_global_id.to_s,
+              functionDefinitionId: function_definition.to_global_id.to_s,
+              nextNodeId: nil,
+              parameters: [
+                {
+                  parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
+                  value: {
+                    literalValue: 99,
+                  },
+                }
+              ],
+            }
+          ],
+        },
+      }
+    end
+
+    it 'does not destroy nodes that are still in use' do
+      mutate!
+
+      expect(graphql_data_at(:namespaces_projects_flows_update, :errors)).to be_blank
+      expect(graphql_data_at(:namespaces_projects_flows_update, :flow)).to be_present
+      expect(flow.reload.node_functions.count).to eq(2)
+    end
+  end
+
   context 'when user does not have the permission' do
     it 'returns an error' do
       mutate!
