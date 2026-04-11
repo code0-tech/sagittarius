@@ -60,7 +60,11 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
 
   let(:runtime) { create(:runtime) }
   let(:project) { create(:namespace_project, primary_runtime: runtime) }
-  let(:flow_type) { create(:flow_type, runtime: runtime, signature: '(input: INPUT): OUTPUT') }
+  let(:flow_type) do
+    create(:flow_type, runtime: runtime, signature: '(input: INPUT): OUTPUT').tap do |ft|
+      create(:flow_type_setting, flow_type: ft, identifier: 'input')
+    end
+  end
   let(:function_definition) do
     rfd = create(:runtime_function_definition, runtime: runtime)
     rpd = create(:runtime_parameter_definition, runtime_function_definition: rfd)
@@ -77,7 +81,6 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
         type: flow_type.to_global_id.to_s,
         startingNodeId: 'gid://sagittarius/NodeFunction/1000',
         settings: {
-          flowSettingIdentifier: 'key',
           value: {
             'key' => 'value',
           },

@@ -62,7 +62,11 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
   let(:runtime) { create(:runtime) }
   let(:project) { create(:namespace_project, primary_runtime: runtime) }
-  let(:flow_type) { create(:flow_type, runtime: runtime) }
+  let(:flow_type) do
+    create(:flow_type, runtime: runtime).tap do |ft|
+      create(:flow_type_setting, flow_type: ft, identifier: 'setting')
+    end
+  end
   let(:flow) { create(:flow, project: project, flow_type: flow_type) }
   let(:function_definition) do
     rfd = create(:runtime_function_definition, runtime: runtime)
@@ -82,7 +86,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
         signature: 'updated_signature',
         startingNodeId: 'gid://sagittarius/NodeFunction/1000',
         settings: {
-          flowSettingIdentifier: 'key',
           value: {
             'key' => 'value',
           },
@@ -179,6 +182,12 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       expect(flow.signature).to eq(input[:flowInput][:signature])
 
       expect(graphql_data_at(:namespaces_projects_flows_update, :flow, :settings).size).to eq(1)
+      expect(
+        graphql_data_at(:namespaces_projects_flows_update, :flow, :settings, :nodes).first
+      ).to match a_hash_including(
+        'flowSettingIdentifier' => flow_type.flow_type_settings.first.identifier,
+        'value' => input[:flowInput][:settings][:value]
+      )
 
       nodes = graphql_data_at(:namespaces_projects_flows_update, :flow, :nodes, :nodes)
       starting_node = nodes.find do |n|

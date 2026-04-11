@@ -3,6 +3,8 @@
 class FlowSetting < ApplicationRecord
   belongs_to :flow, optional: true
 
+  validates :flow_setting_id, presence: true
+
   def to_grpc
     Tucana::Shared::FlowSetting.new(
       database_id: id,
