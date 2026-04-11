@@ -21,6 +21,8 @@ module Namespaces
         params[:primary_runtime_id] = params.delete(:primary_runtime)&.id if params.key?(:primary_runtime)
 
         transactional do |t|
+          validate_new_primary_runtime(params[:primary_runtime_id], t) if params.key?(:primary_runtime_id)
+
           namespace_project.assign_attributes(params)
 
           if namespace_project.primary_runtime_changed?
@@ -45,6 +47,27 @@ module Namespaces
 
           ServiceResponse.success(message: 'Updated project', payload: namespace_project)
         end
+      end
+
+      private
+
+      def validate_new_primary_runtime(runtime_id, t)
+        assignment = namespace_project.runtime_assignments.find_by(runtime_id: runtime_id)
+
+        if assignment.blank?
+          t.rollback_and_return! ServiceResponse.error(
+            message: 'Runtime not assigned to project',
+            error_code: :runtime_not_assigned
+          )
+        end
+
+        return if namespace_project.primary_runtime.blank?
+        return if assignment.compatible
+
+        t.rollback_and_return! ServiceResponse.error(
+          message: 'Runtime not compatible with primary runtime',
+          error_code: :runtime_not_compatible
+        )
       end
     end
   end

@@ -10,7 +10,11 @@ RSpec.describe Namespaces::Projects::UpdateService do
   let(:namespace) { create(:namespace) }
   let(:namespace_project) { create(:namespace_project, namespace: namespace) }
   let(:namespace_project_name) { generate(:namespace_project_name) }
-  let(:runtime) { create(:runtime, namespace: namespace) }
+  let(:runtime) do
+    create(:runtime, namespace: namespace).tap do |r|
+      create(:namespace_project_runtime_assignment, namespace_project: namespace_project, runtime: r)
+    end
+  end
   let(:params) { { name: namespace_project_name, primary_runtime: runtime } }
 
   context 'when user is nil' do
@@ -91,6 +95,28 @@ RSpec.describe Namespaces::Projects::UpdateService do
 
         expect(UpdateRuntimeCompatibilityJob).not_to have_received(:perform_later)
       end
+    end
+
+    context 'when setting an incompatible runtime as primary' do
+      let(:second_runtime) do
+        create(:runtime, namespace: namespace).tap do |r|
+          create(
+            :namespace_project_runtime_assignment,
+            namespace_project: namespace_project,
+            runtime: r,
+            compatible: false
+          )
+        end
+      end
+
+      let(:params) { { primary_runtime: second_runtime } }
+
+      before do
+        namespace_project.update!(primary_runtime: runtime)
+      end
+
+      it { is_expected.not_to be_success }
+      it { expect(service_response.payload[:error_code]).to eq(:runtime_not_compatible) }
     end
   end
 end
