@@ -14,12 +14,7 @@ module Namespaces
           function_definitions = FunctionDefinition
                                  .by_node_function(flow.node_functions)
                                  .preload(:runtime_function_definition)
-          data_types = DataTypesFinder.new(
-            {
-              runtime_function_definition: function_definitions.map(&:runtime_function_definition),
-              expand_recursively: true,
-            }
-          ).execute
+          data_types = DataType.where(runtime: flow.project.primary_runtime)
 
           result = Triangulum::Validation.new(
             flow.to_grpc,
