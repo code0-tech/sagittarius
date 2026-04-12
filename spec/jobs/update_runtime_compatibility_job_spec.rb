@@ -20,6 +20,8 @@ RSpec.describe UpdateRuntimeCompatibilityJob do
     allow(Runtimes::CheckRuntimeCompatibilityService).to receive(:new)
       .with(assignment2.runtime, assignment2.namespace_project).and_return(service2)
 
+    allow(UpdateRuntimesForProjectJob).to receive(:perform_later)
+
     conditions = { id: [assignment1.id, assignment2.id] }
 
     perform_enqueued_jobs do
@@ -28,5 +30,7 @@ RSpec.describe UpdateRuntimeCompatibilityJob do
 
     expect(assignment1.reload.compatible).to be true
     expect(assignment2.reload.compatible).to be false
+
+    expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(assignment1.namespace_project.id)
   end
 end
