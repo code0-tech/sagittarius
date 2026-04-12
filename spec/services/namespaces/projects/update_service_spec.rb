@@ -85,6 +85,14 @@ RSpec.describe Namespaces::Projects::UpdateService do
       )
     end
 
+    it 'queues job to reassign definitions' do
+      allow(ReassignProjectFlowDefinitionsJob).to receive(:perform_later)
+
+      service_response
+
+      expect(ReassignProjectFlowDefinitionsJob).to have_received(:perform_later).with(namespace_project.id)
+    end
+
     context 'without changing the primary runtime' do
       let(:params) { { name: namespace_project_name } }
 
@@ -94,6 +102,14 @@ RSpec.describe Namespaces::Projects::UpdateService do
         service_response
 
         expect(UpdateRuntimeCompatibilityJob).not_to have_received(:perform_later)
+      end
+
+      it 'does not queue job to reassign definitions' do
+        allow(ReassignProjectFlowDefinitionsJob).to receive(:perform_later)
+
+        service_response
+
+        expect(ReassignProjectFlowDefinitionsJob).not_to have_received(:perform_later)
       end
     end
 

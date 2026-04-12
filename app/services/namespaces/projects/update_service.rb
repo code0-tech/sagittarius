@@ -27,6 +27,7 @@ module Namespaces
 
           if namespace_project.primary_runtime_changed?
             UpdateRuntimeCompatibilityJob.perform_later({ namespace_project_id: namespace_project.id })
+            ReassignProjectFlowDefinitionsJob.perform_later(namespace_project.id)
           end
 
           unless namespace_project.save
