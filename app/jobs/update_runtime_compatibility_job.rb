@@ -9,6 +9,8 @@ class UpdateRuntimeCompatibilityJob < ApplicationJob
 
       assignment.compatible = res.success?
       assignment.save!
+
+      UpdateRuntimesForProjectJob.perform_later(assignment.namespace_project.id)
     end
   end
 end
