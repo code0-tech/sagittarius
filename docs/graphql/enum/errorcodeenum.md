@@ -80,6 +80,8 @@ Represents the available error responses
 | `REFERENCED_VALUE_NOT_FOUND` | A referenced value could not be found |
 | `REGISTRATION_DISABLED` | Self-registration is disabled |
 | `RUNTIME_MISMATCH` | Resources are from different runtimes |
+| `RUNTIME_NOT_ASSIGNED` | The runtime is not assigned to the project |
+| `RUNTIME_NOT_COMPATIBLE` | The runtime is not compatible with the primary runtime |
 | `RUNTIME_NOT_FOUND` | The runtime with the given identifier was not found |
 | `SECONDARY_LEVEL_NOT_FOUND` | **Deprecated:** Outdated concept |
 | `TERTIARY_LEVEL_EXCEEDS_PARAMETERS` | **Deprecated:** Outdated concept |

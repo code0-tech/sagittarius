@@ -60,6 +60,8 @@ class ErrorCode
       invalid_flow: { description: 'The flow is invalid because of active model errors' },
       project_not_found: { description: 'The namespace project with the given identifier was not found' },
       runtime_not_found: { description: 'The runtime with the given identifier was not found' },
+      runtime_not_assigned: { description: 'The runtime is not assigned to the project' },
+      runtime_not_compatible: { description: 'The runtime is not compatible with the primary runtime' },
       namespace_not_found: { description: 'The namespace with the given identifier was not found' },
       flow_not_found: { description: 'The flow with the given identifier was not found' },
       namespace_role_not_found: { description: 'The namespace role with the given identifier was not found' },
