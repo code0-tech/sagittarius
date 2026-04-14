@@ -10,7 +10,13 @@ RSpec.describe NodeFunction do
     it { is_expected.to belong_to(:next_node).class_name('NodeFunction').optional }
     it { is_expected.to belong_to(:flow).class_name('Flow') }
 
-    it { is_expected.to have_many(:node_parameter_values).inverse_of(:function_value) }
+    it do
+      is_expected.to belong_to(:value_of_node_parameter)
+        .class_name('NodeParameter')
+        .inverse_of(:function_value)
+        .optional
+    end
+
     it { is_expected.to have_many(:node_parameters).inverse_of(:node_function) }
   end
 

@@ -6,5 +6,6 @@ FactoryBot.define do
     next_node { nil }
     node_parameters { [] }
     flow
+    value_of_node_parameter { nil }
   end
 end

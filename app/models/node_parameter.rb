@@ -2,13 +2,12 @@
 
 class NodeParameter < ApplicationRecord
   belongs_to :parameter_definition, inverse_of: :node_parameters
-  belongs_to :reference_value, optional: true, autosave: true
-  belongs_to :function_value, class_name: 'NodeFunction', optional: true, inverse_of: :node_parameter_values
   belongs_to :node_function, class_name: 'NodeFunction', inverse_of: :node_parameters
 
-  validate :only_one_value_present
+  has_one :reference_value
+  has_one :function_value, class_name: 'NodeFunction', inverse_of: :value_of_node_parameter
 
-  before_destroy :destroy_value_objects
+  validate :only_one_value_present
 
   def to_grpc
     param = Tucana::Shared::NodeParameter.new(
@@ -36,9 +35,5 @@ class NodeParameter < ApplicationRecord
     return if values.count(true) <= 1
 
     errors.add(:value, 'Only one of literal_value, reference_value, or function_value must be present')
-  end
-
-  def destroy_value_objects
-    reference_value.destroy if reference_value.present?
   end
 end

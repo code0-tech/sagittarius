@@ -13,7 +13,7 @@ module Types
     def value
       if object.reference_value.present?
         object.reference_value
-      elsif object.function_value_id.present?
+      elsif object.function_value.present?
         object.function_value
       else
         object.literal_value

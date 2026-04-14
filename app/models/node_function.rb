@@ -5,14 +5,15 @@ class NodeFunction < ApplicationRecord
   belongs_to :next_node, class_name: 'NodeFunction', optional: true
   belongs_to :flow, class_name: 'Flow'
 
+  belongs_to :value_of_node_parameter,
+             class_name: 'NodeParameter',
+             inverse_of: :function_value,
+             optional: true
+
   has_one :previous_node,
           class_name: 'NodeFunction',
           foreign_key: :next_node_id,
           inverse_of: :next_node
-
-  has_many :node_parameter_values,
-           class_name: 'NodeParameter',
-           inverse_of: :function_value
 
   has_many :node_parameters,
            class_name: 'NodeParameter',
