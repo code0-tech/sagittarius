@@ -248,6 +248,13 @@ module Namespaces
             )
           end
 
+          removed_parameters = current_node.node_parameters - db_parameters
+          # rubocop:disable Rails/SkipsModelValidations -- must nullify FK before parameter destruction to prevent cascade
+          flow.node_functions
+              .where(value_of_node_parameter: removed_parameters)
+              .update_all(value_of_node_parameter_id: nil)
+          # rubocop:enable Rails/SkipsModelValidations
+
           current_node.node_parameters = db_parameters
         end
 
