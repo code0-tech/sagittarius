@@ -9,11 +9,13 @@ RSpec.describe NodeParameter do
 
   describe 'associations' do
     it { is_expected.to belong_to(:parameter_definition).class_name('ParameterDefinition') }
-    it { is_expected.to belong_to(:reference_value).optional }
+    it { is_expected.to have_one(:reference_value) }
 
-    it {
-      is_expected.to belong_to(:function_value).class_name('NodeFunction').inverse_of(:node_parameter_values).optional
-    }
+    it do
+      is_expected.to have_one(:function_value)
+        .class_name('NodeFunction')
+        .inverse_of(:value_of_node_parameter)
+    end
 
     it { is_expected.to belong_to(:node_function).class_name('NodeFunction').inverse_of(:node_parameters) }
   end

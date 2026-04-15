@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :reference_value do
     node_function
+    node_parameter
     parameter_index { nil }
     input_index { nil }
     input_type_identifier { nil }
