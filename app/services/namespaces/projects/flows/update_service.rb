@@ -172,13 +172,11 @@ module Namespaces
           current_node_input.parameters.each_with_index do |parameter, index|
             db_parameters[index] ||= current_node.node_parameters.build
 
-            parameter_definition = current_node.function_definition.parameter_definitions.find_by(
-              id: parameter.parameter_definition_id.model_id
-            )
+            parameter_definition = current_node.function_definition.parameter_definitions[index]
             if parameter_definition.nil?
               t.rollback_and_return! ServiceResponse.error(
-                message: 'Invalid parameter id',
-                error_code: :invalid_parameter_id
+                message: 'Invalid parameter index',
+                error_code: :invalid_parameter_index
               )
             end
 

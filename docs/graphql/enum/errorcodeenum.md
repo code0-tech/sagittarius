@@ -40,7 +40,7 @@ Represents the available error responses
 | `INVALID_NODE_FUNCTION` | The node function is invalid |
 | `INVALID_NODE_PARAMETER` | The node parameter is invalid |
 | `INVALID_ORGANIZATION` | The organization is invalid because of active model errors |
-| `INVALID_PARAMETER_ID` | The parameter ID is invalid |
+| `INVALID_PARAMETER_INDEX` | The parameter index is invalid |
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_REFERENCE_VALUE` | The reference value is invalid |
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |

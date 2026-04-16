@@ -73,7 +73,7 @@ class ErrorCode
       flow_type_not_found: { description: 'The flow type with the given identifier was not found' },
       organization_not_found: { description: 'The organization with the given identifier was not found' },
       invalid_function_id: { description: 'The function ID is invalid' },
-      invalid_parameter_id: { description: 'The parameter ID is invalid' },
+      invalid_parameter_index: { description: 'The parameter index is invalid' },
       invalid_reference_value: { description: 'The reference value is invalid' },
       referenced_value_not_found: { description: 'A referenced value could not be found' },
       invalid_runtime_parameter_definition: { description: 'The runtime parameter definition is invalid' },

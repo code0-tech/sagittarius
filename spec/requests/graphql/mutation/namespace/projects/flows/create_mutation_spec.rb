@@ -92,7 +92,6 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
             nextNodeId: nil,
             parameters: [
               {
-                parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
                 value: {
                   literalValue: 100,
                 },
@@ -103,7 +102,6 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
             id: 'gid://sagittarius/NodeFunction/1000',
             functionDefinitionId: function_definition.to_global_id.to_s,
             parameters: [
-              parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
               value: {
                 nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
               }
@@ -114,7 +112,6 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
             id: 'gid://sagittarius/NodeFunction/1001',
             functionDefinitionId: function_definition.to_global_id.to_s,
             parameters: [
-              parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
               value: {
                 referenceValue: {
                   referencePath: [
