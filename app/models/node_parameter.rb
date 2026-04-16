@@ -4,7 +4,7 @@ class NodeParameter < ApplicationRecord
   belongs_to :parameter_definition, inverse_of: :node_parameters
   belongs_to :node_function, class_name: 'NodeFunction', inverse_of: :node_parameters
 
-  has_one :reference_value
+  has_one :reference_value, autosave: true
   has_one :function_value, class_name: 'NodeFunction', inverse_of: :value_of_node_parameter
 
   validate :only_one_value_present
