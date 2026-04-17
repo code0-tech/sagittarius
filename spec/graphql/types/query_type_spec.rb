@@ -15,8 +15,6 @@ RSpec.describe SagittariusSchema.types['Query'] do
       user
       global_runtimes
       namespace
-      node
-      nodes
     ]
   end
 

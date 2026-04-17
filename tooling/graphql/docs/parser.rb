@@ -51,6 +51,8 @@ module Tooling
         end
 
         def process_interfaces
+          elements[:interface] ||= []
+
           elements[:interface].each do |interface|
             interface[:implemented_by] = elements[:object]
                                          .filter { |object| object[:interfaces]&.include?(interface[:name]) }
