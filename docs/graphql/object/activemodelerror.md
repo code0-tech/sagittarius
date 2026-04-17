@@ -10,4 +10,3 @@ Represents an active model error
 |------|------|-------------|
 | `attribute` | [`String!`](../scalar/string.md) | The affected attribute on the model |
 | `type` | [`String!`](../scalar/string.md) | The validation type that failed for the attribute |
-

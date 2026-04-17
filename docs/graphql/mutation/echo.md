@@ -7,7 +7,6 @@ A mutation that does not perform any changes.
 This is expected to be used for testing of endpoints, to verify
 that a user has mutation access.
 
-
 ## Arguments
 
 | Name | Type | Description |

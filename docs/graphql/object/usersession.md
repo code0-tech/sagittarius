@@ -15,4 +15,3 @@ Represents a user session
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this UserSession was last updated |
 | `user` | [`User!`](../object/user.md) | User that belongs to the session |
 | `userAbilities` | [`UserSessionUserAbilities!`](../object/usersessionuserabilities.md) | Abilities for the current user on this UserSession |
-

@@ -9,4 +9,3 @@ Abilities for the current user on this NamespaceLicense
 | Name | Type | Description |
 |------|------|-------------|
 | `deleteNamespaceLicense` | [`Boolean!`](../scalar/boolean.md) | Shows if the current user has the `delete_namespace_license` ability on this NamespaceLicense |
-

@@ -12,4 +12,3 @@ The connection type for NodeFunction.
 | `edges` | [`[NodeFunctionEdge]`](../object/nodefunctionedge.md) | A list of edges. |
 | `nodes` | [`[NodeFunction]`](../object/nodefunction.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

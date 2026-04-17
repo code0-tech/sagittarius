@@ -12,4 +12,3 @@ The connection type for DataType.
 | `edges` | [`[DataTypeEdge]`](../object/datatypeedge.md) | A list of edges. |
 | `nodes` | [`[DataType]`](../object/datatype.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

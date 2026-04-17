@@ -14,4 +14,3 @@ Represents a runtime feature
 | `names` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `runtimeStatus` | [`RuntimeStatus!`](../object/runtimestatus.md) | The runtime status this feature belongs to |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeFeature was last updated |
-

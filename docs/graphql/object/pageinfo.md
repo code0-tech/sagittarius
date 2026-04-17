@@ -12,4 +12,3 @@ Information about pagination in a connection.
 | `hasNextPage` | [`Boolean!`](../scalar/boolean.md) | When paginating forwards, are there more items? |
 | `hasPreviousPage` | [`Boolean!`](../scalar/boolean.md) | When paginating backwards, are there more items? |
 | `startCursor` | [`String`](../scalar/string.md) | When paginating backwards, the cursor to continue. |
-

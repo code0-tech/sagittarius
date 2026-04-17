@@ -12,4 +12,3 @@ The connection type for ParameterDefinition.
 | `edges` | [`[ParameterDefinitionEdge]`](../object/parameterdefinitionedge.md) | A list of edges. |
 | `nodes` | [`[ParameterDefinition]`](../object/parameterdefinition.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

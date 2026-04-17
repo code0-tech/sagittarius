@@ -16,4 +16,3 @@ Represents a runtime parameter definition
 | `identifier` | [`String!`](../scalar/string.md) | Identifier of the runtime parameter definition |
 | `names` | [`[Translation!]`](../object/translation.md) | Names of the runtime parameter definition |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeParameterDefinition was last updated |
-

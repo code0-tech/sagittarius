@@ -17,4 +17,3 @@ Represents a parameter definition
 | `names` | [`[Translation!]`](../object/translation.md) | Name of the parameter |
 | `runtimeParameterDefinition` | [`RuntimeParameterDefinition`](../object/runtimeparameterdefinition.md) | Runtime parameter definition |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this ParameterDefinition was last updated |
-

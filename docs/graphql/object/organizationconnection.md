@@ -12,4 +12,3 @@ The connection type for Organization.
 | `edges` | [`[OrganizationEdge]`](../object/organizationedge.md) | A list of edges. |
 | `nodes` | [`[Organization]`](../object/organization.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

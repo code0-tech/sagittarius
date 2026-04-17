@@ -12,4 +12,3 @@ The connection type for UserIdentity.
 | `edges` | [`[UserIdentityEdge]`](../object/useridentityedge.md) | A list of edges. |
 | `nodes` | [`[UserIdentity]`](../object/useridentity.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

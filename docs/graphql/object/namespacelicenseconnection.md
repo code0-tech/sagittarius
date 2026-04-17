@@ -12,4 +12,3 @@ The connection type for NamespaceLicense.
 | `edges` | [`[NamespaceLicenseEdge]`](../object/namespacelicenseedge.md) | A list of edges. |
 | `nodes` | [`[NamespaceLicense]`](../object/namespacelicense.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

@@ -12,4 +12,3 @@ The connection type for Flow.
 | `edges` | [`[FlowEdge]`](../object/flowedge.md) | A list of edges. |
 | `nodes` | [`[Flow]`](../object/flow.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

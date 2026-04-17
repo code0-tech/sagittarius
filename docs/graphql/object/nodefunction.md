@@ -14,4 +14,3 @@ Represents a Node Function
 | `nextNodeId` | [`NodeFunctionID`](../scalar/nodefunctionid.md) | The ID of the next Node Function in the flow |
 | `parameters` | [`NodeParameterConnection!`](../object/nodeparameterconnection.md) | The parameters of the Node Function |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this NodeFunction was last updated |
-

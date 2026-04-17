@@ -14,4 +14,3 @@ Represents an external user identity
 | `providerId` | [`String!`](../scalar/string.md) | The name for the runtime |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this UserIdentity was last updated |
 | `user` | [`User!`](../object/user.md) | The correlating user of the identity |
-
