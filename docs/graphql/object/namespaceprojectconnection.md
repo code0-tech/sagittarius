@@ -12,4 +12,3 @@ The connection type for NamespaceProject.
 | `edges` | [`[NamespaceProjectEdge]`](../object/namespaceprojectedge.md) | A list of edges. |
 | `nodes` | [`[NamespaceProject]`](../object/namespaceproject.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

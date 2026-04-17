@@ -10,4 +10,3 @@ Application metadata
 |------|------|-------------|
 | `extensions` | [`[String!]!`](../scalar/string.md) | List of loaded extensions |
 | `version` | [`String!`](../scalar/string.md) | Application version |
-

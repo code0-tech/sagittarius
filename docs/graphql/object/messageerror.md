@@ -9,4 +9,3 @@ Represents an error message
 | Name | Type | Description |
 |------|------|-------------|
 | `message` | [`String!`](../scalar/string.md) | The message provided from the error |
-

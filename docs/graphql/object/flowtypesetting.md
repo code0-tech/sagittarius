@@ -17,4 +17,3 @@ Represents a flow type setting
 | `names` | [`[Translation!]!`](../object/translation.md) | Names of the flow type setting |
 | `unique` | [`Boolean!`](../scalar/boolean.md) | Unique status of the flow type setting |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this FlowTypeSetting was last updated |
-

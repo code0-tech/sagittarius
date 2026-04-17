@@ -4,15 +4,6 @@ module Types
   class QueryType < Types::BaseObject
     description 'Root Query type'
 
-    field :node, Types::NodeType, null: true, description: 'Fetches an object given its ID' do
-      argument :id, ID, required: true, description: 'ID of the object'
-    end
-
-    field :nodes, [Types::NodeType, { null: true }], null: true,
-                                                     description: 'Fetches a list of objects given a list of IDs' do
-      argument :ids, [ID], required: true, description: 'IDs of the objects'
-    end
-
     # rubocop:disable GraphQL/ExtractType -- these are intentionally at the root
     field :current_authentication, Types::AuthenticationType, null: true,
                                                               description: 'Get the currently logged in authentication'
@@ -52,14 +43,6 @@ module Types
     field :users, Types::UserType.connection_type, null: false, description: 'Find users'
 
     field :global_runtimes, Types::RuntimeType.connection_type, null: false, description: 'Find runtimes'
-
-    def node(id:)
-      context.schema.object_from_id(id, context)
-    end
-
-    def nodes(ids:)
-      ids.map { |id| context.schema.object_from_id(id, context) }
-    end
 
     def application
       {}

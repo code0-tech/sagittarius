@@ -9,4 +9,3 @@ Abilities for the current user on this Flow
 | Name | Type | Description |
 |------|------|-------------|
 | `deleteFlow` | [`Boolean!`](../scalar/boolean.md) | Shows if the current user has the `delete_flow` ability on this Flow |
-

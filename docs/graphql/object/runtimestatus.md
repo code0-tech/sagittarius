@@ -17,4 +17,3 @@ A runtime status information entry
 | `status` | [`RuntimeStatusStatus!`](../enum/runtimestatusstatus.md) | The current status of the runtime (e.g. running, stopped) |
 | `type` | [`RuntimeStatusType!`](../enum/runtimestatustype.md) | The type of runtime status information (e.g. adapter, execution) |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeStatus was last updated |
-

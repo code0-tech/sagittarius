@@ -12,4 +12,3 @@ The connection type for UserSession.
 | `edges` | [`[UserSessionEdge]`](../object/usersessionedge.md) | A list of edges. |
 | `nodes` | [`[UserSession]`](../object/usersession.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

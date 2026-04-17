@@ -9,4 +9,3 @@ Represents a literal value, such as a string or number.
 | Name | Type | Description |
 |------|------|-------------|
 | `value` | [`JSON`](../scalar/json.md) | The literal value itself as JSON. |
-

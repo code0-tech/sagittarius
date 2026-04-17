@@ -9,8 +9,7 @@ Validates a TOTP value for the given secret and enables TOTP MFA for the user
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `currentTotp` | [`String!`](../scalar/string.md) | The current totp at the time to verify the mfa
-                                                        authentication device |
+| `currentTotp` | [`String!`](../scalar/string.md) | The current totp at the time to verify the mfa authentication device |
 | `secret` | [`String!`](../scalar/string.md) | The signed secret from the generation |
 
 ## Fields

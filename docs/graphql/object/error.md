@@ -10,4 +10,3 @@ Objects that can present an error
 |------|------|-------------|
 | `details` | [`[DetailedError!]`](../union/detailederror.md) | Detailed validation errors if applicable |
 | `errorCode` | [`ErrorCodeEnum!`](../enum/errorcodeenum.md) | The code representing the error type |
-

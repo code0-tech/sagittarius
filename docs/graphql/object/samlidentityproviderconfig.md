@@ -4,7 +4,7 @@ title: SamlIdentityProviderConfig
 
 Represents the configuration for a SAML identity provider.
 
-For more information see: https://github.com/code0-tech/code0-identities/blob/0.0.3/README.md#saml
+For more information see: <https://github.com/code0-tech/code0-identities/blob/0.0.3/README.md#saml>
 
 ## Fields without arguments
 
@@ -15,4 +15,3 @@ For more information see: https://github.com/code0-tech/code0-identities/blob/0.
 | `providerName` | [`String!`](../scalar/string.md) | The name of the SAML identity provider |
 | `responseSettings` | [`JSON!`](../scalar/json.md) | The SAML response settings for the identity provider |
 | `settings` | [`JSON!`](../scalar/json.md) | The SAML settings for the identity provider |
-

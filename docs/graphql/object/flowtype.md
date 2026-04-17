@@ -25,4 +25,3 @@ Represents a flow type
 | `signature` | [`String!`](../scalar/string.md) | Signature of the flow type |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this FlowType was last updated |
 | `version` | [`String!`](../scalar/string.md) | Version of the flow type |
-

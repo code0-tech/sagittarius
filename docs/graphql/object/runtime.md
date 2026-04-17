@@ -22,4 +22,3 @@ Represents a runtime
 | `token` | [`String`](../scalar/string.md) | Token belonging to the runtime, only present on creation |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Runtime was last updated |
 | `userAbilities` | [`RuntimeUserAbilities!`](../object/runtimeuserabilities.md) | Abilities for the current user on this Runtime |
-

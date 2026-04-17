@@ -5,7 +5,7 @@ module Types
     description 'Represents the configuration for a SAML identity provider.'
 
     markdown_documentation <<~MARKDOWN
-      For more information see: https://github.com/code0-tech/code0-identities/blob/#{Code0::Identities::VERSION}/README.md#saml
+      For more information see: <https://github.com/code0-tech/code0-identities/blob/#{Code0::Identities::VERSION}/README.md#saml>
     MARKDOWN
 
     field :provider_name, String,

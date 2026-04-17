@@ -14,4 +14,3 @@ Abilities for the current user on this Application
 | `rotateRuntimeToken` | [`Boolean!`](../scalar/boolean.md) | Shows if the current user has the `rotate_runtime_token` ability on this Application |
 | `updateApplicationSetting` | [`Boolean!`](../scalar/boolean.md) | Shows if the current user has the `update_application_setting` ability on this Application |
 | `updateRuntime` | [`Boolean!`](../scalar/boolean.md) | Shows if the current user has the `update_runtime` ability on this Application |
-

@@ -12,4 +12,3 @@ The connection type for FlowSetting.
 | `edges` | [`[FlowSettingEdge]`](../object/flowsettingedge.md) | A list of edges. |
 | `nodes` | [`[FlowSetting]`](../object/flowsetting.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

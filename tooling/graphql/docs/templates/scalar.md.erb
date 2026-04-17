@@ -2,8 +2,8 @@
 title: <%= object[:name] %>
 ---
 
-<%= object[:description] %>
+<%= object[:description].chomp %>
 <% unless object[:markdown_documentation].nil? -%>
 
-<%= object[:markdown_documentation] %>
+<%= object[:markdown_documentation].chomp %>
 <% end -%>

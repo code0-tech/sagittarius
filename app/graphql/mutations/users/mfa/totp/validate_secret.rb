@@ -9,9 +9,9 @@ module Mutations
 
           field :user, ::Types::UserType, null: true, description: 'The modified user'
 
-          argument :current_totp, String, required: true,
-                                          description: 'The current totp at the time to verify the mfa
-                                                        authentication device'
+          argument :current_totp, String,
+                   required: true,
+                   description: 'The current totp at the time to verify the mfa authentication device'
           argument :secret, String, required: true, description: 'The signed secret from the generation'
 
           def resolve(secret:, current_totp:)

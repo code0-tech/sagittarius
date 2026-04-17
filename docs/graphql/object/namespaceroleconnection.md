@@ -12,4 +12,3 @@ The connection type for NamespaceRole.
 | `edges` | [`[NamespaceRoleEdge]`](../object/namespaceroleedge.md) | A list of edges. |
 | `nodes` | [`[NamespaceRole]`](../object/namespacerole.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

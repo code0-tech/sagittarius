@@ -37,26 +37,6 @@ Returns [`Namespace`](../object/namespace.md).
 |------|------|-------------|
 | `id` | [`NamespaceID!`](../scalar/namespaceid.md) | GlobalID of the target namespace |
 
-### node
-
-Fetches an object given its ID
-
-Returns [`Node`](../interface/node.md).
-
-| Name | Type | Description |
-|------|------|-------------|
-| `id` | [`ID!`](../scalar/id.md) | ID of the object |
-
-### nodes
-
-Fetches a list of objects given a list of IDs
-
-Returns [`[Node]`](../interface/node.md).
-
-| Name | Type | Description |
-|------|------|-------------|
-| `ids` | [`[ID!]!`](../scalar/id.md) | IDs of the objects |
-
 ### organization
 
 Find a organization

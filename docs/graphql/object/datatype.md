@@ -22,4 +22,3 @@ Represents a DataType
 | `type` | [`String!`](../scalar/string.md) | The type of the datatype |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this DataType was last updated |
 | `version` | [`String!`](../scalar/string.md) | The version of the datatype |
-

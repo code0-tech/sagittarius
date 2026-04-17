@@ -12,4 +12,3 @@ The connection type for NodeParameter.
 | `edges` | [`[NodeParameterEdge]`](../object/nodeparameteredge.md) | A list of edges. |
 | `nodes` | [`[NodeParameter]`](../object/nodeparameter.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

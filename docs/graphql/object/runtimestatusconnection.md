@@ -12,4 +12,3 @@ The connection type for RuntimeStatus.
 | `edges` | [`[RuntimeStatusEdge]`](../object/runtimestatusedge.md) | A list of edges. |
 | `nodes` | [`[RuntimeStatus]`](../object/runtimestatus.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

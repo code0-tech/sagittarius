@@ -13,4 +13,3 @@ Represents a rule that can be applied to a data type.
 | `id` | [`DataTypeRuleID!`](../scalar/datatyperuleid.md) | Global ID of this DataTypeRule |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this DataTypeRule was last updated |
 | `variant` | [`DataTypeRulesVariant!`](../enum/datatyperulesvariant.md) | The type of the rule |
-

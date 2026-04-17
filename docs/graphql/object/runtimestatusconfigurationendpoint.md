@@ -12,4 +12,3 @@ Detailed information about a runtime status
 | `endpoint` | [`String!`](../scalar/string.md) | The endpoint URL of the runtime |
 | `id` | [`RuntimeStatusConfigurationID!`](../scalar/runtimestatusconfigurationid.md) | Global ID of this RuntimeStatusConfigurationEndpoint |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeStatusConfigurationEndpoint was last updated |
-

@@ -64,3 +64,9 @@ end
 if Types::BaseObject.instance_variable_defined?(:@user_ability_types)
   Types::BaseObject.remove_instance_variable(:@user_ability_types) # release temporary type map
 end
+
+# Override description from the gem to fix line length
+GraphQL::Types::String.description <<~DESC
+  Represents textual data as UTF-8 character sequences.
+  This type is most often used by GraphQL to represent free-form human-readable text.
+DESC

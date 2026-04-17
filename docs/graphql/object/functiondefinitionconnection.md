@@ -12,4 +12,3 @@ The connection type for FunctionDefinition.
 | `edges` | [`[FunctionDefinitionEdge]`](../object/functiondefinitionedge.md) | A list of edges. |
 | `nodes` | [`[FunctionDefinition]`](../object/functiondefinition.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

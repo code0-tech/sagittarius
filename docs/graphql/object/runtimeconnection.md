@@ -12,4 +12,3 @@ The connection type for Runtime.
 | `edges` | [`[RuntimeEdge]`](../object/runtimeedge.md) | A list of edges. |
 | `nodes` | [`[Runtime]`](../object/runtime.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

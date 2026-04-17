@@ -12,4 +12,3 @@ The connection type for DataTypeRule.
 | `edges` | [`[DataTypeRuleEdge]`](../object/datatyperuleedge.md) | A list of edges. |
 | `nodes` | [`[DataTypeRule]`](../object/datatyperule.md) | A list of nodes. |
 | `pageInfo` | [`PageInfo!`](../object/pageinfo.md) | Information to aid in pagination. |
-

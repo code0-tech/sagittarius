@@ -22,4 +22,3 @@ Represents a flow
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Flow was last updated |
 | `userAbilities` | [`FlowUserAbilities!`](../object/flowuserabilities.md) | Abilities for the current user on this Flow |
 | `validationStatus` | [`FlowValidationStatus!`](../enum/flowvalidationstatus.md) | The validation status of the flow |
-

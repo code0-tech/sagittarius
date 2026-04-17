@@ -7,9 +7,9 @@ title: <%= object[:name] %>
 
 <%= object[:markdown_documentation] %>
 <% end -%>
-
 <% (fields_with_arguments, fields_without_arguments) = object[:fields].partition { |f| has_arguments.call(f) } -%>
 <% unless fields_without_arguments.empty? -%>
+
 ## Fields without arguments
 
 | Name | Type | Description |
@@ -17,9 +17,9 @@ title: <%= object[:name] %>
 <% sorted_by_name.call(fields_without_arguments).each do |field| -%>
 | `<%= field[:name] %>` | [`<%= field[:type][:info] %>`](../<%= field[:type][:path] %>.md) | <%= field[:description] %> |
 <% end -%>
-
 <% end -%>
 <% unless fields_with_arguments.empty? -%>
+
 ## Fields with arguments
 <% sorted_by_name.call(fields_with_arguments).each do |field| -%>
 

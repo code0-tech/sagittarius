@@ -27,4 +27,3 @@ Represents a runtime function definition
 | `throwsError` | [`Boolean!`](../scalar/boolean.md) | Indicates if the function can throw an error |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeFunctionDefinition was last updated |
 | `version` | [`String!`](../scalar/string.md) | Version of the runtime function definition |
-

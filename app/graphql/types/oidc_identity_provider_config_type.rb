@@ -5,7 +5,7 @@ module Types
     description 'Represents an OIDC identity provider configuration'
 
     markdown_documentation <<~MARKDOWN
-      For more information see: https://github.com/code0-tech/code0-identities/blob/#{Code0::Identities::VERSION}/README.md#oauth-based
+      For more information see: <https://github.com/code0-tech/code0-identities/blob/#{Code0::Identities::VERSION}/README.md#oauth-based>
     MARKDOWN
 
     # rubocop:disable GraphQL/ExtractType

@@ -24,4 +24,3 @@ Represents a function definition
 | `signature` | [`String!`](../scalar/string.md) | Signature of the function |
 | `throwsError` | [`Boolean!`](../scalar/boolean.md) | Indicates if the function can throw an error |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this FunctionDefinition was last updated |
-
