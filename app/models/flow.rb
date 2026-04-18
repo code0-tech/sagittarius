@@ -58,7 +58,7 @@ class Flow < ApplicationRecord
       data_types: [], # TODO: when data types are creatable
       disable_reason: disabled_reason,
       settings: flow_settings.map(&:to_grpc),
-      starting_node_id: starting_node.id,
+      starting_node_id: starting_node&.id,
       node_functions: node_functions.map(&:to_grpc),
       signature: signature
     )
