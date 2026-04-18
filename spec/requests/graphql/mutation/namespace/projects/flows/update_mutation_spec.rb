@@ -74,6 +74,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
     create(:function_definition, runtime_function_definition: rfd).tap do |fd|
       create(:parameter_definition, runtime_parameter_definition: rpd, function_definition: fd)
+      create(:parameter_definition, runtime_parameter_definition: rpd, function_definition: fd)
     end
   end
 
@@ -97,7 +98,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
             nextNodeId: nil,
             parameters: [
               {
-                parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
                 value: {
                   literalValue: 100,
                 },
@@ -108,7 +108,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
             id: 'gid://sagittarius/NodeFunction/1000',
             functionDefinitionId: function_definition.to_global_id.to_s,
             parameters: [
-              parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
               value: {
                 nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
               }
@@ -120,7 +119,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
             functionDefinitionId: function_definition.to_global_id.to_s,
             parameters: [
               {
-                parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
                 value: {
                   referenceValue: {
                     referencePath: [
@@ -136,7 +134,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                 },
               },
               {
-                parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
                 value: {
                   referenceValue: {
                     referencePath: [
@@ -341,7 +338,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
               nextNodeId: nil,
               parameters: [
                 {
-                  parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
                   value: {
                     literalValue: 99,
                   },
@@ -400,7 +396,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
               nextNodeId: nil,
               parameters: [
                 {
-                  parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
                   value: {
                     literalValue: 42,
                   },
@@ -413,7 +408,6 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
               nextNodeId: nil,
               parameters: [
                 {
-                  parameterDefinitionId: function_definition.parameter_definitions.first.to_global_id.to_s,
                   value: {
                     literalValue: 99,
                   },
