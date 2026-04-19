@@ -19,6 +19,8 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
       throwsError
       displayIcon
       linkedDataTypes
+      version
+      definitionSource
       createdAt
       updatedAt
     ]

@@ -31,6 +31,7 @@ Represents the available error responses
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_FLOW_TYPE` | The flow type is invalid because of active model errors |
+| `INVALID_FUNCTION_DEFINITION` | The function definition is invalid because of active model errors |
 | `INVALID_FUNCTION_ID` | The function ID is invalid |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
 | `INVALID_NAMESPACE_LICENSE` | The namespace license is invalid because of active model errors |
@@ -40,6 +41,7 @@ Represents the available error responses
 | `INVALID_NODE_FUNCTION` | The node function is invalid |
 | `INVALID_NODE_PARAMETER` | The node parameter is invalid |
 | `INVALID_ORGANIZATION` | The organization is invalid because of active model errors |
+| `INVALID_PARAMETER_DEFINITION` | The parameter definition is invalid because of active model errors |
 | `INVALID_PARAMETER_INDEX` | The parameter index is invalid |
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_REFERENCE_VALUE` | The reference value is invalid |
@@ -75,6 +77,9 @@ Represents the available error responses
 | `NO_PRIMARY_RUNTIME` | The project does not have a primary runtime |
 | `ORGANIZATION_NOT_FOUND` | The organization with the given identifier was not found |
 | `OUTDATED_DEFINITION` | The primary runtime has a newer definition than this one |
+| `PARAMETER_DEFINITION_COUNT_MISMATCH` | The number of parameter definitions does not match the number of runtime parameter definitions |
+| `PARENT_RUNTIME_FUNCTION_DEFINITION_NOT_FOUND` | The parent runtime function definition could not be found |
+| `PARENT_RUNTIME_PARAMETER_DEFINITION_NOT_FOUND` | The parent runtime parameter definition could not be found |
 | `PRIMARY_LEVEL_NOT_FOUND` | **Deprecated:** Outdated concept |
 | `PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
 | `REFERENCED_VALUE_NOT_FOUND` | A referenced value could not be found |

@@ -3,6 +3,11 @@
 class FunctionDefinition < ApplicationRecord
   belongs_to :runtime_function_definition
 
+  has_one :runtime, through: :runtime_function_definition
+
+  has_many :function_definition_data_type_links, inverse_of: :function_definition
+  has_many :referenced_data_types, through: :function_definition_data_type_links, source: :referenced_data_type
+
   has_many :node_functions, inverse_of: :function_definition
   has_many :parameter_definitions, inverse_of: :function_definition
 
@@ -19,20 +24,20 @@ class FunctionDefinition < ApplicationRecord
 
   def to_grpc
     Tucana::Shared::FunctionDefinition.new(
-      runtime_name: runtime_function_definition.runtime_name,
+      runtime_name: runtime_name,
       parameter_definitions: parameter_definitions.map(&:to_grpc),
-      signature: runtime_function_definition.signature,
-      throws_error: runtime_function_definition.throws_error,
+      signature: signature,
+      throws_error: throws_error,
       name: names.map(&:to_grpc),
       description: descriptions.map(&:to_grpc),
       documentation: documentations.map(&:to_grpc),
       deprecation_message: deprecation_messages.map(&:to_grpc),
       display_message: display_messages.map(&:to_grpc),
       alias: aliases.map(&:to_grpc),
-      linked_data_type_identifiers: runtime_function_definition.referenced_data_types.map(&:identifier),
-      version: runtime_function_definition.version,
-      display_icon: runtime_function_definition.display_icon,
-      definition_source: runtime_function_definition.definition_source,
+      linked_data_type_identifiers: referenced_data_types.map(&:identifier),
+      version: version,
+      display_icon: display_icon,
+      definition_source: definition_source,
       runtime_definition_name: runtime_function_definition.runtime_name
     )
   end

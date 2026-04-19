@@ -2,20 +2,30 @@
 
 require 'rails_helper'
 
-RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server do
+RSpec.describe 'sagittarius.FunctionDefinitionService', :need_grpc_server do
   include GrpcHelpers
 
-  let(:stub) { create_stub Tucana::Sagittarius::RuntimeFunctionDefinitionService }
+  let(:stub) { create_stub Tucana::Sagittarius::FunctionDefinitionService }
 
   describe 'Update' do
     context 'when create' do
       let(:runtime) { create(:runtime) }
       let!(:list_data_type) { create(:data_type, identifier: 'LIST', runtime: runtime) }
       let!(:predicate_data_type) { create(:data_type, identifier: 'PREDICATE', runtime: runtime) }
+      let!(:existing_runtime_function_definition) do
+        create(:runtime_function_definition,
+               runtime: runtime,
+               runtime_name: 'std::list::filter',
+               names: [create(:translation, code: 'en_US', content: 'Old Filter List')]).tap do |definition|
+          create(:runtime_parameter_definition, runtime_name: 'list', runtime_function_definition: definition)
+          create(:runtime_parameter_definition, runtime_name: 'predicate', runtime_function_definition: definition)
+        end
+      end
 
-      let(:runtime_functions) do
+      let(:functions) do
         [
           {
+            runtime_definition_name: 'std::list::filter',
             runtime_name: 'std::list::filter',
             signature: '<T>(list: LIST<T>, predicate: PREDICATE<T>): LIST<T>',
             name: [
@@ -38,8 +48,9 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
             ],
             throws_error: false,
             linked_data_type_identifiers: %w[LIST PREDICATE],
-            runtime_parameter_definitions: [
+            parameter_definitions: [
               {
+                runtime_definition_name: 'list',
                 runtime_name: 'list',
                 default_value: nil,
                 name: [
@@ -53,6 +64,7 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
                 ],
               },
               {
+                runtime_definition_name: 'predicate',
                 runtime_name: 'predicate',
                 default_value: Tucana::Shared::Value.from_ruby({ 'key' => 'value' }),
                 name: [
@@ -72,14 +84,16 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
       end
 
       let(:message) do
-        Tucana::Sagittarius::RuntimeFunctionDefinitionUpdateRequest.new(runtime_functions: runtime_functions)
+        Tucana::Sagittarius::FunctionDefinitionUpdateRequest.new(functions: functions)
       end
 
       it 'creates a correct functions' do
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-        function = RuntimeFunctionDefinition.last
+        function = FunctionDefinition.last
+        expect(function.runtime_function_definition).to eq(existing_runtime_function_definition)
         expect(function.runtime_name).to eq('std::list::filter')
+        expect(function.runtime_definition_name).to eq('std::list::filter')
         expect(function.signature).to eq('<T>(list: LIST<T>, predicate: PREDICATE<T>): LIST<T>')
         expect(function.names.first.content).to eq('Filter List')
         expect(function.descriptions.first.content).to eq('Filters a list by a predicate')
@@ -93,43 +107,66 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
         expect(function.display_icon).to eq('filter-icon')
         expect(function.referenced_data_types).to contain_exactly(list_data_type, predicate_data_type)
 
-        expect(function.parameters.count).to eq(2)
-        list_param = function.parameters.find_by(runtime_name: 'list')
+        expect(function.parameter_definitions.count).to eq(2)
+        list_param = function.parameter_definitions.find_by(runtime_name: 'list', runtime_definition_name: 'list')
         expect(list_param.names.first.content).to eq('Input List')
         expect(list_param.descriptions.first.content).to eq('The list to be filtered')
         expect(list_param.documentations.first.content).to eq('List documentation')
         expect(list_param.default_value).to be_nil
 
-        predicate_param = function.parameters.find_by(runtime_name: 'predicate')
+        predicate_param = function.parameter_definitions.find_by(runtime_name: 'predicate',
+                                                                 runtime_definition_name: 'predicate')
         expect(predicate_param.names.first.content).to eq('Filter Predicate')
         expect(predicate_param.default_value).to eq({ 'key' => 'value' })
 
-        expect(ParameterDefinition.count).to eq(0)
+        expect(ParameterDefinition.count).to eq(2)
+        list_param_def = ParameterDefinition.find_by(runtime_parameter_definition: list_param)
+        expect(list_param_def.names.first.content).to eq('Input List')
+        expect(list_param_def.descriptions.first.content).to eq('The list to be filtered')
+        expect(list_param_def.documentations.first.content).to eq('List documentation')
+        expect(list_param_def.default_value).to be_nil
       end
     end
 
     context 'when update' do
       let(:runtime) { create(:runtime) }
       let(:list_data_type) { create(:data_type, identifier: 'LIST', runtime: runtime) }
-
-      let(:existing_runtime_function_definition) do
+      let!(:existing_runtime_function_definition) do
         create(:runtime_function_definition,
                runtime: runtime,
                runtime_name: 'std::list::filter',
-               names: create(:translation, code: 'en_US', content: 'Filter List'))
+               names: [create(:translation, code: 'en_US', content: 'Old Filter List')]).tap do |definition|
+          create(:runtime_parameter_definition, runtime_name: 'list', runtime_function_definition: definition)
+        end
       end
 
-      let(:runtime_functions) do
+      let!(:existing_function_definition) do
+        create(:function_definition,
+               runtime_function_definition: existing_runtime_function_definition,
+               runtime_definition_name: 'std::list::filter',
+               runtime_name: 'std::list::filter',
+               names: [create(:translation, code: 'en_US', content: 'Filter List')]).tap do |function_definition|
+          create(:parameter_definition,
+                 function_definition: function_definition,
+                 runtime_definition_name: 'list',
+                 runtime_name: 'list',
+                 runtime_parameter_definition: existing_runtime_function_definition.parameters.first)
+        end
+      end
+
+      let(:functions) do
         [
           {
+            runtime_definition_name: 'std::list::filter',
             runtime_name: 'std::list::filter',
             signature: '<T>(list: LIST<T>): LIST<T>',
             name: [
               { code: 'de_DE', content: 'Liste filtern' }
             ],
-            runtime_parameter_definitions: [
+            parameter_definitions: [
               {
-                runtime_name: 'list',
+                runtime_definition_name: 'list',
+                runtime_name: 'some_updated_name',
                 name: [
                   { code: 'de_DE', content: 'Eingabeliste' }
                 ],
@@ -142,76 +179,68 @@ RSpec.describe 'sagittarius.RuntimeFunctionDefinitionService', :need_grpc_server
       end
 
       let(:message) do
-        Tucana::Sagittarius::RuntimeFunctionDefinitionUpdateRequest.new(runtime_functions: runtime_functions)
+        Tucana::Sagittarius::FunctionDefinitionUpdateRequest.new(functions: functions)
+      end
+
+      context 'when removing parameters' do
+        let(:functions) do
+          [
+            {
+              runtime_definition_name: 'std::list::filter',
+              runtime_name: 'std::list::filter',
+              signature: '<T>(list: LIST<T>): LIST<T>',
+              name: [
+                { code: 'de_DE', content: 'Liste filtern' }
+              ],
+              parameter_definitions: [],
+              linked_data_type_identifiers: [list_data_type.identifier],
+              version: '0.0.0',
+            }
+          ]
+        end
+
+        it 'fails' do
+          expect(stub.update(message, authorization(runtime)).success).to be(false)
+          expect(FunctionDefinition.first.parameter_definitions.count).to eq(1)
+        end
       end
 
       it 'creates a correct functions' do
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-        expect(RuntimeFunctionDefinition.count).to eq(1)
+        expect(FunctionDefinition.count).to eq(1)
 
-        function = RuntimeFunctionDefinition.last
-        expect(function.runtime_name).to eq('std::list::filter')
-        expect(function.signature).to eq('<T>(list: LIST<T>): LIST<T>')
-        expect(function.names.first.content).to eq('Liste filtern')
-        parameter = function.parameters.first
-        expect(parameter.runtime_name).to eq('list')
+        function = FunctionDefinition.last
+        expect(function.id).to eq(existing_function_definition.id)
+        parameter = function.parameter_definitions.first
+        expect(parameter.runtime_name).to eq('some_updated_name')
         expect(parameter.names.first.content).to eq('Eingabeliste')
 
-        expect(FunctionDefinition.count).to eq(0)
-        expect(ParameterDefinition.count).to eq(0)
+        expect(FunctionDefinition.count).to eq(1)
+        expect(ParameterDefinition.count).to eq(1)
       end
     end
 
     context 'when deleting' do
       let(:runtime) { create(:runtime) }
 
-      let!(:existing_runtime_function_definition) do
-        create(:runtime_function_definition, runtime: runtime)
+      let!(:existing_function_definition) do
+        create(:function_definition, runtime: runtime)
       end
 
-      let!(:existing_runtime_parameter_definition) do
-        create(:runtime_parameter_definition,
-               runtime_function_definition: existing_runtime_function_definition)
+      let(:functions) do
+        []
       end
 
       let(:message) do
-        Tucana::Sagittarius::RuntimeFunctionDefinitionUpdateRequest.new(runtime_functions: runtime_functions)
-      end
-
-      describe 'parameter definitions' do
-        let(:runtime_functions) do
-          [
-            {
-              runtime_name: existing_runtime_function_definition.runtime_name,
-              signature: '() => void',
-              name: [
-                { code: 'de_DE', content: 'Eine Funktion' }
-              ],
-              runtime_parameter_definitions: [],
-              linked_data_type_identifiers: [],
-              version: '0.0.0',
-            }
-          ]
-        end
-
-        it 'marks them as removed' do
-          expect(stub.update(message, authorization(runtime)).success).to be(true)
-
-          expect(existing_runtime_function_definition.reload.removed_at).not_to be_present
-          expect(existing_runtime_parameter_definition.reload.removed_at).to be_present
-        end
+        Tucana::Sagittarius::FunctionDefinitionUpdateRequest.new(functions: functions)
       end
 
       describe 'function definitions' do
-        let(:runtime_functions) do
-          []
-        end
-
         it 'marks them as removed' do
           expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-          expect(existing_runtime_function_definition.reload.removed_at).to be_present
+          expect(existing_function_definition.reload.removed_at).to be_present
         end
       end
     end
