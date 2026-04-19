@@ -90,6 +90,11 @@ class ErrorCode
       invalid_runtime_status: { description: 'The runtime status is invalid because of active model errors' },
       invalid_runtime_status_configuration: { description: 'The runtime status configuration is invalid because of active model errors' },
       invalid_runtime_feature: { description: 'The runtime feature is invalid because of active model errors' },
+      invalid_function_definition: { description: 'The function definition is invalid because of active model errors' },
+      parent_runtime_function_definition_not_found: { description: 'The parent runtime function definition could not be found' },
+      parent_runtime_parameter_definition_not_found: { description: 'The parent runtime parameter definition could not be found' },
+      invalid_parameter_definition: { description: 'The parameter definition is invalid because of active model errors' },
+      parameter_definition_count_mismatch: { description: 'The number of parameter definitions does not match the number of runtime parameter definitions' },
 
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },

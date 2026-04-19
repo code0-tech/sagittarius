@@ -10,6 +10,7 @@ Represents a function definition
 |------|------|-------------|
 | `aliases` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this FunctionDefinition was created |
+| `definitionSource` | [`String`](../scalar/string.md) | The source that defines this definition |
 | `deprecationMessages` | [`[Translation!]`](../object/translation.md) | Deprecation message of the function |
 | `descriptions` | [`[Translation!]`](../object/translation.md) | Description of the function |
 | `displayIcon` | [`String`](../scalar/string.md) | Display icon of the function |
@@ -24,3 +25,4 @@ Represents a function definition
 | `signature` | [`String!`](../scalar/string.md) | Signature of the function |
 | `throwsError` | [`Boolean!`](../scalar/boolean.md) | Indicates if the function can throw an error |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this FunctionDefinition was last updated |
+| `version` | [`String!`](../scalar/string.md) | Version of the runtime function definition |

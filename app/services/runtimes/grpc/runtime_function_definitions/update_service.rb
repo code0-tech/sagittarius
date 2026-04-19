@@ -69,20 +69,6 @@ module Runtimes
 
           db_object.save
 
-          if db_object.function_definitions.empty?
-            definition = FunctionDefinition.new
-            definition.names = update_translations(runtime_function_definition.name, definition.names)
-            definition.descriptions = update_translations(runtime_function_definition.description,
-                                                          definition.descriptions)
-            definition.documentations = update_translations(runtime_function_definition.documentation,
-                                                            definition.documentations)
-            definition.display_messages = update_translations(runtime_function_definition.display_message,
-                                                              definition.display_messages)
-            definition.aliases = update_translations(runtime_function_definition.alias, definition.aliases)
-
-            db_object.function_definitions << definition
-          end
-
           db_object.parameters = update_parameters(db_object, runtime_function_definition.runtime_parameter_definitions,
                                                    db_object.parameters, t)
 
@@ -111,24 +97,13 @@ module Runtimes
 
             db_param.default_value = real_param.default_value&.to_ruby(true)
 
-            unless db_param.save
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Could not save runtime parameter definition',
-                error_code: :invalid_runtime_parameter_definition,
-                details: db_param.errors
-              )
-            end
+            next if db_param.save
 
-            next unless db_param.parameter_definitions.empty?
-
-            definition = ParameterDefinition.new
-            definition.names = update_translations(real_param.name, definition.names)
-            definition.descriptions = update_translations(real_param.description, definition.descriptions)
-            definition.documentations = update_translations(real_param.documentation, definition.documentations)
-            definition.default_value = db_param.default_value
-            definition.function_definition = runtime_function_definition.function_definitions.first
-
-            db_param.parameter_definitions << definition
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Could not save runtime parameter definition',
+              error_code: :invalid_runtime_parameter_definition,
+              details: db_param.errors
+            )
           end
 
           db_parameters
