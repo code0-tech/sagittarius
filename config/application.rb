@@ -15,7 +15,7 @@ require_relative '../lib/sagittarius/version'
 
 module Sagittarius
   class Application < Rails::Application
-    config.load_defaults 8.0
+    config.load_defaults 8.1
 
     # Use SQL instead of Active Record's schema dumper when creating the database.
     # This is necessary if your schema can't be completely dumped by the schema dumper,
