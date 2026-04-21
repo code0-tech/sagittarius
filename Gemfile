@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 ruby '3.4.7'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem 'rails', '~> 8.0.0'
+gem 'rails', '~> 8.1.0'
 
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1'
@@ -93,3 +93,5 @@ gem 'image_processing', '>= 1.2'
 gem 'json-schema', '~> 6.0'
 
 gem 'triangulum', '0.13.0'
+
+gem 'benchmark'
