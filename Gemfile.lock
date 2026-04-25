@@ -377,7 +377,7 @@ GEM
     test-prof (1.5.0)
     thor (1.4.0)
     timeout (0.6.0)
-    triangulum (0.13.2)
+    triangulum (0.13.3)
       base64 (~> 0.3)
       json (~> 2.19)
       open3 (~> 0.2)
@@ -437,7 +437,7 @@ DEPENDENCIES
   simplecov (~> 0.22.0)
   simplecov-cobertura (~> 3.0)
   test-prof (~> 1.0)
-  triangulum (= 0.13.2)
+  triangulum (= 0.13.3)
   tucana (= 0.0.67)
   tzinfo-data
 
