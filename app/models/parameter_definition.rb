@@ -23,7 +23,8 @@ class ParameterDefinition < ApplicationRecord
 
   def to_grpc
     Tucana::Shared::ParameterDefinition.new(
-      runtime_name: runtime_parameter_definition.runtime_name,
+      runtime_name: runtime_name,
+      runtime_definition_name: runtime_parameter_definition.runtime_name,
       default_value: Tucana::Shared::Value.from_ruby(default_value),
       name: names.map(&:to_grpc),
       description: descriptions.map(&:to_grpc),

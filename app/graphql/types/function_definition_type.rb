@@ -6,7 +6,9 @@ module Types
 
     authorize :read_function_definition
 
-    field :identifier, String, null: false, description: 'Identifier of the function'
+    field :identifier, String, null: false,
+                               description: 'Identifier of the function',
+                               method: :runtime_name
 
     field :parameter_definitions, Types::ParameterDefinitionType.connection_type,
           null: true,
@@ -33,6 +35,14 @@ module Types
     field :throws_error, Boolean,
           null: false, description: 'Indicates if the function can throw an error'
 
+    field :version, String,
+          null: false,
+          description: 'Version of the runtime function definition'
+
+    field :definition_source, String,
+          null: true,
+          description: 'The source that defines this definition'
+
     # rubocop:disable GraphQL/ExtractType
     field :display_icon, String,
           null: true, description: 'Display icon of the function'
@@ -45,27 +55,8 @@ module Types
     id_field FunctionDefinition
     timestamps
 
-    def identifier
-      object.runtime_function_definition&.runtime_name
-    end
-
-    def signature
-      object.runtime_function_definition&.signature
-    end
-
-    def throws_error
-      object.runtime_function_definition&.throws_error
-    end
-
-    def display_icon
-      object.runtime_function_definition&.display_icon
-    end
-
     def linked_data_types
-      return [] unless object.runtime_function_definition
-
-      DataTypesFinder.new({ runtime_function_definition: object.runtime_function_definition,
-                            expand_recursively: true }).execute
+      DataTypesFinder.new({ function_definition: object, expand_recursively: true }).execute
     end
   end
 end
