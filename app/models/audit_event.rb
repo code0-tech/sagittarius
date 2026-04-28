@@ -15,9 +15,9 @@ class AuditEvent < ApplicationRecord
     namespace_member_deleted: 11,
     organization_deleted: 12,
     namespace_role_deleted: 13,
-    namespace_license_created: 14, # EE-specific
+    license_created: 14, # EE-specific
     namespace_project_created: 15,
-    namespace_license_deleted: 16, # EE-specific
+    license_deleted: 16, # EE-specific
     namespace_project_deleted: 17,
     namespace_project_updated: 18,
     runtime_created: 19,

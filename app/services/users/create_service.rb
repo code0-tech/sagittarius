@@ -16,12 +16,14 @@ module Users
         return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
       end
 
-      transactional do
+      transactional do |t|
         user = User.create(**params)
         unless user.persisted?
           return ServiceResponse.error(message: 'User is invalid', error_code: :invalid_user,
                                        details: user.errors)
         end
+
+        validate_user_limit!(t)
 
         AuditService.audit(
           :user_created,
@@ -34,5 +36,13 @@ module Users
         ServiceResponse.success(payload: user)
       end
     end
+
+    protected
+
+    def validate_user_limit!(*)
+      # overridden in EE
+    end
   end
 end
+
+Users::CreateService.prepend_extensions

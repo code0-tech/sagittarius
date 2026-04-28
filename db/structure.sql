@@ -394,22 +394,22 @@ CREATE TABLE good_jobs (
     locked_at timestamp with time zone
 );
 
-CREATE TABLE namespace_licenses (
+CREATE TABLE licenses (
     id bigint NOT NULL,
     data text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    namespace_id bigint NOT NULL
+    namespace_id bigint
 );
 
-CREATE SEQUENCE namespace_licenses_id_seq
+CREATE SEQUENCE licenses_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE namespace_licenses_id_seq OWNED BY namespace_licenses.id;
+ALTER SEQUENCE licenses_id_seq OWNED BY licenses.id;
 
 CREATE TABLE namespace_member_roles (
     id bigint NOT NULL,
@@ -923,7 +923,7 @@ ALTER TABLE ONLY flows ALTER COLUMN id SET DEFAULT nextval('flows_id_seq'::regcl
 
 ALTER TABLE ONLY function_definitions ALTER COLUMN id SET DEFAULT nextval('function_definitions_id_seq'::regclass);
 
-ALTER TABLE ONLY namespace_licenses ALTER COLUMN id SET DEFAULT nextval('namespace_licenses_id_seq'::regclass);
+ALTER TABLE ONLY licenses ALTER COLUMN id SET DEFAULT nextval('licenses_id_seq'::regclass);
 
 ALTER TABLE ONLY namespace_member_roles ALTER COLUMN id SET DEFAULT nextval('namespace_member_roles_id_seq'::regclass);
 
@@ -1041,8 +1041,8 @@ ALTER TABLE ONLY good_job_settings
 ALTER TABLE ONLY good_jobs
     ADD CONSTRAINT good_jobs_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY namespace_licenses
-    ADD CONSTRAINT namespace_licenses_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY licenses
+    ADD CONSTRAINT licenses_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY namespace_member_roles
     ADD CONSTRAINT namespace_member_roles_pkey PRIMARY KEY (id);
@@ -1212,7 +1212,7 @@ CREATE INDEX index_good_jobs_on_queue_name_and_scheduled_at ON good_jobs USING b
 
 CREATE INDEX index_good_jobs_on_scheduled_at ON good_jobs USING btree (scheduled_at) WHERE (finished_at IS NULL);
 
-CREATE INDEX index_namespace_licenses_on_namespace_id ON namespace_licenses USING btree (namespace_id);
+CREATE INDEX index_licenses_on_namespace_id ON licenses USING btree (namespace_id);
 
 CREATE INDEX index_namespace_member_roles_on_member_id ON namespace_member_roles USING btree (member_id);
 
@@ -1307,7 +1307,7 @@ ALTER TABLE ONLY node_parameters
 ALTER TABLE ONLY flow_type_data_type_links
     ADD CONSTRAINT fk_rails_38698de52d FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
-ALTER TABLE ONLY namespace_licenses
+ALTER TABLE ONLY licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_features

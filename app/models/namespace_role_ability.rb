@@ -12,11 +12,11 @@ class NamespaceRoleAbility < ApplicationRecord
     delete_organization: { db: 8, description: 'Allows to delete the organization' },
     delete_namespace_role: { db: 9, description: 'Allows the deletion of roles in a namespace' },
     namespace_administrator: { db: 10, description: 'Allows to perform any action in the namespace' },
-    create_namespace_license: { db: 11, description: 'Allows to create a license for the namespace' }, # EE-specific
-    read_namespace_license: { db: 12, description: 'Allows to read the license of the namespace' }, # EE-specific
+    create_license: { db: 11, description: 'Allows to create a license for the namespace' }, # Cloud-specific
+    read_license: { db: 12, description: 'Allows to read the license of the namespace' }, # Cloud-specific
     create_namespace_project: { db: 13, description: 'Allows to create a project in the namespace' },
     read_namespace_project: { db: 14, description: 'Allows to read the project of the namespace' },
-    delete_namespace_license: { db: 15, description: 'Allows to delete the license of the namespace' }, # EE-specific
+    delete_license: { db: 15, description: 'Allows to delete the license of the namespace' }, # Cloud-specific
     update_namespace_project: { db: 16, description: 'Allows to update the project of the namespace' },
     delete_namespace_project: { db: 17, description: 'Allows to delete the project of the namespace' },
     create_runtime: { db: 18, description: 'Allows to create a runtime globally or for the namespace' },

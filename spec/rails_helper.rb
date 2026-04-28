@@ -94,6 +94,12 @@ RSpec.configure do |config|
   config.before eager_load: true do
     Rails.application.eager_load!
   end
+
+  config.around do |example|
+    Code0::ZeroTrack::Context.with_context(correlation_id: SecureRandom.uuid) do
+      example.run
+    end
+  end
 end
 
 Shoulda::Matchers.configure do |config|

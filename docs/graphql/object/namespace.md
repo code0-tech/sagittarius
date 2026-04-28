@@ -9,10 +9,10 @@ Represents a Namespace
 | Name | Type | Description |
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Namespace was created |
-| `currentNamespaceLicense` | [`NamespaceLicense`](../object/namespacelicense.md) | (EE only) Currently active license of the namespace |
+| `currentLicense` | [`License`](../object/license.md) | (Cloud only) Currently active license of the namespace |
 | `id` | [`NamespaceID!`](../scalar/namespaceid.md) | Global ID of this Namespace |
+| `licenses` | [`LicenseConnection!`](../object/licenseconnection.md) | (Cloud only) Licenses of the namespace |
 | `members` | [`NamespaceMemberConnection!`](../object/namespacememberconnection.md) | Members of the namespace |
-| `namespaceLicenses` | [`NamespaceLicenseConnection!`](../object/namespacelicenseconnection.md) | (EE only) Licenses of the namespace |
 | `parent` | [`NamespaceParent!`](../union/namespaceparent.md) | Parent of this namespace |
 | `projects` | [`NamespaceProjectConnection!`](../object/namespaceprojectconnection.md) | Projects of the namespace |
 | `roles` | [`NamespaceRoleConnection!`](../object/namespaceroleconnection.md) | Roles of the namespace |

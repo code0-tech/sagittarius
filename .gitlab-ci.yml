@@ -59,10 +59,12 @@ rspec:
       - EDITION:
           - ce
           - ee
+          - cloud
   variables:
     FPROF: '1'
   script:
-    - '[[ "$EDITION" = "ee" ]] || rm -rf extensions/ee/'
+    - '[[ "$EDITION" = "ce" ]] && rm -rf extensions/{ee,cloud}/'
+    - '[[ "$EDITION" = "ee" ]] && rm -rf extensions/cloud'
     - bundle exec rspec --format doc --format RspecJunitFormatter --out rspec.xml | tee output || exit_code=$?
     - |
       echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
