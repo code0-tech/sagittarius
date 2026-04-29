@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SagittariusSchema.types['Application'] do
+RSpec.describe Types::ApplicationType do
   let(:fields) do
     %w[
       settings
@@ -10,10 +10,14 @@ RSpec.describe SagittariusSchema.types['Application'] do
       privacyUrl
       termsAndConditionsUrl
       legalNoticeUrl
+      licenses
+      currentLicense
       user_abilities
     ]
   end
 
+  it { expect(described_class).to include_module(EE::Types::ApplicationType) }
+
   it { expect(described_class.graphql_name).to eq('Application') }
-  it { expect(described_class).to have_graphql_fields(fields).allow_unexpected_if_extended }
+  it { expect(described_class).to have_graphql_fields(fields) }
 end

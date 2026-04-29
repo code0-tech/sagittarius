@@ -8,6 +8,7 @@ Abilities for the current user on this Application
 
 | Name | Type | Description |
 |------|------|-------------|
+| `createLicense` | [`Boolean!`](../scalar/boolean.md) | Shows if the current user has the `create_license` ability on this Application |
 | `createOrganization` | [`Boolean!`](../scalar/boolean.md) | Shows if the current user has the `create_organization` ability on this Application |
 | `createRuntime` | [`Boolean!`](../scalar/boolean.md) | Shows if the current user has the `create_runtime` ability on this Application |
 | `deleteRuntime` | [`Boolean!`](../scalar/boolean.md) | Shows if the current user has the `delete_runtime` ability on this Application |
