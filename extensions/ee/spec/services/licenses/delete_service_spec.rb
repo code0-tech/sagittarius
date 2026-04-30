@@ -8,7 +8,7 @@ RSpec.describe Licenses::DeleteService, unless: Sagittarius::Extensions.cloud? d
   shared_examples 'does not delete' do
     it { is_expected.to be_error }
 
-    it 'does not delete namespace license' do
+    it 'does not delete license' do
       expect { service_response }.not_to change { License.count }
     end
 
@@ -36,7 +36,7 @@ RSpec.describe Licenses::DeleteService, unless: Sagittarius::Extensions.cloud? d
 
     it { is_expected.to be_success }
 
-    it 'removes license to the namespace' do
+    it 'removes license' do
       expect { service_response }.to change { License.count }.by(-1)
     end
 

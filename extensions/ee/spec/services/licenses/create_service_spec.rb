@@ -8,7 +8,7 @@ RSpec.describe Licenses::CreateService, unless: Sagittarius::Extensions.cloud? d
   shared_examples 'does not create' do
     it { is_expected.to be_error }
 
-    it 'does not create namespace license' do
+    it 'does not create license' do
       expect { service_response }.not_to change { License.count }
     end
 
@@ -63,7 +63,7 @@ RSpec.describe Licenses::CreateService, unless: Sagittarius::Extensions.cloud? d
     it { is_expected.to be_success }
     it { expect(service_response.payload.reload).to be_valid }
 
-    it 'adds license to the namespace' do
+    it 'adds license' do
       expect { service_response }.to change { License.count }.by(1)
     end
 
