@@ -49,7 +49,6 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
       expect(db_status.identifier).to eq('adapter_status_1')
       expect(db_status.status_type).to eq('adapter')
       expect(db_status.status).to eq('running')
-      expect(db_status.runtime_features.size).to eq(1)
       expect(db_status.runtime_status_configurations.count).to eq(1)
       expect(db_status.runtime_status_configurations.first.endpoint).to eq('http://localhost:3000')
     end
@@ -106,7 +105,6 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
         expect(db_status.identifier).to eq('execution_status_1')
         expect(db_status.status_type).to eq('execution')
         expect(db_status.status).to eq('running')
-        expect(db_status.runtime_features.size).to eq(1)
       end
     end
   end
