@@ -25,3 +25,5 @@ class GlobalPolicy < BasePolicy
     enable :create_user
   end
 end
+
+GlobalPolicy.prepend_extensions

@@ -2,7 +2,7 @@
 title: namespacesLicensesCreate
 ---
 
-(EE only) Create a new namespace license.
+(Cloud only) Create a new namespace license.
 
 ## Arguments
 
@@ -18,4 +18,4 @@ title: namespacesLicensesCreate
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |
-| `namespaceLicense` | [`NamespaceLicense`](../object/namespacelicense.md) | The newly created license. |
+| `license` | [`License`](../object/license.md) | The newly created license. |

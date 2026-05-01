@@ -19,4 +19,5 @@
 
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'EE'
+  inflect.acronym 'CLOUD'
 end

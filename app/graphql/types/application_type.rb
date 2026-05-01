@@ -52,3 +52,5 @@ module Types
     end
   end
 end
+
+Types::ApplicationType.prepend_extensions

@@ -66,6 +66,9 @@ RSpec/DescribeClass:
     - extensions/ee/spec/graphql/**/*
     - extensions/ee/spec/requests/graphql/**/*
     - extensions/ee/spec/requests/grpc/**/*
+    - extensions/cloud/spec/graphql/**/*
+    - extensions/cloud/spec/requests/graphql/**/*
+    - extensions/cloud/spec/requests/grpc/**/*
 
 RSpec/ExampleLength:
   Enabled: false

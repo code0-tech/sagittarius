@@ -45,6 +45,8 @@ RSpec.describe 'usersCreate Mutation' do
     end
 
     it 'creates user' do
+      expect(graphql_data_at(:users_create, :errors)).to be_empty
+
       expect(graphql_data_at(:users_create, :user, :id)).to be_present
       expect(graphql_data_at(:users_create, :user, :email)).to eq(input[:email])
       expect(graphql_data_at(:users_create, :user, :username)).to eq(input[:username])

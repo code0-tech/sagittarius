@@ -4,7 +4,7 @@ module Sagittarius
   module Extensions
     module_function
 
-    AVAILABLE_EXTENSIONS = %i[ee].freeze
+    AVAILABLE_EXTENSIONS = %i[ee cloud].freeze
 
     def active
       extensions = []

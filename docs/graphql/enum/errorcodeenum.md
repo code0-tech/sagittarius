@@ -32,8 +32,8 @@ Represents the available error responses
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_FLOW_TYPE` | The flow type is invalid because of active model errors |
 | `INVALID_FUNCTION_ID` | The function ID is invalid |
+| `INVALID_LICENSE` | The license is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
-| `INVALID_NAMESPACE_LICENSE` | The namespace license is invalid because of active model errors |
 | `INVALID_NAMESPACE_MEMBER` | The namespace member is invalid because of active model errors |
 | `INVALID_NAMESPACE_PROJECT` | The namespace project is invalid because of active model errors |
 | `INVALID_NAMESPACE_ROLE` | The namespace role is invalid because of active model errors |
@@ -56,7 +56,7 @@ Represents the available error responses
 | `INVALID_USER_SESSION` | The user session is invalid because of active model errors |
 | `INVALID_VERIFICATION_CODE` | Invalid verification code provided |
 | `IS_PRIMARY_RUNTIME` | This runtime is the primary runtime of a project |
-| `LICENSE_NOT_FOUND` | The namespace license with the given identifier was not found |
+| `LICENSE_NOT_FOUND` | The license with the given identifier was not found |
 | `LOADING_IDENTITY_FAILED` | Failed to load user identity from external provider |
 | `MFA_FAILED` | Invalid MFA data provided |
 | `MFA_REQUIRED` | MFA is required |

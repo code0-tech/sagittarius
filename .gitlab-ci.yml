@@ -59,10 +59,12 @@ rspec:
       - EDITION:
           - ce
           - ee
+          - cloud
   variables:
     FPROF: '1'
   script:
-    - '[[ "$EDITION" = "ee" ]] || rm -rf extensions/ee/'
+    - '[[ "$EDITION" = "ce" ]] && rm -rf extensions/{ee,cloud}/'
+    - '[[ "$EDITION" = "ee" ]] && rm -rf extensions/cloud'
     - bundle exec rspec --format doc --format RspecJunitFormatter --out rspec.xml | tee output || exit_code=$?
     - |
       echo -e "\e[0Ksection_start:`date +%s`:glpa_summary\r\e[0KHeader of the summary"
@@ -115,6 +117,7 @@ boot:production-mode:
       - EDITION:
           - ce
           - ee
+          - cloud
   variables:
     POSTGRES_DB: sagittarius_production
     POSTGRES_USER: sagittarius
@@ -122,7 +125,8 @@ boot:production-mode:
     RAILS_ENV: production
     BUNDLE_WITHOUT: 'development:test'
   script:
-    - '[[ "$EDITION" = "ee" ]] || rm -rf extensions/ee/'
+    - '[[ "$EDITION" = "ce" ]] && rm -rf extensions/{ee,cloud}/'
+    - '[[ "$EDITION" = "ee" ]] && rm -rf extensions/cloud'
     - bundle exec rake db:prepare db:seed_fu
     - bin/rails s &
     - curl --fail -sv --retry 20 --retry-delay 3 --retry-connrefused http://127.0.0.1:3000/health/liveness
