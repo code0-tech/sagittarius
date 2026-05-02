@@ -5,7 +5,6 @@ module Runtimes
     class RuntimeStatusUpdateService
       include Sagittarius::Database::Transactional
       include Code0::ZeroTrack::Loggable
-      include Runtimes::Grpc::TranslationUpdateHelper
 
       attr_reader :runtime, :status_info
 

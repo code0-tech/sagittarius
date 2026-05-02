@@ -14,22 +14,6 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
         status: Tucana::Shared::AdapterRuntimeStatus::Status::RUNNING,
         timestamp: Time.now.to_i,
         identifier: 'adapter_status_1',
-        features: [
-          Tucana::Shared::RuntimeFeature.new(
-            name: [
-              Tucana::Shared::Translation.new(
-                code: 'de_DE',
-                content: 'http'
-              )
-            ],
-            description: [
-              Tucana::Shared::Translation.new(
-                code: 'de_DE',
-                content: 'HTTP support'
-              )
-            ]
-          )
-        ],
         configurations: [
           Tucana::Shared::AdapterConfiguration.new(
             endpoint: 'http://localhost:3000'
@@ -74,23 +58,7 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
         Tucana::Shared::ExecutionRuntimeStatus.new(
           status: Tucana::Shared::ExecutionRuntimeStatus::Status::RUNNING,
           timestamp: Time.now.to_i,
-          identifier: 'execution_status_1',
-          features: [
-            Tucana::Shared::RuntimeFeature.new(
-              name: [
-                Tucana::Shared::Translation.new(
-                  code: 'de_DE',
-                  content: 'http'
-                )
-              ],
-              description: [
-                Tucana::Shared::Translation.new(
-                  code: 'de_DE',
-                  content: 'HTTP support'
-                )
-              ]
-            )
-          ]
+          identifier: 'execution_status_1'
         )
       end
 
