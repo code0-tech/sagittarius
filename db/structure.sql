@@ -395,10 +395,10 @@ CREATE TABLE good_jobs (
 );
 
 CREATE TABLE licenses (
-    id bigint NOT NULL,
-    data text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id bigint CONSTRAINT organization_licenses_id_not_null NOT NULL,
+    data text CONSTRAINT organization_licenses_data_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_licenses_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_licenses_updated_at_not_null NOT NULL,
     namespace_id bigint
 );
 
@@ -412,11 +412,11 @@ CREATE SEQUENCE licenses_id_seq
 ALTER SEQUENCE licenses_id_seq OWNED BY licenses.id;
 
 CREATE TABLE namespace_member_roles (
-    id bigint NOT NULL,
-    role_id bigint NOT NULL,
-    member_id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    id bigint CONSTRAINT organization_member_roles_id_not_null NOT NULL,
+    role_id bigint CONSTRAINT organization_member_roles_role_id_not_null NOT NULL,
+    member_id bigint CONSTRAINT organization_member_roles_member_id_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_member_roles_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_member_roles_updated_at_not_null NOT NULL
 );
 
 CREATE SEQUENCE namespace_member_roles_id_seq
@@ -429,10 +429,10 @@ CREATE SEQUENCE namespace_member_roles_id_seq
 ALTER SEQUENCE namespace_member_roles_id_seq OWNED BY namespace_member_roles.id;
 
 CREATE TABLE namespace_members (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id bigint CONSTRAINT organization_members_id_not_null NOT NULL,
+    user_id bigint CONSTRAINT organization_members_user_id_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_members_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_members_updated_at_not_null NOT NULL,
     namespace_id bigint NOT NULL
 );
 
@@ -448,7 +448,7 @@ ALTER SEQUENCE namespace_members_id_seq OWNED BY namespace_members.id;
 CREATE TABLE namespace_project_runtime_assignments (
     id bigint NOT NULL,
     runtime_id bigint NOT NULL,
-    namespace_project_id bigint NOT NULL,
+    namespace_project_id bigint CONSTRAINT namespace_project_runtime_assignm_namespace_project_id_not_null NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     compatible boolean DEFAULT false NOT NULL
@@ -464,11 +464,11 @@ CREATE SEQUENCE namespace_project_runtime_assignments_id_seq
 ALTER SEQUENCE namespace_project_runtime_assignments_id_seq OWNED BY namespace_project_runtime_assignments.id;
 
 CREATE TABLE namespace_projects (
-    id bigint NOT NULL,
-    name text NOT NULL,
-    description text DEFAULT ''::text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id bigint CONSTRAINT organization_projects_id_not_null NOT NULL,
+    name text CONSTRAINT organization_projects_name_not_null NOT NULL,
+    description text DEFAULT ''::text CONSTRAINT organization_projects_description_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_projects_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_projects_updated_at_not_null NOT NULL,
     namespace_id bigint NOT NULL,
     primary_runtime_id bigint,
     slug text NOT NULL,
@@ -487,10 +487,10 @@ CREATE SEQUENCE namespace_projects_id_seq
 ALTER SEQUENCE namespace_projects_id_seq OWNED BY namespace_projects.id;
 
 CREATE TABLE namespace_role_abilities (
-    id bigint NOT NULL,
-    ability integer NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id bigint CONSTRAINT organization_role_abilities_id_not_null NOT NULL,
+    ability integer CONSTRAINT organization_role_abilities_ability_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_role_abilities_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_role_abilities_updated_at_not_null NOT NULL,
     namespace_role_id bigint NOT NULL
 );
 
@@ -521,10 +521,10 @@ CREATE SEQUENCE namespace_role_project_assignments_id_seq
 ALTER SEQUENCE namespace_role_project_assignments_id_seq OWNED BY namespace_role_project_assignments.id;
 
 CREATE TABLE namespace_roles (
-    id bigint NOT NULL,
-    name text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id bigint CONSTRAINT organization_roles_id_not_null NOT NULL,
+    name text CONSTRAINT organization_roles_name_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_roles_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_roles_updated_at_not_null NOT NULL,
     namespace_id bigint NOT NULL
 );
 
@@ -683,8 +683,8 @@ ALTER SEQUENCE runtime_features_id_seq OWNED BY runtime_features.id;
 
 CREATE TABLE runtime_function_definition_data_type_links (
     id bigint NOT NULL,
-    runtime_function_definition_id bigint NOT NULL,
-    referenced_data_type_id bigint NOT NULL,
+    runtime_function_definition_id bigint CONSTRAINT runtime_function_definition_runtime_function_definitio_not_null NOT NULL,
+    referenced_data_type_id bigint CONSTRAINT runtime_function_definition_da_referenced_data_type_id_not_null NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
@@ -727,7 +727,7 @@ ALTER SEQUENCE runtime_function_definitions_id_seq OWNED BY runtime_function_def
 
 CREATE TABLE runtime_parameter_definitions (
     id bigint NOT NULL,
-    runtime_function_definition_id bigint NOT NULL,
+    runtime_function_definition_id bigint CONSTRAINT runtime_parameter_definitio_runtime_function_definitio_not_null NOT NULL,
     runtime_name text NOT NULL,
     removed_at timestamp with time zone,
     created_at timestamp with time zone NOT NULL,
