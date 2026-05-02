@@ -15,12 +15,12 @@ include:
     - bundle install --jobs $(nproc)
 
 .rails:
-  image: ghcr.io/code0-tech/build-images/ruby-postgres:303.1-ruby-3.4.7-postgres-16.1
+  image: ghcr.io/code0-tech/build-images/ruby-postgres:331.1-ruby-3.4.7-postgres-18.3
   before_script:
     - cp tooling/pipeline/sagittarius.yml config/sagittarius.yml
     - !reference [.bundle, before_script]
   services:
-    - postgres:16.1
+    - postgres:18.3
   variables:
     POSTGRES_DB: sagittarius_test
     POSTGRES_USER: sagittarius
