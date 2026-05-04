@@ -11,11 +11,13 @@ RSpec.describe UserPolicy do
     let(:current_user) { create(:user) }
 
     it { is_expected.to be_allowed(:read_user) }
+    it { is_expected.to be_allowed(:read_user_organization_pin) }
   end
 
   context 'when user is nil' do
     let(:current_user) { nil }
 
     it { is_expected.not_to be_allowed(:read_user) }
+    it { is_expected.not_to be_allowed(:read_user_organization_pin) }
   end
 end

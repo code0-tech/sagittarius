@@ -21,5 +21,15 @@ FactoryBot.define do
     trait :with_namespace do
       after :build, &:ensure_namespace
     end
+
+    trait :with_organization_pins do
+      transient do
+        organization_pins_count { 2 }
+      end
+
+      after :create do |user, evaluator|
+        create_list(:user_organization_pin, evaluator.organization_pins_count, user: user)
+      end
+    end
   end
 end
