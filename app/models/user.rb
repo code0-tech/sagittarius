@@ -27,6 +27,8 @@ class User < ApplicationRecord
   has_many :namespaces, through: :namespace_memberships, inverse_of: :users
 
   has_many :user_identities, inverse_of: :user
+  has_many :user_organization_pins, -> { order(priority: :asc) }, inverse_of: :user, dependent: :delete_all
+  has_many :pinned_organizations, through: :user_organization_pins, source: :organization
 
   has_one_attached :avatar
 

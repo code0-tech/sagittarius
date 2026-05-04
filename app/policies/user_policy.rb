@@ -5,7 +5,10 @@ class UserPolicy < BasePolicy
   condition(:user_is_admin) { user&.admin? || false }
   condition(:admin_status_visible) { ApplicationSetting.current[:admin_status_visible] }
 
-  rule { ~anonymous }.enable :read_user
+  rule { ~anonymous }.policy do
+    enable :read_user
+    enable :read_user_organization_pin
+  end
 
   rule { user_is_admin }.policy do
     enable :update_user
