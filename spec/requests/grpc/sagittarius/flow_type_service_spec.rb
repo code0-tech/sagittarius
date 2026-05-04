@@ -152,8 +152,16 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
 
         flow_type.reload
 
-        expect(flow_type.flow_type_settings.size).to eq(1)
-        expect(flow_type.flow_type_settings.first.identifier).to eq(flow_types.first[:settings].first[:identifier])
+        first_setting = flow_type.flow_type_settings.find_by(identifier: 'first_setting')
+        second_setting = flow_type.flow_type_settings.find_by(identifier: 'second_setting')
+        other_setting = flow_type.flow_type_settings.find_by(identifier: flow_types.first[:settings].first[:identifier])
+
+        expect(first_setting).to be_present
+        expect(second_setting).to be_present
+        expect(other_setting).to be_present
+        expect(first_setting.removed_at).to be_present
+        expect(second_setting.removed_at).to be_present
+        expect(other_setting.removed_at).to be_nil
       end
     end
   end
