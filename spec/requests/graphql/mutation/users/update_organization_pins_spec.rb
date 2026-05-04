@@ -55,7 +55,8 @@ RSpec.describe 'usersUpdateOrganizationPins Mutation' do
 
     it 'returns an error' do
       expect(graphql_data_at(:users_update_organization_pins, :user)).to be_nil
-      expect(graphql_data_at(:users_update_organization_pins, :errors, :error_code)).to include('ORGANIZATION_NOT_FOUND')
+      expect(graphql_data_at(:users_update_organization_pins, :errors,
+                             :error_code)).to include('ORGANIZATION_NOT_FOUND')
     end
   end
 end

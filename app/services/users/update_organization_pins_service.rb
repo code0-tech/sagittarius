@@ -23,7 +23,9 @@ module Users
       end
 
       transactional do |t|
-        old_pins = user.user_organization_pins.map { |pin| { organization_id: pin.organization_id, priority: pin.priority } }
+        old_pins = user.user_organization_pins.map do |pin|
+          { organization_id: pin.organization_id, priority: pin.priority }
+        end
 
         user.user_organization_pins.delete_all
 
