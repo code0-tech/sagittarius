@@ -60,25 +60,31 @@ module Runtimes
           db_object.version = flow_type.version
           db_object.definition_source = flow_type.definition_source
           db_object.display_icon = flow_type.display_icon
-          update_settings(flow_type.settings, db_object.flow_type_settings)
+          update_settings(flow_type.settings, db_object.flow_type_settings, t)
           link_data_types(db_object, flow_type.linked_data_type_identifiers, t)
           db_object.save
           db_object
         end
 
-        def update_settings(flow_type_settings, db_setting_relation)
+        def update_settings(flow_type_settings, db_setting_relation, t)
           # rubocop:disable Rails/SkipsModelValidations -- when marking settings as removed, we don't care about validations
           db_setting_relation.update_all(removed_at: Time.zone.now)
           # rubocop:enable Rails/SkipsModelValidations
 
-          flow_type_settings.map do |setting|
+          flow_type_settings.each do |setting|
             db_setting = db_setting_relation.find_or_initialize_by(identifier: setting.identifier)
             db_setting.unique = setting.unique.to_s.downcase
             db_setting.default_value = setting.default_value&.to_ruby
             db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
             db_setting.names = update_translations(setting.name, db_setting.names)
             db_setting.removed_at = nil
-            db_setting
+            next if db_setting.save
+
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Failed to update flow type setting',
+              error_code: :invalid_flow_setting,
+              details: db_setting.errors
+            )
           end
         end
       end
