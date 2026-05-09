@@ -830,6 +830,24 @@ CREATE SEQUENCE user_identities_id_seq
 
 ALTER SEQUENCE user_identities_id_seq OWNED BY user_identities.id;
 
+CREATE TABLE user_organization_pins (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    organization_id bigint NOT NULL,
+    priority integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE user_organization_pins_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE user_organization_pins_id_seq OWNED BY user_organization_pins.id;
+
 CREATE TABLE user_sessions (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
@@ -860,6 +878,7 @@ CREATE TABLE users (
     admin boolean DEFAULT false NOT NULL,
     totp_secret text,
     email_verified_at timestamp with time zone,
+    readme text,
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),
     CONSTRAINT check_60346c5299 CHECK ((char_length(lastname) <= 50)),
@@ -952,6 +971,8 @@ ALTER TABLE ONLY runtimes ALTER COLUMN id SET DEFAULT nextval('runtimes_id_seq':
 ALTER TABLE ONLY translations ALTER COLUMN id SET DEFAULT nextval('translations_id_seq'::regclass);
 
 ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_identities_id_seq'::regclass);
+
+ALTER TABLE ONLY user_organization_pins ALTER COLUMN id SET DEFAULT nextval('user_organization_pins_id_seq'::regclass);
 
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
 
@@ -1094,6 +1115,9 @@ ALTER TABLE ONLY translations
 
 ALTER TABLE ONLY user_identities
     ADD CONSTRAINT user_identities_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY user_organization_pins
+    ADD CONSTRAINT user_organization_pins_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT user_sessions_pkey PRIMARY KEY (id);
@@ -1253,6 +1277,10 @@ CREATE INDEX index_user_identities_on_user_id ON user_identities USING btree (us
 
 CREATE UNIQUE INDEX index_user_identities_on_user_id_and_provider_id ON user_identities USING btree (user_id, provider_id);
 
+CREATE UNIQUE INDEX index_user_organization_pins_on_user_id_and_organization_id ON user_organization_pins USING btree (user_id, organization_id);
+
+CREATE UNIQUE INDEX index_user_organization_pins_on_user_id_and_priority ON user_organization_pins USING btree (user_id, priority);
+
 CREATE UNIQUE INDEX index_user_sessions_on_token ON user_sessions USING btree (token);
 
 CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_id);
@@ -1262,6 +1290,9 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(ema
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
 
 CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
+
+ALTER TABLE ONLY user_organization_pins
+    ADD CONSTRAINT fk_rails_036679312e FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_0d79310cfa FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
@@ -1337,6 +1368,9 @@ ALTER TABLE ONLY flow_types
 
 ALTER TABLE ONLY namespace_role_project_assignments
     ADD CONSTRAINT fk_rails_69066bda8f FOREIGN KEY (project_id) REFERENCES namespace_projects(id);
+
+ALTER TABLE ONLY user_organization_pins
+    ADD CONSTRAINT fk_rails_6b125cdf79 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_member_roles
     ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES namespace_members(id) ON DELETE CASCADE;
