@@ -165,7 +165,7 @@ GEM
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.19.4)
+    json (2.19.5)
     json-schema (6.2.0)
       addressable (~> 2.8)
       bigdecimal (>= 3.1, < 5)
@@ -383,7 +383,7 @@ GEM
     test-prof (1.6.1)
     thor (1.4.0)
     timeout (0.6.0)
-    triangulum (0.13.3)
+    triangulum (0.14.3)
       base64 (~> 0.3)
       json (~> 2.19)
       open3 (~> 0.2)
@@ -444,7 +444,7 @@ DEPENDENCIES
   simplecov (~> 0.22.0)
   simplecov-cobertura (~> 3.0)
   test-prof (~> 1.0)
-  triangulum (= 0.13.3)
+  triangulum (= 0.14.3)
   tucana (= 0.0.68)
   tzinfo-data
 
