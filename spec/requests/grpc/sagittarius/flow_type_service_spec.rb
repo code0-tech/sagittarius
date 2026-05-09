@@ -163,7 +163,7 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
         expect(second_setting.removed_at).to be_present
         expect(other_setting.removed_at).to be_nil
       end
-      
+
       context 'when updating existing flow type settings' do
         let(:flow_types) do
           [
