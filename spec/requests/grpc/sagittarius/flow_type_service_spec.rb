@@ -152,8 +152,54 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
 
         flow_type.reload
 
-        expect(flow_type.flow_type_settings.size).to eq(1)
-        expect(flow_type.flow_type_settings.first.identifier).to eq(flow_types.first[:settings].first[:identifier])
+        first_setting = flow_type.flow_type_settings.find_by(identifier: 'first_setting')
+        second_setting = flow_type.flow_type_settings.find_by(identifier: 'second_setting')
+        other_setting = flow_type.flow_type_settings.find_by(identifier: flow_types.first[:settings].first[:identifier])
+
+        expect(first_setting).to be_present
+        expect(second_setting).to be_present
+        expect(other_setting).to be_present
+        expect(first_setting.removed_at).to be_present
+        expect(second_setting.removed_at).to be_present
+        expect(other_setting.removed_at).to be_nil
+      end
+
+      context 'when updating existing flow type settings' do
+        let(:flow_types) do
+          [
+            {
+              identifier: flow_type.identifier,
+              settings: [
+                {
+                  identifier: 'second_setting',
+                  default_value: Tucana::Shared::Value.from_ruby('something'),
+                  unique: :PROJECT,
+                }
+              ],
+              signature: '(input: NUMBER): NUMBER',
+              linked_data_type_identifiers: %w[],
+              editable: false,
+              version: '0.0.0',
+              definition_source: 'draco-rest',
+              display_icon: 'rest-icon',
+            }
+          ]
+        end
+
+        it 'updates the flow type settings' do
+          expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+          flow_type.reload
+
+          first_setting = flow_type.flow_type_settings.find_by(identifier: 'first_setting')
+          second_setting = flow_type.flow_type_settings.find_by(identifier: 'second_setting')
+
+          expect(first_setting).to be_present
+          expect(second_setting).to be_present
+          expect(first_setting.removed_at).to be_present
+          expect(second_setting.removed_at).to be_nil
+          expect(second_setting.default_value).to eq('something')
+        end
       end
     end
   end

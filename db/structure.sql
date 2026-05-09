@@ -240,7 +240,8 @@ CREATE TABLE flow_type_settings (
     default_value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    "unique" integer DEFAULT 0 NOT NULL
+    "unique" integer DEFAULT 0 NOT NULL,
+    removed_at timestamp with time zone
 );
 
 CREATE SEQUENCE flow_type_settings_id_seq
