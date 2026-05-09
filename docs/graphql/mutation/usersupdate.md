@@ -16,6 +16,7 @@ Update an existing user.
 | `mfa` | [`MfaInput`](../input_object/mfainput.md) | The data of the mfa validation |
 | `password` | [`String`](../scalar/string.md) | New password for the user. |
 | `passwordRepeat` | [`String`](../scalar/string.md) | New password repeat for the user to check for typos, required if password is set. |
+| `readme` | [`String`](../scalar/string.md) | New readme for the user. |
 | `userId` | [`UserID!`](../scalar/userid.md) | ID of the user to update. |
 | `username` | [`String`](../scalar/string.md) | New username for the user. |
 
