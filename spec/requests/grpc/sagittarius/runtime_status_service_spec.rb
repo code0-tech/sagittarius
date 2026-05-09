@@ -14,22 +14,6 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
         status: Tucana::Shared::AdapterRuntimeStatus::Status::RUNNING,
         timestamp: Time.now.to_i,
         identifier: 'adapter_status_1',
-        features: [
-          Tucana::Shared::RuntimeFeature.new(
-            name: [
-              Tucana::Shared::Translation.new(
-                code: 'de_DE',
-                content: 'http'
-              )
-            ],
-            description: [
-              Tucana::Shared::Translation.new(
-                code: 'de_DE',
-                content: 'HTTP support'
-              )
-            ]
-          )
-        ],
         configurations: [
           Tucana::Shared::AdapterConfiguration.new(
             endpoint: 'http://localhost:3000'
@@ -49,7 +33,6 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
       expect(db_status.identifier).to eq('adapter_status_1')
       expect(db_status.status_type).to eq('adapter')
       expect(db_status.status).to eq('running')
-      expect(db_status.runtime_features.size).to eq(1)
       expect(db_status.runtime_status_configurations.count).to eq(1)
       expect(db_status.runtime_status_configurations.first.endpoint).to eq('http://localhost:3000')
     end
@@ -75,23 +58,7 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
         Tucana::Shared::ExecutionRuntimeStatus.new(
           status: Tucana::Shared::ExecutionRuntimeStatus::Status::RUNNING,
           timestamp: Time.now.to_i,
-          identifier: 'execution_status_1',
-          features: [
-            Tucana::Shared::RuntimeFeature.new(
-              name: [
-                Tucana::Shared::Translation.new(
-                  code: 'de_DE',
-                  content: 'http'
-                )
-              ],
-              description: [
-                Tucana::Shared::Translation.new(
-                  code: 'de_DE',
-                  content: 'HTTP support'
-                )
-              ]
-            )
-          ]
+          identifier: 'execution_status_1'
         )
       end
 
@@ -106,7 +73,6 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
         expect(db_status.identifier).to eq('execution_status_1')
         expect(db_status.status_type).to eq('execution')
         expect(db_status.status).to eq('running')
-        expect(db_status.runtime_features.size).to eq(1)
       end
     end
   end
