@@ -73,8 +73,7 @@ module Runtimes
 
           flow_type_settings.each do |setting|
             db_setting = db_setting_relation.find_or_initialize_by(identifier: setting.identifier)
-            unique = setting.unique.to_s.downcase
-            db_setting.unique = unique if unique.present? && unique != 'unknown'
+            db_setting.unique = setting.unique&.to_s&.downcase
             db_setting.default_value = setting.default_value&.to_ruby
             db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
             db_setting.names = update_translations(setting.name, db_setting.names)
