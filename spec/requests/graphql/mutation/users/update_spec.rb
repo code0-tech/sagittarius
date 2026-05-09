@@ -147,6 +147,45 @@ RSpec.describe 'usersUpdate Mutation' do
     end
   end
 
+  context 'when updating readme' do
+    let(:mutation) do
+      <<~QUERY
+        mutation($input: UsersUpdateInput!) {
+          usersUpdate(input: $input) {
+            #{error_query}
+            user {
+              id
+              readme
+            }
+          }
+        }
+      QUERY
+    end
+
+    let(:input) do
+      {
+        userId: current_user.to_global_id.to_s,
+        readme: "# Hello\n\nThis is my profile README.",
+      }
+    end
+
+    it 'updates the user readme' do
+      expect(graphql_data_at(:users_update, :user, :id)).to be_present
+      expect(graphql_data_at(:users_update, :user, :readme)).to eq(input[:readme])
+      expect(current_user.reload.readme).to eq(input[:readme])
+
+      is_expected.to create_audit_event(
+        :user_updated,
+        author_id: current_user.id,
+        entity_id: current_user.id,
+        entity_type: 'User',
+        details: { readme: input[:readme] },
+        target_id: current_user.id,
+        target_type: 'User'
+      )
+    end
+  end
+
   context 'when user name is taken' do
     let(:existing_user) { create(:user) }
     let(:input) do
