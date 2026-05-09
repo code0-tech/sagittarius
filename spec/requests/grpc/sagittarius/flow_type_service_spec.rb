@@ -173,6 +173,7 @@ RSpec.describe 'sagittarius.FlowTypeService', :need_grpc_server do
                 {
                   identifier: 'second_setting',
                   default_value: Tucana::Shared::Value.from_ruby('something'),
+                  unique: :PROJECT,
                 }
               ],
               signature: '(input: NUMBER): NUMBER',
