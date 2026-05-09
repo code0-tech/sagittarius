@@ -54,7 +54,7 @@ module Namespaces
 
         def update_settings(t)
           db_settings = flow.flow_settings.first(flow_input.settings.length)
-          flow_type_settings = flow.flow_type.flow_type_settings.active.order(:id)
+          flow_type_settings = flow.flow_type.flow_type_settings
 
           flow_input.settings.each_with_index do |setting, index|
             db_settings[index] ||= flow.flow_settings.build
