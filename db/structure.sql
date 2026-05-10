@@ -1074,6 +1074,26 @@ CREATE SEQUENCE users_id_seq
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
+CREATE TABLE weekly_runtime_usages (
+    id bigint NOT NULL,
+    flow_id bigint,
+    namespace_id bigint NOT NULL,
+    week_start date,
+    week_end date,
+    usage numeric,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE weekly_runtime_usages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE weekly_runtime_usages_id_seq OWNED BY weekly_runtime_usages.id;
+
 ALTER TABLE ONLY active_storage_attachments ALTER COLUMN id SET DEFAULT nextval('active_storage_attachments_id_seq'::regclass);
 
 ALTER TABLE ONLY active_storage_blobs ALTER COLUMN id SET DEFAULT nextval('active_storage_blobs_id_seq'::regclass);
@@ -1171,6 +1191,8 @@ ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_ident
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+ALTER TABLE ONLY weekly_runtime_usages ALTER COLUMN id SET DEFAULT nextval('weekly_runtime_usages_id_seq'::regclass);
 
 ALTER TABLE ONLY active_storage_attachments
     ADD CONSTRAINT active_storage_attachments_pkey PRIMARY KEY (id);
@@ -1339,6 +1361,9 @@ ALTER TABLE ONLY user_sessions
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY weekly_runtime_usages
+    ADD CONSTRAINT weekly_runtime_usages_pkey PRIMARY KEY (id);
 
 CREATE UNIQUE INDEX idx_data_types_on_runtime_module_id_identifier ON data_types USING btree (runtime_module_id, identifier);
 
@@ -1548,6 +1573,10 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(
 
 CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
 
+CREATE INDEX index_weekly_runtime_usages_on_flow_id ON weekly_runtime_usages USING btree (flow_id);
+
+CREATE INDEX index_weekly_runtime_usages_on_namespace_id ON weekly_runtime_usages USING btree (namespace_id);
+
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_0d79310cfa FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
 
@@ -1731,6 +1760,9 @@ ALTER TABLE ONLY flows
 ALTER TABLE ONLY flow_settings
     ADD CONSTRAINT fk_rails_da3b2fb3c5 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY weekly_runtime_usages
+    ADD CONSTRAINT fk_rails_e20b70409c FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE SET NULL;
+
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_e27dd4d82a FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
 
@@ -1757,3 +1789,6 @@ ALTER TABLE ONLY node_functions
 
 ALTER TABLE ONLY runtime_flow_type_settings
     ADD CONSTRAINT fk_rails_fbd356a9f4 FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY weekly_runtime_usages
+    ADD CONSTRAINT fk_rails_fff245ffb4 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
