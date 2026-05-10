@@ -20,6 +20,7 @@ module Mutations
                String,
                required: false,
                description: 'New password repeat for the user to check for typos, required if password is set.'
+      argument :readme, String, required: false, description: 'New readme for the user.'
       argument :username, String, required: false, description: 'New username for the user.'
 
       argument :mfa, Types::Input::MfaInput, required: false, description: 'The data of the mfa validation'

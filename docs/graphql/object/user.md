@@ -20,6 +20,7 @@ Represents a user
 | `mfaStatus` | [`MfaStatus`](../object/mfastatus.md) | Multi-factor authentication status of this user |
 | `namespace` | [`Namespace`](../object/namespace.md) | Namespace of this user |
 | `namespaceMemberships` | [`NamespaceMemberConnection!`](../object/namespacememberconnection.md) | Namespace Memberships of this user |
+| `readme` | [`String`](../scalar/string.md) | Readme of the user |
 | `sessions` | [`UserSessionConnection!`](../object/usersessionconnection.md) | Sessions of this user |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this User was last updated |
 | `userAbilities` | [`UserUserAbilities!`](../object/useruserabilities.md) | Abilities for the current user on this User |

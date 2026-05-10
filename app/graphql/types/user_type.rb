@@ -19,6 +19,7 @@ module Types
           authorize: :read_email
     field :firstname, String, null: true, description: 'Firstname of the user'
     field :lastname, String, null: true, description: 'Lastname of the user'
+    field :readme, String, null: true, description: 'Readme of the user'
     field :username, String, null: false, description: 'Username of the user'
 
     field :namespace_memberships, Types::NamespaceMemberType.connection_type,
