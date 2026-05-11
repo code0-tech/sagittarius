@@ -6,10 +6,9 @@ module Runtimes
       include Sagittarius::Database::Transactional
       include Code0::ZeroTrack::Loggable
 
-      attr_reader :current_runtime, :usages
+      attr_reader :usages
 
-      def initialize(current_runtime:, usages:)
-        @current_runtime = current_runtime
+      def initialize(usages:)
         @usages = usages
       end
 
