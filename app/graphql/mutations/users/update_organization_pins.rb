@@ -11,7 +11,6 @@ module Mutations
                [Types::GlobalIdType[::Organization]],
                required: true,
                description: 'Ordered list of organization IDs to pin for the user.'
-      argument :user_id, Types::GlobalIdType[::User], required: true, description: 'ID of the user to update.'
 
       def resolve(user_id:, organization_ids:)
         user = SagittariusSchema.object_from_id(user_id)
