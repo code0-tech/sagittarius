@@ -85,7 +85,7 @@ module Types
     end
 
     def pinned_organizations
-      organization_pins.map(&:organization)
+      object.pinned_organizations
     end
   end
 end

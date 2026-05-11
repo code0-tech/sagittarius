@@ -3,7 +3,7 @@
 class Organization < ApplicationRecord
   include NamespaceParent
 
-  has_many :user_organization_pins, inverse_of: :organization, dependent: :delete_all
+  has_many :user_organization_pins, inverse_of: :organization
   has_many :pinned_by_users, through: :user_organization_pins, source: :user
 
   validates :name, presence: true,

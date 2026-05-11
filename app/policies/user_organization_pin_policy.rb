@@ -3,5 +3,7 @@
 class UserOrganizationPinPolicy < BasePolicy
   delegate { subject.user }
 
-  rule { can?(:read_user) }.enable :read_user_organization_pin
+  condition(:user_is_self) { subject.id == user&.id }
+
+  rule { user_is_self }.enable :read_user_organization_pin
 end

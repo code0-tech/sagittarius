@@ -17,7 +17,7 @@ module Users
         return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
       end
 
-      organizations = Organization.where(id: organization_ids)
+      organizations = OrganizationsFinder.new(id: organization_ids, namespace_member_user: user).execute
       if organizations.count != organization_ids.count
         return ServiceResponse.error(message: 'Organization not found', error_code: :organization_not_found)
       end
