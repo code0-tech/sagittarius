@@ -41,6 +41,7 @@ class ErrorCode
       failed_to_save_valid_backup_code: { description: 'The new backup codes could not be saved' },
       invalid_setting: { description: 'Invalid setting provided' },
       invalid_user: { description: 'The user is invalid because of active model errors' },
+      invalid_user_organization_pin: { description: 'The user organization pin is invalid because of active model errors' },
       invalid_password_repeat: { description: 'The provided password repeat does not match the password' },
       cannot_modify_admin: { description: 'Only administrators can modify admin status of users' },
       cannot_modify_own_admin: { description: 'Users cannot modify their own admin status' },

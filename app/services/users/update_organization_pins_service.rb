@@ -6,14 +6,14 @@ module Users
 
     attr_reader :current_authentication, :user, :organization_ids
 
-    def initialize(current_authentication, user, organization_ids)
+    def initialize(current_authentication, organization_ids)
       @current_authentication = current_authentication
-      @user = user
+      @user = current_authentication.user
       @organization_ids = organization_ids.uniq
     end
 
     def execute
-      unless Ability.allowed?(current_authentication, :update_user, user)
+      unless user && Ability.allowed?(current_authentication, :update_user_organization_pin, user)
         return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
       end
 
@@ -27,7 +27,7 @@ module Users
           { organization_id: pin.organization_id, priority: pin.priority }
         end
 
-        user.user_organization_pins.delete_all
+        UserOrganizationPin.where(user: user).delete_all
 
         organization_ids.each_with_index do |organization_id, priority|
           pin = user.user_organization_pins.build(organization_id: organization_id, priority: priority)
@@ -35,7 +35,7 @@ module Users
 
           t.rollback_and_return! ServiceResponse.error(
             message: 'Failed to update user organization pins',
-            error_code: :invalid_user,
+            error_code: :invalid_user_organization_pin,
             details: pin.errors
           )
         end
@@ -45,7 +45,7 @@ module Users
         end
 
         AuditService.audit(
-          :user_updated,
+          :user_organization_pins_updated,
           author_id: current_authentication.user.id,
           entity: user,
           target: user,

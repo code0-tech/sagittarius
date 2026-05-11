@@ -12,10 +12,7 @@ module Mutations
                required: true,
                description: 'Ordered list of organization IDs to pin for the user.'
 
-      def resolve(user_id:, organization_ids:)
-        user = SagittariusSchema.object_from_id(user_id)
-        return { user: nil, errors: [create_error(:user_not_found, 'Invalid user with provided id')] } if user.nil?
-
+      def resolve(organization_ids:)
         organizations = organization_ids.map { |id| SagittariusSchema.object_from_id(id) }
         if organizations.any?(&:nil?)
           return { user: nil, errors: [create_error(:organization_not_found, 'Invalid organization with provided id')] }
@@ -23,7 +20,6 @@ module Mutations
 
         ::Users::UpdateOrganizationPinsService.new(
           current_authentication,
-          user,
           organizations.map(&:id)
         ).execute.to_mutation_response(success_key: :user)
       end

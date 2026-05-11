@@ -10,7 +10,6 @@ Update pinned organizations for a user.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `organizationIds` | [`[OrganizationID!]!`](../scalar/organizationid.md) | Ordered list of organization IDs to pin for the user. |
-| `userId` | [`UserID!`](../scalar/userid.md) | ID of the user to update. |
 
 ## Fields
 
