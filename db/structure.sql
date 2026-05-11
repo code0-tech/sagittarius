@@ -240,7 +240,8 @@ CREATE TABLE flow_type_settings (
     default_value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    "unique" integer DEFAULT 0 NOT NULL
+    "unique" integer DEFAULT 0 NOT NULL,
+    removed_at timestamp with time zone
 );
 
 CREATE SEQUENCE flow_type_settings_id_seq
@@ -665,22 +666,6 @@ CREATE SEQUENCE reference_values_id_seq
 
 ALTER SEQUENCE reference_values_id_seq OWNED BY reference_values.id;
 
-CREATE TABLE runtime_features (
-    id bigint NOT NULL,
-    runtime_status_id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE runtime_features_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE runtime_features_id_seq OWNED BY runtime_features.id;
-
 CREATE TABLE runtime_function_definition_data_type_links (
     id bigint NOT NULL,
     runtime_function_definition_id bigint CONSTRAINT runtime_function_definition_runtime_function_definitio_not_null NOT NULL,
@@ -894,6 +879,8 @@ CREATE TABLE users (
     admin boolean DEFAULT false NOT NULL,
     totp_secret text,
     email_verified_at timestamp with time zone,
+    readme text,
+    CONSTRAINT check_11461c37fb CHECK ((char_length(readme) <= 5000)),
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),
     CONSTRAINT check_60346c5299 CHECK ((char_length(lastname) <= 50)),
@@ -970,8 +957,6 @@ ALTER TABLE ONLY parameter_definitions ALTER COLUMN id SET DEFAULT nextval('para
 ALTER TABLE ONLY reference_paths ALTER COLUMN id SET DEFAULT nextval('reference_paths_id_seq'::regclass);
 
 ALTER TABLE ONLY reference_values ALTER COLUMN id SET DEFAULT nextval('reference_values_id_seq'::regclass);
-
-ALTER TABLE ONLY runtime_features ALTER COLUMN id SET DEFAULT nextval('runtime_features_id_seq'::regclass);
 
 ALTER TABLE ONLY runtime_function_definition_data_type_links ALTER COLUMN id SET DEFAULT nextval('runtime_function_definition_data_type_links_id_seq'::regclass);
 
@@ -1105,9 +1090,6 @@ ALTER TABLE ONLY reference_paths
 
 ALTER TABLE ONLY reference_values
     ADD CONSTRAINT reference_values_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY runtime_features
-    ADD CONSTRAINT runtime_features_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY runtime_function_definition_data_type_links
     ADD CONSTRAINT runtime_function_definition_data_type_links_pkey PRIMARY KEY (id);
@@ -1281,8 +1263,6 @@ CREATE INDEX index_reference_values_on_node_function_id ON reference_values USIN
 
 CREATE INDEX index_reference_values_on_node_parameter_id ON reference_values USING btree (node_parameter_id);
 
-CREATE INDEX index_runtime_features_on_runtime_status_id ON runtime_features USING btree (runtime_status_id);
-
 CREATE INDEX index_runtime_status_configurations_on_runtime_status_id ON runtime_status_configurations USING btree (runtime_status_id);
 
 CREATE INDEX index_runtime_statuses_on_runtime_id ON runtime_statuses USING btree (runtime_id);
@@ -1339,9 +1319,6 @@ ALTER TABLE ONLY flow_type_data_type_links
 
 ALTER TABLE ONLY licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY runtime_features
-    ADD CONSTRAINT fk_rails_39d4643cc0 FOREIGN KEY (runtime_status_id) REFERENCES runtime_statuses(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_statuses
     ADD CONSTRAINT fk_rails_3af887feb9 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;

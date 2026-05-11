@@ -11,6 +11,7 @@ RSpec.describe SagittariusSchema.types['User'] do
       namespace
       firstname
       lastname
+      readme
       admin
       namespaceMemberships
       avatarPath

@@ -44,7 +44,6 @@ Represents the available error responses
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_REFERENCE_VALUE` | The reference value is invalid |
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |
-| `INVALID_RUNTIME_FEATURE` | The runtime feature is invalid because of active model errors |
 | `INVALID_RUNTIME_FUNCTION_DEFINITION` | The runtime function definition is invalid |
 | `INVALID_RUNTIME_PARAMETER_DEFINITION` | The runtime parameter definition is invalid |
 | `INVALID_RUNTIME_STATUS` | The runtime status is invalid because of active model errors |

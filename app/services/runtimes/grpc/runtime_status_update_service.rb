@@ -5,7 +5,6 @@ module Runtimes
     class RuntimeStatusUpdateService
       include Sagittarius::Database::Transactional
       include Code0::ZeroTrack::Loggable
-      include Runtimes::Grpc::TranslationUpdateHelper
 
       attr_reader :runtime, :status_info
 
@@ -34,24 +33,6 @@ module Runtimes
                                   else
                                     :execution
                                   end
-
-          db_features = db_status.runtime_features.first(status_info.features.length)
-          db_status.runtime_features.where.not(id: db_features.map(&:id)).destroy_all
-
-          status_info.features.each_with_index do |feature, index|
-            db_features[index] ||= db_status.runtime_features.build
-
-            db_features[index].names = update_translations(feature.name, db_features[index].names)
-            db_features[index].descriptions = update_translations(feature.description, db_features[index].descriptions)
-
-            next if db_features[index].save
-
-            t.rollback_and_return! ServiceResponse.error(
-              message: 'Failed to save runtime feature',
-              error_code: :invalid_runtime_feature,
-              details: db_features[index].errors
-            )
-          end
 
           db_status.status = status_info.status.downcase
 

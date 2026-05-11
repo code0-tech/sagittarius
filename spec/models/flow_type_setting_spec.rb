@@ -17,4 +17,19 @@ RSpec.describe FlowTypeSetting do
     it { is_expected.to allow_values(:none, :project, 'none', 'project').for(:unique) }
     it { is_expected.not_to allow_value(:unknown, 'unknown', 0).for(:unique) }
   end
+
+  describe 'scopes' do
+    let!(:active_setting) { create(:flow_type_setting, removed_at: nil) }
+    let!(:removed_setting) { create(:flow_type_setting, removed_at: Time.zone.now) }
+
+    it 'returns active settings' do
+      expect(described_class.active).to include(active_setting)
+      expect(described_class.active).not_to include(removed_setting)
+    end
+
+    it 'returns removed settings' do
+      expect(described_class.removed).to include(removed_setting)
+      expect(described_class.removed).not_to include(active_setting)
+    end
+  end
 end
