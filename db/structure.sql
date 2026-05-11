@@ -125,8 +125,8 @@ CREATE TABLE daily_runtime_usages (
     id bigint NOT NULL,
     flow_id bigint,
     namespace_id bigint NOT NULL,
-    day date,
-    usage numeric,
+    day date NOT NULL,
+    usage numeric DEFAULT 0.0 NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
