@@ -84,9 +84,5 @@ module Types
     def organization_pins
       object.user_organization_pins.order(priority: :asc)
     end
-
-    def pinned_organizations
-      object.pinned_organizations
-    end
   end
 end
