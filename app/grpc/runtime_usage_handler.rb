@@ -5,10 +5,10 @@ class RuntimeUsageHandler < Tucana::Sagittarius::RuntimeUsageService::Service
   include GrpcHandler
 
   def update(request, _call)
-    response = Runtimes::Grpc::RuntimeUsageUpdateService.new(request).execute
+    response = Runtimes::Grpc::RuntimeUsageUpdateService.new(usages: request.runtime_usage).execute
 
     logger.debug("RuntimeUsageHandler#update response: #{response.inspect}")
 
-    Tucana::Sagittarius::RuntimeUsageUpdateResponse.new(success: response.success?)
+    Tucana::Sagittarius::RuntimeUsageResponse.new(success: response.success?)
   end
 end

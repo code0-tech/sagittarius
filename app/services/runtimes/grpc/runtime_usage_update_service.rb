@@ -33,39 +33,30 @@ module Runtimes
         flow = Flow.includes(project: :namespace).find_by(id: usage_attribute(usage, :flow_id))
         return ServiceResponse.error(message: 'Flow not found', error_code: :flow_not_found) if flow.nil?
 
-        unless runtime_assigned_to_project?(flow.project)
-          return ServiceResponse.error(message: 'Runtime is not assigned to the project',
-                                       error_code: :runtime_not_assigned)
-        end
-
         day = usage_day(usage)
         amount = usage_amount(usage)
         return invalid_usage_error('Usage amount must be greater than zero') unless amount&.positive?
 
-        db_usage = DailyRuntimeUsage.create_or_find_by!(
+        db_usage = DailyRuntimeUsage.find_or_initialize_by(
           namespace: flow.project.namespace,
           flow: flow,
           day: day
         )
 
-        db_usage.with_lock do
-          db_usage.usage += amount
-          return ServiceResponse.success(payload: db_usage) if db_usage.save
+        return increment_usage(db_usage, amount) unless db_usage.persisted?
 
-          invalid_usage_error(db_usage.errors)
-        end
+        db_usage.with_lock { increment_usage(db_usage, amount) }
       rescue ActiveRecord::RecordInvalid => e
         invalid_usage_error(e.record.errors)
+      rescue ActiveRecord::RecordNotUnique
+        retry
       rescue ArgumentError
         invalid_usage_error('Usage interval must be a valid date')
       end
 
-      def runtime_assigned_to_project?(project)
-        current_runtime.project_assignments.compatible.exists?(namespace_project: project)
-      end
-
       def usage_day(usage)
         value = usage_attribute(usage, :day, :date, :interval)
+        return Time.zone.today if value.nil?
 
         case value
         when Date
@@ -80,12 +71,19 @@ module Runtimes
       end
 
       def usage_amount(usage)
-        value = usage_attribute(usage, :usage, :amount, :count)
+        value = usage_attribute(usage, :duration, :usage, :amount, :count)
         return if value.nil?
 
         BigDecimal(value.to_s)
       rescue ArgumentError
         nil
+      end
+
+      def increment_usage(db_usage, amount)
+        db_usage.usage += amount
+        return ServiceResponse.success(payload: db_usage) if db_usage.save
+
+        invalid_usage_error(db_usage.errors)
       end
 
       def usage_attribute(usage, *keys)

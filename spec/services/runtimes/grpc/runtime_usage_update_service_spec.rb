@@ -3,21 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Runtimes::Grpc::RuntimeUsageUpdateService do
-  subject(:service_response) { described_class.new(current_runtime: runtime, usages: usages).execute }
+  subject(:service_response) { described_class.new(usages: usages).execute }
 
   let(:namespace) { create(:namespace) }
   let(:project) { create(:namespace_project, namespace: namespace) }
-  let(:runtime) { create(:runtime, namespace: namespace) }
   let(:flow) { create(:flow, project: project) }
   let(:day) { Date.new(2026, 5, 10) }
-  let(:usages) { [{ flow_id: flow.id, interval: day, usage: 3 }] }
-
-  before do
-    create(:namespace_project_runtime_assignment,
-           runtime: runtime,
-           namespace_project: project,
-           compatible: true)
-  end
+  let(:usages) { [{ flow_id: flow.id, interval: day, duration: 3 }] }
 
   it 'creates a daily runtime usage for the flow namespace' do
     expect(service_response).to be_success
@@ -46,7 +38,7 @@ RSpec.describe Runtimes::Grpc::RuntimeUsageUpdateService do
     let(:usages) do
       [
         { flow_id: flow.id, interval: day, usage: 3 },
-        { flow_id: second_flow.id, interval: day, usage: 4 }
+        { flow_id: second_flow.id, interval: day, duration: 4 }
       ]
     end
 
@@ -71,20 +63,8 @@ RSpec.describe Runtimes::Grpc::RuntimeUsageUpdateService do
     end
   end
 
-  context 'when the runtime is not assigned to the project' do
-    before do
-      NamespaceProjectRuntimeAssignment.delete_all
-    end
-
-    it 'returns an error' do
-      expect(service_response).to be_error
-      expect(service_response.payload[:error_code]).to eq(:runtime_not_assigned)
-      expect(DailyRuntimeUsage.count).to eq(0)
-    end
-  end
-
   context 'when the usage amount is invalid' do
-    let(:usages) { [{ flow_id: flow.id, interval: day, usage: -1 }] }
+    let(:usages) { [{ flow_id: flow.id, interval: day, duration: -1 }] }
 
     it 'returns an error' do
       expect(service_response).to be_error
@@ -94,12 +74,21 @@ RSpec.describe Runtimes::Grpc::RuntimeUsageUpdateService do
   end
 
   context 'when the interval is invalid' do
-    let(:usages) { [{ flow_id: flow.id, interval: 'not-a-date', usage: 1 }] }
+    let(:usages) { [{ flow_id: flow.id, interval: 'not-a-date', duration: 1 }] }
 
     it 'returns an error' do
       expect(service_response).to be_error
       expect(service_response.payload[:error_code]).to eq(:invalid_runtime_usage)
       expect(DailyRuntimeUsage.count).to eq(0)
+    end
+  end
+
+  context 'when no interval is given' do
+    let(:usages) { [{ flow_id: flow.id, duration: 1 }] }
+
+    it 'uses the current day' do
+      expect(service_response).to be_success
+      expect(DailyRuntimeUsage.last.day).to eq(Time.zone.today)
     end
   end
 end
