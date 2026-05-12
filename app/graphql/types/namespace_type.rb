@@ -20,6 +20,19 @@ module Types
                                                                 description: 'Members of the namespace',
                                                                 extras: [:lookahead]
 
+    field :daily_runtime_usages, Types::DailyRuntimeUsageType.connection_type,
+          null: false,
+          description: 'Daily runtime usage entries for this namespace' do
+      argument :flow_id, Types::GlobalIdType[::Flow],
+               required: false,
+               description: 'Only return usage entries for this flow'
+      argument :from, Types::DateType,
+               required: false,
+               description: 'Only return usage entries on or after this day'
+      argument :to, Types::DateType,
+               required: false,
+               description: 'Only return usage entries on or before this day'
+    end
     field :roles, Types::NamespaceRoleType.connection_type, null: false, description: 'Roles of the namespace'
     field :runtimes, Types::RuntimeType.connection_type, null: false, description: 'Runtime of the namespace'
 
@@ -38,6 +51,14 @@ module Types
 
     def project(id:)
       object.projects.find_by(id: id.model_id)
+    end
+
+    def daily_runtime_usages(flow_id: nil, from: nil, to: nil)
+      scope = object.daily_runtime_usages.order(day: :desc, id: :desc)
+      scope = scope.where(flow_id: flow_id.model_id) if flow_id.present?
+      scope = scope.where(DailyRuntimeUsage.arel_table[:day].gteq(from)) if from.present?
+      scope = scope.where(DailyRuntimeUsage.arel_table[:day].lteq(to)) if to.present?
+      scope
     end
   end
 end

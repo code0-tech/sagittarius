@@ -22,6 +22,22 @@ Represents a Namespace
 
 ## Fields with arguments
 
+### dailyRuntimeUsages
+
+Daily runtime usage entries for this namespace
+
+Returns [`DailyRuntimeUsageConnection!`](../object/dailyruntimeusageconnection.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `after` | [`String`](../scalar/string.md) | Returns the elements in the list that come after the specified cursor. |
+| `before` | [`String`](../scalar/string.md) | Returns the elements in the list that come before the specified cursor. |
+| `first` | [`Int`](../scalar/int.md) | Returns the first _n_ elements from the list. |
+| `flowId` | [`FlowID`](../scalar/flowid.md) | Only return usage entries for this flow |
+| `from` | [`Date`](../scalar/date.md) | Only return usage entries on or after this day |
+| `last` | [`Int`](../scalar/int.md) | Returns the last _n_ elements from the list. |
+| `to` | [`Date`](../scalar/date.md) | Only return usage entries on or before this day |
+
 ### project
 
 Query a project by its id

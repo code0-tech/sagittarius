@@ -22,3 +22,20 @@ Represents a flow
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Flow was last updated |
 | `userAbilities` | [`FlowUserAbilities!`](../object/flowuserabilities.md) | Abilities for the current user on this Flow |
 | `validationStatus` | [`FlowValidationStatus!`](../enum/flowvalidationstatus.md) | The validation status of the flow |
+
+## Fields with arguments
+
+### dailyRuntimeUsages
+
+Daily runtime usage entries for this flow
+
+Returns [`DailyRuntimeUsageConnection!`](../object/dailyruntimeusageconnection.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `after` | [`String`](../scalar/string.md) | Returns the elements in the list that come after the specified cursor. |
+| `before` | [`String`](../scalar/string.md) | Returns the elements in the list that come before the specified cursor. |
+| `first` | [`Int`](../scalar/int.md) | Returns the first _n_ elements from the list. |
+| `from` | [`Date`](../scalar/date.md) | Only return usage entries on or after this day |
+| `last` | [`Int`](../scalar/int.md) | Returns the last _n_ elements from the list. |
+| `to` | [`Date`](../scalar/date.md) | Only return usage entries on or before this day |

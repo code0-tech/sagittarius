@@ -6,6 +6,17 @@ module Types
 
     authorize :read_flow
 
+    field :daily_runtime_usages, Types::DailyRuntimeUsageType.connection_type,
+          null: false,
+          description: 'Daily runtime usage entries for this flow' do
+      argument :from, Types::DateType,
+               required: false,
+               description: 'Only return usage entries on or after this day'
+      argument :to, Types::DateType,
+               required: false,
+               description: 'Only return usage entries on or before this day'
+    end
+
     field :name, String, null: false, description: 'Name of the flow'
 
     field :disabled_reason, Types::FlowDisabledReasonEnum,
@@ -55,6 +66,13 @@ module Types
 
     def linked_data_types
       DataTypesFinder.new({ flow: object, expand_recursively: true }).execute
+    end
+
+    def daily_runtime_usages(from: nil, to: nil)
+      scope = object.daily_runtime_usages.order(day: :desc, id: :desc)
+      scope = scope.where(DailyRuntimeUsage.arel_table[:day].gteq(from)) if from.present?
+      scope = scope.where(DailyRuntimeUsage.arel_table[:day].lteq(to)) if to.present?
+      scope
     end
   end
 end
