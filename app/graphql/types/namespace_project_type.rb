@@ -40,7 +40,7 @@ module Types
     timestamps
 
     def flow(id:)
-      object.flows.find(id: id)
+      object.flows.find_by(id: id.model_id)
     end
   end
 end

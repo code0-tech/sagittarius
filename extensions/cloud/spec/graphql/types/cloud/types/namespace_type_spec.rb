@@ -8,6 +8,7 @@ RSpec.describe SagittariusSchema.types['Namespace'] do
       id
       parent
       members
+      dailyRuntimeUsages
       roles
       runtimes
       project
