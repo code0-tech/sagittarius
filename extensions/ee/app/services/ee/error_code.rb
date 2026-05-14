@@ -5,6 +5,9 @@ module EE
     extend ActiveSupport::Concern
 
     class_methods do
+      include Sagittarius::Override
+
+      override :error_codes
       def error_codes
         super.merge(
           {
