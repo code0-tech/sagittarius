@@ -9,17 +9,19 @@ module Runtimes
         include Runtimes::Grpc::TranslationUpdateHelper
         include Runtimes::Grpc::DataTypeHelper
 
-        attr_reader :current_runtime, :runtime_function_definitions
+        attr_reader :current_runtime, :runtime_function_definitions, :runtime_module
 
-        def initialize(current_runtime, runtime_function_definitions)
+        def initialize(current_runtime, runtime_function_definitions, runtime_module:)
           @current_runtime = current_runtime
           @runtime_function_definitions = runtime_function_definitions
+          @runtime_module = runtime_module
         end
 
         def execute
           transactional do |t|
             # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
-            RuntimeFunctionDefinition.where(runtime: current_runtime).update_all(removed_at: Time.zone.now)
+            RuntimeFunctionDefinition.where(runtime: current_runtime,
+                                            runtime_module: runtime_module).update_all(removed_at: Time.zone.now)
             # rubocop:enable Rails/SkipsModelValidations
             runtime_function_definitions.each do |runtime_function_definition|
               response = update_runtime_function_definition(runtime_function_definition, t)
@@ -57,6 +59,7 @@ module Runtimes
           db_object.version = runtime_function_definition.version
           db_object.definition_source = runtime_function_definition.definition_source
           db_object.display_icon = runtime_function_definition.display_icon
+          db_object.runtime_module = runtime_module
           db_object.names = update_translations(runtime_function_definition.name, db_object.names)
           db_object.descriptions = update_translations(runtime_function_definition.description, db_object.descriptions)
           db_object.documentations = update_translations(runtime_function_definition.documentation,

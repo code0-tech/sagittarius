@@ -9,17 +9,19 @@ module Runtimes
         include Runtimes::Grpc::TranslationUpdateHelper
         include Runtimes::Grpc::DataTypeHelper
 
-        attr_reader :current_runtime, :data_types
+        attr_reader :current_runtime, :data_types, :runtime_module
 
-        def initialize(current_runtime, data_types)
+        def initialize(current_runtime, data_types, runtime_module:)
           @current_runtime = current_runtime
           @data_types = data_types
+          @runtime_module = runtime_module
         end
 
         def execute
           transactional do |t|
             # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
-            DataType.where(runtime: current_runtime).update_all(removed_at: Time.zone.now)
+            DataType.where(runtime: current_runtime, runtime_module: runtime_module)
+                    .update_all(removed_at: Time.zone.now)
             # rubocop:enable Rails/SkipsModelValidations
             sort_data_types(data_types).each do |data_type|
               db_data_type = update_datatype(data_type, t)
@@ -72,6 +74,7 @@ module Runtimes
           db_object.generic_keys = data_type.generic_keys.to_a
           db_object.version = data_type.version
           db_object.definition_source = data_type.definition_source
+          db_object.runtime_module = runtime_module
           link_data_types(db_object, data_type.linked_data_type_identifiers, t)
           db_object.save
           db_object

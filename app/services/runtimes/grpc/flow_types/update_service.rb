@@ -9,17 +9,19 @@ module Runtimes
         include Runtimes::Grpc::TranslationUpdateHelper
         include Runtimes::Grpc::DataTypeHelper
 
-        attr_reader :current_runtime, :flow_types
+        attr_reader :current_runtime, :flow_types, :runtime_module
 
-        def initialize(current_runtime, flow_types)
+        def initialize(current_runtime, flow_types, runtime_module:)
           @current_runtime = current_runtime
           @flow_types = flow_types
+          @runtime_module = runtime_module
         end
 
         def execute
           transactional do |t|
             # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
-            FlowType.where(runtime: current_runtime).update_all(removed_at: Time.zone.now)
+            FlowType.where(runtime: current_runtime, runtime_module: runtime_module)
+                    .update_all(removed_at: Time.zone.now)
             # rubocop:enable Rails/SkipsModelValidations
             flow_types.each do |flow_type|
               db_flow_type = update_flowtype(flow_type, t)
@@ -60,10 +62,28 @@ module Runtimes
           db_object.version = flow_type.version
           db_object.definition_source = flow_type.definition_source
           db_object.display_icon = flow_type.display_icon
+          db_object.runtime_module = runtime_module
+          db_object.runtime_flow_type = update_runtime_flow_type(flow_type, runtime_module)
           update_settings(flow_type.settings, db_object.flow_type_settings, t)
           link_data_types(db_object, flow_type.linked_data_type_identifiers, t)
           db_object.save
           db_object
+        end
+
+        def update_runtime_flow_type(flow_type, runtime_module)
+          runtime_flow_type = RuntimeFlowType.find_or_initialize_by(
+            runtime: current_runtime,
+            identifier: flow_type.runtime_identifier.presence || flow_type.identifier
+          )
+          runtime_flow_type.runtime_module = runtime_module
+          runtime_flow_type.removed_at = nil
+          runtime_flow_type.signature = flow_type.signature
+          runtime_flow_type.editable = flow_type.editable
+          runtime_flow_type.version = flow_type.version
+          runtime_flow_type.definition_source = flow_type.definition_source
+          runtime_flow_type.display_icon = flow_type.display_icon
+          runtime_flow_type.save!
+          runtime_flow_type
         end
 
         def update_settings(flow_type_settings, db_setting_relation, t)
