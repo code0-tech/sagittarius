@@ -15,7 +15,7 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
         timestamp: Time.now.to_i,
         identifier: 'adapter_status_1',
         configurations: [
-          Tucana::Shared::AdapterConfiguration.new(
+          Tucana::Shared::AdapterStatusConfiguration.new(
             endpoint: 'http://localhost:3000'
           )
         ]

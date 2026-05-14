@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe FlowTypeHandler do
+RSpec.describe ModuleHandler do
   subject(:handler) { described_class.new }
 
   it { is_expected.to respond_to(:update) }

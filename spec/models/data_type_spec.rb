@@ -7,6 +7,7 @@ RSpec.describe DataType do
 
   describe 'associations' do
     it { is_expected.to belong_to(:runtime).inverse_of(:data_types) }
+    it { is_expected.to belong_to(:runtime_module).inverse_of(:data_types) }
     it { is_expected.to have_many(:names).class_name('Translation') }
     it { is_expected.to have_many(:aliases).class_name('Translation') }
     it { is_expected.to have_many(:display_messages).class_name('Translation') }
