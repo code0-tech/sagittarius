@@ -4,6 +4,7 @@ class DataType < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
   belongs_to :runtime, inverse_of: :data_types
+  belongs_to :runtime_module, inverse_of: :data_types
 
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :rules, class_name: 'DataTypeRule', inverse_of: :data_type

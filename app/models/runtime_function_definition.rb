@@ -2,6 +2,7 @@
 
 class RuntimeFunctionDefinition < ApplicationRecord
   belongs_to :runtime
+  belongs_to :runtime_module, inverse_of: :runtime_function_definitions
 
   has_many :function_definitions, inverse_of: :runtime_function_definition
   has_many :parameters, class_name: 'RuntimeParameterDefinition', inverse_of: :runtime_function_definition
