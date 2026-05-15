@@ -31,20 +31,24 @@ Represents the available error responses
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_FLOW_TYPE` | The flow type is invalid because of active model errors |
+| `INVALID_FUNCTION_DEFINITION` | The function definition is invalid |
 | `INVALID_FUNCTION_ID` | The function ID is invalid |
 | `INVALID_LICENSE` | The license is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
+| `INVALID_MODULE_CONFIGURATION_DEFINITION` | The module configuration definition is invalid |
 | `INVALID_NAMESPACE_MEMBER` | The namespace member is invalid because of active model errors |
 | `INVALID_NAMESPACE_PROJECT` | The namespace project is invalid because of active model errors |
 | `INVALID_NAMESPACE_ROLE` | The namespace role is invalid because of active model errors |
 | `INVALID_NODE_FUNCTION` | The node function is invalid |
 | `INVALID_NODE_PARAMETER` | The node parameter is invalid |
 | `INVALID_ORGANIZATION` | The organization is invalid because of active model errors |
+| `INVALID_PARAMETER_DEFINITION` | The parameter definition is invalid |
 | `INVALID_PARAMETER_INDEX` | The parameter index is invalid |
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_REFERENCE_VALUE` | The reference value is invalid |
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |
 | `INVALID_RUNTIME_FUNCTION_DEFINITION` | The runtime function definition is invalid |
+| `INVALID_RUNTIME_MODULE` | The runtime module is invalid |
 | `INVALID_RUNTIME_PARAMETER_DEFINITION` | The runtime parameter definition is invalid |
 | `INVALID_RUNTIME_STATUS` | The runtime status is invalid because of active model errors |
 | `INVALID_RUNTIME_STATUS_CONFIGURATION` | The runtime status configuration is invalid because of active model errors |

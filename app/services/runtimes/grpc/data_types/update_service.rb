@@ -9,23 +9,30 @@ module Runtimes
         include Runtimes::Grpc::TranslationUpdateHelper
         include Runtimes::Grpc::DataTypeHelper
 
-        attr_reader :current_runtime, :data_types, :runtime_module
+        attr_reader :current_runtime, :data_types, :runtime_module, :runtime_module_resolver,
+                    :runtime_modules_to_update, :update_runtime_compatibility
 
-        def initialize(current_runtime, data_types, runtime_module:)
+        def initialize(current_runtime, data_types, runtime_module:, update_runtime_compatibility: true,
+                       runtime_module_resolver: nil, runtime_modules_to_update: nil)
           @current_runtime = current_runtime
           @data_types = data_types
           @runtime_module = runtime_module
+          @runtime_module_resolver = runtime_module_resolver || ->(_data_type) { runtime_module }
+          @runtime_modules_to_update = runtime_modules_to_update
+          @update_runtime_compatibility = update_runtime_compatibility
         end
 
         def execute
           transactional do |t|
-            # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
-            DataType.where(runtime: current_runtime, runtime_module: runtime_module)
-                    .update_all(removed_at: Time.zone.now)
-            # rubocop:enable Rails/SkipsModelValidations
-            sort_data_types(data_types).each do |data_type|
-              db_data_type = update_datatype(data_type, t)
-              next if db_data_type.persisted?
+            mark_existing_data_types_as_removed
+            data_type_links_to_update = []
+
+            data_types.each do |data_type|
+              db_data_type = update_datatype(data_type)
+              if db_data_type.persisted?
+                data_type_links_to_update << [db_data_type, data_type.linked_data_type_identifiers]
+                next
+              end
 
               logger.error(message: 'Failed to update data type',
                            runtime_id: current_runtime.id,
@@ -36,7 +43,11 @@ module Runtimes
                                                            error_code: :invalid_data_type, details: db_data_type.errors)
             end
 
-            UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+            data_type_links_to_update.each do |db_data_type, linked_data_type_identifiers|
+              link_data_types(db_data_type, linked_data_type_identifiers, t)
+            end
+
+            enqueue_runtime_compatibility_update
 
             logger.info(message: 'Updated data types for runtime', runtime_id: current_runtime.id)
 
@@ -46,24 +57,24 @@ module Runtimes
 
         protected
 
-        def sort_data_types(data_types)
-          sorted_types = data_types.reject { |dt| dt.linked_data_type_identifiers.any? }
-          unsorted_types = data_types - sorted_types
+        def mark_existing_data_types_as_removed
+          runtime_modules = runtime_modules_to_update || data_types.filter_map do |data_type|
+            runtime_module_resolver.call(data_type)
+          end.uniq
 
-          unsorted_types.size.times do
-            next_datatype = unsorted_types.find do |to_sort|
-              unsorted_types.none? do |to_search|
-                to_sort.linked_data_type_identifiers.include?(to_search.identifier)
-              end
-            end
-            sorted_types << next_datatype
-            unsorted_types.delete(next_datatype)
-          end
-
-          sorted_types + unsorted_types
+          # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
+          DataType.where(runtime: current_runtime, runtime_module: runtime_modules)
+                  .update_all(removed_at: Time.zone.now)
+          # rubocop:enable Rails/SkipsModelValidations
         end
 
-        def update_datatype(data_type, t)
+        def enqueue_runtime_compatibility_update
+          return unless update_runtime_compatibility
+
+          UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+        end
+
+        def update_datatype(data_type)
           db_object = DataType.find_or_initialize_by(runtime: current_runtime, identifier: data_type.identifier)
           db_object.removed_at = nil
           db_object.type = data_type.type
@@ -74,8 +85,7 @@ module Runtimes
           db_object.generic_keys = data_type.generic_keys.to_a
           db_object.version = data_type.version
           db_object.definition_source = data_type.definition_source
-          db_object.runtime_module = runtime_module
-          link_data_types(db_object, data_type.linked_data_type_identifiers, t)
+          db_object.runtime_module = runtime_module_resolver.call(data_type)
           db_object.save
           db_object
         end

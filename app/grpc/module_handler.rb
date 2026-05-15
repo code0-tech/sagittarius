@@ -10,7 +10,18 @@ class ModuleHandler < Tucana::Sagittarius::ModuleService::Service
     response = Runtimes::Grpc::Modules::UpdateService.new(current_runtime, request.modules).execute
 
     logger.debug("ModuleHandler#update response: #{response.inspect}")
+    unless response.success?
+      logger.error(message: 'Failed to update modules',
+                   runtime_id: current_runtime.id,
+                   error: response.message,
+                   details: response.payload)
 
-    Tucana::Sagittarius::ModuleUpdateResponse.new(success: response.success?)
+      return Tucana::Sagittarius::ModuleUpdateResponse.new(
+        success: false,
+        error: Tucana::Shared::ServiceError.new(message: response.message)
+      )
+    end
+
+    Tucana::Sagittarius::ModuleUpdateResponse.new(success: true)
   end
 end

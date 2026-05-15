@@ -22,6 +22,7 @@ Represents a runtime function definition
 | `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this runtime function definition |
 | `names` | [`[Translation!]`](../object/translation.md) | Names of the runtime function definition |
 | `runtime` | [`Runtime!`](../object/runtime.md) | The runtime this runtime function definition belongs to |
+| `runtimeModule` | [`RuntimeModule!`](../object/runtimemodule.md) | The runtime module this runtime function definition belongs to |
 | `runtimeParameterDefinitions` | [`RuntimeParameterDefinitionConnection`](../object/runtimeparameterdefinitionconnection.md) | Parameter definitions of the runtime function definition |
 | `signature` | [`String!`](../scalar/string.md) | Signature of the runtime function definition |
 | `throwsError` | [`Boolean!`](../scalar/boolean.md) | Indicates if the function can throw an error |

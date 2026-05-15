@@ -9,12 +9,14 @@ module Runtimes
         include Runtimes::Grpc::TranslationUpdateHelper
         include Runtimes::Grpc::DataTypeHelper
 
-        attr_reader :current_runtime, :runtime_function_definitions, :runtime_module
+        attr_reader :current_runtime, :runtime_function_definitions, :runtime_module, :update_runtime_compatibility
 
-        def initialize(current_runtime, runtime_function_definitions, runtime_module:)
+        def initialize(current_runtime, runtime_function_definitions, runtime_module:,
+                       update_runtime_compatibility: true)
           @current_runtime = current_runtime
           @runtime_function_definitions = runtime_function_definitions
           @runtime_module = runtime_module
+          @update_runtime_compatibility = update_runtime_compatibility
         end
 
         def execute
@@ -37,7 +39,7 @@ module Runtimes
                                                            details: response.errors)
             end
 
-            UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+            enqueue_runtime_compatibility_update
 
             logger.info(message: 'Updated runtime function definitions for runtime', runtime_id: current_runtime.id)
 
@@ -47,6 +49,12 @@ module Runtimes
         end
 
         protected
+
+        def enqueue_runtime_compatibility_update
+          return unless update_runtime_compatibility
+
+          UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+        end
 
         def update_runtime_function_definition(runtime_function_definition, t)
           db_object = RuntimeFunctionDefinition.find_or_initialize_by(

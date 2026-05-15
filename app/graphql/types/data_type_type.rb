@@ -18,6 +18,8 @@ module Types
                                                            description: 'Rules of the datatype'
     field :runtime, Types::RuntimeType, null: true,
                                         description: 'The runtime where this datatype belongs to'
+    field :runtime_module, Types::RuntimeModuleType, null: false,
+                                                     description: 'The runtime module where this datatype belongs to'
     field :type, String, null: false, description: 'The type of the datatype'
     field :version, String, null: false, description: 'The version of the datatype'
 

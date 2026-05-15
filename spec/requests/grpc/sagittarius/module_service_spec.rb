@@ -163,6 +163,63 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
       expect(configuration.referenced_data_types).to contain_exactly(text)
     end
 
+    context 'when data types reference data types from another module' do
+      let(:modules) do
+        [
+          {
+            identifier: 'module-a',
+            version: '1.0.0',
+            definition_data_types: [
+              {
+                identifier: 'A_TYPE',
+                type: 'B_TYPE',
+                linked_data_type_identifiers: ['B_TYPE'],
+                version: '1.0.0',
+                definition_source: 'module-a',
+              }
+            ],
+            runtime_flow_types: [],
+            flow_types: [],
+            runtime_function_definitions: [],
+            function_definitions: [],
+            configurations: [],
+          },
+          {
+            identifier: 'module-b',
+            version: '1.0.0',
+            definition_data_types: [
+              {
+                identifier: 'B_TYPE',
+                type: 'A_TYPE',
+                linked_data_type_identifiers: ['A_TYPE'],
+                version: '1.0.0',
+                definition_source: 'module-b',
+              }
+            ],
+            runtime_flow_types: [],
+            flow_types: [],
+            runtime_function_definitions: [],
+            function_definitions: [],
+            configurations: [],
+          }
+        ]
+      end
+
+      it 'creates all data types before linking them' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+        module_a = RuntimeModule.find_by!(runtime: runtime, identifier: 'module-a')
+        module_b = RuntimeModule.find_by!(runtime: runtime, identifier: 'module-b')
+        a_type = DataType.find_by!(runtime: runtime, identifier: 'A_TYPE')
+        b_type = DataType.find_by!(runtime: runtime, identifier: 'B_TYPE')
+
+        expect(a_type.runtime_module).to eq(module_a)
+        expect(b_type.runtime_module).to eq(module_b)
+        expect(a_type.referenced_data_types).to contain_exactly(b_type)
+        expect(b_type.referenced_data_types).to contain_exactly(a_type)
+      end
+    end
+
     context 'when a definition is not sent anymore' do
       let!(:runtime_module) { create(:runtime_module, runtime: runtime, identifier: 'taurus') }
       let!(:data_type) { create(:data_type, runtime: runtime, runtime_module: runtime_module) }

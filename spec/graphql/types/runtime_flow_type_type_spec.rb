@@ -2,32 +2,32 @@
 
 require 'rails_helper'
 
-RSpec.describe SagittariusSchema.types['FlowType'] do
+RSpec.describe SagittariusSchema.types['RuntimeFlowType'] do
   let(:fields) do
     %w[
+      id
       identifier
       editable
       signature
       displayIcon
       version
       definitionSource
-      flow_type_settings
+      runtimeFlowTypeSettings
       names
-      display_messages
+      displayMessages
       aliases
       descriptions
       documentations
       runtime
-      runtimeFlowType
       runtimeModule
-      linked_data_types
-      id
-      created_at
-      updated_at
+      flowTypes
+      linkedDataTypes
+      createdAt
+      updatedAt
     ]
   end
 
-  it { expect(described_class.graphql_name).to eq('FlowType') }
+  it { expect(described_class.graphql_name).to eq('RuntimeFlowType') }
   it { expect(described_class).to have_graphql_fields(fields) }
-  it { expect(described_class).to require_graphql_authorizations(:read_flow_type) }
+  it { expect(described_class).to require_graphql_authorizations(:read_runtime_flow_type) }
 end

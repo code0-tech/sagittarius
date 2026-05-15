@@ -9,12 +9,13 @@ module Runtimes
         include Runtimes::Grpc::TranslationUpdateHelper
         include Runtimes::Grpc::DataTypeHelper
 
-        attr_reader :current_runtime, :flow_types, :runtime_module
+        attr_reader :current_runtime, :flow_types, :runtime_module, :update_runtime_compatibility
 
-        def initialize(current_runtime, flow_types, runtime_module:)
+        def initialize(current_runtime, flow_types, runtime_module:, update_runtime_compatibility: true)
           @current_runtime = current_runtime
           @flow_types = flow_types
           @runtime_module = runtime_module
+          @update_runtime_compatibility = update_runtime_compatibility
         end
 
         def execute
@@ -39,7 +40,7 @@ module Runtimes
                                                            details: db_flow_type.errors)
             end
 
-            UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+            enqueue_runtime_compatibility_update
 
             logger.info(message: 'Updated flow types for runtime', runtime_id: current_runtime.id)
 
@@ -48,6 +49,12 @@ module Runtimes
         end
 
         protected
+
+        def enqueue_runtime_compatibility_update
+          return unless update_runtime_compatibility
+
+          UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+        end
 
         def update_flowtype(flow_type, t)
           db_object = FlowType.find_or_initialize_by(runtime: current_runtime, identifier: flow_type.identifier)
@@ -63,27 +70,25 @@ module Runtimes
           db_object.definition_source = flow_type.definition_source
           db_object.display_icon = flow_type.display_icon
           db_object.runtime_module = runtime_module
-          db_object.runtime_flow_type = update_runtime_flow_type(flow_type, runtime_module)
+          db_object.runtime_flow_type = find_runtime_flow_type(flow_type, t)
           update_settings(flow_type.settings, db_object.flow_type_settings, t)
           link_data_types(db_object, flow_type.linked_data_type_identifiers, t)
           db_object.save
           db_object
         end
 
-        def update_runtime_flow_type(flow_type, runtime_module)
-          runtime_flow_type = RuntimeFlowType.find_or_initialize_by(
+        def find_runtime_flow_type(flow_type, t)
+          identifier = flow_type.runtime_identifier.presence || flow_type.identifier
+          runtime_flow_type = RuntimeFlowType.find_by(
             runtime: current_runtime,
-            identifier: flow_type.runtime_identifier.presence || flow_type.identifier
+            identifier: identifier
           )
-          runtime_flow_type.runtime_module = runtime_module
-          runtime_flow_type.removed_at = nil
-          runtime_flow_type.signature = flow_type.signature
-          runtime_flow_type.editable = flow_type.editable
-          runtime_flow_type.version = flow_type.version
-          runtime_flow_type.definition_source = flow_type.definition_source
-          runtime_flow_type.display_icon = flow_type.display_icon
-          runtime_flow_type.save!
-          runtime_flow_type
+          return runtime_flow_type if runtime_flow_type.present?
+
+          t.rollback_and_return! ServiceResponse.error(
+            message: "Could not find runtime flow type with identifier #{identifier}",
+            error_code: :invalid_flow_type
+          )
         end
 
         def update_settings(flow_type_settings, db_setting_relation, t)

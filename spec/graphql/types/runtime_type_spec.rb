@@ -8,9 +8,7 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
       id
       namespace
       name
-      dataTypes
-      flowTypes
-      functionDefinitions
+      modules
       description
       projects
       statuses
