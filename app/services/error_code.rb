@@ -87,6 +87,7 @@ class ErrorCode
       invalid_node_function: { description: 'The node function is invalid' },
       invalid_runtime_status: { description: 'The runtime status is invalid because of active model errors' },
       invalid_runtime_status_configuration: { description: 'The runtime status configuration is invalid because of active model errors' },
+      unsupported_authentication: { description: 'The current authentication is not supported for this operation' },
 
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
