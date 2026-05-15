@@ -64,3 +64,5 @@ class User < ApplicationRecord
     password_digest&.last(20)
   end
 end
+
+User.prepend_extensions

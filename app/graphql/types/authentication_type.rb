@@ -15,3 +15,5 @@ module Types
     end
   end
 end
+
+Types::AuthenticationType.prepend_extensions

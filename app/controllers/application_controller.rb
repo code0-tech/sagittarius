@@ -8,6 +8,12 @@ class ApplicationController < ActionController::API
 
     token_type, token = authorization.split(' ', 2)
 
+    create_authentication(token_type, token)
+  end
+
+  protected
+
+  def create_authentication(token_type, token)
     case token_type
     when 'Session'
       Sagittarius::Authentication.new(:session, UserSession.find_by(token: token, active: true))
@@ -16,3 +22,5 @@ class ApplicationController < ActionController::API
     end
   end
 end
+
+ApplicationController.prepend_extensions

@@ -86,6 +86,7 @@ Represents the available error responses
 | `TERTIARY_LEVEL_EXCEEDS_PARAMETERS` | **Deprecated:** Outdated concept |
 | `TOTP_SECRET_ALREADY_SET` | This user already has TOTP set up |
 | `UNMODIFIABLE_FIELD` | The user is not permitted to modify this field |
+| `UNSUPPORTED_AUTHENTICATION` | The current authentication is not supported for this operation |
 | `USER_NOT_FOUND` | The user with the given identifier was not found |
 | `USER_SESSION_NOT_FOUND` | The user session with the given identifier was not found |
 | `WRONG_TOTP` | Invalid TOTP code provided |
