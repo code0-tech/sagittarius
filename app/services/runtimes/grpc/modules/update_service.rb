@@ -96,9 +96,9 @@ module Runtimes
         end
 
         def update_definition_services(module_records, t)
-          modules.each do |grpc_module|
-            runtime_module = module_records.fetch(grpc_module)
-            definition_update_services.each do |definition_field, service|
+          definition_update_services.each do |definition_field, service|
+            modules.each do |grpc_module|
+              runtime_module = module_records.fetch(grpc_module)
               response = build_definition_update_service(
                 service,
                 grpc_module.public_send(definition_field),
@@ -141,14 +141,19 @@ module Runtimes
         def update_function_definitions(module_records, t)
           modules.each do |grpc_module|
             runtime_module = module_records.fetch(grpc_module)
+
+            # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, validations are irrelevant
+            FunctionDefinition.where(runtime_module: runtime_module).update_all(removed_at: Time.zone.now)
+            # rubocop:enable Rails/SkipsModelValidations
+
             grpc_module.function_definitions.each do |function_definition|
-              db_function_definition = update_function_definition(function_definition, t)
+              db_function_definition = update_function_definition(function_definition, runtime_module, t)
               next if db_function_definition.persisted?
 
               logger.error(message: 'Failed to update function definition',
                            runtime_id: current_runtime.id,
                            module_identifier: runtime_module.identifier,
-                           definition_identifier: function_definition.runtime_definition_name,
+                           definition_identifier: function_definition.runtime_name,
                            errors: db_function_definition.errors.full_messages)
 
               t.rollback_and_return! ServiceResponse.error(message: 'Failed to update function definition',
@@ -173,7 +178,7 @@ module Runtimes
           db_object
         end
 
-        def update_function_definition(function_definition, t)
+        def update_function_definition(function_definition, runtime_module, t)
           runtime_definition_name = function_definition.runtime_definition_name.presence ||
                                     function_definition.runtime_name
           runtime_function_definition = RuntimeFunctionDefinition.find_by(
@@ -192,7 +197,11 @@ module Runtimes
             )
           end
 
-          db_object = runtime_function_definition.function_definitions.first_or_initialize
+          db_object = runtime_module.function_definitions.find_or_initialize_by(
+            identifier: function_definition.runtime_name
+          )
+          db_object.runtime_function_definition = runtime_function_definition
+          db_object.removed_at = nil
           db_object.names = update_translations(function_definition.name, db_object.names)
           db_object.descriptions = update_translations(function_definition.description, db_object.descriptions)
           db_object.documentations = update_translations(function_definition.documentation, db_object.documentations)

@@ -81,37 +81,8 @@ module Runtimes
             update_settings(runtime_flow_type.runtime_settings, db_object.runtime_flow_type_settings, t)
             link_data_types(db_object, runtime_flow_type.linked_data_type_identifiers, t)
             db_object.save
-            ensure_flow_type_for_runtime_flow_type(db_object, runtime_flow_type, t)
           end
           db_object
-        end
-
-        def ensure_flow_type_for_runtime_flow_type(runtime_flow_type, grpc_runtime_flow_type, t)
-          return if runtime_flow_type.flow_types.exists?
-
-          flow_type = runtime_flow_type.flow_types.build(
-            runtime: current_runtime,
-            runtime_module: runtime_flow_type.runtime_module,
-            identifier: runtime_flow_type.identifier,
-            signature: runtime_flow_type.signature,
-            editable: runtime_flow_type.editable,
-            version: runtime_flow_type.version,
-            definition_source: runtime_flow_type.definition_source,
-            display_icon: runtime_flow_type.display_icon,
-            removed_at: nil
-          )
-          flow_type.names = update_translations(grpc_runtime_flow_type.name, flow_type.names)
-          flow_type.descriptions = update_translations(grpc_runtime_flow_type.description, flow_type.descriptions)
-          flow_type.documentations = update_translations(grpc_runtime_flow_type.documentation, flow_type.documentations)
-          flow_type.display_messages = update_translations(grpc_runtime_flow_type.display_message,
-                                                           flow_type.display_messages)
-          flow_type.aliases = update_translations(grpc_runtime_flow_type.alias, flow_type.aliases)
-          flow_type.save
-          return unless flow_type.persisted?
-
-          update_settings(grpc_runtime_flow_type.runtime_settings, flow_type.flow_type_settings, t)
-          link_data_types(flow_type, grpc_runtime_flow_type.linked_data_type_identifiers, t)
-          flow_type.save
         end
 
         def update_settings(flow_type_settings, db_setting_relation, t)

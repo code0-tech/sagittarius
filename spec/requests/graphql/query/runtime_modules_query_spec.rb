@@ -26,6 +26,12 @@ RSpec.describe 'runtime modules Query' do
   let(:runtime_function_definition) do
     create(:runtime_function_definition, runtime_module: runtime_module, runtime_name: 'runtime_function')
   end
+  let(:function_definition) do
+    create(:function_definition,
+           runtime_module: runtime_module,
+           runtime_function_definition: runtime_function_definition,
+           identifier: 'function')
+  end
   let(:module_configuration_definition) do
     create(:module_configuration_definition,
            runtime_module: runtime_module,
@@ -73,6 +79,14 @@ RSpec.describe 'runtime modules Query' do
                       runtimeModule { id }
                     }
                   }
+                  functionDefinitions {
+                    nodes {
+                      id
+                      identifier
+                      runtimeFunctionDefinition { id }
+                      runtimeModule { id }
+                    }
+                  }
                   configurationDefinitions {
                     nodes {
                       id
@@ -100,7 +114,7 @@ RSpec.describe 'runtime modules Query' do
            module_configuration_definition: module_configuration_definition,
            referenced_data_type: data_type)
     flow_type
-    runtime_function_definition
+    function_definition
 
     post_graphql query,
                  variables: { namespaceId: namespace.to_global_id.to_s },
@@ -149,6 +163,14 @@ RSpec.describe 'runtime modules Query' do
       a_hash_including(
         'id' => runtime_function_definition.to_global_id.to_s,
         'identifier' => 'runtime_function',
+        'runtimeModule' => { 'id' => runtime_module.to_global_id.to_s }
+      )
+    )
+    expect(module_node.dig('functionDefinitions', 'nodes')).to contain_exactly(
+      a_hash_including(
+        'id' => function_definition.to_global_id.to_s,
+        'identifier' => 'function',
+        'runtimeFunctionDefinition' => { 'id' => runtime_function_definition.to_global_id.to_s },
         'runtimeModule' => { 'id' => runtime_module.to_global_id.to_s }
       )
     )

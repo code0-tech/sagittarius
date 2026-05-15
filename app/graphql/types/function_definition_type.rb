@@ -25,8 +25,11 @@ module Types
           null: true,
           description: 'Documentation of the function'
 
+    # rubocop:disable GraphQL/ExtractType
     field :runtime_function_definition, Types::RuntimeFunctionDefinitionType,
           null: true, description: 'Runtime function definition'
+    field :runtime_module, Types::RuntimeModuleType, null: false, description: 'Runtime module of the function'
+    # rubocop:enable GraphQL/ExtractType
 
     field :signature, String, null: false, description: 'Signature of the function'
 
@@ -44,10 +47,6 @@ module Types
 
     id_field FunctionDefinition
     timestamps
-
-    def identifier
-      object.runtime_function_definition&.runtime_name
-    end
 
     def signature
       object.runtime_function_definition&.signature

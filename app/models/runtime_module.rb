@@ -7,7 +7,7 @@ class RuntimeModule < ApplicationRecord
   has_many :runtime_flow_types, inverse_of: :runtime_module
   has_many :flow_types, inverse_of: :runtime_module
   has_many :runtime_function_definitions, inverse_of: :runtime_module
-  has_many :function_definitions, through: :runtime_function_definitions
+  has_many :function_definitions, inverse_of: :runtime_module
   has_many :module_configuration_definitions, inverse_of: :runtime_module
 
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner

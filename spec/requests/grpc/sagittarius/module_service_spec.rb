@@ -90,6 +90,7 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
           ],
           function_definitions: [
             {
+              runtime_name: 'std::text::split_visible',
               runtime_definition_name: 'std::text::split',
               parameter_definitions: [
                 {
@@ -152,7 +153,8 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
       expect(runtime_function.referenced_data_types).to contain_exactly(text, text_list)
       expect(runtime_function.parameters.first.runtime_name).to eq('text')
 
-      function_definition = runtime_function.function_definitions.first
+      function_definition = runtime_module.function_definitions.find_by!(identifier: 'std::text::split_visible')
+      expect(function_definition.runtime_function_definition).to eq(runtime_function)
       expect(function_definition.names.first.content).to eq('Split text')
       expect(function_definition.parameter_definitions.first.default_value).to eq('hello')
       expect(function_definition.parameter_definitions.first.names.first.content).to eq('Visible Text')
@@ -217,6 +219,84 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
         expect(b_type.runtime_module).to eq(module_b)
         expect(a_type.referenced_data_types).to contain_exactly(b_type)
         expect(b_type.referenced_data_types).to contain_exactly(a_type)
+      end
+    end
+
+    context 'when public definitions reference runtime definitions from another module' do
+      let(:modules) do
+        [
+          {
+            identifier: 'module-a',
+            version: '1.0.0',
+            definition_data_types: [],
+            runtime_flow_types: [],
+            flow_types: [
+              {
+                identifier: 'PUBLIC_FLOW',
+                runtime_identifier: 'RUNTIME_FLOW',
+                signature: '(): void',
+                editable: false,
+                version: '1.0.0',
+                definition_source: 'module-a',
+              }
+            ],
+            runtime_function_definitions: [],
+            function_definitions: [
+              {
+                runtime_name: 'test::math::increment',
+                runtime_definition_name: 'std::number::add',
+                name: [{ code: 'en_US', content: 'Increment' }],
+              }
+            ],
+            configurations: [],
+          },
+          {
+            identifier: 'module-b',
+            version: '1.0.0',
+            definition_data_types: [],
+            runtime_flow_types: [
+              {
+                identifier: 'RUNTIME_FLOW',
+                signature: '(): void',
+                editable: false,
+                version: '1.0.0',
+                definition_source: 'module-b',
+              }
+            ],
+            flow_types: [],
+            runtime_function_definitions: [
+              {
+                runtime_name: 'std::number::add',
+                signature: '(value: NUMBER): NUMBER',
+                version: '1.0.0',
+                definition_source: 'module-b',
+              }
+            ],
+            function_definitions: [],
+            configurations: [],
+          }
+        ]
+      end
+
+      it 'links explicit definitions to their runtime counterparts by identifier' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+        module_a = RuntimeModule.find_by!(runtime: runtime, identifier: 'module-a')
+        module_b = RuntimeModule.find_by!(runtime: runtime, identifier: 'module-b')
+        runtime_flow_type = RuntimeFlowType.find_by!(runtime: runtime, identifier: 'RUNTIME_FLOW')
+        flow_type = FlowType.find_by!(runtime: runtime, identifier: 'PUBLIC_FLOW')
+        runtime_function_definition = RuntimeFunctionDefinition.find_by!(
+          runtime: runtime,
+          runtime_name: 'std::number::add'
+        )
+        function_definition = FunctionDefinition.find_by!(runtime_module: module_a, identifier: 'test::math::increment')
+
+        expect(runtime_flow_type.runtime_module).to eq(module_b)
+        expect(flow_type.runtime_module).to eq(module_a)
+        expect(flow_type.runtime_flow_type).to eq(runtime_flow_type)
+        expect(runtime_flow_type.flow_types).to contain_exactly(flow_type)
+        expect(runtime_function_definition.runtime_module).to eq(module_b)
+        expect(function_definition.runtime_function_definition).to eq(runtime_function_definition)
       end
     end
 

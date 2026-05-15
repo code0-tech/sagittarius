@@ -309,7 +309,11 @@ CREATE TABLE function_definitions (
     id bigint NOT NULL,
     runtime_function_definition_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    runtime_module_id bigint,
+    identifier text,
+    removed_at timestamp with time zone,
+    CONSTRAINT check_0641c95c39 CHECK ((char_length(identifier) <= 50))
 );
 
 CREATE SEQUENCE function_definitions_id_seq
@@ -1272,6 +1276,8 @@ CREATE UNIQUE INDEX idx_data_types_on_runtime_module_id_identifier ON data_types
 
 CREATE UNIQUE INDEX idx_flow_types_on_runtime_module_id_identifier ON flow_types USING btree (runtime_module_id, identifier);
 
+CREATE UNIQUE INDEX idx_function_definitions_on_module_id_identifier ON function_definitions USING btree (runtime_module_id, identifier);
+
 CREATE UNIQUE INDEX idx_module_config_links_on_config_id_data_type_id ON module_configuration_definition_data_type_links USING btree (module_configuration_definition_id, referenced_data_type_id);
 
 CREATE UNIQUE INDEX idx_module_configs_on_module_id_identifier ON module_configuration_definitions USING btree (runtime_module_id, identifier);
@@ -1469,6 +1475,9 @@ ALTER TABLE ONLY namespace_roles
 
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT fk_rails_260318ad67 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY function_definitions
+    ADD CONSTRAINT fk_rails_2b9456e278 FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_2ed7c53167 FOREIGN KEY (parameter_definition_id) REFERENCES parameter_definitions(id) ON DELETE RESTRICT;

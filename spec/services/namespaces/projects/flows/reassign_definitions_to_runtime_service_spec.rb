@@ -16,8 +16,9 @@ RSpec.describe Namespaces::Projects::Flows::ReassignDefinitionsToRuntimeService 
   let!(:old_rfd) { create(:runtime_function_definition, runtime: old_runtime, runtime_name: runtime_name) }
   let!(:new_rfd) { create(:runtime_function_definition, runtime: new_runtime, runtime_name: runtime_name) }
 
-  let!(:old_fd) { create(:function_definition, runtime_function_definition: old_rfd) }
-  let!(:new_fd) { create(:function_definition, runtime_function_definition: new_rfd) }
+  let!(:function_identifier) { 'shared_public_function' }
+  let!(:old_fd) { create(:function_definition, runtime_function_definition: old_rfd, identifier: function_identifier) }
+  let!(:new_fd) { create(:function_definition, runtime_function_definition: new_rfd, identifier: function_identifier) }
 
   let!(:rpd_runtime_name) { 'shared_param' }
   let!(:old_rpd) do

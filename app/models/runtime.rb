@@ -19,7 +19,7 @@ class Runtime < ApplicationRecord
   has_many :data_types, inverse_of: :runtime
 
   has_many :runtime_function_definitions, inverse_of: :runtime
-  has_many :function_definitions, through: :runtime_function_definitions
+  has_many :function_definitions, through: :runtime_modules
 
   has_many :runtime_flow_types, inverse_of: :runtime
   has_many :flow_types, inverse_of: :runtime
