@@ -313,6 +313,7 @@ CREATE TABLE function_definitions (
     runtime_module_id bigint,
     identifier text,
     removed_at timestamp with time zone,
+    runtime_id bigint,
     CONSTRAINT check_0641c95c39 CHECK ((char_length(identifier) <= 50))
 );
 
@@ -1276,7 +1277,7 @@ CREATE UNIQUE INDEX idx_data_types_on_runtime_module_id_identifier ON data_types
 
 CREATE UNIQUE INDEX idx_flow_types_on_runtime_module_id_identifier ON flow_types USING btree (runtime_module_id, identifier);
 
-CREATE UNIQUE INDEX idx_function_definitions_on_module_id_identifier ON function_definitions USING btree (runtime_module_id, identifier);
+CREATE UNIQUE INDEX idx_function_definitions_on_runtime_id_identifier ON function_definitions USING btree (runtime_id, identifier);
 
 CREATE UNIQUE INDEX idx_module_config_links_on_config_id_data_type_id ON module_configuration_definition_data_type_links USING btree (module_configuration_definition_id, referenced_data_type_id);
 
@@ -1601,6 +1602,9 @@ ALTER TABLE ONLY namespace_members
 
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_ab927e0ecb FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY function_definitions
+    ADD CONSTRAINT fk_rails_ac308a3f72 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_flow_type_data_type_links
     ADD CONSTRAINT fk_rails_b300bcf944 FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;

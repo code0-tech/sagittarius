@@ -9,6 +9,7 @@ RSpec.describe Runtime do
     it { is_expected.to belong_to(:namespace).optional }
     it { is_expected.to have_many(:runtime_modules).inverse_of(:runtime) }
     it { is_expected.to have_many(:data_types).inverse_of(:runtime) }
+    it { is_expected.to have_many(:function_definitions).inverse_of(:runtime) }
     it { is_expected.to have_many(:runtime_flow_types).inverse_of(:runtime) }
     it { is_expected.to have_many(:flow_types).inverse_of(:runtime) }
 

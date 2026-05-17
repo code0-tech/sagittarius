@@ -20,6 +20,7 @@ Represents a function definition
 | `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | All data types referenced within this function definition |
 | `names` | [`[Translation!]`](../object/translation.md) | Name of the function |
 | `parameterDefinitions` | [`ParameterDefinitionConnection`](../object/parameterdefinitionconnection.md) | Parameters of the function |
+| `runtime` | [`Runtime!`](../object/runtime.md) | Runtime of the function |
 | `runtimeFunctionDefinition` | [`RuntimeFunctionDefinition`](../object/runtimefunctiondefinition.md) | Runtime function definition |
 | `runtimeModule` | [`RuntimeModule!`](../object/runtimemodule.md) | Runtime module of the function |
 | `signature` | [`String!`](../scalar/string.md) | Signature of the function |

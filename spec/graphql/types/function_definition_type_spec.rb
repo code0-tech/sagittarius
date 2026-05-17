@@ -15,6 +15,7 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
       documentations
       deprecationMessages
       runtimeFunctionDefinition
+      runtime
       runtimeModule
       signature
       throwsError

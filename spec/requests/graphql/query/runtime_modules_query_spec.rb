@@ -83,6 +83,7 @@ RSpec.describe 'runtime modules Query' do
                     nodes {
                       id
                       identifier
+                      runtime { id }
                       runtimeFunctionDefinition { id }
                       runtimeModule { id }
                     }
@@ -170,6 +171,7 @@ RSpec.describe 'runtime modules Query' do
       a_hash_including(
         'id' => function_definition.to_global_id.to_s,
         'identifier' => 'function',
+        'runtime' => { 'id' => runtime.to_global_id.to_s },
         'runtimeFunctionDefinition' => { 'id' => runtime_function_definition.to_global_id.to_s },
         'runtimeModule' => { 'id' => runtime_module.to_global_id.to_s }
       )

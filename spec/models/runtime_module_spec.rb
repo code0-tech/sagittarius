@@ -11,7 +11,7 @@ RSpec.describe RuntimeModule do
     it { is_expected.to have_many(:runtime_flow_types).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:flow_types).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:runtime_function_definitions).inverse_of(:runtime_module) }
-    it { is_expected.to have_many(:function_definitions).through(:runtime_function_definitions) }
+    it { is_expected.to have_many(:function_definitions).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:module_configuration_definitions).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:names).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:descriptions).class_name('Translation').inverse_of(:owner) }

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class FunctionDefinition < ApplicationRecord
+  belongs_to :runtime, inverse_of: :function_definitions
   belongs_to :runtime_module, inverse_of: :function_definitions
   belongs_to :runtime_function_definition
 
@@ -18,7 +19,7 @@ class FunctionDefinition < ApplicationRecord
 
   scope :by_node_function, ->(node_functions) { where(node_functions: node_functions) }
 
-  validates :identifier, presence: true, uniqueness: { case_sensitive: false, scope: :runtime_module_id }
+  validates :identifier, presence: true, uniqueness: { case_sensitive: false, scope: :runtime_id }
 
   def to_grpc
     Tucana::Shared::FunctionDefinition.new(

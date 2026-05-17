@@ -26,6 +26,7 @@ module Types
           description: 'Documentation of the function'
 
     # rubocop:disable GraphQL/ExtractType
+    field :runtime, Types::RuntimeType, null: false, description: 'Runtime of the function'
     field :runtime_function_definition, Types::RuntimeFunctionDefinitionType,
           null: true, description: 'Runtime function definition'
     field :runtime_module, Types::RuntimeModuleType, null: false, description: 'Runtime module of the function'

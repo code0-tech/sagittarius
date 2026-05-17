@@ -50,7 +50,8 @@ module Runtimes
 
         def mark_existing_function_definitions_as_removed
           # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, validations are irrelevant
-          FunctionDefinition.where(runtime_module: runtime_module).update_all(removed_at: Time.zone.now)
+          FunctionDefinition.where(runtime: current_runtime, runtime_module: runtime_module)
+                            .update_all(removed_at: Time.zone.now)
           # rubocop:enable Rails/SkipsModelValidations
         end
 
@@ -63,9 +64,11 @@ module Runtimes
         def update_function_definition(function_definition, t)
           runtime_function_definition = find_runtime_function_definition(function_definition, t)
 
-          db_object = runtime_module.function_definitions.find_or_initialize_by(
+          db_object = FunctionDefinition.find_or_initialize_by(
+            runtime: current_runtime,
             identifier: function_definition.runtime_name
           )
+          db_object.runtime_module = runtime_module
           db_object.runtime_function_definition = runtime_function_definition
           db_object.removed_at = nil
           db_object.names = update_translations(function_definition.name, db_object.names)
