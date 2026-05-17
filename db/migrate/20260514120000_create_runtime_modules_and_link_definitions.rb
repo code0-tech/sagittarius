@@ -8,7 +8,7 @@ class CreateRuntimeModulesAndLinkDefinitions < Code0::ZeroTrack::Database::Migra
       t.text :documentation, null: false, default: '', limit: 200
       t.text :author, null: false, default: '', limit: 200
       t.text :icon, limit: 100
-      t.text :version, null: false, default: '0.0.0'
+      t.text :version, null: false
 
       t.index %i[runtime_id identifier], unique: true, name: 'idx_runtime_modules_on_runtime_id_identifier'
 
