@@ -133,7 +133,7 @@ class GraphqlController < ApplicationController
 
     def self.add_query(sql:, duration_ms:, name:, cached:)
       self.sql_queries ||= []
-      self.sql_queries << { sql: sql, duration_ms: duration_ms, name: name, cached: !!cached }
+      sql_queries << { sql: sql, duration_ms: duration_ms, name: name, cached: !!cached }
     end
   end
 end
