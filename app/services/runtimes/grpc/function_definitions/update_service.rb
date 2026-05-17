@@ -74,6 +74,7 @@ module Runtimes
           db_object.names = update_translations(function_definition.name, db_object.names)
           db_object.descriptions = update_translations(function_definition.description, db_object.descriptions)
           db_object.documentations = update_translations(function_definition.documentation, db_object.documentations)
+          db_object.design = function_definition.design
           db_object.deprecation_messages = update_translations(function_definition.deprecation_message,
                                                                db_object.deprecation_messages)
           db_object.display_messages = update_translations(function_definition.display_message,
@@ -124,6 +125,8 @@ module Runtimes
             function_definition: function_definition
           )
           db_param.default_value = parameter.default_value&.to_ruby(true)
+          db_param.optional = parameter.optional
+          db_param.hidden = parameter.hidden
           db_param.names = update_translations(parameter.name, db_param.names)
           db_param.descriptions = update_translations(parameter.description, db_param.descriptions)
           db_param.documentations = update_translations(parameter.documentation, db_param.documentations)

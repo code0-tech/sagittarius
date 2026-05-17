@@ -5,6 +5,10 @@ require 'rails_helper'
 RSpec.describe FunctionDefinition do
   subject { create(:function_definition) }
 
+  describe 'validations' do
+    it { is_expected.to validate_length_of(:design).is_at_most(200) }
+  end
+
   describe 'associations' do
     it { is_expected.to belong_to(:runtime).inverse_of(:function_definitions) }
     it { is_expected.to belong_to(:runtime_module).inverse_of(:function_definitions) }

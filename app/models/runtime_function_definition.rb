@@ -26,6 +26,7 @@ class RuntimeFunctionDefinition < ApplicationRecord
   validates :signature, presence: true, length: { maximum: 500 }
   validates :definition_source, length: { maximum: 50 }
   validates :display_icon, length: { maximum: 100 }
+  validates :design, length: { maximum: 200 }
 
   validate :validate_version
 
@@ -56,7 +57,8 @@ class RuntimeFunctionDefinition < ApplicationRecord
       linked_data_type_identifiers: referenced_data_types.map(&:identifier),
       version: version,
       definition_source: definition_source,
-      display_icon: display_icon
+      display_icon: display_icon,
+      design: design
     )
   end
 end

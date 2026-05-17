@@ -20,6 +20,7 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
       signature
       throwsError
       displayIcon
+      design
       linkedDataTypes
       createdAt
       updatedAt

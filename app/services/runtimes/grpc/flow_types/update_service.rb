@@ -100,6 +100,8 @@ module Runtimes
             db_setting = db_setting_relation.find_or_initialize_by(identifier: setting.identifier)
             db_setting.unique = setting.unique&.to_s&.downcase
             db_setting.default_value = setting.default_value&.to_ruby
+            db_setting.optional = setting.optional
+            db_setting.hidden = setting.hidden
             db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
             db_setting.names = update_translations(setting.name, db_setting.names)
             db_setting.removed_at = nil

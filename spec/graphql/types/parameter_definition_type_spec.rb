@@ -12,6 +12,8 @@ RSpec.describe SagittariusSchema.types['ParameterDefinition'] do
       documentations
       runtimeParameterDefinition
       defaultValue
+      optional
+      hidden
       createdAt
       updatedAt
     ]

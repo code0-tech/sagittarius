@@ -19,6 +19,8 @@ class FlowTypeSetting < ApplicationRecord
                        in: UNIQUENESS_SCOPE.keys.map(&:to_s),
                      },
                      exclusion: [0, :unknown, 'unknown']
+  validates :optional, inclusion: { in: [true, false] }
+  validates :hidden, inclusion: { in: [true, false] }
 
   has_translation :names, purpose: :name
   has_translation :descriptions, purpose: :description

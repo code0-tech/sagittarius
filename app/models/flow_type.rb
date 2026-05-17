@@ -38,4 +38,8 @@ class FlowType < ApplicationRecord
   def parsed_version
     Gem::Version.new(version)
   end
+
+  def runtime_identifier
+    runtime_flow_type&.identifier
+  end
 end

@@ -242,7 +242,9 @@ CREATE TABLE flow_type_settings (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     "unique" integer DEFAULT 0 NOT NULL,
-    removed_at timestamp with time zone
+    removed_at timestamp with time zone,
+    optional boolean DEFAULT false NOT NULL,
+    hidden boolean DEFAULT false NOT NULL
 );
 
 CREATE SEQUENCE flow_type_settings_id_seq
@@ -310,11 +312,13 @@ CREATE TABLE function_definitions (
     runtime_function_definition_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    runtime_module_id bigint NOT NULL,
-    identifier text NOT NULL,
+    runtime_module_id bigint,
+    identifier text,
     removed_at timestamp with time zone,
-    runtime_id bigint NOT NULL,
-    CONSTRAINT check_0641c95c39 CHECK ((char_length(identifier) <= 50))
+    runtime_id bigint,
+    design text,
+    CONSTRAINT check_0641c95c39 CHECK ((char_length(identifier) <= 50)),
+    CONSTRAINT check_8b4572b26a CHECK ((char_length(design) <= 200))
 );
 
 CREATE SEQUENCE function_definitions_id_seq
@@ -663,7 +667,9 @@ CREATE TABLE parameter_definitions (
     default_value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    function_definition_id bigint NOT NULL
+    function_definition_id bigint NOT NULL,
+    optional boolean DEFAULT false NOT NULL,
+    hidden boolean DEFAULT false NOT NULL
 );
 
 CREATE SEQUENCE parameter_definitions_id_seq
@@ -739,7 +745,9 @@ CREATE TABLE runtime_flow_type_settings (
     default_value jsonb,
     removed_at timestamp with time zone,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    optional boolean DEFAULT false NOT NULL,
+    hidden boolean DEFAULT false NOT NULL
 );
 
 CREATE SEQUENCE runtime_flow_type_settings_id_seq
@@ -809,8 +817,10 @@ CREATE TABLE runtime_function_definitions (
     definition_source text,
     display_icon text,
     runtime_module_id bigint NOT NULL,
+    design text,
     CONSTRAINT check_4cf530fb6a CHECK ((char_length(definition_source) <= 50)),
     CONSTRAINT check_86da361565 CHECK ((char_length(signature) <= 500)),
+    CONSTRAINT check_b25f98a584 CHECK ((char_length(design) <= 200)),
     CONSTRAINT check_ef62cf61e5 CHECK ((char_length(display_icon) <= 100)),
     CONSTRAINT check_fe8fff4f27 CHECK ((char_length(runtime_name) <= 50))
 );
@@ -857,6 +867,8 @@ CREATE TABLE runtime_parameter_definitions (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     default_value jsonb,
+    optional boolean DEFAULT false NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
     CONSTRAINT check_c1156ce358 CHECK ((char_length(runtime_name) <= 50))
 );
 

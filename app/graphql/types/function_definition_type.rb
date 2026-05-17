@@ -42,6 +42,9 @@ module Types
           null: true, description: 'Display icon of the function'
     # rubocop:enable GraphQL/ExtractType
 
+    field :design, String,
+          null: true, description: 'Design metadata of the function'
+
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,
           description: 'All data types referenced within this function definition'

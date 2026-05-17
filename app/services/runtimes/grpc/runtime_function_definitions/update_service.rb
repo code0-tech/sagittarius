@@ -67,6 +67,7 @@ module Runtimes
           db_object.version = runtime_function_definition.version
           db_object.definition_source = runtime_function_definition.definition_source
           db_object.display_icon = runtime_function_definition.display_icon
+          db_object.design = runtime_function_definition.design
           db_object.runtime_module = runtime_module
           db_object.names = update_translations(runtime_function_definition.name, db_object.names)
           db_object.descriptions = update_translations(runtime_function_definition.description, db_object.descriptions)
@@ -107,6 +108,8 @@ module Runtimes
             db_param.documentations = update_translations(real_param.documentation, db_param.documentations)
 
             db_param.default_value = real_param.default_value&.to_ruby(true)
+            db_param.optional = real_param.optional
+            db_param.hidden = real_param.hidden
 
             next if db_param.save
 

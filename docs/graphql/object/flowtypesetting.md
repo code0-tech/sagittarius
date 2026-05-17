@@ -12,9 +12,11 @@ Represents a flow type setting
 | `defaultValue` | [`JSON`](../scalar/json.md) | Default value of the flow type setting |
 | `descriptions` | [`[Translation!]!`](../object/translation.md) | Descriptions of the flow type setting |
 | `flowType` | [`FlowType`](../object/flowtype.md) | Flow type of the flow type setting |
+| `hidden` | [`Boolean!`](../scalar/boolean.md) | Indicates if the flow type setting is hidden |
 | `id` | [`FlowTypeSettingID!`](../scalar/flowtypesettingid.md) | Global ID of this FlowTypeSetting |
 | `identifier` | [`String!`](../scalar/string.md) | Identifier of the flow type setting |
 | `names` | [`[Translation!]!`](../object/translation.md) | Names of the flow type setting |
+| `optional` | [`Boolean!`](../scalar/boolean.md) | Indicates if the flow type setting is optional |
 | `removedAt` | [`Time`](../scalar/time.md) | The timestamp when this setting was soft removed |
 | `unique` | [`Boolean!`](../scalar/boolean.md) | Unique status of the flow type setting |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this FlowTypeSetting was last updated |

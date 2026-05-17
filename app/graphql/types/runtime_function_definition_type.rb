@@ -38,6 +38,10 @@ module Types
           null: true,
           description: 'Display icon of the runtime function definition'
 
+    field :design, String,
+          null: true,
+          description: 'Design metadata of the runtime function definition'
+
     field :version, String,
           null: false,
           description: 'Version of the runtime function definition'

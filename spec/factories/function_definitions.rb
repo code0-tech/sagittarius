@@ -6,6 +6,7 @@ FactoryBot.define do
     runtime_function_definition
     runtime { runtime_function_definition.runtime }
     runtime_module { runtime_function_definition.runtime_module }
+    design { nil }
 
     after(:build) do |function_definition|
       if function_definition.runtime_function_definition.present?
