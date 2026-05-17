@@ -10,6 +10,7 @@ RSpec.describe SagittariusSchema.types['RuntimeFunctionDefinition'] do
       functionDefinitions
       runtimeParameterDefinitions
       runtime
+      runtimeModule
       signature
       throwsError
       displayIcon

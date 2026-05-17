@@ -6,6 +6,8 @@ RSpec.describe FunctionDefinition do
   subject { create(:function_definition) }
 
   describe 'associations' do
+    it { is_expected.to belong_to(:runtime).inverse_of(:function_definitions) }
+    it { is_expected.to belong_to(:runtime_module).inverse_of(:function_definitions) }
     it { is_expected.to belong_to(:runtime_function_definition) }
     it { is_expected.to have_many(:names).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:descriptions).class_name('Translation').inverse_of(:owner) }

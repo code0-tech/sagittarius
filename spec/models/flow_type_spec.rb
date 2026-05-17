@@ -7,6 +7,8 @@ RSpec.describe FlowType do
 
   describe 'associations' do
     it { is_expected.to belong_to(:runtime) }
+    it { is_expected.to belong_to(:runtime_module).inverse_of(:flow_types) }
+    it { is_expected.to belong_to(:runtime_flow_type).inverse_of(:flow_types) }
     it { is_expected.to have_many(:flow_type_settings).inverse_of(:flow_type) }
     it { is_expected.to have_many(:aliases).class_name('Translation') }
     it { is_expected.to have_many(:display_messages).class_name('Translation') }

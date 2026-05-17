@@ -41,6 +41,7 @@ RSpec.describe RuntimeFunctionDefinition do
 
   describe 'associations' do
     it { is_expected.to belong_to(:runtime) }
+    it { is_expected.to belong_to(:runtime_module).inverse_of(:runtime_function_definitions) }
 
     it do
       is_expected.to have_many(:parameters)

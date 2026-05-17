@@ -9,17 +9,21 @@ module Runtimes
         include Runtimes::Grpc::TranslationUpdateHelper
         include Runtimes::Grpc::DataTypeHelper
 
-        attr_reader :current_runtime, :runtime_function_definitions
+        attr_reader :current_runtime, :runtime_function_definitions, :runtime_module, :update_runtime_compatibility
 
-        def initialize(current_runtime, runtime_function_definitions)
+        def initialize(current_runtime, runtime_function_definitions, runtime_module:,
+                       update_runtime_compatibility: true)
           @current_runtime = current_runtime
           @runtime_function_definitions = runtime_function_definitions
+          @runtime_module = runtime_module
+          @update_runtime_compatibility = update_runtime_compatibility
         end
 
         def execute
           transactional do |t|
             # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
-            RuntimeFunctionDefinition.where(runtime: current_runtime).update_all(removed_at: Time.zone.now)
+            RuntimeFunctionDefinition.where(runtime: current_runtime,
+                                            runtime_module: runtime_module).update_all(removed_at: Time.zone.now)
             # rubocop:enable Rails/SkipsModelValidations
             runtime_function_definitions.each do |runtime_function_definition|
               response = update_runtime_function_definition(runtime_function_definition, t)
@@ -35,7 +39,7 @@ module Runtimes
                                                            details: response.errors)
             end
 
-            UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+            enqueue_runtime_compatibility_update
 
             logger.info(message: 'Updated runtime function definitions for runtime', runtime_id: current_runtime.id)
 
@@ -45,6 +49,12 @@ module Runtimes
         end
 
         protected
+
+        def enqueue_runtime_compatibility_update
+          return unless update_runtime_compatibility
+
+          UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
+        end
 
         def update_runtime_function_definition(runtime_function_definition, t)
           db_object = RuntimeFunctionDefinition.find_or_initialize_by(
@@ -57,6 +67,7 @@ module Runtimes
           db_object.version = runtime_function_definition.version
           db_object.definition_source = runtime_function_definition.definition_source
           db_object.display_icon = runtime_function_definition.display_icon
+          db_object.runtime_module = runtime_module
           db_object.names = update_translations(runtime_function_definition.name, db_object.names)
           db_object.descriptions = update_translations(runtime_function_definition.description, db_object.descriptions)
           db_object.documentations = update_translations(runtime_function_definition.documentation,
@@ -68,20 +79,6 @@ module Runtimes
           db_object.aliases = update_translations(runtime_function_definition.alias, db_object.aliases)
 
           db_object.save
-
-          if db_object.function_definitions.empty?
-            definition = FunctionDefinition.new
-            definition.names = update_translations(runtime_function_definition.name, definition.names)
-            definition.descriptions = update_translations(runtime_function_definition.description,
-                                                          definition.descriptions)
-            definition.documentations = update_translations(runtime_function_definition.documentation,
-                                                            definition.documentations)
-            definition.display_messages = update_translations(runtime_function_definition.display_message,
-                                                              definition.display_messages)
-            definition.aliases = update_translations(runtime_function_definition.alias, definition.aliases)
-
-            db_object.function_definitions << definition
-          end
 
           db_object.parameters = update_parameters(db_object, runtime_function_definition.runtime_parameter_definitions,
                                                    db_object.parameters, t)
@@ -111,24 +108,13 @@ module Runtimes
 
             db_param.default_value = real_param.default_value&.to_ruby(true)
 
-            unless db_param.save
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Could not save runtime parameter definition',
-                error_code: :invalid_runtime_parameter_definition,
-                details: db_param.errors
-              )
-            end
+            next if db_param.save
 
-            next unless db_param.parameter_definitions.empty?
-
-            definition = ParameterDefinition.new
-            definition.names = update_translations(real_param.name, definition.names)
-            definition.descriptions = update_translations(real_param.description, definition.descriptions)
-            definition.documentations = update_translations(real_param.documentation, definition.documentations)
-            definition.default_value = db_param.default_value
-            definition.function_definition = runtime_function_definition.function_definitions.first
-
-            db_param.parameter_definitions << definition
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Could not save runtime parameter definition',
+              error_code: :invalid_runtime_parameter_definition,
+              details: db_param.errors
+            )
           end
 
           db_parameters

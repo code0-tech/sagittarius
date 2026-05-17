@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
 class ParameterDefinition < ApplicationRecord
+  include HasTranslation
+
   belongs_to :runtime_parameter_definition
 
   belongs_to :function_definition, inverse_of: :parameter_definitions
 
   has_many :node_parameters, inverse_of: :parameter_definition
 
-  has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :documentations, -> { by_purpose(:documentation) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_translation :names, purpose: :name
+  has_translation :descriptions, purpose: :description
+  has_translation :documentations, purpose: :documentation
 
   validate :function_definition_matches_definition
 

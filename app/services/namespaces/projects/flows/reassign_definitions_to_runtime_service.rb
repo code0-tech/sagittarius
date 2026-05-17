@@ -36,11 +36,11 @@ module Namespaces
         end
 
         def reassign_node_function_definition(node_function)
-          runtime_function_definition = runtime.runtime_function_definitions.find_by(
-            runtime_name: node_function.function_definition.runtime_function_definition.runtime_name
+          function_definition = runtime.function_definitions.find_by(
+            identifier: node_function.function_definition.identifier
           )
 
-          node_function.function_definition = runtime_function_definition.function_definitions.first
+          node_function.function_definition = function_definition
         end
 
         def reassign_node_parameter_definitions(node_parameter, function_definition)
