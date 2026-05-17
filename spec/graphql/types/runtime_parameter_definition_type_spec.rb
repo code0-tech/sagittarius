@@ -8,6 +8,8 @@ RSpec.describe SagittariusSchema.types['RuntimeParameterDefinition'] do
       id
       identifier
       defaultValue
+      optional
+      hidden
       names
       descriptions
       documentations

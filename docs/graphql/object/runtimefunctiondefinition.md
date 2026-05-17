@@ -13,6 +13,7 @@ Represents a runtime function definition
 | `definitionSource` | [`String`](../scalar/string.md) | The source that defines this definition |
 | `deprecationMessages` | [`[Translation!]`](../object/translation.md) | Deprecation messages |
 | `descriptions` | [`[Translation!]`](../object/translation.md) | Descriptions of the runtime function definition |
+| `design` | [`String`](../scalar/string.md) | Design metadata of the runtime function definition |
 | `displayIcon` | [`String`](../scalar/string.md) | Display icon of the runtime function definition |
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display messages |
 | `documentations` | [`[Translation!]`](../object/translation.md) | Documentations of the runtime function definition |

@@ -15,6 +15,9 @@ module Types
           null: true,
           description: 'Default value of the runtime parameter definition'
 
+    field :hidden, Boolean, null: false, description: 'Indicates if the runtime parameter definition is hidden'
+    field :optional, Boolean, null: false, description: 'Indicates if the runtime parameter definition is optional'
+
     field :descriptions, [Types::TranslationType], null: true,
                                                    description: 'Descriptions of the runtime parameter definition'
     field :documentations, [Types::TranslationType], null: true,

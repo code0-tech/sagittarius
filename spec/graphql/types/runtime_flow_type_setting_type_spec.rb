@@ -8,6 +8,8 @@ RSpec.describe SagittariusSchema.types['RuntimeFlowTypeSetting'] do
       id
       identifier
       defaultValue
+      optional
+      hidden
       descriptions
       names
       removedAt

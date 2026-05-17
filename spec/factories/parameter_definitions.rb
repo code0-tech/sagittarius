@@ -3,6 +3,8 @@
 FactoryBot.define do
   factory :parameter_definition do
     runtime_parameter_definition
+    optional { false }
+    hidden { false }
 
     function_definition do
       association :function_definition,

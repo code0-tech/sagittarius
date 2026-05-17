@@ -10,8 +10,10 @@ module Types
     field :descriptions, [Types::TranslationType], null: false,
                                                    description: 'Descriptions of the flow type setting'
     field :flow_type, Types::FlowTypeType, null: true, description: 'Flow type of the flow type setting'
+    field :hidden, Boolean, null: false, description: 'Indicates if the flow type setting is hidden'
     field :identifier, String, null: false, description: 'Identifier of the flow type setting'
     field :names, [Types::TranslationType], null: false, description: 'Names of the flow type setting'
+    field :optional, Boolean, null: false, description: 'Indicates if the flow type setting is optional'
     field :removed_at, Types::TimeType, null: true, description: 'The timestamp when this setting was soft removed'
     field :unique, Boolean, null: false, description: 'Unique status of the flow type setting'
 

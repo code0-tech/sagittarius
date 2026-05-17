@@ -12,6 +12,7 @@ FactoryBot.define do
     version { '0.0.0' }
     definition_source { 'sagittarius' }
     display_icon { nil }
+    design { nil }
 
     after(:build) do |runtime_function_definition|
       if runtime_function_definition.runtime_module.present?

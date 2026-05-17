@@ -13,6 +13,9 @@ class ParameterDefinition < ApplicationRecord
   has_translation :descriptions, purpose: :description
   has_translation :documentations, purpose: :documentation
 
+  validates :optional, inclusion: { in: [true, false] }
+  validates :hidden, inclusion: { in: [true, false] }
+
   validate :function_definition_matches_definition
 
   def function_definition_matches_definition
@@ -27,6 +30,8 @@ class ParameterDefinition < ApplicationRecord
     Tucana::Shared::ParameterDefinition.new(
       runtime_name: runtime_parameter_definition.runtime_name,
       default_value: Tucana::Shared::Value.from_ruby(default_value),
+      optional: optional,
+      hidden: hidden,
       name: names.map(&:to_grpc),
       description: descriptions.map(&:to_grpc),
       documentation: documentations.map(&:to_grpc)

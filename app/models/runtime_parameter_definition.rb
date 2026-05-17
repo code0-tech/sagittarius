@@ -13,11 +13,15 @@ class RuntimeParameterDefinition < ApplicationRecord
 
   validates :runtime_name, length: { minimum: 3, maximum: 50 }, presence: true,
                            uniqueness: { case_sensitive: false, scope: :runtime_function_definition_id }
+  validates :optional, inclusion: { in: [true, false] }
+  validates :hidden, inclusion: { in: [true, false] }
 
   def to_grpc
     Tucana::Shared::RuntimeParameterDefinition.new(
       runtime_name: runtime_name,
       default_value: Tucana::Shared::Value.from_ruby(default_value),
+      optional: optional,
+      hidden: hidden,
       name: names.map(&:to_grpc),
       description: descriptions.map(&:to_grpc),
       documentation: documentations.map(&:to_grpc)

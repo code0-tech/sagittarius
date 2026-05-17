@@ -14,6 +14,7 @@ RSpec.describe SagittariusSchema.types['RuntimeFunctionDefinition'] do
       signature
       throwsError
       displayIcon
+      design
       version
       definitionSource
       names

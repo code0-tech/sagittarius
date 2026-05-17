@@ -45,6 +45,8 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
                   identifier: 'title',
                   unique: :PROJECT,
                   default_value: Tucana::Shared::Value.from_ruby('Untitled'),
+                  optional: true,
+                  hidden: true,
                 }
               ],
               editable: false,
@@ -62,6 +64,8 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
                   identifier: 'title',
                   unique: :PROJECT,
                   default_value: Tucana::Shared::Value.from_ruby('Untitled'),
+                  optional: true,
+                  hidden: true,
                 }
               ],
               signature: '(input: TEXT): TEXT_LIST',
@@ -81,11 +85,14 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
                 {
                   runtime_name: 'text',
                   name: [{ code: 'en_US', content: 'Text' }],
+                  optional: true,
+                  hidden: true,
                 }
               ],
               version: '1.2.3',
               definition_source: 'taurus',
               display_icon: 'split-icon',
+              design: 'runtime-design',
             }
           ],
           function_definitions: [
@@ -97,9 +104,12 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
                   runtime_name: 'text',
                   default_value: Tucana::Shared::Value.from_ruby('hello'),
                   name: [{ code: 'en_US', content: 'Visible Text' }],
+                  optional: true,
+                  hidden: true,
                 }
               ],
               name: [{ code: 'en_US', content: 'Split text' }],
+              design: 'function-design',
             }
           ],
           configurations: [
@@ -141,22 +151,28 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
       runtime_flow_type = RuntimeFlowType.find_by!(runtime: runtime, identifier: 'RUNTIME_FORM')
       expect(runtime_flow_type.runtime_module).to eq(runtime_module)
       expect(runtime_flow_type.runtime_flow_type_settings.first.identifier).to eq('title')
+      expect(runtime_flow_type.runtime_flow_type_settings.first).to have_attributes(optional: true, hidden: true)
       expect(runtime_flow_type.referenced_data_types).to contain_exactly(text, text_list)
 
       flow_type = FlowType.find_by!(runtime: runtime, identifier: 'FORM')
       expect(flow_type.runtime_module).to eq(runtime_module)
       expect(flow_type.runtime_flow_type).to eq(runtime_flow_type)
+      expect(flow_type.flow_type_settings.first).to have_attributes(optional: true, hidden: true)
       expect(flow_type.referenced_data_types).to contain_exactly(text, text_list)
 
       runtime_function = RuntimeFunctionDefinition.find_by!(runtime: runtime, runtime_name: 'std::text::split')
       expect(runtime_function.runtime_module).to eq(runtime_module)
+      expect(runtime_function.design).to eq('runtime-design')
       expect(runtime_function.referenced_data_types).to contain_exactly(text, text_list)
       expect(runtime_function.parameters.first.runtime_name).to eq('text')
+      expect(runtime_function.parameters.first).to have_attributes(optional: true, hidden: true)
 
       function_definition = runtime_module.function_definitions.find_by!(identifier: 'std::text::split_visible')
       expect(function_definition.runtime_function_definition).to eq(runtime_function)
+      expect(function_definition.design).to eq('function-design')
       expect(function_definition.names.first.content).to eq('Split text')
       expect(function_definition.parameter_definitions.first.default_value).to eq('hello')
+      expect(function_definition.parameter_definitions.first).to have_attributes(optional: true, hidden: true)
       expect(function_definition.parameter_definitions.first.names.first.content).to eq('Visible Text')
 
       configuration = runtime_module.module_configuration_definitions.find_by!(identifier: 'api_key')

@@ -13,6 +13,8 @@ RSpec.describe RuntimeParameterDefinition do
     }
 
     it { is_expected.to validate_length_of(:runtime_name).is_at_most(50) }
+    it { is_expected.to allow_values(true, false).for(:optional) }
+    it { is_expected.to allow_values(true, false).for(:hidden) }
   end
 
   describe 'associations' do
@@ -36,6 +38,8 @@ RSpec.describe RuntimeParameterDefinition do
       expect(grpc_object.to_h).to eq(
         runtime_name: parameter.runtime_name,
         default_value: Tucana::Shared::Value.from_ruby(parameter.default_value).to_h,
+        optional: parameter.optional,
+        hidden: parameter.hidden,
         name: [name.to_grpc.to_h],
         description: [description.to_grpc.to_h],
         documentation: [documentation.to_grpc.to_h]

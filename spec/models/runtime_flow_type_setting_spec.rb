@@ -13,6 +13,8 @@ RSpec.describe RuntimeFlowTypeSetting do
     it { is_expected.to validate_presence_of(:identifier) }
     it { is_expected.to validate_uniqueness_of(:identifier).scoped_to(:runtime_flow_type_id) }
     it { is_expected.to validate_presence_of(:unique) }
+    it { is_expected.to allow_values(true, false).for(:optional) }
+    it { is_expected.to allow_values(true, false).for(:hidden) }
 
     it 'allows known uniqueness scopes' do
       expect(runtime_flow_type_setting).to allow_values(:none, :project).for(:unique)

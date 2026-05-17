@@ -8,5 +8,7 @@ FactoryBot.define do
     identifier { generate(:runtime_flow_type_setting_identifier) }
     unique { :none }
     default_value { '' }
+    optional { false }
+    hidden { false }
   end
 end
