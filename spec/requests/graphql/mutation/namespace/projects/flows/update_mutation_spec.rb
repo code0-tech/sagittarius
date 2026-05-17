@@ -108,8 +108,10 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
             id: 'gid://sagittarius/NodeFunction/1000',
             functionDefinitionId: function_definition.to_global_id.to_s,
             parameters: [
-              value: {
-                nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+              {
+                value: {
+                  nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+                },
               }
             ],
             nextNodeId: 'gid://sagittarius/NodeFunction/1001',

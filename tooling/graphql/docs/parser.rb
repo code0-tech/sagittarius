@@ -4,7 +4,8 @@ module Tooling
   module Graphql
     module Docs
       class Parser # rubocop:disable GraphQL/ObjectDescription -- this is not a graphql object
-        ViolatedAssumption = Class.new(StandardError)
+        class ViolatedAssumption < StandardError # rubocop:disable GraphQL/ObjectDescription -- this is an exception, not a GraphQL object
+        end
         SLUGIFY_PRETTY_REGEXP = Regexp.new("[^[:alnum:]._~!$&'()+,;=@]+").freeze
         GQL_CONTEXT = { visibility_profile: :docs }.freeze
 

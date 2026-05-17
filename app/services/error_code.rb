@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class ErrorCode
-  InvalidErrorCode = Class.new(StandardError)
+  class InvalidErrorCode < StandardError
+  end
 
   def self.validate_error_code!(error_code)
     return unless error_code.is_a?(Symbol)

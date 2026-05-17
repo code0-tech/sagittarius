@@ -17,7 +17,7 @@ module Namespaces
           return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
         end
 
-        if !namespace_role.namespace.has_owner? &&
+        if !namespace_role.namespace.owner? &&
            !namespace_role.namespace.roles.where.not(id: namespace_role.id)
                           .joins(:abilities)
                           .joins(:member_roles)

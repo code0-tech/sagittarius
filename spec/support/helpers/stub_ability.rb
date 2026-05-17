@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module StubAbility
-  InvalidAbility = Class.new(StandardError)
+  class InvalidAbility < StandardError
+  end
 
   def stub_allowed_ability(policy_class, ability, user: nil, subject: nil)
     raise InvalidAbility, "Ability #{ability} does not exist" unless NamespaceRoleAbility::ABILITIES.key?(ability)

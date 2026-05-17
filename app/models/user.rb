@@ -2,6 +2,7 @@
 
 class User < ApplicationRecord
   include NamespaceParent
+
   has_secure_password
 
   validates :username, length: { maximum: 50 },
@@ -46,9 +47,9 @@ class User < ApplicationRecord
     case mfa_type
     when :backup_code
       backup_code = BackupCode.where(user: self, token: mfa_value)
-      mfa_passed = backup_code.count.positive?
+      mfa_passed = backup_code.any?
       backup_code.delete_all
-      mfa_passed = false unless backup_code.count.zero?
+      mfa_passed = false unless backup_code.none?
     when :totp
       totp = ROTP::TOTP.new(totp_secret)
       mfa_passed = totp.verify(mfa_value)

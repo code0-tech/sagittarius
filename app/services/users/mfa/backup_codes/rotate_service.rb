@@ -21,7 +21,7 @@ module Users
           transactional do |t|
             old_codes = BackupCode.where(user: current_user)
             old_codes.delete_all
-            unless old_codes.count.zero?
+            unless old_codes.none?
               t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete old backup codes',
                                                            error_code: :failed_to_invalidate_old_backup_codes)
             end
