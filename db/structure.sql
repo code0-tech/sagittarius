@@ -392,7 +392,8 @@ CREATE TABLE good_jobs (
     error_event smallint,
     labels text[],
     locked_by_id uuid,
-    locked_at timestamp with time zone
+    locked_at timestamp with time zone,
+    lock_type integer
 );
 
 CREATE TABLE licenses (
@@ -1162,6 +1163,8 @@ CREATE INDEX index_good_job_jobs_for_candidate_lookup ON good_jobs USING btree (
 
 CREATE UNIQUE INDEX index_good_job_settings_on_key ON good_job_settings USING btree (key);
 
+CREATE INDEX index_good_jobs_for_candidate_dequeue_unlocked ON good_jobs USING btree (priority, scheduled_at, id) WHERE ((finished_at IS NULL) AND (locked_by_id IS NULL));
+
 CREATE INDEX index_good_jobs_jobs_on_finished_at_only ON good_jobs USING btree (finished_at) WHERE (finished_at IS NOT NULL);
 
 CREATE INDEX index_good_jobs_jobs_on_priority_created_at_when_unfinished ON good_jobs USING btree (priority DESC NULLS LAST, created_at) WHERE (finished_at IS NULL);
@@ -1176,9 +1179,13 @@ CREATE INDEX index_good_jobs_on_concurrency_key_and_created_at ON good_jobs USIN
 
 CREATE INDEX index_good_jobs_on_concurrency_key_when_unfinished ON good_jobs USING btree (concurrency_key) WHERE (finished_at IS NULL);
 
+CREATE INDEX index_good_jobs_on_created_at ON good_jobs USING btree (created_at);
+
 CREATE INDEX index_good_jobs_on_cron_key_and_created_at_cond ON good_jobs USING btree (cron_key, created_at) WHERE (cron_key IS NOT NULL);
 
 CREATE UNIQUE INDEX index_good_jobs_on_cron_key_and_cron_at_cond ON good_jobs USING btree (cron_key, cron_at) WHERE (cron_key IS NOT NULL);
+
+CREATE INDEX index_good_jobs_on_discarded ON good_jobs USING btree (finished_at DESC) WHERE ((finished_at IS NOT NULL) AND (error IS NOT NULL));
 
 CREATE INDEX index_good_jobs_on_job_class ON good_jobs USING btree (job_class);
 
@@ -1186,11 +1193,21 @@ CREATE INDEX index_good_jobs_on_labels ON good_jobs USING gin (labels) WHERE (la
 
 CREATE INDEX index_good_jobs_on_locked_by_id ON good_jobs USING btree (locked_by_id) WHERE (locked_by_id IS NOT NULL);
 
+CREATE INDEX index_good_jobs_on_priority_scheduled_at_unfinished ON good_jobs USING btree (priority, scheduled_at, id) WHERE (finished_at IS NULL);
+
 CREATE INDEX index_good_jobs_on_priority_scheduled_at_unfinished_unlocked ON good_jobs USING btree (priority, scheduled_at) WHERE ((finished_at IS NULL) AND (locked_by_id IS NULL));
+
+CREATE INDEX index_good_jobs_on_queue_name ON good_jobs USING btree (queue_name);
 
 CREATE INDEX index_good_jobs_on_queue_name_and_scheduled_at ON good_jobs USING btree (queue_name, scheduled_at) WHERE (finished_at IS NULL);
 
+CREATE INDEX index_good_jobs_on_queue_name_priority_scheduled_at_unfinished ON good_jobs USING btree (queue_name, scheduled_at, id) WHERE (finished_at IS NULL);
+
 CREATE INDEX index_good_jobs_on_scheduled_at ON good_jobs USING btree (scheduled_at) WHERE (finished_at IS NULL);
+
+CREATE INDEX index_good_jobs_on_scheduled_at_and_queue_name ON good_jobs USING btree (scheduled_at, queue_name);
+
+CREATE INDEX index_good_jobs_on_unfinished_or_errored ON good_jobs USING btree (id) WHERE ((finished_at IS NULL) OR (error IS NOT NULL));
 
 CREATE INDEX index_licenses_on_namespace_id ON licenses USING btree (namespace_id);
 
