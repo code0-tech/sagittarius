@@ -4,8 +4,11 @@ module Sagittarius
   module Override
     extend ActiveSupport::Concern
 
-    InvalidMethodError = Class.new(StandardError)
-    MissingOverrideError = Class.new(StandardError)
+    class InvalidMethodError < StandardError
+    end
+
+    class MissingOverrideError < StandardError
+    end
 
     class_methods do
       def override(method)
@@ -23,7 +26,7 @@ module Sagittarius
 
     def self.verify_existence!(clazz)
       Override.extensions[clazz].each do |method|
-        unless clazz.instance_methods.include?(method)
+        unless clazz.method_defined?(method)
           raise_error! InvalidMethodError, "Method #{method} is not defined on #{clazz}"
         end
       end
@@ -33,7 +36,7 @@ module Sagittarius
       core_class = find_core_class(clazz)
 
       Override.extensions[clazz].each do |method|
-        unless core_class.instance_methods(false).include?(method)
+        unless core_class.method_defined?(method, false)
           raise_error! MissingOverrideError, "Method #{method} is not defined on core class #{core_class}"
         end
       end
@@ -63,7 +66,7 @@ module Sagittarius
 
           next if !overrides.nil? && overrides.include?(method)
 
-          if ext.instance_methods(false).include?(method)
+          if ext.method_defined?(method, false)
             raise_error! MissingOverrideError, "Method #{method} is not marked as override in #{ext}"
           end
         end

@@ -121,13 +121,15 @@ RSpec.describe Flow do
           ],
           starting_node_id: starting_node.id,
           settings: [
-            database_id: flow.flow_settings.first.id,
-            flow_setting_id: flow.flow_settings.first.flow_setting_id,
-            value: {
-              struct_value: {
-                fields: {
-                  'url' => {
-                    string_value: flow.flow_settings.first.object['url'],
+            {
+              database_id: flow.flow_settings.first.id,
+              flow_setting_id: flow.flow_settings.first.flow_setting_id,
+              value: {
+                struct_value: {
+                  fields: {
+                    'url' => {
+                      string_value: flow.flow_settings.first.object['url'],
+                    },
                   },
                 },
               },

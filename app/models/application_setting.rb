@@ -4,8 +4,11 @@ class ApplicationSetting < ApplicationRecord
   include Code0::ZeroTrack::Loggable
 
   # Custom class used for policy association
-  ApplicationSettings = Class.new(ActiveSupport::HashWithIndifferentAccess)
-  MissingApplicationSettings = Class.new(StandardError)
+  class ApplicationSettings < ActiveSupport::HashWithIndifferentAccess
+  end
+
+  class MissingApplicationSettings < StandardError
+  end
 
   SETTINGS = {
     user_registration_enabled: 1,

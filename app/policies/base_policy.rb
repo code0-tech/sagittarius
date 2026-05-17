@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class BasePolicy < DeclarativePolicy::Base
-  InvalidUserError = Class.new(StandardError)
+  class InvalidUserError < StandardError
+  end
 
   def initialize(user, subject, opts = {})
     super
