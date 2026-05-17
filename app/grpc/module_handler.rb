@@ -12,7 +12,6 @@ class ModuleHandler < Tucana::Sagittarius::ModuleService::Service
     logger.debug("ModuleHandler#update response: #{response.inspect}")
     unless response.success?
       logger.error(message: 'Failed to update modules',
-                   runtime_id: current_runtime.id,
                    error: response.message,
                    details: response.payload)
 

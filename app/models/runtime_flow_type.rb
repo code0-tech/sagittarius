@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class RuntimeFlowType < ApplicationRecord
+  include HasTranslation
+
   belongs_to :runtime, inverse_of: :runtime_flow_types
   belongs_to :runtime_module, inverse_of: :runtime_flow_types
 
@@ -10,12 +12,11 @@ class RuntimeFlowType < ApplicationRecord
   has_many :runtime_flow_type_data_type_links, inverse_of: :runtime_flow_type
   has_many :referenced_data_types, through: :runtime_flow_type_data_type_links, source: :referenced_data_type
 
-  has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :documentations, -> { by_purpose(:documentation) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :display_messages, -> { by_purpose(:display_message) },
-           class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :aliases, -> { by_purpose(:alias) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_translation :names, purpose: :name
+  has_translation :descriptions, purpose: :description
+  has_translation :documentations, purpose: :documentation
+  has_translation :display_messages, purpose: :display_message
+  has_translation :aliases, purpose: :alias
 
   validates :identifier, presence: true, uniqueness: { scope: :runtime_id }
   validates :editable, inclusion: { in: [true, false] }

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class RuntimeModule < ApplicationRecord
+  include HasTranslation
+
   belongs_to :runtime, inverse_of: :runtime_modules
 
   has_many :data_types, inverse_of: :runtime_module
@@ -10,13 +12,13 @@ class RuntimeModule < ApplicationRecord
   has_many :function_definitions, inverse_of: :runtime_module
   has_many :module_configuration_definitions, inverse_of: :runtime_module
 
-  has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_translation :names, purpose: :name
+  has_translation :descriptions, purpose: :description
 
   validates :identifier, presence: true,
                          length: { maximum: 50 },
                          uniqueness: { case_sensitive: false, scope: :runtime_id }
-  validates :documentation, length: { maximum: 2000 }, exclusion: { in: [nil] }
+  validates :documentation, length: { maximum: 200 }, exclusion: { in: [nil] }
   validates :author, length: { maximum: 200 }, exclusion: { in: [nil] }
   validates :icon, length: { maximum: 100 }
 

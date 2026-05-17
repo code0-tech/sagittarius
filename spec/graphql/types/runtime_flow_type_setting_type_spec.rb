@@ -20,5 +20,6 @@ RSpec.describe SagittariusSchema.types['RuntimeFlowTypeSetting'] do
 
   it { expect(described_class.graphql_name).to eq('RuntimeFlowTypeSetting') }
   it { expect(described_class).to have_graphql_fields(fields) }
+  it { expect(described_class.fields['unique'].type.to_type_signature).to eq('String!') }
   it { expect(described_class).to require_graphql_authorizations(:read_runtime_flow_type_setting) }
 end

@@ -17,7 +17,7 @@ module Runtimes
                                      error_code: :missing_primary_runtime)
       end
 
-      { DataType => :identifier, FlowType => :identifier,
+      { DataType => :identifier, RuntimeFlowType => :identifier, FlowType => :identifier,
         RuntimeFunctionDefinition => :runtime_name }.each do |model, identifier_field|
         res = check_versions(model, identifier_field)
         return res if res.error?

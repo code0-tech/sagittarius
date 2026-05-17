@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ModuleConfigurationDefinition < ApplicationRecord
+  include HasTranslation
+
   self.inheritance_column = :_type_disabled
 
   belongs_to :runtime_module, inverse_of: :module_configuration_definitions
@@ -10,8 +12,8 @@ class ModuleConfigurationDefinition < ApplicationRecord
            through: :module_configuration_definition_data_type_links,
            source: :referenced_data_type
 
-  has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_translation :names, purpose: :name
+  has_translation :descriptions, purpose: :description
 
   validates :identifier, presence: true, length: { maximum: 50 }, uniqueness: { scope: :runtime_module_id }
   validates :type, presence: true, length: { maximum: 2000 }

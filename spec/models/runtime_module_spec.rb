@@ -21,7 +21,7 @@ RSpec.describe RuntimeModule do
     it { is_expected.to validate_presence_of(:identifier) }
     it { is_expected.to validate_uniqueness_of(:identifier).case_insensitive.scoped_to(:runtime_id) }
     it { is_expected.to validate_length_of(:identifier).is_at_most(50) }
-    it { is_expected.to validate_length_of(:documentation).is_at_most(2000) }
+    it { is_expected.to validate_length_of(:documentation).is_at_most(200) }
     it { is_expected.to validate_length_of(:author).is_at_most(200) }
     it { is_expected.to validate_length_of(:icon).is_at_most(100) }
 

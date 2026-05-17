@@ -23,11 +23,14 @@ module Runtimes
         end
 
         def execute
+          sorted_data_types_response = sort_data_types_by_dependencies
+          return sorted_data_types_response unless sorted_data_types_response.success?
+
           transactional do |t|
             mark_existing_data_types_as_removed
             data_type_links_to_update = []
 
-            data_types.each do |data_type|
+            sorted_data_types_response.payload.each do |data_type|
               db_data_type = update_datatype(data_type)
               if db_data_type.persisted?
                 data_type_links_to_update << [db_data_type, data_type.linked_data_type_identifiers]
@@ -56,6 +59,66 @@ module Runtimes
         end
 
         protected
+
+        def sort_data_types_by_dependencies
+          data_types_by_identifier = data_types.index_by(&:identifier)
+          sorted_data_types = []
+          visited_identifiers = {}
+          visiting_identifiers = {}
+
+          data_types.each do |data_type|
+            response = visit_data_type_dependency(
+              data_type,
+              data_types_by_identifier,
+              sorted_data_types,
+              visited_identifiers,
+              visiting_identifiers,
+              []
+            )
+            return response if response
+          end
+
+          ServiceResponse.success(payload: sorted_data_types)
+        end
+
+        def visit_data_type_dependency(data_type, data_types_by_identifier, sorted_data_types, visited_identifiers,
+                                       visiting_identifiers, dependency_stack)
+          identifier = data_type.identifier
+          return if visited_identifiers[identifier]
+
+          if visiting_identifiers[identifier]
+            cycle = (dependency_stack[dependency_stack.index(identifier)..] + [identifier]).join(' -> ')
+            return ServiceResponse.error(
+              message: "Cyclic data type reference detected: #{cycle}",
+              error_code: :cyclic_data_type_reference
+            )
+          end
+
+          visiting_identifiers[identifier] = true
+          dependency_stack << identifier
+
+          data_type.linked_data_type_identifiers.each do |linked_identifier|
+            linked_data_type = data_types_by_identifier[linked_identifier]
+            next if linked_data_type.nil?
+
+            response = visit_data_type_dependency(
+              linked_data_type,
+              data_types_by_identifier,
+              sorted_data_types,
+              visited_identifiers,
+              visiting_identifiers,
+              dependency_stack
+            )
+            return response if response
+          end
+
+          dependency_stack.pop
+          visiting_identifiers.delete(identifier)
+          visited_identifiers[identifier] = true
+          sorted_data_types << data_type
+
+          nil
+        end
 
         def mark_existing_data_types_as_removed
           runtime_modules = runtime_modules_to_update || data_types.filter_map do |data_type|

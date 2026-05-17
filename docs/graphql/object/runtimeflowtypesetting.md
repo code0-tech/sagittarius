@@ -16,5 +16,5 @@ Represents a runtime flow type setting
 | `names` | [`[Translation!]!`](../object/translation.md) | Names of the runtime flow type setting |
 | `removedAt` | [`Time`](../scalar/time.md) | The timestamp when this setting was soft removed |
 | `runtimeFlowType` | [`RuntimeFlowType!`](../object/runtimeflowtype.md) | Runtime flow type of this setting |
-| `unique` | [`Boolean!`](../scalar/boolean.md) | Unique status of the runtime flow type setting |
+| `unique` | [`String!`](../scalar/string.md) | Unique scope of the runtime flow type setting |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeFlowTypeSetting was last updated |

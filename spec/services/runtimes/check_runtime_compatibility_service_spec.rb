@@ -47,12 +47,17 @@ RSpec.describe Runtimes::CheckRuntimeCompatibilityService do
     before do
       create(:data_type, runtime: primary_runtime, identifier: 'dt1', version: '1.3.0')
       create(:data_type, runtime: runtime, identifier: 'dt1', version: '1.3.0')
+      primary_runtime_flow_type = create(:runtime_flow_type, runtime: primary_runtime, identifier: 'rft1',
+                                                             version: '2.1.0')
+      runtime_flow_type = create(:runtime_flow_type, runtime: runtime, identifier: 'rft1', version: '2.2.0')
       create(:flow_type,
              runtime: primary_runtime,
+             runtime_flow_type: primary_runtime_flow_type,
              identifier: 'ft1',
              version: '2.1.0')
       create(:flow_type,
              runtime: runtime,
+             runtime_flow_type: runtime_flow_type,
              identifier: 'ft1',
              version: '2.2.0')
       create(:runtime_function_definition, runtime_name: 'rfd1', runtime: primary_runtime, version: '3.0.0')

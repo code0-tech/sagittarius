@@ -20,6 +20,12 @@ RSpec.describe 'runtime modules Query' do
   let(:runtime_flow_type) do
     create(:runtime_flow_type, runtime_module: runtime_module, identifier: 'runtime-flow')
   end
+  let(:runtime_flow_type_setting) do
+    create(:runtime_flow_type_setting,
+           runtime_flow_type: runtime_flow_type,
+           identifier: 'scope',
+           unique: :project)
+  end
   let(:flow_type) do
     create(:flow_type, runtime_module: runtime_module, runtime_flow_type: runtime_flow_type, identifier: 'flow')
   end
@@ -70,6 +76,7 @@ RSpec.describe 'runtime modules Query' do
                       runtimeModule { id }
                       flowTypes { nodes { id identifier runtimeFlowType { id } runtimeModule { id } } }
                       linkedDataTypes { nodes { id } }
+                      runtimeFlowTypeSettings { id identifier unique }
                     }
                   }
                   runtimeFunctionDefinitions {
@@ -111,6 +118,7 @@ RSpec.describe 'runtime modules Query' do
 
   before do
     create(:runtime_flow_type_data_type_link, runtime_flow_type: runtime_flow_type, referenced_data_type: data_type)
+    runtime_flow_type_setting
     create(:module_configuration_definition_data_type_link,
            module_configuration_definition: module_configuration_definition,
            referenced_data_type: data_type)
@@ -148,6 +156,13 @@ RSpec.describe 'runtime modules Query' do
         'linkedDataTypes' => {
           'nodes' => contain_exactly(a_hash_including('id' => data_type.to_global_id.to_s)),
         },
+        'runtimeFlowTypeSettings' => contain_exactly(
+          a_hash_including(
+            'id' => runtime_flow_type_setting.to_global_id.to_s,
+            'identifier' => 'scope',
+            'unique' => 'project'
+          )
+        ),
         'flowTypes' => {
           'nodes' => contain_exactly(
             a_hash_including(

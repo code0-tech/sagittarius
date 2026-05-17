@@ -207,18 +207,12 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
         ]
       end
 
-      it 'creates all data types before linking them' do
-        expect(stub.update(message, authorization(runtime)).success).to be(true)
+      it 'rejects cyclic data type references' do
+        response = stub.update(message, authorization(runtime))
 
-        module_a = RuntimeModule.find_by!(runtime: runtime, identifier: 'module-a')
-        module_b = RuntimeModule.find_by!(runtime: runtime, identifier: 'module-b')
-        a_type = DataType.find_by!(runtime: runtime, identifier: 'A_TYPE')
-        b_type = DataType.find_by!(runtime: runtime, identifier: 'B_TYPE')
-
-        expect(a_type.runtime_module).to eq(module_a)
-        expect(b_type.runtime_module).to eq(module_b)
-        expect(a_type.referenced_data_types).to contain_exactly(b_type)
-        expect(b_type.referenced_data_types).to contain_exactly(a_type)
+        expect(response.success).to be(false)
+        expect(response.error.message).to eq('Cyclic data type reference detected: A_TYPE -> B_TYPE -> A_TYPE')
+        expect(DataType.where(runtime: runtime, identifier: %w[A_TYPE B_TYPE])).to be_empty
       end
     end
 
