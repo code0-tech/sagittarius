@@ -27,7 +27,9 @@ module CustomizablePermission
     end
 
     def namespace_member(user, subject)
-      @namespace_member ||= namespace(subject).namespace_members.find_by(user: user)
+      return @namespace_member if defined?(@namespace_member)
+
+      @namespace_member = namespace(subject).namespace_members.find_by(user: user)
     end
 
     def user_has_ability?(ability, user, subject)
