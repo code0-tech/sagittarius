@@ -2,7 +2,9 @@
 
 class AddRuntimeToFunctionDefinitions < Code0::ZeroTrack::Database::Migration[1.0]
   def change
-    add_reference :function_definitions, :runtime, foreign_key: { on_delete: :cascade }, index: false
+    # rubocop:disable Rails/NotNullColumn -- backwards compatibility intentionally ignored
+    add_reference :function_definitions, :runtime, null: false, foreign_key: { on_delete: :cascade }, index: false
+    # rubocop:enable Rails/NotNullColumn
 
     remove_index :function_definitions,
                  column: %i[runtime_module_id identifier],

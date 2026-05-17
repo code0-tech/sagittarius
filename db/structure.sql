@@ -310,10 +310,10 @@ CREATE TABLE function_definitions (
     runtime_function_definition_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    runtime_module_id bigint,
-    identifier text,
+    runtime_module_id bigint NOT NULL,
+    identifier text NOT NULL,
     removed_at timestamp with time zone,
-    runtime_id bigint,
+    runtime_id bigint NOT NULL,
     CONSTRAINT check_0641c95c39 CHECK ((char_length(identifier) <= 50))
 );
 
