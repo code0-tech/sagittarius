@@ -53,7 +53,7 @@ module Runtimes
             module_record.documentation = grpc_module.documentation
             module_record.author = grpc_module.author
             module_record.icon = grpc_module.icon
-            module_record.version = grpc_module.version.presence || '0.0.0'
+            module_record.version = grpc_module.version
             module_record.names = update_translations(grpc_module.name, module_record.names)
             module_record.descriptions = update_translations(grpc_module.description, module_record.descriptions)
 
