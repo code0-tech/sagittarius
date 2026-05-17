@@ -41,7 +41,7 @@ module Runtimes
                                        error_code: :missing_definition)
         end
 
-        result = compare_version(curr_type.parsed_version, to_check.parsed_version)
+        result = compatible_version?(curr_type.parsed_version, to_check.parsed_version)
 
         unless result
           return ServiceResponse.error(message: "#{model} is outdated",
@@ -53,7 +53,7 @@ module Runtimes
 
     # true: compatible
     # false: not compatible
-    def compare_version(primary_version, to_check_version)
+    def compatible_version?(primary_version, to_check_version)
       return false if primary_version.segments[0] != to_check_version.segments[0]
       return false if primary_version.segments[1] > to_check_version.segments[1]
 
