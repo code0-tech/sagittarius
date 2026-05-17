@@ -7,7 +7,7 @@ module Tooling
         CONNECTION_ARGS = %w[after before first last].to_set
 
         def files
-          rendering_objects.flat_map { |type, objects| objects.map { |object| render(type, object) } }
+          rendering_objects.flat_map { |type, objects| Array(objects).map { |object| render(type, object) } }
         end
 
         def rendering_objects
