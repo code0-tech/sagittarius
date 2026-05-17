@@ -22,6 +22,9 @@ Represents a flow type
 | `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this flow type |
 | `names` | [`[Translation!]`](../object/translation.md) | Names of the flow type |
 | `runtime` | [`Runtime!`](../object/runtime.md) | Runtime of the flow type |
+| `runtimeFlowType` | [`RuntimeFlowType!`](../object/runtimeflowtype.md) | Runtime flow type backing this flow type |
+| `runtimeIdentifier` | [`String!`](../scalar/string.md) | Identifier of the runtime flow type backing this flow type |
+| `runtimeModule` | [`RuntimeModule!`](../object/runtimemodule.md) | Runtime module of the flow type |
 | `signature` | [`String!`](../scalar/string.md) | Signature of the flow type |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this FlowType was last updated |
 | `version` | [`String!`](../scalar/string.md) | Version of the flow type |

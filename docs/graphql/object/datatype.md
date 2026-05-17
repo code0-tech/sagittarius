@@ -19,6 +19,7 @@ Represents a DataType
 | `name` | [`[Translation!]!`](../object/translation.md) | Names of the flow type setting |
 | `rules` | [`DataTypeRuleConnection!`](../object/datatyperuleconnection.md) | Rules of the datatype |
 | `runtime` | [`Runtime`](../object/runtime.md) | The runtime where this datatype belongs to |
+| `runtimeModule` | [`RuntimeModule!`](../object/runtimemodule.md) | The runtime module where this datatype belongs to |
 | `type` | [`String!`](../scalar/string.md) | The type of the datatype |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this DataType was last updated |
 | `version` | [`String!`](../scalar/string.md) | The version of the datatype |

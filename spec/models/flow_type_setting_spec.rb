@@ -16,6 +16,8 @@ RSpec.describe FlowTypeSetting do
     it { is_expected.to validate_uniqueness_of(:identifier).scoped_to(:flow_type_id) }
     it { is_expected.to allow_values(:none, :project, 'none', 'project').for(:unique) }
     it { is_expected.not_to allow_value(:unknown, 'unknown', 0).for(:unique) }
+    it { is_expected.to allow_values(true, false).for(:optional) }
+    it { is_expected.to allow_values(true, false).for(:hidden) }
   end
 
   describe 'scopes' do

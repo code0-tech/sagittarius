@@ -8,7 +8,10 @@ module Types
 
     field :runtime, Types::RuntimeType,
           null: false, description: 'The runtime this runtime function definition belongs to'
+    field :runtime_module, Types::RuntimeModuleType,
+          null: false, description: 'The runtime module this runtime function definition belongs to'
 
+    # rubocop:disable GraphQL/ExtractType
     field :function_definitions, Types::FunctionDefinitionType.connection_type,
           null: true,
           description: 'Function definitions of the runtime function definition'
@@ -16,6 +19,7 @@ module Types
     field :runtime_parameter_definitions, Types::RuntimeParameterDefinitionType.connection_type,
           null: true,
           description: 'Parameter definitions of the runtime function definition'
+    # rubocop:enable GraphQL/ExtractType
 
     field :identifier, String,
           null: false,
@@ -33,6 +37,10 @@ module Types
     field :display_icon, String,
           null: true,
           description: 'Display icon of the runtime function definition'
+
+    field :design, String,
+          null: true,
+          description: 'Design metadata of the runtime function definition'
 
     field :version, String,
           null: false,

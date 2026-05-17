@@ -18,6 +18,9 @@ RSpec.describe SagittariusSchema.types['FlowType'] do
       descriptions
       documentations
       runtime
+      runtimeIdentifier
+      runtimeFlowType
+      runtimeModule
       linked_data_types
       id
       created_at

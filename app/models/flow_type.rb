@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 class FlowType < ApplicationRecord
+  include HasTranslation
+
   belongs_to :runtime, inverse_of: :flow_types
+  belongs_to :runtime_module, inverse_of: :flow_types
+  belongs_to :runtime_flow_type, inverse_of: :flow_types
 
   has_many :flow_type_settings, inverse_of: :flow_type, autosave: true
 
@@ -14,13 +18,12 @@ class FlowType < ApplicationRecord
   validates :definition_source, length: { maximum: 50 }
   validates :display_icon, length: { maximum: 100 }
 
-  has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :documentations, -> { by_purpose(:documentation) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_translation :names, purpose: :name
+  has_translation :descriptions, purpose: :description
+  has_translation :documentations, purpose: :documentation
 
-  has_many :display_messages, -> { by_purpose(:display_message) },
-           class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :aliases, -> { by_purpose(:alias) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_translation :display_messages, purpose: :display_message
+  has_translation :aliases, purpose: :alias
 
   validate :validate_version
 
@@ -34,5 +37,9 @@ class FlowType < ApplicationRecord
 
   def parsed_version
     Gem::Version.new(version)
+  end
+
+  def runtime_identifier
+    runtime_flow_type&.identifier
   end
 end

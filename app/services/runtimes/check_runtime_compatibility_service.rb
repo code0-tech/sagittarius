@@ -17,8 +17,14 @@ module Runtimes
                                      error_code: :missing_primary_runtime)
       end
 
-      { DataType => :identifier, FlowType => :identifier,
-        RuntimeFunctionDefinition => :runtime_name }.each do |model, identifier_field|
+      {
+        DataType => :identifier,
+        RuntimeFlowType => :identifier,
+        FlowType => :identifier,
+        RuntimeFunctionDefinition => :runtime_name,
+        FunctionDefinition => :identifier,
+        RuntimeModule => :identifier,
+      }.each do |model, identifier_field|
         res = check_versions(model, identifier_field)
         return res if res.error?
       end
@@ -30,21 +36,22 @@ module Runtimes
       primary_types = model.where(runtime: namespace_project.primary_runtime)
 
       if to_check_types.size < primary_types.size
-        return ServiceResponse.error(message: "#{model} amount dont match",
-                                     error_code: :missing_definition)
+        return ServiceResponse.error(message: "#{model} amount dont match", error_code: :missing_definition)
       end
 
       primary_types.each do |curr_type|
         to_check = model.find_by(runtime: runtime, identifier_field => curr_type.send(identifier_field))
         if to_check.nil?
-          return ServiceResponse.error(message: "#{model} is not present in new runtime",
-                                       error_code: :missing_definition)
+          return ServiceResponse.error(
+            message: "#{model}(#{curr_type.send(identifier_field)}) is not present in new runtime",
+            error_code: :missing_definition
+          )
         end
 
         result = compatible_version?(curr_type.parsed_version, to_check.parsed_version)
 
         unless result
-          return ServiceResponse.error(message: "#{model} is outdated",
+          return ServiceResponse.error(message: "#{model}(#{curr_type.send(identifier_field)}) is outdated",
                                        error_code: :outdated_definition)
         end
       end

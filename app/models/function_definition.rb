@@ -1,25 +1,30 @@
 # frozen_string_literal: true
 
 class FunctionDefinition < ApplicationRecord
+  include HasTranslation
+
+  belongs_to :runtime, inverse_of: :function_definitions
+  belongs_to :runtime_module, inverse_of: :function_definitions
   belongs_to :runtime_function_definition
 
   has_many :node_functions, inverse_of: :function_definition
   has_many :parameter_definitions, inverse_of: :function_definition
 
-  has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :documentations, -> { by_purpose(:documentation) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :deprecation_messages, -> { by_purpose(:deprecation_message) },
-           class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :display_messages, -> { by_purpose(:display_message) },
-           class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :aliases, -> { by_purpose(:alias) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_translation :names, purpose: :name
+  has_translation :descriptions, purpose: :description
+  has_translation :documentations, purpose: :documentation
+  has_translation :deprecation_messages, purpose: :deprecation_message
+  has_translation :display_messages, purpose: :display_message
+  has_translation :aliases, purpose: :alias
 
   scope :by_node_function, ->(node_functions) { where(node_functions: node_functions) }
 
+  validates :identifier, presence: true, uniqueness: { case_sensitive: false, scope: :runtime_id }
+  validates :design, length: { maximum: 200 }
+
   def to_grpc
     Tucana::Shared::FunctionDefinition.new(
-      runtime_name: runtime_function_definition.runtime_name,
+      runtime_name: identifier,
       parameter_definitions: parameter_definitions.map(&:to_grpc),
       signature: runtime_function_definition.signature,
       throws_error: runtime_function_definition.throws_error,
@@ -33,7 +38,8 @@ class FunctionDefinition < ApplicationRecord
       version: runtime_function_definition.version,
       display_icon: runtime_function_definition.display_icon,
       definition_source: runtime_function_definition.definition_source,
-      runtime_definition_name: runtime_function_definition.runtime_name
+      runtime_definition_name: runtime_function_definition.runtime_name,
+      design: design
     )
   end
 end

@@ -13,6 +13,7 @@ Represents a runtime function definition
 | `definitionSource` | [`String`](../scalar/string.md) | The source that defines this definition |
 | `deprecationMessages` | [`[Translation!]`](../object/translation.md) | Deprecation messages |
 | `descriptions` | [`[Translation!]`](../object/translation.md) | Descriptions of the runtime function definition |
+| `design` | [`String`](../scalar/string.md) | Design metadata of the runtime function definition |
 | `displayIcon` | [`String`](../scalar/string.md) | Display icon of the runtime function definition |
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display messages |
 | `documentations` | [`[Translation!]`](../object/translation.md) | Documentations of the runtime function definition |
@@ -22,6 +23,7 @@ Represents a runtime function definition
 | `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this runtime function definition |
 | `names` | [`[Translation!]`](../object/translation.md) | Names of the runtime function definition |
 | `runtime` | [`Runtime!`](../object/runtime.md) | The runtime this runtime function definition belongs to |
+| `runtimeModule` | [`RuntimeModule!`](../object/runtimemodule.md) | The runtime module this runtime function definition belongs to |
 | `runtimeParameterDefinitions` | [`RuntimeParameterDefinitionConnection`](../object/runtimeparameterdefinitionconnection.md) | Parameter definitions of the runtime function definition |
 | `signature` | [`String!`](../scalar/string.md) | Signature of the runtime function definition |
 | `throwsError` | [`Boolean!`](../scalar/boolean.md) | Indicates if the function can throw an error |
