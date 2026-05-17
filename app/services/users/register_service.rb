@@ -25,6 +25,8 @@ module Users
           return ServiceResponse.error(message: 'User is invalid', error_code: :invalid_user, details: user.errors)
         end
 
+        validate_user_limit!(t)
+
         user_session = UserSession.create(user: user)
         unless user_session.persisted?
           t.rollback_and_return! ServiceResponse.error(message: 'UserSession is invalid',
@@ -55,5 +57,13 @@ module Users
         ServiceResponse.success(payload: user_session)
       end
     end
+
+    protected
+
+    def validate_user_limit!(*)
+      # overridden in EE
+    end
   end
 end
+
+Users::RegisterService.prepend_extensions

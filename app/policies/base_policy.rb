@@ -24,3 +24,5 @@ class BasePolicy < DeclarativePolicy::Base
   condition(:anonymous) { authentication.nil? || authentication.type == :none }
   condition(:admin) { user&.admin? }
 end
+
+BasePolicy.prepend_extensions

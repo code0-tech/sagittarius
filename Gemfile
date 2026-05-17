@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 ruby '3.4.7'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem 'rails', '~> 8.0.0'
+gem 'rails', '~> 8.1.0'
 
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1'
@@ -79,11 +79,11 @@ gem 'good_job', '~> 4.0'
 gem 'rotp'
 
 gem 'grpc', '~> 1.67'
-gem 'tucana', '0.0.67'
+gem 'tucana', '0.0.68'
 
 gem 'code0-identities', '~> 0.0.3'
 
-gem 'pry', '~> 0.15.0'
+gem 'pry', '~> 0.16.0'
 gem 'pry-byebug', '~> 3.10'
 
 gem 'code0-zero_track', '0.0.7'
@@ -92,4 +92,6 @@ gem 'image_processing', '>= 1.2'
 
 gem 'json-schema', '~> 6.0'
 
-gem 'triangulum', '0.13.2'
+gem 'triangulum', '0.14.3'
+
+gem 'benchmark'

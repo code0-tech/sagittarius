@@ -2,14 +2,14 @@ version: '3.9'
 
 services:
   postgres:
-    image: postgres:16.1
+    image: postgres:18.3
     environment:
       POSTGRES_USER: "sagittarius"
       POSTGRES_PASSWORD: "sagittarius"
       POSTGRES_DB: "postgres"
     restart: unless-stopped
     volumes:
-      - database:/var/lib/postgresql/data/
+      - database:/var/lib/postgresql/
       - ./tooling/init-dev-db:/docker-entrypoint-initdb.d
     ports:
       - "5433:5432"

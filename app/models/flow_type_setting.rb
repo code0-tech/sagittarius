@@ -20,4 +20,7 @@ class FlowTypeSetting < ApplicationRecord
 
   has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
   has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+
+  scope :active, -> { where(removed_at: nil) }
+  scope :removed, -> { where.not(removed_at: nil) }
 end

@@ -44,7 +44,7 @@ module Namespaces
       protected
 
       def validate_user_limit!(*)
-        # overridden in EE
+        # overridden in CLOUD
       end
     end
   end

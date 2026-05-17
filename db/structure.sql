@@ -240,7 +240,8 @@ CREATE TABLE flow_type_settings (
     default_value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    "unique" integer DEFAULT 0 NOT NULL
+    "unique" integer DEFAULT 0 NOT NULL,
+    removed_at timestamp with time zone
 );
 
 CREATE SEQUENCE flow_type_settings_id_seq
@@ -394,29 +395,29 @@ CREATE TABLE good_jobs (
     locked_at timestamp with time zone
 );
 
-CREATE TABLE namespace_licenses (
-    id bigint NOT NULL,
-    data text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    namespace_id bigint NOT NULL
+CREATE TABLE licenses (
+    id bigint CONSTRAINT organization_licenses_id_not_null NOT NULL,
+    data text CONSTRAINT organization_licenses_data_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_licenses_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_licenses_updated_at_not_null NOT NULL,
+    namespace_id bigint
 );
 
-CREATE SEQUENCE namespace_licenses_id_seq
+CREATE SEQUENCE licenses_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE namespace_licenses_id_seq OWNED BY namespace_licenses.id;
+ALTER SEQUENCE licenses_id_seq OWNED BY licenses.id;
 
 CREATE TABLE namespace_member_roles (
-    id bigint NOT NULL,
-    role_id bigint NOT NULL,
-    member_id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    id bigint CONSTRAINT organization_member_roles_id_not_null NOT NULL,
+    role_id bigint CONSTRAINT organization_member_roles_role_id_not_null NOT NULL,
+    member_id bigint CONSTRAINT organization_member_roles_member_id_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_member_roles_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_member_roles_updated_at_not_null NOT NULL
 );
 
 CREATE SEQUENCE namespace_member_roles_id_seq
@@ -429,10 +430,10 @@ CREATE SEQUENCE namespace_member_roles_id_seq
 ALTER SEQUENCE namespace_member_roles_id_seq OWNED BY namespace_member_roles.id;
 
 CREATE TABLE namespace_members (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id bigint CONSTRAINT organization_members_id_not_null NOT NULL,
+    user_id bigint CONSTRAINT organization_members_user_id_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_members_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_members_updated_at_not_null NOT NULL,
     namespace_id bigint NOT NULL
 );
 
@@ -448,7 +449,7 @@ ALTER SEQUENCE namespace_members_id_seq OWNED BY namespace_members.id;
 CREATE TABLE namespace_project_runtime_assignments (
     id bigint NOT NULL,
     runtime_id bigint NOT NULL,
-    namespace_project_id bigint NOT NULL,
+    namespace_project_id bigint CONSTRAINT namespace_project_runtime_assignm_namespace_project_id_not_null NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     compatible boolean DEFAULT false NOT NULL
@@ -464,11 +465,11 @@ CREATE SEQUENCE namespace_project_runtime_assignments_id_seq
 ALTER SEQUENCE namespace_project_runtime_assignments_id_seq OWNED BY namespace_project_runtime_assignments.id;
 
 CREATE TABLE namespace_projects (
-    id bigint NOT NULL,
-    name text NOT NULL,
-    description text DEFAULT ''::text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id bigint CONSTRAINT organization_projects_id_not_null NOT NULL,
+    name text CONSTRAINT organization_projects_name_not_null NOT NULL,
+    description text DEFAULT ''::text CONSTRAINT organization_projects_description_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_projects_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_projects_updated_at_not_null NOT NULL,
     namespace_id bigint NOT NULL,
     primary_runtime_id bigint,
     slug text NOT NULL,
@@ -487,10 +488,10 @@ CREATE SEQUENCE namespace_projects_id_seq
 ALTER SEQUENCE namespace_projects_id_seq OWNED BY namespace_projects.id;
 
 CREATE TABLE namespace_role_abilities (
-    id bigint NOT NULL,
-    ability integer NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id bigint CONSTRAINT organization_role_abilities_id_not_null NOT NULL,
+    ability integer CONSTRAINT organization_role_abilities_ability_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_role_abilities_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_role_abilities_updated_at_not_null NOT NULL,
     namespace_role_id bigint NOT NULL
 );
 
@@ -521,10 +522,10 @@ CREATE SEQUENCE namespace_role_project_assignments_id_seq
 ALTER SEQUENCE namespace_role_project_assignments_id_seq OWNED BY namespace_role_project_assignments.id;
 
 CREATE TABLE namespace_roles (
-    id bigint NOT NULL,
-    name text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id bigint CONSTRAINT organization_roles_id_not_null NOT NULL,
+    name text CONSTRAINT organization_roles_name_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT organization_roles_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT organization_roles_updated_at_not_null NOT NULL,
     namespace_id bigint NOT NULL
 );
 
@@ -665,26 +666,10 @@ CREATE SEQUENCE reference_values_id_seq
 
 ALTER SEQUENCE reference_values_id_seq OWNED BY reference_values.id;
 
-CREATE TABLE runtime_features (
-    id bigint NOT NULL,
-    runtime_status_id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE runtime_features_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE runtime_features_id_seq OWNED BY runtime_features.id;
-
 CREATE TABLE runtime_function_definition_data_type_links (
     id bigint NOT NULL,
-    runtime_function_definition_id bigint NOT NULL,
-    referenced_data_type_id bigint NOT NULL,
+    runtime_function_definition_id bigint CONSTRAINT runtime_function_definition_runtime_function_definitio_not_null NOT NULL,
+    referenced_data_type_id bigint CONSTRAINT runtime_function_definition_da_referenced_data_type_id_not_null NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
@@ -727,7 +712,7 @@ ALTER SEQUENCE runtime_function_definitions_id_seq OWNED BY runtime_function_def
 
 CREATE TABLE runtime_parameter_definitions (
     id bigint NOT NULL,
-    runtime_function_definition_id bigint NOT NULL,
+    runtime_function_definition_id bigint CONSTRAINT runtime_parameter_definitio_runtime_function_definitio_not_null NOT NULL,
     runtime_name text NOT NULL,
     removed_at timestamp with time zone,
     created_at timestamp with time zone NOT NULL,
@@ -876,6 +861,8 @@ CREATE TABLE users (
     admin boolean DEFAULT false NOT NULL,
     totp_secret text,
     email_verified_at timestamp with time zone,
+    readme text,
+    CONSTRAINT check_11461c37fb CHECK ((char_length(readme) <= 5000)),
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),
     CONSTRAINT check_60346c5299 CHECK ((char_length(lastname) <= 50)),
@@ -923,7 +910,7 @@ ALTER TABLE ONLY flows ALTER COLUMN id SET DEFAULT nextval('flows_id_seq'::regcl
 
 ALTER TABLE ONLY function_definitions ALTER COLUMN id SET DEFAULT nextval('function_definitions_id_seq'::regclass);
 
-ALTER TABLE ONLY namespace_licenses ALTER COLUMN id SET DEFAULT nextval('namespace_licenses_id_seq'::regclass);
+ALTER TABLE ONLY licenses ALTER COLUMN id SET DEFAULT nextval('licenses_id_seq'::regclass);
 
 ALTER TABLE ONLY namespace_member_roles ALTER COLUMN id SET DEFAULT nextval('namespace_member_roles_id_seq'::regclass);
 
@@ -952,8 +939,6 @@ ALTER TABLE ONLY parameter_definitions ALTER COLUMN id SET DEFAULT nextval('para
 ALTER TABLE ONLY reference_paths ALTER COLUMN id SET DEFAULT nextval('reference_paths_id_seq'::regclass);
 
 ALTER TABLE ONLY reference_values ALTER COLUMN id SET DEFAULT nextval('reference_values_id_seq'::regclass);
-
-ALTER TABLE ONLY runtime_features ALTER COLUMN id SET DEFAULT nextval('runtime_features_id_seq'::regclass);
 
 ALTER TABLE ONLY runtime_function_definition_data_type_links ALTER COLUMN id SET DEFAULT nextval('runtime_function_definition_data_type_links_id_seq'::regclass);
 
@@ -1041,8 +1026,8 @@ ALTER TABLE ONLY good_job_settings
 ALTER TABLE ONLY good_jobs
     ADD CONSTRAINT good_jobs_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY namespace_licenses
-    ADD CONSTRAINT namespace_licenses_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY licenses
+    ADD CONSTRAINT licenses_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY namespace_member_roles
     ADD CONSTRAINT namespace_member_roles_pkey PRIMARY KEY (id);
@@ -1085,9 +1070,6 @@ ALTER TABLE ONLY reference_paths
 
 ALTER TABLE ONLY reference_values
     ADD CONSTRAINT reference_values_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY runtime_features
-    ADD CONSTRAINT runtime_features_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY runtime_function_definition_data_type_links
     ADD CONSTRAINT runtime_function_definition_data_type_links_pkey PRIMARY KEY (id);
@@ -1212,7 +1194,7 @@ CREATE INDEX index_good_jobs_on_queue_name_and_scheduled_at ON good_jobs USING b
 
 CREATE INDEX index_good_jobs_on_scheduled_at ON good_jobs USING btree (scheduled_at) WHERE (finished_at IS NULL);
 
-CREATE INDEX index_namespace_licenses_on_namespace_id ON namespace_licenses USING btree (namespace_id);
+CREATE INDEX index_licenses_on_namespace_id ON licenses USING btree (namespace_id);
 
 CREATE INDEX index_namespace_member_roles_on_member_id ON namespace_member_roles USING btree (member_id);
 
@@ -1257,8 +1239,6 @@ CREATE INDEX index_reference_paths_on_reference_value_id ON reference_paths USIN
 CREATE INDEX index_reference_values_on_node_function_id ON reference_values USING btree (node_function_id);
 
 CREATE INDEX index_reference_values_on_node_parameter_id ON reference_values USING btree (node_parameter_id);
-
-CREATE INDEX index_runtime_features_on_runtime_status_id ON runtime_features USING btree (runtime_status_id);
 
 CREATE INDEX index_runtime_status_configurations_on_runtime_status_id ON runtime_status_configurations USING btree (runtime_status_id);
 
@@ -1307,11 +1287,8 @@ ALTER TABLE ONLY node_parameters
 ALTER TABLE ONLY flow_type_data_type_links
     ADD CONSTRAINT fk_rails_38698de52d FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
-ALTER TABLE ONLY namespace_licenses
+ALTER TABLE ONLY licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY runtime_features
-    ADD CONSTRAINT fk_rails_39d4643cc0 FOREIGN KEY (runtime_status_id) REFERENCES runtime_statuses(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_statuses
     ADD CONSTRAINT fk_rails_3af887feb9 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;

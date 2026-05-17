@@ -50,6 +50,8 @@ module Users
           user.ensure_namespace
           return ServiceResponse.error(error_code: :invalid_user, details: user.errors) unless user.persisted?
 
+          validate_user_limit!(t)
+
           user_identity = UserIdentity.create(user: user, provider_id: provider_id, identifier: identifier)
           unless user_identity.persisted?
             t.rollback_and_return! ServiceResponse.error(error_code: :invalid_user_identity,
@@ -75,6 +77,14 @@ module Users
           ServiceResponse.success(payload: user_session)
         end
       end
+
+      protected
+
+      def validate_user_limit!(*)
+        # overridden in EE
+      end
     end
   end
 end
+
+Users::Identity::RegisterService.prepend_extensions

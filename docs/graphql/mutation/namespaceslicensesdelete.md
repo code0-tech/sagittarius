@@ -2,14 +2,14 @@
 title: namespacesLicensesDelete
 ---
 
-(EE only) Deletes an namespace license.
+(Cloud only) Deletes an namespace license.
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `namespaceLicenseId` | [`NamespaceLicenseID!`](../scalar/namespacelicenseid.md) | The license id to delete. |
+| `licenseId` | [`LicenseID!`](../scalar/licenseid.md) | The license id to delete. |
 
 ## Fields
 
@@ -17,4 +17,4 @@ title: namespacesLicensesDelete
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |
-| `namespaceLicense` | [`NamespaceLicense`](../object/namespacelicense.md) | The deleted namespace license. |
+| `license` | [`License`](../object/license.md) | The deleted license. |

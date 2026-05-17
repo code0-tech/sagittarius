@@ -32,8 +32,8 @@ Represents the available error responses
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_FLOW_TYPE` | The flow type is invalid because of active model errors |
 | `INVALID_FUNCTION_ID` | The function ID is invalid |
+| `INVALID_LICENSE` | The license is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
-| `INVALID_NAMESPACE_LICENSE` | The namespace license is invalid because of active model errors |
 | `INVALID_NAMESPACE_MEMBER` | The namespace member is invalid because of active model errors |
 | `INVALID_NAMESPACE_PROJECT` | The namespace project is invalid because of active model errors |
 | `INVALID_NAMESPACE_ROLE` | The namespace role is invalid because of active model errors |
@@ -44,7 +44,6 @@ Represents the available error responses
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_REFERENCE_VALUE` | The reference value is invalid |
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |
-| `INVALID_RUNTIME_FEATURE` | The runtime feature is invalid because of active model errors |
 | `INVALID_RUNTIME_FUNCTION_DEFINITION` | The runtime function definition is invalid |
 | `INVALID_RUNTIME_PARAMETER_DEFINITION` | The runtime parameter definition is invalid |
 | `INVALID_RUNTIME_STATUS` | The runtime status is invalid because of active model errors |
@@ -56,7 +55,7 @@ Represents the available error responses
 | `INVALID_USER_SESSION` | The user session is invalid because of active model errors |
 | `INVALID_VERIFICATION_CODE` | Invalid verification code provided |
 | `IS_PRIMARY_RUNTIME` | This runtime is the primary runtime of a project |
-| `LICENSE_NOT_FOUND` | The namespace license with the given identifier was not found |
+| `LICENSE_NOT_FOUND` | The license with the given identifier was not found |
 | `LOADING_IDENTITY_FAILED` | Failed to load user identity from external provider |
 | `MFA_FAILED` | Invalid MFA data provided |
 | `MFA_REQUIRED` | MFA is required |
@@ -87,6 +86,7 @@ Represents the available error responses
 | `TERTIARY_LEVEL_EXCEEDS_PARAMETERS` | **Deprecated:** Outdated concept |
 | `TOTP_SECRET_ALREADY_SET` | This user already has TOTP set up |
 | `UNMODIFIABLE_FIELD` | The user is not permitted to modify this field |
+| `UNSUPPORTED_AUTHENTICATION` | The current authentication is not supported for this operation |
 | `USER_NOT_FOUND` | The user with the given identifier was not found |
 | `USER_SESSION_NOT_FOUND` | The user session with the given identifier was not found |
 | `WRONG_TOTP` | Invalid TOTP code provided |
