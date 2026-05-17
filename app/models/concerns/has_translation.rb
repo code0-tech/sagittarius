@@ -3,7 +3,7 @@
 module HasTranslation
   extend ActiveSupport::Concern
 
-  class_methods do # -- this is like has_many from rails rather than a boolean predicate
+  class_methods do
     # rubocop:disable Naming/PredicatePrefix -- this is an association macro, not a predicate
     def has_translation(relation, purpose: nil)
       has_many relation, -> { by_purpose(purpose) },
