@@ -4,7 +4,7 @@ class AddModuleIdentityToFunctionDefinitions < Code0::ZeroTrack::Database::Migra
   def change
     add_reference :function_definitions, :runtime_module, foreign_key: { on_delete: :cascade }, index: false
     add_column :function_definitions, :identifier, :text, limit: 50
-    add_column :function_definitions, :removed_at, :timestamptz
+    add_column :function_definitions, :removed_at, :datetime_with_timezone
 
     add_index :function_definitions,
               %i[runtime_module_id identifier],
