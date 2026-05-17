@@ -44,10 +44,8 @@ class CreateRuntimeFlowTypes < Code0::ZeroTrack::Database::Migration[1.0]
     end
 
     # rubocop:disable Rails/NotNullColumn -- backwards compatibility intentionally ignored
-    add_reference :flow_types, :runtime_flow_type, null: false, foreign_key: { on_delete: :cascade }, index: false
+    add_reference :flow_types, :runtime_flow_type, null: false, foreign_key: { on_delete: :cascade }
     # rubocop:enable Rails/NotNullColumn
-
-    add_index :flow_types, :runtime_flow_type_id
   end
 
   def down
