@@ -5,22 +5,23 @@ class NodeParameter < ApplicationRecord
   belongs_to :node_function, class_name: 'NodeFunction', inverse_of: :node_parameters
 
   has_one :reference_value, autosave: true
-  has_one :function_value, class_name: 'NodeFunction', inverse_of: :value_of_node_parameter
+  has_one :sub_flow, autosave: true, dependent: :destroy
 
   validate :only_one_value_present
 
   def to_grpc
     param = Tucana::Shared::NodeParameter.new(
       database_id: id,
-      runtime_parameter_id: parameter_definition.runtime_parameter_definition.runtime_name
+      runtime_parameter_id: parameter_definition.runtime_parameter_definition.runtime_name,
+      cast: cast
     )
 
     param.value = Tucana::Shared::NodeValue.new(literal_value: Tucana::Shared::Value.from_ruby({}))
 
     if reference_value.present?
       param.value.reference_value = reference_value.to_grpc
-    elsif function_value.present?
-      param.value.node_function_id = function_value.id
+    elsif sub_flow.present?
+      param.value.sub_flow = sub_flow.to_grpc
     else
       param.value.literal_value = Tucana::Shared::Value.from_ruby(literal_value)
     end
@@ -31,9 +32,9 @@ class NodeParameter < ApplicationRecord
   private
 
   def only_one_value_present
-    values = [!literal_value.nil?, reference_value.present?, function_value.present?]
+    values = [!literal_value.nil?, reference_value.present?, sub_flow.present?]
     return if values.count(true) <= 1
 
-    errors.add(:value, 'Only one of literal_value, reference_value, or function_value must be present')
+    errors.add(:value, 'Only one of literal_value, reference_value, or sub_flow must be present')
   end
 end

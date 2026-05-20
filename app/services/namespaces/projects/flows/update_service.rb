@@ -60,6 +60,7 @@ module Namespaces
             db_settings[index] ||= flow.flow_settings.build
             db_settings[index].flow_setting_id = flow_type_settings[index]&.identifier
             db_settings[index].object = setting.value
+            db_settings[index].cast = optional_input(setting, :cast)
 
             next if db_settings[index].save
 
@@ -85,6 +86,14 @@ module Namespaces
             current_node = all_nodes[node_index] || NodeFunction.new(flow: flow)
 
             update_node(t, current_node, node_input)
+            unless current_node.save
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Invalid node',
+                error_code: :invalid_node_function,
+                details: current_node.errors
+              )
+            end
+
             updated_nodes << { node: current_node, input: node_input }
 
             node_index += 1
@@ -181,22 +190,15 @@ module Namespaces
             end
 
             db_parameters[index].parameter_definition = parameter_definition
+            db_parameters[index].cast = optional_input(parameter, :cast)
 
             db_parameters[index].literal_value = parameter.value.literal_value
 
-            if parameter.value.node_function_id.present?
-              node = all_nodes.find { |n| n[:input].id == parameter.value.node_function_id }
-
-              if node.nil?
-                t.rollback_and_return! ServiceResponse.error(
-                  message: 'Invalid function value for parameter',
-                  error_code: :function_value_not_found
-                )
-              end
-
-              db_parameters[index].function_value = node[:node]
+            if optional_input(parameter.value, :sub_flow).present?
+              update_sub_flow(t, db_parameters[index], parameter.value.sub_flow, all_nodes)
             else
-              db_parameters[index].function_value = nil
+              db_parameters[index].sub_flow&.destroy
+              db_parameters[index].sub_flow = nil
             end
 
             if parameter.value.reference_value.present?
@@ -246,13 +248,6 @@ module Namespaces
             )
           end
 
-          removed_parameters = current_node.node_parameters - db_parameters
-          # rubocop:disable Rails/SkipsModelValidations -- must nullify FK before parameter destruction to prevent cascade
-          flow.node_functions
-              .where(value_of_node_parameter: removed_parameters)
-              .update_all(value_of_node_parameter_id: nil)
-          # rubocop:enable Rails/SkipsModelValidations
-
           current_node.node_parameters = db_parameters
         end
 
@@ -266,6 +261,51 @@ module Namespaces
               **flow.attributes.except('created_at', 'updated_at'),
             }
           )
+        end
+
+        def update_sub_flow(t, node_parameter, sub_flow_input, all_nodes)
+          starting_node_id = nil
+
+          if optional_input(sub_flow_input, :starting_node_id).present?
+            starting_node = all_nodes.find { |n| n[:input].id == sub_flow_input.starting_node_id }
+
+            if starting_node.nil?
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Sub-flow starting node not found',
+                error_code: :node_not_found
+              )
+            end
+
+            starting_node_id = starting_node[:node].id
+          end
+
+          sub_flow = node_parameter.sub_flow || node_parameter.build_sub_flow
+          sub_flow.assign_attributes(
+            starting_node_id: starting_node_id,
+            function_identifier: optional_input(sub_flow_input, :function_identifier),
+            signature: sub_flow_input.signature
+          )
+
+          sub_flow_settings_input = Array(optional_input(sub_flow_input, :settings))
+          sub_flow_settings = sub_flow.sub_flow_settings.first(sub_flow_settings_input.length)
+
+          sub_flow_settings_input.each_with_index do |setting, index|
+            sub_flow_settings[index] ||= sub_flow.sub_flow_settings.build
+            sub_flow_settings[index].assign_attributes(
+              identifier: setting.identifier,
+              default_value: optional_input(setting, :default_value),
+              optional: optional_input(setting, :optional),
+              hidden: optional_input(setting, :hidden)
+            )
+          end
+
+          (sub_flow.sub_flow_settings - sub_flow_settings).each(&:destroy)
+        end
+
+        def optional_input(input, attribute)
+          return unless input.respond_to?(attribute)
+
+          input.public_send(attribute)
         end
       end
     end

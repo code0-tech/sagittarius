@@ -88,7 +88,6 @@ class ErrorCode
       cyclic_data_type_reference: { description: 'A data type dependency cycle was detected' },
       invalid_data_type_link: { description: 'The data type link is invalid because of active model errors' },
       node_not_found: { description: 'The node with this id does not exist' },
-      function_value_not_found: { description: 'The id for the function value node does not exist' },
       invalid_node_parameter: { description: 'The node parameter is invalid' },
       invalid_node_function: { description: 'The node function is invalid' },
       invalid_runtime_status: { description: 'The runtime status is invalid because of active model errors' },

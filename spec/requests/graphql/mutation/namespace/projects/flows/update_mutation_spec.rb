@@ -29,6 +29,10 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                       ...on LiteralValue {
                         value
                       }
+                      ...on FlowSubFlow {
+                        signature
+                        startingNodeId
+                      }
                       ...on ReferenceValue {
                         createdAt
                         id
@@ -110,7 +114,10 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
             parameters: [
               {
                 value: {
-                  nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+                  subFlow: {
+                    startingNodeId: 'gid://sagittarius/NodeFunction/2000',
+                    signature: '(input: INPUT): OUTPUT',
+                  },
                 },
               }
             ],
@@ -215,6 +222,13 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       )
       expect(parameter_values).to include(
         a_hash_including(
+          '__typename' => 'FlowSubFlow',
+          'signature' => '(input: INPUT): OUTPUT',
+          'startingNodeId' => a_string_matching(%r{gid://sagittarius/NodeFunction/\d+})
+        )
+      )
+      expect(parameter_values).to include(
+        a_hash_including(
           '__typename' => 'ReferenceValue',
           'nodeFunctionId' => a_string_matching(%r{gid://sagittarius/NodeFunction/\d+}),
           'referencePath' => [a_hash_including('arrayIndex' => 0, 'path' => 'some.path')],
@@ -309,10 +323,8 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                            node_function: node1,
                            parameter_definition: function_definition.parameter_definitions.first,
                            literal_value: nil)
-        create(:node_function,
-               flow: f,
-               function_definition: function_definition,
-               value_of_node_parameter: parameter)
+        node2 = create(:node_function, flow: f, function_definition: function_definition)
+        create(:sub_flow, node_parameter: parameter, starting_node: node2, signature: '(input: INPUT): OUTPUT')
         f.starting_node = node1
         node1.save!
         f.save!
@@ -360,7 +372,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     end
   end
 
-  context 'when clearing function_value on a reused node' do
+  context 'when clearing sub_flow on a reused node' do
     before do
       stub_allowed_ability(NamespaceProjectPolicy, :update_flow, user: current_user, subject: project)
       stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: project)
@@ -373,10 +385,8 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                            node_function: node1,
                            parameter_definition: function_definition.parameter_definitions.first,
                            literal_value: nil)
-        create(:node_function,
-               flow: f,
-               function_definition: function_definition,
-               value_of_node_parameter: parameter)
+        node2 = create(:node_function, flow: f, function_definition: function_definition)
+        create(:sub_flow, node_parameter: parameter, starting_node: node2, signature: '(input: INPUT): OUTPUT')
         f.starting_node = node1
         node1.save!
         f.save!

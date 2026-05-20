@@ -4,15 +4,15 @@ module Types
   class NodeParameterValueType < Types::BaseUnion
     description 'Represents a parameter value for a node.'
 
-    possible_types Types::LiteralValueType, Types::ReferenceValueType, Types::NodeFunctionIdWrapperType,
-                   description: 'The value can be a literal, a reference, or a node function id.'
+    possible_types Types::FlowSubFlowType, Types::LiteralValueType, Types::ReferenceValueType,
+                   description: 'The value can be a literal, a reference, or a sub-flow.'
 
     def self.resolve_type(object, _context)
       case object
       when ReferenceValue
         Types::ReferenceValueType
-      when NodeFunction
-        Types::NodeFunctionIdWrapperType
+      when SubFlow
+        Types::FlowSubFlowType
       else
         Types::LiteralValueType
       end
