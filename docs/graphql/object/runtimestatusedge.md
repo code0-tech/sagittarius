@@ -9,4 +9,4 @@ An edge in a connection.
 | Name | Type | Description |
 |------|------|-------------|
 | `cursor` | [`String!`](../scalar/string.md) | A cursor for use in pagination. |
-| `node` | [`RuntimeStatus`](../object/runtimestatus.md) | The item at the end of the edge. |
+| `node` | [`RuntimeStatus`](../union/runtimestatus.md) | The item at the end of the edge. |

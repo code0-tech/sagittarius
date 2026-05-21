@@ -5,6 +5,7 @@ module Types
     description 'The type of runtime status'
 
     value :ADAPTER, 'Indicates that the runtime status is related to an adapter.', value: 'adapter'
+    value :ACTION, 'Indicates that the runtime status is related to an action.', value: 'action'
     value :EXECUTION, 'Indicates that the runtime status is related to an execution.', value: 'execution'
   end
 end

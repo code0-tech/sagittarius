@@ -1,30 +1,22 @@
 # frozen_string_literal: true
 
 module Types
-  class RuntimeStatusType < Types::BaseObject
+  class RuntimeStatusType < Types::BaseUnion
     description 'A runtime status information entry'
 
-    authorize :read_runtime
+    possible_types Types::ActionStatusType, Types::AdapterRuntimeStatusType, Types::ExecutionRuntimeStatusType
 
-    field :configurations, Types::RuntimeStatusConfigurationType.connection_type,
-          null: false,
-          description: 'The detailed configuration entries for this runtime status (only for adapters)',
-          method: :runtime_status_configurations
-    field :identifier, String,
-          null: false,
-          description: 'The unique identifier for this runtime status'
-    field :last_heartbeat, Types::TimeType,
-          null: true,
-          description: 'The timestamp of the last heartbeat received from the runtime'
-    field :status, Types::RuntimeStatusStatusEnum,
-          null: false,
-          description: 'The current status of the runtime (e.g. running, stopped)'
-    field :type, Types::RuntimeStatusTypeEnum,
-          null: false,
-          description: 'The type of runtime status information (e.g. adapter, execution)',
-          method: :status_type
-
-    id_field RuntimeStatus
-    timestamps
+    def self.resolve_type(object, _context)
+      case object
+      when ActionStatus
+        Types::ActionStatusType
+      when AdapterRuntimeStatus
+        Types::AdapterRuntimeStatusType
+      when ExecutionRuntimeStatus
+        Types::ExecutionRuntimeStatusType
+      else
+        raise "Unknown RuntimeStatus type: #{object.class.name}"
+      end
+    end
   end
 end

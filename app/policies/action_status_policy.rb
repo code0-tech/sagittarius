@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class RuntimeStatusPolicy < BasePolicy
+class ActionStatusPolicy < BasePolicy
   delegate { subject.runtime }
 end

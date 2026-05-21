@@ -3,20 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe SagittariusSchema.types['RuntimeStatus'] do
-  let(:fields) do
-    %w[
-      id
-      status
-      configurations
-      lastHeartbeat
-      type
-      identifier
-      createdAt
-      updatedAt
-    ]
-  end
-
   it { expect(described_class.graphql_name).to eq('RuntimeStatus') }
-  it { expect(described_class).to have_graphql_fields(fields) }
-  it { expect(described_class).to require_graphql_authorizations(:read_runtime) }
+
+  it 'includes all concrete runtime status objects' do
+    expect(described_class.possible_types).to include(
+      Types::ActionStatusType,
+      Types::AdapterRuntimeStatusType,
+      Types::ExecutionRuntimeStatusType
+    )
+  end
 end

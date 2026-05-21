@@ -7,7 +7,17 @@ class Runtime < ApplicationRecord
 
   token_attr :token, prefix: 's_rt_', length: 48
 
-  has_many :runtime_statuses, inverse_of: :runtime
+  has_many :adapter_runtime_statuses, inverse_of: :runtime
+  has_many :execution_runtime_statuses, inverse_of: :runtime
+  has_many :action_statuses, inverse_of: :runtime
+
+  def statuses
+    [
+      *adapter_runtime_statuses,
+      *execution_runtime_statuses,
+      *action_statuses
+    ].sort_by(&:created_at)
+  end
 
   has_many :project_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :runtime
   has_many :projects, class_name: 'NamespaceProject', through: :project_assignments, source: :namespace_project,

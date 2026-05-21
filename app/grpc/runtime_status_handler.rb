@@ -11,6 +11,8 @@ class RuntimeStatusHandler < Tucana::Sagittarius::RuntimeStatusService::Service
                     request.adapter_runtime_status
                   when :execution_runtime_status
                     request.execution_runtime_status
+                  when :action_status
+                    request.action_status
                   else
                     return Tucana::Sagittarius::RuntimeStatusUpdateResponse.new(success: false)
                   end
@@ -20,7 +22,7 @@ class RuntimeStatusHandler < Tucana::Sagittarius::RuntimeStatusService::Service
       status_info: status_info
     ).execute
 
-    logger.debug("RuntimeFunctionHandler#update response: #{response.inspect}")
+    logger.debug("RuntimeStatusHandler#update response: #{response.inspect}")
 
     Tucana::Sagittarius::RuntimeStatusUpdateResponse.new(success: response.success?)
   end

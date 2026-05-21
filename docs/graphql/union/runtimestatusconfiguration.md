@@ -6,4 +6,5 @@ Detailed configuration about a runtime status, either: endpoint, ...
 
 ## Possible types
 
-- [`RuntimeStatusConfigurationEndpoint`](../object/runtimestatusconfigurationendpoint.md)
+- [`ActionStatusConfigurationEndpoint`](../object/actionstatusconfigurationendpoint.md)
+- [`AdapterStatusConfigurationEndpoint`](../object/adapterstatusconfigurationendpoint.md)
