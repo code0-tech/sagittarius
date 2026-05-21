@@ -16,8 +16,7 @@ module Types
     field :status, Types::RuntimeConnectionStatusEnum, null: false, description: 'The status of the runtime'
 
     field :statuses, Types::RuntimeStatusType.connection_type, null: false,
-                                                               description: 'Statuses of the runtime',
-                                                               method: :statuses
+                                                               description: 'Statuses of the runtime'
     field :token, String, null: true, description: 'Token belonging to the runtime, only present on creation'
 
     expose_abilities %i[
