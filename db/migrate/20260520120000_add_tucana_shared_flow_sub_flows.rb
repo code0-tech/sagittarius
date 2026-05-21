@@ -7,11 +7,11 @@ class AddTucanaSharedFlowSubFlows < Code0::ZeroTrack::Database::Migration[1.0]
     add_column :node_parameters, :cast, :text
 
     create_table :sub_flows do |t|
-      t.references :node_parameter, null: false, foreign_key: { to_table: :node_parameters, on_delete: :cascade }
+      t.references :node_parameter, null: false, index: { unique: true },
+                                    foreign_key: { to_table: :node_parameters, on_delete: :cascade }
       t.references :starting_node, null: true, foreign_key: { to_table: :node_functions, on_delete: :restrict }
       t.text :function_identifier
       t.text :signature, null: false
-      t.index :node_parameter_id, unique: true
 
       t.check_constraint 'num_nonnulls(starting_node_id, function_identifier) = 1',
                          name: check_constraint_name(:sub_flows, :execution_reference, :one_of)
