@@ -56,6 +56,80 @@ CREATE SEQUENCE active_storage_variant_records_id_seq
 
 ALTER SEQUENCE active_storage_variant_records_id_seq OWNED BY active_storage_variant_records.id;
 
+CREATE TABLE action_status_configurations (
+    id bigint NOT NULL,
+    action_status_id bigint NOT NULL,
+    flow_type_identifiers text[] DEFAULT '{}'::text[] NOT NULL,
+    endpoint text,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE action_status_configurations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE action_status_configurations_id_seq OWNED BY action_status_configurations.id;
+
+CREATE TABLE action_statuses (
+    id bigint NOT NULL,
+    runtime_id bigint NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
+    last_heartbeat timestamp with time zone,
+    identifier text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE action_statuses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE action_statuses_id_seq OWNED BY action_statuses.id;
+
+CREATE TABLE adapter_runtime_statuses (
+    id bigint NOT NULL,
+    runtime_id bigint NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
+    last_heartbeat timestamp with time zone,
+    identifier text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE adapter_runtime_statuses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE adapter_runtime_statuses_id_seq OWNED BY adapter_runtime_statuses.id;
+
+CREATE TABLE adapter_status_configurations (
+    id bigint NOT NULL,
+    adapter_runtime_status_id bigint NOT NULL,
+    flow_type_identifiers text[] DEFAULT '{}'::text[] NOT NULL,
+    endpoint text,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE adapter_status_configurations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE adapter_status_configurations_id_seq OWNED BY adapter_status_configurations.id;
+
 CREATE TABLE application_settings (
     id bigint NOT NULL,
     setting integer NOT NULL,
@@ -181,6 +255,25 @@ CREATE SEQUENCE data_types_id_seq
     CACHE 1;
 
 ALTER SEQUENCE data_types_id_seq OWNED BY data_types.id;
+
+CREATE TABLE execution_runtime_statuses (
+    id bigint NOT NULL,
+    runtime_id bigint NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
+    last_heartbeat timestamp with time zone,
+    identifier text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE execution_runtime_statuses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE execution_runtime_statuses_id_seq OWNED BY execution_runtime_statuses.id;
 
 CREATE TABLE flow_data_type_links (
     id bigint NOT NULL,
@@ -882,43 +975,6 @@ CREATE SEQUENCE runtime_parameter_definitions_id_seq
 
 ALTER SEQUENCE runtime_parameter_definitions_id_seq OWNED BY runtime_parameter_definitions.id;
 
-CREATE TABLE runtime_status_configurations (
-    id bigint NOT NULL,
-    runtime_status_id bigint NOT NULL,
-    endpoint text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE runtime_status_configurations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE runtime_status_configurations_id_seq OWNED BY runtime_status_configurations.id;
-
-CREATE TABLE runtime_statuses (
-    id bigint NOT NULL,
-    runtime_id bigint NOT NULL,
-    status integer DEFAULT 0 NOT NULL,
-    status_type integer DEFAULT 0 NOT NULL,
-    last_heartbeat timestamp with time zone,
-    identifier text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE runtime_statuses_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE runtime_statuses_id_seq OWNED BY runtime_statuses.id;
-
 CREATE TABLE runtimes (
     id bigint NOT NULL,
     name text NOT NULL,
@@ -1036,6 +1092,14 @@ ALTER TABLE ONLY active_storage_blobs ALTER COLUMN id SET DEFAULT nextval('activ
 
 ALTER TABLE ONLY active_storage_variant_records ALTER COLUMN id SET DEFAULT nextval('active_storage_variant_records_id_seq'::regclass);
 
+ALTER TABLE ONLY action_status_configurations ALTER COLUMN id SET DEFAULT nextval('action_status_configurations_id_seq'::regclass);
+
+ALTER TABLE ONLY action_statuses ALTER COLUMN id SET DEFAULT nextval('action_statuses_id_seq'::regclass);
+
+ALTER TABLE ONLY adapter_runtime_statuses ALTER COLUMN id SET DEFAULT nextval('adapter_runtime_statuses_id_seq'::regclass);
+
+ALTER TABLE ONLY adapter_status_configurations ALTER COLUMN id SET DEFAULT nextval('adapter_status_configurations_id_seq'::regclass);
+
 ALTER TABLE ONLY application_settings ALTER COLUMN id SET DEFAULT nextval('application_settings_id_seq'::regclass);
 
 ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_id_seq'::regclass);
@@ -1047,6 +1111,8 @@ ALTER TABLE ONLY data_type_data_type_links ALTER COLUMN id SET DEFAULT nextval('
 ALTER TABLE ONLY data_type_rules ALTER COLUMN id SET DEFAULT nextval('data_type_rules_id_seq'::regclass);
 
 ALTER TABLE ONLY data_types ALTER COLUMN id SET DEFAULT nextval('data_types_id_seq'::regclass);
+
+ALTER TABLE ONLY execution_runtime_statuses ALTER COLUMN id SET DEFAULT nextval('execution_runtime_statuses_id_seq'::regclass);
 
 ALTER TABLE ONLY flow_data_type_links ALTER COLUMN id SET DEFAULT nextval('flow_data_type_links_id_seq'::regclass);
 
@@ -1110,10 +1176,6 @@ ALTER TABLE ONLY runtime_modules ALTER COLUMN id SET DEFAULT nextval('runtime_mo
 
 ALTER TABLE ONLY runtime_parameter_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_parameter_definitions_id_seq'::regclass);
 
-ALTER TABLE ONLY runtime_status_configurations ALTER COLUMN id SET DEFAULT nextval('runtime_status_configurations_id_seq'::regclass);
-
-ALTER TABLE ONLY runtime_statuses ALTER COLUMN id SET DEFAULT nextval('runtime_statuses_id_seq'::regclass);
-
 ALTER TABLE ONLY runtimes ALTER COLUMN id SET DEFAULT nextval('runtimes_id_seq'::regclass);
 
 ALTER TABLE ONLY translations ALTER COLUMN id SET DEFAULT nextval('translations_id_seq'::regclass);
@@ -1132,6 +1194,18 @@ ALTER TABLE ONLY active_storage_blobs
 
 ALTER TABLE ONLY active_storage_variant_records
     ADD CONSTRAINT active_storage_variant_records_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY action_status_configurations
+    ADD CONSTRAINT action_status_configurations_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY action_statuses
+    ADD CONSTRAINT action_statuses_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY adapter_runtime_statuses
+    ADD CONSTRAINT adapter_runtime_statuses_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY adapter_status_configurations
+    ADD CONSTRAINT adapter_status_configurations_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY application_settings
     ADD CONSTRAINT application_settings_pkey PRIMARY KEY (id);
@@ -1153,6 +1227,9 @@ ALTER TABLE ONLY data_type_rules
 
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT data_types_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY execution_runtime_statuses
+    ADD CONSTRAINT execution_runtime_statuses_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY flow_data_type_links
     ADD CONSTRAINT flow_data_type_links_pkey PRIMARY KEY (id);
@@ -1262,12 +1339,6 @@ ALTER TABLE ONLY runtime_modules
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT runtime_parameter_definitions_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY runtime_status_configurations
-    ADD CONSTRAINT runtime_status_configurations_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY runtime_statuses
-    ADD CONSTRAINT runtime_statuses_pkey PRIMARY KEY (id);
-
 ALTER TABLE ONLY runtimes
     ADD CONSTRAINT runtimes_pkey PRIMARY KEY (id);
 
@@ -1332,6 +1403,14 @@ CREATE UNIQUE INDEX index_active_storage_blobs_on_key ON active_storage_blobs US
 
 CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON active_storage_variant_records USING btree (blob_id, variation_digest);
 
+CREATE INDEX index_action_status_configurations_on_action_status_id ON action_status_configurations USING btree (action_status_id);
+
+CREATE UNIQUE INDEX index_action_statuses_on_runtime_id_and_identifier ON action_statuses USING btree (runtime_id, identifier);
+
+CREATE UNIQUE INDEX index_adapter_runtime_statuses_on_runtime_id_and_identifier ON adapter_runtime_statuses USING btree (runtime_id, identifier);
+
+CREATE INDEX index_adapter_status_configurations_on_adapter_runtime_status_id ON adapter_status_configurations USING btree (adapter_runtime_status_id);
+
 CREATE UNIQUE INDEX index_application_settings_on_setting ON application_settings USING btree (setting);
 
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
@@ -1341,6 +1420,8 @@ CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes 
 CREATE INDEX index_data_type_rules_on_data_type_id ON data_type_rules USING btree (data_type_id);
 
 CREATE UNIQUE INDEX index_data_types_on_runtime_id_and_identifier ON data_types USING btree (runtime_id, identifier);
+
+CREATE UNIQUE INDEX index_execution_runtime_statuses_on_runtime_id_and_identifier ON execution_runtime_statuses USING btree (runtime_id, identifier);
 
 CREATE INDEX index_flow_settings_on_flow_id ON flow_settings USING btree (flow_id);
 
@@ -1462,10 +1543,6 @@ CREATE INDEX index_reference_values_on_node_parameter_id ON reference_values USI
 
 CREATE UNIQUE INDEX index_runtime_flow_types_on_runtime_id_and_identifier ON runtime_flow_types USING btree (runtime_id, identifier);
 
-CREATE INDEX index_runtime_status_configurations_on_runtime_status_id ON runtime_status_configurations USING btree (runtime_status_id);
-
-CREATE INDEX index_runtime_statuses_on_runtime_id ON runtime_statuses USING btree (runtime_id);
-
 CREATE INDEX index_runtimes_on_namespace_id ON runtimes USING btree (namespace_id);
 
 CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
@@ -1487,6 +1564,21 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(ema
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
 
 CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
+
+ALTER TABLE ONLY action_status_configurations
+    ADD CONSTRAINT fk_action_status_configurations_action_status FOREIGN KEY (action_status_id) REFERENCES action_statuses(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY action_statuses
+    ADD CONSTRAINT fk_action_statuses_runtime FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY adapter_runtime_statuses
+    ADD CONSTRAINT fk_adapter_runtime_statuses_runtime FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY adapter_status_configurations
+    ADD CONSTRAINT fk_adapter_status_configurations_adapter_runtime_status FOREIGN KEY (adapter_runtime_status_id) REFERENCES adapter_runtime_statuses(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY execution_runtime_statuses
+    ADD CONSTRAINT fk_execution_runtime_statuses_runtime FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_0d79310cfa FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
@@ -1523,9 +1615,6 @@ ALTER TABLE ONLY runtime_flow_type_data_type_links
 
 ALTER TABLE ONLY licenses
     ADD CONSTRAINT fk_rails_38f693332d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY runtime_statuses
-    ADD CONSTRAINT fk_rails_3af887feb9 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT fk_rails_3b02763f84 FOREIGN KEY (runtime_parameter_definition_id) REFERENCES runtime_parameter_definitions(id) ON DELETE CASCADE;
@@ -1649,9 +1738,6 @@ ALTER TABLE ONLY namespace_project_runtime_assignments
 
 ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT fk_rails_d2d9392ab1 FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY runtime_status_configurations
-    ADD CONSTRAINT fk_rails_d3eeb850ed FOREIGN KEY (runtime_status_id) REFERENCES runtime_statuses(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_projects
     ADD CONSTRAINT fk_rails_d4f50e2f00 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
