@@ -4,7 +4,7 @@ class SubFlow < ApplicationRecord
   belongs_to :node_parameter, inverse_of: :sub_flow
   belongs_to :starting_node, class_name: 'NodeFunction', optional: true
 
-  has_many :sub_flow_settings, inverse_of: :sub_flow, autosave: true, dependent: :destroy
+  has_many :sub_flow_settings, inverse_of: :sub_flow, autosave: true
 
   validate :validate_execution_reference
 
