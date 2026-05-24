@@ -5,7 +5,7 @@ class NodeParameter < ApplicationRecord
   belongs_to :node_function, class_name: 'NodeFunction', inverse_of: :node_parameters
 
   has_one :reference_value, autosave: true
-  has_one :sub_flow, autosave: true, dependent: :destroy
+  has_one :sub_flow, autosave: true
 
   validate :only_one_value_present
 
