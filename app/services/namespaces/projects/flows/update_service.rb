@@ -53,14 +53,15 @@ module Namespaces
         end
 
         def update_settings(t)
-          db_settings = flow.flow_settings.first(flow_input.settings.length)
+          settings_input = Array(flow_input.settings)
+          db_settings = flow.flow_settings.first(settings_input.length)
           flow_type_settings = flow.flow_type.flow_type_settings
 
-          flow_input.settings.each_with_index do |setting, index|
+          settings_input.each_with_index do |setting, index|
             db_settings[index] ||= flow.flow_settings.build
             db_settings[index].flow_setting_id = flow_type_settings[index]&.identifier
             db_settings[index].object = setting.value
-            db_settings[index].cast = optional_input(setting, :cast)
+            db_settings[index].cast = setting.try(:cast)
 
             next if db_settings[index].save
 
@@ -76,8 +77,6 @@ module Namespaces
 
         def update_nodes(t)
           all_nodes = flow.node_functions
-
-          flow_input.starting_node_id
           node_index = 0
 
           updated_nodes = []
@@ -86,18 +85,12 @@ module Namespaces
             current_node = all_nodes[node_index] || NodeFunction.new(flow: flow)
 
             update_node(t, current_node, node_input)
-            unless current_node.save
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Invalid node',
-                error_code: :invalid_node_function,
-                details: current_node.errors
-              )
-            end
-
             updated_nodes << { node: current_node, input: node_input }
 
             node_index += 1
           end
+
+          persist_new_nodes(t, updated_nodes)
 
           updated_nodes.each do |node|
             update_node_parameters(t, node[:node], node[:input], updated_nodes)
@@ -120,6 +113,19 @@ module Namespaces
           update_starting_node(t, updated_nodes)
 
           delete_old_nodes(t, all_nodes.reject { |node| updated_nodes.pluck(:node).pluck(:id).include?(node.id) })
+        end
+
+        def persist_new_nodes(t, updated_nodes)
+          updated_nodes.each do |node|
+            next unless node[:node].new_record?
+            next if node[:node].save(validate: false)
+
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Invalid node',
+              error_code: :invalid_node_function,
+              details: node[:node].errors
+            )
+          end
         end
 
         def update_starting_node(t, all_nodes)
@@ -190,11 +196,11 @@ module Namespaces
             end
 
             db_parameters[index].parameter_definition = parameter_definition
-            db_parameters[index].cast = optional_input(parameter, :cast)
+            db_parameters[index].cast = parameter.try(:cast)
 
             db_parameters[index].literal_value = parameter.value.literal_value
 
-            if optional_input(parameter.value, :sub_flow).present?
+            if parameter.value.try(:sub_flow).present?
               update_sub_flow(t, db_parameters[index], parameter.value.sub_flow, all_nodes)
             else
               db_parameters[index].sub_flow&.destroy
@@ -265,8 +271,9 @@ module Namespaces
 
         def update_sub_flow(t, node_parameter, sub_flow_input, all_nodes)
           starting_node_id = nil
+          function_definition = nil
 
-          if optional_input(sub_flow_input, :starting_node_id).present?
+          if sub_flow_input.starting_node_id.present?
             starting_node = all_nodes.find { |n| n[:input].id == sub_flow_input.starting_node_id }
 
             if starting_node.nil?
@@ -277,35 +284,40 @@ module Namespaces
             end
 
             starting_node_id = starting_node[:node].id
+          elsif sub_flow_input.function_identifier.present?
+            function_definition = flow.project.primary_runtime.function_definitions.find_by(
+              identifier: sub_flow_input.function_identifier
+            )
+
+            if function_definition.nil?
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Sub-flow function not found',
+                error_code: :invalid_function_id
+              )
+            end
           end
 
           sub_flow = node_parameter.sub_flow || node_parameter.build_sub_flow
           sub_flow.assign_attributes(
             starting_node_id: starting_node_id,
-            function_identifier: optional_input(sub_flow_input, :function_identifier),
+            function_definition: function_definition,
             signature: sub_flow_input.signature
           )
 
-          sub_flow_settings_input = Array(optional_input(sub_flow_input, :settings))
+          sub_flow_settings_input = Array(sub_flow_input.try(:settings))
           sub_flow_settings = sub_flow.sub_flow_settings.first(sub_flow_settings_input.length)
 
           sub_flow_settings_input.each_with_index do |setting, index|
             sub_flow_settings[index] ||= sub_flow.sub_flow_settings.build
             sub_flow_settings[index].assign_attributes(
               identifier: setting.identifier,
-              default_value: optional_input(setting, :default_value),
-              optional: optional_input(setting, :optional),
-              hidden: optional_input(setting, :hidden)
+              default_value: setting.try(:default_value),
+              optional: setting.try(:optional),
+              hidden: setting.try(:hidden)
             )
           end
 
           (sub_flow.sub_flow_settings - sub_flow_settings).each(&:destroy)
-        end
-
-        def optional_input(input, attribute)
-          return unless input.respond_to?(attribute)
-
-          input.public_send(attribute)
         end
       end
     end

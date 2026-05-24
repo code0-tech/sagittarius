@@ -5,7 +5,7 @@ FactoryBot.define do
     sub_flow
     identifier { 'setting' }
     default_value { nil }
-    optional { nil }
-    hidden { nil }
+    optional { false }
+    hidden { false }
   end
 end

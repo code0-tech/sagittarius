@@ -10,10 +10,10 @@ class AddTucanaSharedFlowSubFlows < Code0::ZeroTrack::Database::Migration[1.0]
       t.references :node_parameter, null: false, index: { unique: true },
                                     foreign_key: { to_table: :node_parameters, on_delete: :cascade }
       t.references :starting_node, null: true, foreign_key: { to_table: :node_functions, on_delete: :restrict }
-      t.text :function_identifier
+      t.references :function_definition, null: true, foreign_key: { on_delete: :restrict }
       t.text :signature, null: false
 
-      t.check_constraint 'num_nonnulls(starting_node_id, function_identifier) = 1',
+      t.check_constraint 'num_nonnulls(starting_node_id, function_definition_id) = 1',
                          name: check_constraint_name(:sub_flows, :execution_reference, :one_of)
 
       t.timestamps_with_timezone

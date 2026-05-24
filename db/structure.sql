@@ -206,7 +206,8 @@ CREATE TABLE flow_settings (
     object jsonb NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    "cast" text
+    "cast" text,
+    CONSTRAINT check_65f98666ae CHECK ((char_length("cast") <= 500))
 );
 
 CREATE SEQUENCE flow_settings_id_seq
@@ -634,7 +635,8 @@ CREATE TABLE node_parameters (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     parameter_definition_id bigint NOT NULL,
-    "cast" text
+    "cast" text,
+    CONSTRAINT check_6439c80497 CHECK ((char_length("cast") <= 500))
 );
 
 CREATE SEQUENCE node_parameters_id_seq
@@ -951,8 +953,8 @@ CREATE TABLE sub_flow_settings (
     sub_flow_id bigint NOT NULL,
     identifier text NOT NULL,
     default_value jsonb,
-    optional boolean,
-    hidden boolean,
+    optional boolean DEFAULT false NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
@@ -970,11 +972,11 @@ CREATE TABLE sub_flows (
     id bigint NOT NULL,
     node_parameter_id bigint NOT NULL,
     starting_node_id bigint,
-    function_identifier text,
+    function_definition_id bigint,
     signature text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_53a99b1dd3 CHECK ((num_nonnulls(starting_node_id, function_identifier) = 1))
+    CONSTRAINT check_53a99b1dd3 CHECK ((num_nonnulls(starting_node_id, function_definition_id) = 1))
 );
 
 CREATE SEQUENCE sub_flows_id_seq
@@ -1521,6 +1523,8 @@ CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
 
 CREATE INDEX index_sub_flow_settings_on_sub_flow_id ON sub_flow_settings USING btree (sub_flow_id);
 
+CREATE INDEX index_sub_flows_on_function_definition_id ON sub_flows USING btree (function_definition_id);
+
 CREATE UNIQUE INDEX index_sub_flows_on_node_parameter_id ON sub_flows USING btree (node_parameter_id);
 
 CREATE INDEX index_sub_flows_on_starting_node_id ON sub_flows USING btree (starting_node_id);
@@ -1689,6 +1693,9 @@ ALTER TABLE ONLY user_sessions
 
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY sub_flows
+    ADD CONSTRAINT fk_rails_a99aa3478f FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_ab927e0ecb FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
