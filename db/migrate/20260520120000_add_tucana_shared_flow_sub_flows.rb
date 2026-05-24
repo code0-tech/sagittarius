@@ -2,9 +2,9 @@
 
 class AddTucanaSharedFlowSubFlows < Code0::ZeroTrack::Database::Migration[1.0]
   def change
-    add_column :flow_settings, :cast, :text
+    add_column :flow_settings, :cast, :text, limit: 500
 
-    add_column :node_parameters, :cast, :text
+    add_column :node_parameters, :cast, :text, limit: 500
 
     create_table :sub_flows do |t|
       t.references :node_parameter, null: false, index: { unique: true },
@@ -23,10 +23,8 @@ class AddTucanaSharedFlowSubFlows < Code0::ZeroTrack::Database::Migration[1.0]
       t.references :sub_flow, null: false, foreign_key: { to_table: :sub_flows, on_delete: :cascade }
       t.text :identifier, null: false
       t.jsonb :default_value
-      # rubocop:disable Rails/ThreeStateBooleanColumn -- mirrors proto optional bool presence
-      t.boolean :optional
-      t.boolean :hidden
-      # rubocop:enable Rails/ThreeStateBooleanColumn
+      t.boolean :optional, null: false, default: false
+      t.boolean :hidden, null: false, default: false
 
       t.timestamps_with_timezone
     end
