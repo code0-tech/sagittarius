@@ -312,8 +312,8 @@ module Namespaces
             sub_flow_settings[index].assign_attributes(
               identifier: setting.identifier,
               default_value: setting.try(:default_value),
-              optional: setting.try(:optional),
-              hidden: setting.try(:hidden)
+              optional: setting.try(:optional) || false,
+              hidden: setting.try(:hidden) || false
             )
           end
 
