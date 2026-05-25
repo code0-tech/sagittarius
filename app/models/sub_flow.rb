@@ -25,7 +25,7 @@ class SubFlow < ApplicationRecord
   private
 
   def validate_execution_reference
-    return if [starting_node_id.present?, function_definition_id.present?].count(true) == 1
+    return if [starting_node.present?, function_definition.present?].count(true) == 1
 
     errors.add(:base, 'Exactly one of starting_node or function_definition must be present')
   end

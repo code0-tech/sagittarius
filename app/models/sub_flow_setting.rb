@@ -8,7 +8,7 @@ class SubFlowSetting < ApplicationRecord
   def to_grpc
     Tucana::Shared::SubFlowSetting.new(
       identifier: identifier,
-      default_value: default_value.nil? ? nil : Tucana::Shared::Value.from_ruby(default_value),
+      default_value: Tucana::Shared::Value.from_ruby(default_value),
       optional: optional,
       hidden: hidden
     )

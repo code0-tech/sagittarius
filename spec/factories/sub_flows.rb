@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :sub_flow do
-    node_parameter
+    node_parameter { association :node_parameter, literal_value: nil, reference_value: nil }
     starting_node factory: :node_function
     function_definition { nil }
     signature { '(): VOID' }

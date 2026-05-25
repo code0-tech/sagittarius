@@ -90,8 +90,6 @@ module Namespaces
             node_index += 1
           end
 
-          persist_new_nodes(t, updated_nodes)
-
           updated_nodes.each do |node|
             update_node_parameters(t, node[:node], node[:input], updated_nodes)
             update_next_node(t, node[:node], node[:input], updated_nodes)
@@ -113,19 +111,6 @@ module Namespaces
           update_starting_node(t, updated_nodes)
 
           delete_old_nodes(t, all_nodes.reject { |node| updated_nodes.pluck(:node).pluck(:id).include?(node.id) })
-        end
-
-        def persist_new_nodes(t, updated_nodes)
-          updated_nodes.each do |node|
-            next unless node[:node].new_record?
-            next if node[:node].save(validate: false)
-
-            t.rollback_and_return! ServiceResponse.error(
-              message: 'Invalid node',
-              error_code: :invalid_node_function,
-              details: node[:node].errors
-            )
-          end
         end
 
         def update_starting_node(t, all_nodes)
@@ -270,20 +255,20 @@ module Namespaces
         end
 
         def update_sub_flow(t, node_parameter, sub_flow_input, all_nodes)
-          starting_node_id = nil
+          starting_node = nil
           function_definition = nil
 
           if sub_flow_input.starting_node_id.present?
-            starting_node = all_nodes.find { |n| n[:input].id == sub_flow_input.starting_node_id }
+            starting_node_reference = all_nodes.find { |n| n[:input].id == sub_flow_input.starting_node_id }
 
-            if starting_node.nil?
+            if starting_node_reference.nil?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Sub-flow starting node not found',
                 error_code: :node_not_found
               )
             end
 
-            starting_node_id = starting_node[:node].id
+            starting_node = starting_node_reference[:node]
           elsif sub_flow_input.function_identifier.present?
             function_definition = flow.project.primary_runtime.function_definitions.find_by(
               identifier: sub_flow_input.function_identifier
@@ -299,7 +284,7 @@ module Namespaces
 
           sub_flow = node_parameter.sub_flow || node_parameter.build_sub_flow
           sub_flow.assign_attributes(
-            starting_node_id: starting_node_id,
+            starting_node: starting_node,
             function_definition: function_definition,
             signature: sub_flow_input.signature
           )

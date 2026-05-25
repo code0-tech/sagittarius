@@ -4,9 +4,9 @@ module Types
   class FlowSubFlowType < Types::BaseObject
     description 'Represents a sub-flow parameter value.'
 
-    field :function_identifier, String,
+    field :function_definition, Types::FunctionDefinitionType,
           null: true,
-          description: 'The function identifier to execute.'
+          description: 'The resolved function definition to execute.'
     field :settings, [Types::FlowSubFlowSettingType],
           method: :sub_flow_settings,
           null: false,

@@ -30,7 +30,10 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                         value
                       }
                       ...on FlowSubFlow {
-                        functionIdentifier
+                        functionDefinition {
+                          id
+                          identifier
+                        }
                         signature
                         startingNodeId
                       }
@@ -317,8 +320,11 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
 
       expect(parameter_value).to include(
         '__typename' => 'FlowSubFlow',
-        'functionIdentifier' => function_definition.identifier,
         'startingNodeId' => nil
+      )
+      expect(parameter_value['functionDefinition']).to include(
+        'id' => function_definition.to_global_id.to_s,
+        'identifier' => function_definition.identifier
       )
 
       sub_flow = flow.reload.starting_node.node_parameters.first.sub_flow
