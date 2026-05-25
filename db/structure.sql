@@ -976,7 +976,8 @@ CREATE TABLE sub_flows (
     signature text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_53a99b1dd3 CHECK ((num_nonnulls(starting_node_id, function_definition_id) = 1))
+    CONSTRAINT check_53a99b1dd3 CHECK ((num_nonnulls(starting_node_id, function_definition_id) = 1)),
+    CONSTRAINT check_943d01babb CHECK ((char_length(signature) <= 500))
 );
 
 CREATE SEQUENCE sub_flows_id_seq
