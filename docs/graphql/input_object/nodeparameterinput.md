@@ -8,4 +8,5 @@ Input type for Node parameter
 
 | Name | Type | Description |
 |------|------|-------------|
+| `cast` | [`String`](../scalar/string.md) | The cast applied to the parameter |
 | `value` | [`NodeParameterValueInput!`](../input_object/nodeparametervalueinput.md) | The value of the parameter |

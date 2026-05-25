@@ -29,6 +29,14 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                       ...on LiteralValue {
                         value
                       }
+                      ...on SubFlowValue {
+                        functionDefinition {
+                          id
+                          identifier
+                        }
+                        signature
+                        startingNodeId
+                      }
                       ...on ReferenceValue {
                         createdAt
                         id
@@ -110,7 +118,10 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
             parameters: [
               {
                 value: {
-                  nodeFunctionId: 'gid://sagittarius/NodeFunction/2000',
+                  subFlowValue: {
+                    startingNodeId: 'gid://sagittarius/NodeFunction/2000',
+                    signature: '(input: INPUT): OUTPUT',
+                  },
                 },
               }
             ],
@@ -215,6 +226,13 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       )
       expect(parameter_values).to include(
         a_hash_including(
+          '__typename' => 'SubFlowValue',
+          'signature' => '(input: INPUT): OUTPUT',
+          'startingNodeId' => a_string_matching(%r{gid://sagittarius/NodeFunction/\d+})
+        )
+      )
+      expect(parameter_values).to include(
+        a_hash_including(
           '__typename' => 'ReferenceValue',
           'nodeFunctionId' => a_string_matching(%r{gid://sagittarius/NodeFunction/\d+}),
           'referencePath' => [a_hash_including('arrayIndex' => 0, 'path' => 'some.path')],
@@ -240,6 +258,77 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
         target_id: project.id,
         target_type: 'NamespaceProject'
       )
+    end
+  end
+
+  context 'when updating a sub-flow by function identifier' do
+    before do
+      stub_allowed_ability(NamespaceProjectPolicy, :update_flow, user: current_user, subject: project)
+      stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: project)
+    end
+
+    let(:input) do
+      {
+        flowId: flow.to_global_id.to_s,
+        flowInput: {
+          name: generate(:flow_name),
+          type: flow_type.to_global_id.to_s,
+          startingNodeId: flow.starting_node.to_global_id.to_s,
+          settings: [],
+          nodes: [
+            {
+              id: flow.starting_node.to_global_id.to_s,
+              functionDefinitionId: function_definition.to_global_id.to_s,
+              nextNodeId: nil,
+              parameters: [
+                {
+                  value: {
+                    subFlowValue: {
+                      functionIdentifier: function_definition.identifier,
+                      signature: '(input: INPUT): OUTPUT',
+                    },
+                  },
+                }
+              ],
+            }
+          ],
+        },
+      }
+    end
+
+    let(:flow) do
+      create(:flow, project: project, flow_type: flow_type).tap do |f|
+        node = create(:node_function, flow: f, function_definition: function_definition)
+        create(
+          :node_parameter,
+          node_function: node,
+          parameter_definition: function_definition.parameter_definitions.first,
+          literal_value: nil
+        )
+        f.starting_node = node
+        f.save!
+      end
+    end
+
+    it 'stores the referenced function definition on the sub-flow' do
+      mutate!
+
+      expect(graphql_data_at(:namespaces_projects_flows_update, :errors)).to be_blank
+
+      parameter_value = graphql_data_at(:namespaces_projects_flows_update, :flow, :nodes, :nodes)
+                        .first['parameters']['nodes'].first['value']
+
+      expect(parameter_value).to include(
+        '__typename' => 'SubFlowValue',
+        'startingNodeId' => nil
+      )
+      expect(parameter_value['functionDefinition']).to include(
+        'id' => function_definition.to_global_id.to_s,
+        'identifier' => function_definition.identifier
+      )
+
+      sub_flow = flow.reload.starting_node.node_parameters.first.sub_flow
+      expect(sub_flow.function_definition).to eq(function_definition)
     end
   end
 
@@ -309,10 +398,8 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                            node_function: node1,
                            parameter_definition: function_definition.parameter_definitions.first,
                            literal_value: nil)
-        create(:node_function,
-               flow: f,
-               function_definition: function_definition,
-               value_of_node_parameter: parameter)
+        node2 = create(:node_function, flow: f, function_definition: function_definition)
+        create(:sub_flow, node_parameter: parameter, starting_node: node2, signature: '(input: INPUT): OUTPUT')
         f.starting_node = node1
         node1.save!
         f.save!
@@ -360,7 +447,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     end
   end
 
-  context 'when clearing function_value on a reused node' do
+  context 'when clearing sub_flow on a reused node' do
     before do
       stub_allowed_ability(NamespaceProjectPolicy, :update_flow, user: current_user, subject: project)
       stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: project)
@@ -373,10 +460,8 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                            node_function: node1,
                            parameter_definition: function_definition.parameter_definitions.first,
                            literal_value: nil)
-        create(:node_function,
-               flow: f,
-               function_definition: function_definition,
-               value_of_node_parameter: parameter)
+        node2 = create(:node_function, flow: f, function_definition: function_definition)
+        create(:sub_flow, node_parameter: parameter, starting_node: node2, signature: '(input: INPUT): OUTPUT')
         f.starting_node = node1
         node1.save!
         f.save!

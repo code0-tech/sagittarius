@@ -6,6 +6,10 @@ module Types
 
     authorize :read_flow
 
+    field :cast, String,
+          null: true,
+          description: 'The cast applied to the flow setting'
+
     field :flow_setting_identifier, String,
           null: false,
           method: :flow_setting_id,

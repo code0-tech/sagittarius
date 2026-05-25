@@ -53,13 +53,15 @@ module Namespaces
         end
 
         def update_settings(t)
-          db_settings = flow.flow_settings.first(flow_input.settings.length)
+          settings_input = Array(flow_input.settings)
+          db_settings = flow.flow_settings.first(settings_input.length)
           flow_type_settings = flow.flow_type.flow_type_settings
 
-          flow_input.settings.each_with_index do |setting, index|
+          settings_input.each_with_index do |setting, index|
             db_settings[index] ||= flow.flow_settings.build
             db_settings[index].flow_setting_id = flow_type_settings[index]&.identifier
             db_settings[index].object = setting.value
+            db_settings[index].cast = setting.try(:cast)
 
             next if db_settings[index].save
 
@@ -75,8 +77,6 @@ module Namespaces
 
         def update_nodes(t)
           all_nodes = flow.node_functions
-
-          flow_input.starting_node_id
           node_index = 0
 
           updated_nodes = []
@@ -181,22 +181,15 @@ module Namespaces
             end
 
             db_parameters[index].parameter_definition = parameter_definition
+            db_parameters[index].cast = parameter.try(:cast)
 
             db_parameters[index].literal_value = parameter.value.literal_value
 
-            if parameter.value.node_function_id.present?
-              node = all_nodes.find { |n| n[:input].id == parameter.value.node_function_id }
-
-              if node.nil?
-                t.rollback_and_return! ServiceResponse.error(
-                  message: 'Invalid function value for parameter',
-                  error_code: :function_value_not_found
-                )
-              end
-
-              db_parameters[index].function_value = node[:node]
+            if parameter.value.try(:sub_flow_value).present?
+              update_sub_flow(t, db_parameters[index], parameter.value.sub_flow_value, all_nodes)
             else
-              db_parameters[index].function_value = nil
+              db_parameters[index].sub_flow&.destroy
+              db_parameters[index].sub_flow = nil
             end
 
             if parameter.value.reference_value.present?
@@ -246,13 +239,6 @@ module Namespaces
             )
           end
 
-          removed_parameters = current_node.node_parameters - db_parameters
-          # rubocop:disable Rails/SkipsModelValidations -- must nullify FK before parameter destruction to prevent cascade
-          flow.node_functions
-              .where(value_of_node_parameter: removed_parameters)
-              .update_all(value_of_node_parameter_id: nil)
-          # rubocop:enable Rails/SkipsModelValidations
-
           current_node.node_parameters = db_parameters
         end
 
@@ -266,6 +252,57 @@ module Namespaces
               **flow.attributes.except('created_at', 'updated_at'),
             }
           )
+        end
+
+        def update_sub_flow(t, node_parameter, sub_flow_input, all_nodes)
+          starting_node = nil
+          function_definition = nil
+
+          if sub_flow_input.starting_node_id.present?
+            starting_node_reference = all_nodes.find { |n| n[:input].id == sub_flow_input.starting_node_id }
+
+            if starting_node_reference.nil?
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Sub-flow starting node not found',
+                error_code: :node_not_found
+              )
+            end
+
+            starting_node = starting_node_reference[:node]
+          elsif sub_flow_input.function_identifier.present?
+            function_definition = flow.project.primary_runtime.function_definitions.find_by(
+              identifier: sub_flow_input.function_identifier
+            )
+
+            if function_definition.nil?
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Sub-flow function not found',
+                error_code: :invalid_function_id
+              )
+            end
+          end
+
+          sub_flow = node_parameter.sub_flow || node_parameter.build_sub_flow
+          sub_flow.assign_attributes(
+            starting_node: starting_node,
+            function_definition: function_definition,
+            signature: sub_flow_input.signature
+          )
+
+          sub_flow_settings_input = Array(sub_flow_input.try(:settings))
+          sub_flow_settings = sub_flow.sub_flow_settings.first(sub_flow_settings_input.length)
+
+          sub_flow_settings_input.each_with_index do |setting, index|
+            sub_flow_settings[index] ||= sub_flow.sub_flow_settings.build
+            sub_flow_settings[index].assign_attributes(
+              identifier: setting.identifier,
+              default_value: setting.try(:default_value),
+              optional: setting.try(:optional) || false,
+              hidden: setting.try(:hidden) || false
+            )
+          end
+
+          (sub_flow.sub_flow_settings - sub_flow_settings).each(&:destroy)
         end
       end
     end

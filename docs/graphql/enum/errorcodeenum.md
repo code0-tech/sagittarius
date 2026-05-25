@@ -20,7 +20,6 @@ Represents the available error responses
 | `FAILED_TO_SAVE_VALID_BACKUP_CODE` | The new backup codes could not be saved |
 | `FLOW_NOT_FOUND` | The flow with the given identifier was not found |
 | `FLOW_TYPE_NOT_FOUND` | The flow type with the given identifier was not found |
-| `FUNCTION_VALUE_NOT_FOUND` | The id for the function value node does not exist |
 | `GENERIC_KEY_NOT_FOUND` | The given key was not found in the data type |
 | `IDENTITY_NOT_FOUND` | The external identity with the given identifier was not found |
 | `IDENTITY_VALIDATION_FAILED` | Failed to validate the external identity |
