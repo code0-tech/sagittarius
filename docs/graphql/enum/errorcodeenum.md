@@ -36,6 +36,7 @@ Represents the available error responses
 | `INVALID_FUNCTION_ID` | The function ID is invalid |
 | `INVALID_LICENSE` | The license is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
+| `INVALID_MODULE_CONFIGURATION` | The module configuration is invalid because of active model errors |
 | `INVALID_MODULE_CONFIGURATION_DEFINITION` | The module configuration definition is invalid |
 | `INVALID_NAMESPACE_MEMBER` | The namespace member is invalid because of active model errors |
 | `INVALID_NAMESPACE_PROJECT` | The namespace project is invalid because of active model errors |

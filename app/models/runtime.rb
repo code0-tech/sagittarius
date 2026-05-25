@@ -15,6 +15,7 @@ class Runtime < ApplicationRecord
   has_many :primary_projects, class_name: 'NamespaceProject', inverse_of: :primary_runtime
 
   has_many :runtime_modules, inverse_of: :runtime
+  has_many :module_configuration_definitions, through: :runtime_modules
 
   has_many :data_types, inverse_of: :runtime
 
