@@ -205,9 +205,7 @@ CREATE TABLE flow_settings (
     flow_setting_id text NOT NULL,
     object jsonb NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    "cast" text,
-    CONSTRAINT check_65f98666ae CHECK ((char_length("cast") <= 500))
+    updated_at timestamp with time zone NOT NULL
 );
 
 CREATE SEQUENCE flow_settings_id_seq
@@ -634,7 +632,8 @@ CREATE TABLE node_functions (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     flow_id bigint NOT NULL,
-    function_definition_id bigint NOT NULL
+    function_definition_id bigint NOT NULL,
+    value_of_node_parameter_id bigint
 );
 
 CREATE SEQUENCE node_functions_id_seq
@@ -652,9 +651,7 @@ CREATE TABLE node_parameters (
     literal_value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    parameter_definition_id bigint NOT NULL,
-    "cast" text,
-    CONSTRAINT check_6439c80497 CHECK ((char_length("cast") <= 500))
+    parameter_definition_id bigint NOT NULL
 );
 
 CREATE SEQUENCE node_parameters_id_seq
@@ -966,47 +963,6 @@ CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
 
-CREATE TABLE sub_flow_settings (
-    id bigint NOT NULL,
-    sub_flow_id bigint NOT NULL,
-    identifier text NOT NULL,
-    default_value jsonb,
-    optional boolean DEFAULT false NOT NULL,
-    hidden boolean DEFAULT false NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE sub_flow_settings_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE sub_flow_settings_id_seq OWNED BY sub_flow_settings.id;
-
-CREATE TABLE sub_flows (
-    id bigint NOT NULL,
-    node_parameter_id bigint NOT NULL,
-    starting_node_id bigint,
-    function_definition_id bigint,
-    signature text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_53a99b1dd3 CHECK ((num_nonnulls(starting_node_id, function_definition_id) = 1)),
-    CONSTRAINT check_943d01babb CHECK ((char_length(signature) <= 500))
-);
-
-CREATE SEQUENCE sub_flows_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE sub_flows_id_seq OWNED BY sub_flows.id;
-
 CREATE TABLE translations (
     id bigint NOT NULL,
     code text NOT NULL,
@@ -1180,10 +1136,6 @@ ALTER TABLE ONLY runtime_statuses ALTER COLUMN id SET DEFAULT nextval('runtime_s
 
 ALTER TABLE ONLY runtimes ALTER COLUMN id SET DEFAULT nextval('runtimes_id_seq'::regclass);
 
-ALTER TABLE ONLY sub_flow_settings ALTER COLUMN id SET DEFAULT nextval('sub_flow_settings_id_seq'::regclass);
-
-ALTER TABLE ONLY sub_flows ALTER COLUMN id SET DEFAULT nextval('sub_flows_id_seq'::regclass);
-
 ALTER TABLE ONLY translations ALTER COLUMN id SET DEFAULT nextval('translations_id_seq'::regclass);
 
 ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_identities_id_seq'::regclass);
@@ -1344,12 +1296,6 @@ ALTER TABLE ONLY runtimes
 
 ALTER TABLE ONLY schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
-
-ALTER TABLE ONLY sub_flow_settings
-    ADD CONSTRAINT sub_flow_settings_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY sub_flows
-    ADD CONSTRAINT sub_flows_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY translations
     ADD CONSTRAINT translations_pkey PRIMARY KEY (id);
@@ -1525,6 +1471,8 @@ CREATE INDEX index_node_functions_on_function_definition_id ON node_functions US
 
 CREATE INDEX index_node_functions_on_next_node_id ON node_functions USING btree (next_node_id);
 
+CREATE INDEX index_node_functions_on_value_of_node_parameter_id ON node_functions USING btree (value_of_node_parameter_id);
+
 CREATE INDEX index_node_parameters_on_node_function_id ON node_parameters USING btree (node_function_id);
 
 CREATE INDEX index_node_parameters_on_parameter_definition_id ON node_parameters USING btree (parameter_definition_id);
@@ -1550,14 +1498,6 @@ CREATE INDEX index_runtime_statuses_on_runtime_id ON runtime_statuses USING btre
 CREATE INDEX index_runtimes_on_namespace_id ON runtimes USING btree (namespace_id);
 
 CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
-
-CREATE INDEX index_sub_flow_settings_on_sub_flow_id ON sub_flow_settings USING btree (sub_flow_id);
-
-CREATE INDEX index_sub_flows_on_function_definition_id ON sub_flows USING btree (function_definition_id);
-
-CREATE UNIQUE INDEX index_sub_flows_on_node_parameter_id ON sub_flows USING btree (node_parameter_id);
-
-CREATE INDEX index_sub_flows_on_starting_node_id ON sub_flows USING btree (starting_node_id);
 
 CREATE INDEX index_translations_on_owner ON translations USING btree (owner_type, owner_id);
 
@@ -1600,9 +1540,6 @@ ALTER TABLE ONLY function_definitions
 
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_2ed7c53167 FOREIGN KEY (parameter_definition_id) REFERENCES parameter_definitions(id) ON DELETE RESTRICT;
-
-ALTER TABLE ONLY sub_flows
-    ADD CONSTRAINT fk_rails_32ab48790a FOREIGN KEY (node_parameter_id) REFERENCES node_parameters(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_flow_types
     ADD CONSTRAINT fk_rails_3675f29c4e FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
@@ -1651,9 +1588,6 @@ ALTER TABLE ONLY node_functions
 
 ALTER TABLE ONLY backup_codes
     ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY sub_flow_settings
-    ADD CONSTRAINT fk_rails_55f76c79cc FOREIGN KEY (sub_flow_id) REFERENCES sub_flows(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_567f152a62 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
@@ -1730,9 +1664,6 @@ ALTER TABLE ONLY user_sessions
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY sub_flows
-    ADD CONSTRAINT fk_rails_a99aa3478f FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE RESTRICT;
-
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_ab927e0ecb FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
 
@@ -1766,9 +1697,6 @@ ALTER TABLE ONLY flows
 ALTER TABLE ONLY flow_settings
     ADD CONSTRAINT fk_rails_da3b2fb3c5 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY sub_flows
-    ADD CONSTRAINT fk_rails_e27dd4d82a FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
-
 ALTER TABLE ONLY runtime_flow_types
     ADD CONSTRAINT fk_rails_e729dc57e7 FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
 
@@ -1780,6 +1708,9 @@ ALTER TABLE ONLY runtimes
 
 ALTER TABLE ONLY flow_data_type_links
     ADD CONSTRAINT fk_rails_f4202724d3 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY node_functions
+    ADD CONSTRAINT fk_rails_f5d1a9d316 FOREIGN KEY (value_of_node_parameter_id) REFERENCES node_parameters(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY audit_events
     ADD CONSTRAINT fk_rails_f64374fc56 FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL;

@@ -17,7 +17,7 @@ RSpec.describe ModuleConfiguration do
     end
 
     it 'requires the definition to belong to the assigned runtime' do
-      assignment = create(:namespace_project_runtime_assignment)
+      assignment = module_configuration.namespace_project_runtime_assignment
       other_runtime = create(:runtime, namespace: assignment.namespace_project.namespace)
       other_runtime_module = create(:runtime_module, runtime: other_runtime)
       other_definition = create(:module_configuration_definition, runtime_module: other_runtime_module)

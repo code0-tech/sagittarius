@@ -37,7 +37,6 @@ module Namespaces
                   {
                     id: configuration.id,
                     module_configuration_definition_id: configuration.module_configuration_definition_id,
-                    value: configuration.value,
                   }
                 end,
               }
