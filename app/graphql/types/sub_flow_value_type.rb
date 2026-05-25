@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module Types
-  class FlowSubFlowType < Types::BaseObject
+  class SubFlowValueType < Types::BaseObject
     description 'Represents a sub-flow parameter value.'
 
     field :function_definition, Types::FunctionDefinitionType,
           null: true,
           description: 'The resolved function definition to execute.'
-    field :settings, [Types::FlowSubFlowSettingType],
+    field :settings, [Types::SubFlowValueSettingType],
           method: :sub_flow_settings,
           null: false,
           description: 'The sub-flow settings.'

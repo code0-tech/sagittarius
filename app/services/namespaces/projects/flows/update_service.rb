@@ -185,8 +185,8 @@ module Namespaces
 
             db_parameters[index].literal_value = parameter.value.literal_value
 
-            if parameter.value.try(:sub_flow).present?
-              update_sub_flow(t, db_parameters[index], parameter.value.sub_flow, all_nodes)
+            if parameter.value.try(:sub_flow_value).present?
+              update_sub_flow(t, db_parameters[index], parameter.value.sub_flow_value, all_nodes)
             else
               db_parameters[index].sub_flow&.destroy
               db_parameters[index].sub_flow = nil

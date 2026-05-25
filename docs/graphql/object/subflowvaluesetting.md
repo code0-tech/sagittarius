@@ -1,5 +1,5 @@
 ---
-title: FlowSubFlowSetting
+title: SubFlowValueSetting
 ---
 
 Represents a sub-flow setting.

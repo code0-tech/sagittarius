@@ -1,5 +1,5 @@
 ---
-title: FlowSubFlowSettingInput
+title: SubFlowValueSettingInput
 ---
 
 Input type for sub-flow settings

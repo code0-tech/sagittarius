@@ -29,7 +29,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
                       ...on LiteralValue {
                         value
                       }
-                      ...on FlowSubFlow {
+                      ...on SubFlowValue {
                         signature
                         startingNodeId
                       }
@@ -108,7 +108,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
             parameters: [
               {
                 value: {
-                  subFlow: {
+                  subFlowValue: {
                     startingNodeId: 'gid://sagittarius/NodeFunction/2000',
                     signature: '(input: INPUT): OUTPUT',
                   },
@@ -210,7 +210,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
       expect(parameter_values).to include(a_hash_including('value' => 100))
       expect(parameter_values).to include(
         a_hash_including(
-          '__typename' => 'FlowSubFlow',
+          '__typename' => 'SubFlowValue',
           'signature' => '(input: INPUT): OUTPUT',
           'startingNodeId' => a_string_matching(%r{gid://sagittarius/NodeFunction/\d+})
         )

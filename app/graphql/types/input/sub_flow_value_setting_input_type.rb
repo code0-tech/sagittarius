@@ -2,7 +2,7 @@
 
 module Types
   module Input
-    class FlowSubFlowSettingInputType < Types::BaseInputObject
+    class SubFlowValueSettingInputType < Types::BaseInputObject
       description 'Input type for sub-flow settings'
 
       argument :default_value, GraphQL::Types::JSON,

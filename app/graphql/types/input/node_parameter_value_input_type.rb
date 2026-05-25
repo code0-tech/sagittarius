@@ -9,10 +9,10 @@ module Types
                required: false, description: 'The literal value of the parameter'
       argument :reference_value, Types::Input::ReferenceValueInputType,
                required: false, description: 'The reference value of the parameter'
-      argument :sub_flow, Types::Input::FlowSubFlowInputType,
+      argument :sub_flow_value, Types::Input::SubFlowValueInputType,
                required: false, description: 'The sub-flow value of the parameter'
 
-      require_one_of %i[literal_value reference_value sub_flow]
+      require_one_of %i[literal_value reference_value sub_flow_value]
     end
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class FlowSubFlowSettingType < Types::BaseObject
+  class SubFlowValueSettingType < Types::BaseObject
     description 'Represents a sub-flow setting.'
 
     field :default_value, GraphQL::Types::JSON,
