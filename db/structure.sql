@@ -1418,7 +1418,13 @@ CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes 
 
 CREATE INDEX index_daily_runtime_usages_on_flow_id ON daily_runtime_usages USING btree (flow_id);
 
+CREATE INDEX index_daily_runtime_usages_on_flow_id_and_day ON daily_runtime_usages USING btree (flow_id, day);
+
 CREATE INDEX index_daily_runtime_usages_on_namespace_id ON daily_runtime_usages USING btree (namespace_id);
+
+CREATE INDEX index_daily_runtime_usages_on_namespace_id_and_day ON daily_runtime_usages USING btree (namespace_id, day);
+
+CREATE UNIQUE INDEX index_daily_runtime_usages_on_namespace_id_and_flow_id_and_day ON daily_runtime_usages USING btree (namespace_id, flow_id, day);
 
 CREATE INDEX index_data_type_rules_on_data_type_id ON data_type_rules USING btree (data_type_id);
 

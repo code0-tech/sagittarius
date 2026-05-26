@@ -9,6 +9,10 @@ class CreateDailyRuntimeUsage < Code0::ZeroTrack::Database::Migration[1.0]
       t.decimal :usage, null: false, default: 0
 
       t.timestamps_with_timezone
+
+      t.index %i[namespace_id flow_id day], unique: true
+      t.index %i[namespace_id day]
+      t.index %i[flow_id day]
     end
   end
 end
