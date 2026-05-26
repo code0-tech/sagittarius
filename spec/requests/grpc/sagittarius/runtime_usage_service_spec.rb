@@ -6,10 +6,14 @@ RSpec.describe 'sagittarius.RuntimeUsageService', :need_grpc_server do
   include GrpcHelpers
 
   let(:stub) { create_stub Tucana::Sagittarius::RuntimeUsageService }
-  let(:runtime) { create(:runtime) }
   let(:namespace) { create(:namespace) }
+  let(:runtime) { create(:runtime, namespace: namespace) }
   let(:project) { create(:namespace_project, namespace: namespace) }
   let(:flow) { create(:flow, project: project) }
+
+  before do
+    create(:namespace_project_runtime_assignment, runtime: runtime, namespace_project: project, compatible: true)
+  end
 
   describe 'Update' do
     let(:runtime_usage) do
@@ -55,6 +59,16 @@ RSpec.describe 'sagittarius.RuntimeUsageService', :need_grpc_server do
           )
         ]
       end
+
+      it 'returns a failure response' do
+        expect(stub.update(message, authorization(runtime)).success).to be(false)
+        expect(DailyRuntimeUsage.count).to eq(0)
+      end
+    end
+
+    context 'when the runtime is not assigned to the flow project' do
+      let(:other_project) { create(:namespace_project, namespace: namespace) }
+      let(:flow) { create(:flow, project: other_project) }
 
       it 'returns a failure response' do
         expect(stub.update(message, authorization(runtime)).success).to be(false)

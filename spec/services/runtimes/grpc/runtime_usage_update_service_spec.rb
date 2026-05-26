@@ -3,13 +3,18 @@
 require 'rails_helper'
 
 RSpec.describe Runtimes::Grpc::RuntimeUsageUpdateService do
-  subject(:service_response) { described_class.new(usages: usages).execute }
+  subject(:service_response) { described_class.new(runtime: runtime, usages: usages).execute }
 
   let(:namespace) { create(:namespace) }
   let(:project) { create(:namespace_project, namespace: namespace) }
+  let(:runtime) { create(:runtime, namespace: namespace) }
   let(:flow) { create(:flow, project: project) }
   let(:day) { Date.new(2026, 5, 10) }
   let(:usages) { [{ flow_id: flow.id, interval: day, duration: 3 }] }
+
+  before do
+    create(:namespace_project_runtime_assignment, runtime: runtime, namespace_project: project, compatible: true)
+  end
 
   it 'creates a daily runtime usage for the flow namespace' do
     expect(service_response).to be_success
@@ -48,6 +53,29 @@ RSpec.describe Runtimes::Grpc::RuntimeUsageUpdateService do
         [flow.id, 3.to_d],
         [second_flow.id, 4.to_d]
       )
+    end
+  end
+
+  context 'when the runtime is not assigned to the flow project' do
+    let(:other_project) { create(:namespace_project, namespace: namespace) }
+    let(:flow) { create(:flow, project: other_project) }
+
+    it 'returns an error' do
+      expect(service_response).to be_error
+      expect(service_response.payload[:error_code]).to eq(:runtime_not_assigned)
+      expect(DailyRuntimeUsage.count).to eq(0)
+    end
+  end
+
+  context 'when the runtime assignment is not compatible' do
+    before do
+      runtime.project_assignments.find_by(namespace_project: project).update!(compatible: false)
+    end
+
+    it 'returns an error' do
+      expect(service_response).to be_error
+      expect(service_response.payload[:error_code]).to eq(:runtime_not_compatible)
+      expect(DailyRuntimeUsage.count).to eq(0)
     end
   end
 

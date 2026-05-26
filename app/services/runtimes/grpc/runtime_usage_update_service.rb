@@ -6,9 +6,10 @@ module Runtimes
       include Sagittarius::Database::Transactional
       include Code0::ZeroTrack::Loggable
 
-      attr_reader :usages
+      attr_reader :runtime, :usages
 
-      def initialize(usages:)
+      def initialize(runtime:, usages:)
+        @runtime = runtime
         @usages = usages
       end
 
@@ -32,26 +33,44 @@ module Runtimes
       def update_usage(usage)
         flow = Flow.includes(project: :namespace).find_by(id: usage_attribute(usage, :flow_id))
         return ServiceResponse.error(message: 'Flow not found', error_code: :flow_not_found) if flow.nil?
+        return runtime_assignment_error(flow) unless runtime_assigned_to_flow?(flow)
 
         day = usage_day(usage)
         amount = usage_amount(usage)
         return invalid_usage_error('Usage amount must be greater than zero') unless amount&.positive?
 
-        db_usage = DailyRuntimeUsage.find_or_initialize_by(
-          namespace: flow.project.namespace,
-          flow: flow,
-          day: day
-        )
+        db_usage, created = find_or_create_usage(flow, day, amount)
 
-        return increment_usage(db_usage, amount) unless db_usage.persisted?
+        return ServiceResponse.success(payload: db_usage) if created
 
-        db_usage.with_lock { increment_usage(db_usage, amount) }
+        # rubocop:disable Rails/SkipsModelValidations -- amount is validated above; this keeps the increment atomic in SQL.
+        DailyRuntimeUsage.update_counters(db_usage.id, usage: amount, touch: true)
+        # rubocop:enable Rails/SkipsModelValidations
+        ServiceResponse.success(payload: db_usage.reload)
       rescue ActiveRecord::RecordInvalid => e
         invalid_usage_error(e.record.errors)
-      rescue ActiveRecord::RecordNotUnique
-        retry
       rescue ArgumentError
         invalid_usage_error('Usage interval must be a valid date')
+      end
+
+      def find_or_create_usage(flow, day, amount)
+        attributes = {
+          namespace: flow.project.namespace,
+          flow: flow,
+          day: day,
+        }
+
+        db_usage = DailyRuntimeUsage.find_by(attributes)
+        return [db_usage, false] if db_usage.present?
+
+        db_usage = nil
+        DailyRuntimeUsage.transaction(requires_new: true) do
+          db_usage = DailyRuntimeUsage.create!(attributes.merge(usage: amount))
+        end
+
+        [db_usage, true]
+      rescue ActiveRecord::RecordNotUnique
+        retry
       end
 
       def usage_day(usage)
@@ -79,11 +98,20 @@ module Runtimes
         nil
       end
 
-      def increment_usage(db_usage, amount)
-        db_usage.usage += amount
-        return ServiceResponse.success(payload: db_usage) if db_usage.save
+      def runtime_assigned_to_flow?(flow)
+        runtime.project_assignments.compatible.exists?(namespace_project: flow.project)
+      end
 
-        invalid_usage_error(db_usage.errors)
+      def runtime_assignment_error(flow)
+        assignment = runtime.project_assignments.find_by(namespace_project: flow.project)
+        if assignment.nil?
+          return ServiceResponse.error(
+            message: 'Runtime not assigned to flow project',
+            error_code: :runtime_not_assigned
+          )
+        end
+
+        ServiceResponse.error(message: 'Runtime not compatible with flow project', error_code: :runtime_not_compatible)
       end
 
       def usage_attribute(usage, *keys)

@@ -5,7 +5,11 @@ class RuntimeUsageHandler < Tucana::Sagittarius::RuntimeUsageService::Service
   include GrpcHandler
 
   def update(request, _call)
-    response = Runtimes::Grpc::RuntimeUsageUpdateService.new(usages: request.runtime_usage).execute
+    current_runtime = Runtime.find(Code0::ZeroTrack::Context.current[:runtime][:id])
+    response = Runtimes::Grpc::RuntimeUsageUpdateService.new(
+      runtime: current_runtime,
+      usages: request.runtime_usage
+    ).execute
 
     logger.debug("RuntimeUsageHandler#update response: #{response.inspect}")
 
