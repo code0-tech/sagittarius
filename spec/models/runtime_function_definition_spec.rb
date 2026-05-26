@@ -17,6 +17,7 @@ RSpec.describe RuntimeFunctionDefinition do
 
     it { is_expected.to validate_length_of(:definition_source).is_at_most(50) }
     it { is_expected.to validate_length_of(:display_icon).is_at_most(100) }
+    it { is_expected.to validate_length_of(:design).is_at_most(200) }
 
     describe '#validate_version' do
       it 'adds an error if version is blank' do
@@ -41,6 +42,7 @@ RSpec.describe RuntimeFunctionDefinition do
 
   describe 'associations' do
     it { is_expected.to belong_to(:runtime) }
+    it { is_expected.to belong_to(:runtime_module).inverse_of(:runtime_function_definitions) }
 
     it do
       is_expected.to have_many(:parameters)

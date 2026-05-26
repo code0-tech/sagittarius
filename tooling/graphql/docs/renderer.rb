@@ -35,6 +35,8 @@ module Tooling
         end
 
         def check
+          parser.parse
+
           files.all? do |name, content|
             filename = Rails.root.join(@output_dir, name)
             next false unless File.exist?(filename)

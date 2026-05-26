@@ -6,5 +6,7 @@ FactoryBot.define do
   factory :runtime_parameter_definition do
     runtime_function_definition
     runtime_name { generate(:runtime_parameter_definition_name) }
+    optional { false }
+    hidden { false }
   end
 end

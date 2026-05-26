@@ -44,7 +44,7 @@ module Namespaces
       private
 
       def check_last_administrator(t)
-        return if namespace_member.namespace.has_owner?
+        return if namespace_member.namespace.owner?
 
         unless namespace_member.namespace.roles
                                .joins(:abilities, :member_roles)

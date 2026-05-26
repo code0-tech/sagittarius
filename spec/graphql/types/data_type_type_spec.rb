@@ -15,6 +15,7 @@ RSpec.describe SagittariusSchema.types['DataType'] do
       display_messages
       aliases
       runtime
+      runtimeModule
       linked_data_types
       generic_keys
       createdAt

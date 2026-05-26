@@ -9,5 +9,5 @@ Input type for parameter value
 | Name | Type | Description |
 |------|------|-------------|
 | `literalValue` | [`JSON`](../scalar/json.md) | The literal value of the parameter |
-| `nodeFunctionId` | [`NodeFunctionID`](../scalar/nodefunctionid.md) | The function value of the parameter as an id |
 | `referenceValue` | [`ReferenceValueInput`](../input_object/referencevalueinput.md) | The reference value of the parameter |
+| `subFlowValue` | [`SubFlowValueInput`](../input_object/subflowvalueinput.md) | The sub-flow value of the parameter |

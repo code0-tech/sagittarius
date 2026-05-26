@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class ErrorCode
-  InvalidErrorCode = Class.new(StandardError)
+  class InvalidErrorCode < StandardError
+  end
 
   def self.validate_error_code!(error_code)
     return unless error_code.is_a?(Symbol)
@@ -77,17 +78,22 @@ class ErrorCode
       referenced_value_not_found: { description: 'A referenced value could not be found' },
       invalid_runtime_parameter_definition: { description: 'The runtime parameter definition is invalid' },
       invalid_runtime_function_definition: { description: 'The runtime function definition is invalid' },
+      invalid_runtime_module: { description: 'The runtime module is invalid' },
+      invalid_module_configuration_definition: { description: 'The module configuration definition is invalid' },
+      invalid_function_definition: { description: 'The function definition is invalid' },
+      invalid_parameter_definition: { description: 'The parameter definition is invalid' },
       invalid_data_type: { description: 'The data type is invalid because of active model errors' },
       data_type_not_found: { description: 'The data type with the given identifier was not found' },
       invalid_flow_type: { description: 'The flow type is invalid because of active model errors' },
       no_data_type_for_identifier: { description: 'No data type could be found for the given identifier' },
+      cyclic_data_type_reference: { description: 'A data type dependency cycle was detected' },
       invalid_data_type_link: { description: 'The data type link is invalid because of active model errors' },
       node_not_found: { description: 'The node with this id does not exist' },
-      function_value_not_found: { description: 'The id for the function value node does not exist' },
       invalid_node_parameter: { description: 'The node parameter is invalid' },
       invalid_node_function: { description: 'The node function is invalid' },
       invalid_runtime_status: { description: 'The runtime status is invalid because of active model errors' },
       invalid_runtime_status_configuration: { description: 'The runtime status configuration is invalid because of active model errors' },
+      unsupported_authentication: { description: 'The current authentication is not supported for this operation' },
 
       primary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },
       secondary_level_not_found: { description: '', deprecation_reason: 'Outdated concept' },

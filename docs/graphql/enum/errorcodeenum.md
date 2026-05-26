@@ -11,6 +11,7 @@ Represents the available error responses
 | `CANNOT_MODIFY_OWN_ADMIN` | Users cannot modify their own admin status |
 | `CANNOT_REMOVE_LAST_ADMINISTRATOR` | This action would remove the last administrator |
 | `CANNOT_REMOVE_LAST_ADMIN_ABILITY` | This action would remove the last administrative ability |
+| `CYCLIC_DATA_TYPE_REFERENCE` | A data type dependency cycle was detected |
 | `DATA_TYPE_NOT_FOUND` | The data type with the given identifier was not found |
 | `EMAIL_VERIFICATION_SEND_FAILED` | Failed to send the email verification |
 | `EXTERNAL_IDENTITY_DOES_NOT_EXIST` | This external identity does not exist |
@@ -19,7 +20,6 @@ Represents the available error responses
 | `FAILED_TO_SAVE_VALID_BACKUP_CODE` | The new backup codes could not be saved |
 | `FLOW_NOT_FOUND` | The flow with the given identifier was not found |
 | `FLOW_TYPE_NOT_FOUND` | The flow type with the given identifier was not found |
-| `FUNCTION_VALUE_NOT_FOUND` | The id for the function value node does not exist |
 | `GENERIC_KEY_NOT_FOUND` | The given key was not found in the data type |
 | `IDENTITY_NOT_FOUND` | The external identity with the given identifier was not found |
 | `IDENTITY_VALIDATION_FAILED` | Failed to validate the external identity |
@@ -31,20 +31,24 @@ Represents the available error responses
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_FLOW_TYPE` | The flow type is invalid because of active model errors |
+| `INVALID_FUNCTION_DEFINITION` | The function definition is invalid |
 | `INVALID_FUNCTION_ID` | The function ID is invalid |
 | `INVALID_LICENSE` | The license is invalid because of active model errors |
 | `INVALID_LOGIN_DATA` | Invalid login data provided |
+| `INVALID_MODULE_CONFIGURATION_DEFINITION` | The module configuration definition is invalid |
 | `INVALID_NAMESPACE_MEMBER` | The namespace member is invalid because of active model errors |
 | `INVALID_NAMESPACE_PROJECT` | The namespace project is invalid because of active model errors |
 | `INVALID_NAMESPACE_ROLE` | The namespace role is invalid because of active model errors |
 | `INVALID_NODE_FUNCTION` | The node function is invalid |
 | `INVALID_NODE_PARAMETER` | The node parameter is invalid |
 | `INVALID_ORGANIZATION` | The organization is invalid because of active model errors |
+| `INVALID_PARAMETER_DEFINITION` | The parameter definition is invalid |
 | `INVALID_PARAMETER_INDEX` | The parameter index is invalid |
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_REFERENCE_VALUE` | The reference value is invalid |
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |
 | `INVALID_RUNTIME_FUNCTION_DEFINITION` | The runtime function definition is invalid |
+| `INVALID_RUNTIME_MODULE` | The runtime module is invalid |
 | `INVALID_RUNTIME_PARAMETER_DEFINITION` | The runtime parameter definition is invalid |
 | `INVALID_RUNTIME_STATUS` | The runtime status is invalid because of active model errors |
 | `INVALID_RUNTIME_STATUS_CONFIGURATION` | The runtime status configuration is invalid because of active model errors |
@@ -87,6 +91,7 @@ Represents the available error responses
 | `TERTIARY_LEVEL_EXCEEDS_PARAMETERS` | **Deprecated:** Outdated concept |
 | `TOTP_SECRET_ALREADY_SET` | This user already has TOTP set up |
 | `UNMODIFIABLE_FIELD` | The user is not permitted to modify this field |
+| `UNSUPPORTED_AUTHENTICATION` | The current authentication is not supported for this operation |
 | `USER_NOT_FOUND` | The user with the given identifier was not found |
 | `USER_SESSION_NOT_FOUND` | The user session with the given identifier was not found |
 | `WRONG_TOTP` | Invalid TOTP code provided |

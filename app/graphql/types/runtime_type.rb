@@ -6,12 +6,9 @@ module Types
 
     authorize :read_runtime
 
-    field :data_types, Types::DataTypeType.connection_type, null: false, description: 'DataTypes of the runtime'
     field :description, String, null: false, description: 'The description for the runtime if present'
-    field :flow_types, Types::FlowTypeType.connection_type, null: false, description: 'FlowTypes of the runtime'
-    field :function_definitions, Types::FunctionDefinitionType.connection_type,
-          null: false,
-          description: 'Function definitions of the runtime'
+    field :modules, Types::RuntimeModuleType.connection_type, null: false, description: 'Modules of the runtime',
+                                                              method: :runtime_modules
     field :name, String, null: false, description: 'The name for the runtime'
     field :namespace, Types::NamespaceType, null: true, description: 'The parent namespace for the runtime'
     field :projects, Types::NamespaceProjectType.connection_type, null: false,

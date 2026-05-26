@@ -56,7 +56,7 @@ module Sagittarius
         results.slice(0, page_size)
       end
 
-      # rubocop:disable Naming/PredicateName -- this is required by graphql-ruby
+      # rubocop:disable Naming/PredicateMethod, Naming/PredicatePrefix -- these method names are required by graphql-ruby
       def has_next_page
         !backward? && results.size > page_size
       end
@@ -64,7 +64,7 @@ module Sagittarius
       def has_previous_page
         backward? && results.size > page_size
       end
-      # rubocop:enable Naming/PredicateName
+      # rubocop:enable Naming/PredicateMethod, Naming/PredicatePrefix
     end
     # rubocop:enable GraphQL/ObjectDescription
   end

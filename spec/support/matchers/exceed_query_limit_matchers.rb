@@ -138,7 +138,7 @@ module ExceedQueryLimitHelpers
   end
 
   def recorder
-    @recorder ||= ActiveRecord::QueryRecorder.new(skip_cached: skip_cached, &@subject_block)
+    @recorder ||= ActiveRecord::QueryRecorder.new(skip_cached: skip_cached?, &@subject_block)
   end
 
   # Take a query recorder and tabulate the frequencies of suffixes for each prefix.
@@ -207,11 +207,11 @@ module ExceedQueryLimitHelpers
     end
   end
 
-  def skip_cached
+  def skip_cached?
     true
   end
 
-  def verify_count(&block)
+  def count_verified?(&block)
     @subject_block = block
     actual_count > maximum
   end
@@ -248,7 +248,7 @@ RSpec::Matchers.define :issue_fewer_queries_than do
     control_recorder.count
   end
 
-  def verify_count(&block)
+  def count_verified?(&block)
     @subject_block = block
 
     # These blocks need to be evaluated in an expected order, in case
@@ -260,7 +260,7 @@ RSpec::Matchers.define :issue_fewer_queries_than do
   end
 
   match do |block|
-    verify_count(&block)
+    count_verified?(&block)
   end
 
   def failure_message
@@ -304,7 +304,7 @@ RSpec::Matchers.define :issue_same_number_of_queries_as do |expected|
                         end
   end
 
-  def verify_count(&block)
+  def count_verified?(&block)
     @subject_block = block
 
     # These blocks need to be evaluated in an expected order, in case
@@ -320,7 +320,7 @@ RSpec::Matchers.define :issue_same_number_of_queries_as do |expected|
   end
 
   match do |block|
-    verify_count(&block)
+    count_verified?(&block)
   end
 
   def failure_message
@@ -346,7 +346,7 @@ RSpec::Matchers.define :issue_same_number_of_queries_as do |expected|
     [expected_count.to_s, or_fewer_msg, threshold_msg].compact.join(' ')
   end
 
-  def skip_cached
+  def skip_cached?
     @skip_cached || false
   end
 end
@@ -357,14 +357,14 @@ RSpec::Matchers.define :exceed_all_query_limit do |expected|
   include ExceedQueryLimitHelpers
 
   match do |block|
-    verify_count(&block)
+    count_verified?(&block)
   end
 
   failure_message_when_negated do |actual|
     failure_message
   end
 
-  def skip_cached
+  def skip_cached?
     false
   end
 end
@@ -378,9 +378,9 @@ RSpec::Matchers.define :exceed_query_limit do |expected|
   match do |block|
     if block.is_a?(ActiveRecord::QueryRecorder)
       @recorder = block
-      verify_count
+      count_verified?
     else
-      verify_count(&block)
+      count_verified?(&block)
     end
   end
 
@@ -394,7 +394,7 @@ RSpec::Matchers.define :match_query_count do |expected|
 
   include ExceedQueryLimitHelpers
 
-  def verify_count(&block)
+  def count_verified?(&block)
     @subject_block = block
     actual_count == maximum
   end
@@ -405,12 +405,12 @@ RSpec::Matchers.define :match_query_count do |expected|
     "Expected exactly #{counts} queries, got #{actual_count}:\n\n#{log_message}"
   end
 
-  def skip_cached
+  def skip_cached?
     false
   end
 
   match do |block|
-    verify_count(&block)
+    count_verified?(&block)
   end
 
   failure_message_when_negated do |actual|

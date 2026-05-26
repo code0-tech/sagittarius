@@ -3,7 +3,7 @@
 initial_runtime_token = ENV.fetch('INITIAL_RUNTIME_TOKEN', nil)
 return if initial_runtime_token.blank?
 
-return unless Runtime.count.zero?
+return unless Runtime.none?
 
 runtime = Runtime.new(
   name: 'Initial Runtime',

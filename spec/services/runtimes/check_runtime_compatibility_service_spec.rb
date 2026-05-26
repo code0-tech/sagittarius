@@ -45,18 +45,55 @@ RSpec.describe Runtimes::CheckRuntimeCompatibilityService do
 
   context 'when all models are compatible' do
     before do
-      create(:data_type, runtime: primary_runtime, identifier: 'dt1', version: '1.3.0')
-      create(:data_type, runtime: runtime, identifier: 'dt1', version: '1.3.0')
+      primary_module = create(:runtime_module, runtime: primary_runtime, version: '1.0.0')
+      secondary_module = create(
+        :runtime_module,
+        runtime: runtime,
+        identifier: primary_module.identifier,
+        version: '1.0.0'
+      )
+      create(:data_type, runtime: primary_runtime, runtime_module: primary_module, identifier: 'dt1', version: '1.3.0')
+      create(:data_type, runtime: runtime, runtime_module: secondary_module, identifier: 'dt1', version: '1.3.0')
+      primary_runtime_flow_type = create(
+        :runtime_flow_type,
+        runtime: primary_runtime,
+        runtime_module: primary_module,
+        identifier: 'rft1',
+        version: '2.1.0'
+      )
+      runtime_flow_type = create(
+        :runtime_flow_type,
+        runtime: runtime,
+        runtime_module: secondary_module,
+        identifier: 'rft1',
+        version: '2.2.0'
+      )
       create(:flow_type,
              runtime: primary_runtime,
+             runtime_module: primary_module,
+             runtime_flow_type: primary_runtime_flow_type,
              identifier: 'ft1',
              version: '2.1.0')
       create(:flow_type,
              runtime: runtime,
+             runtime_module: secondary_module,
+             runtime_flow_type: runtime_flow_type,
              identifier: 'ft1',
              version: '2.2.0')
-      create(:runtime_function_definition, runtime_name: 'rfd1', runtime: primary_runtime, version: '3.0.0')
-      create(:runtime_function_definition, runtime_name: 'rfd1', runtime: runtime, version: '3.1.0')
+      create(
+        :runtime_function_definition,
+        runtime_name: 'rfd1',
+        runtime: primary_runtime,
+        runtime_module: primary_module,
+        version: '3.0.0'
+      )
+      create(
+        :runtime_function_definition,
+        runtime_name: 'rfd1',
+        runtime: runtime,
+        runtime_module: secondary_module,
+        version: '3.1.0'
+      )
     end
 
     it 'returns success with the runtime as payload' do

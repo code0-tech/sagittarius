@@ -20,6 +20,14 @@ module Types
     field :names, [Types::TranslationType], null: true, description: 'Names of the flow type'
     field :runtime, Types::RuntimeType, null: false,
                                         description: 'Runtime of the flow type'
+    field :runtime_identifier, String, null: false,
+                                       description: 'Identifier of the runtime flow type backing this flow type'
+    # rubocop:disable GraphQL/ExtractType
+    field :runtime_flow_type, Types::RuntimeFlowTypeType, null: false,
+                                                          description: 'Runtime flow type backing this flow type'
+    field :runtime_module, Types::RuntimeModuleType, null: false,
+                                                     description: 'Runtime module of the flow type'
+    # rubocop:enable GraphQL/ExtractType
     field :signature, String, null: false, description: 'Signature of the flow type'
 
     # rubocop:disable GraphQL/ExtractType

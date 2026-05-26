@@ -4,8 +4,11 @@ module Sagittarius
   module Override
     extend ActiveSupport::Concern
 
-    InvalidMethodError = Class.new(StandardError)
-    MissingOverrideError = Class.new(StandardError)
+    class InvalidMethodError < StandardError
+    end
+
+    class MissingOverrideError < StandardError
+    end
 
     class_methods do
       def override(method)
@@ -23,7 +26,7 @@ module Sagittarius
 
     def self.verify_existence!(clazz)
       Override.extensions[clazz].each do |method|
-        unless clazz.instance_methods.include?(method)
+        unless clazz.method_defined?(method)
           raise_error! InvalidMethodError, "Method #{method} is not defined on #{clazz}"
         end
       end
@@ -31,10 +34,17 @@ module Sagittarius
 
     def self.verify_overrides!(clazz)
       core_class = find_core_class(clazz)
+      ext = find_extension(clazz)
+      lower_extensions = Sagittarius::Extensions::AVAILABLE_EXTENSIONS.take_while { |e| e != ext }
+
+      valid_sources = [core_class] + lower_extensions.filter_map do |lower_ext|
+        mod_name = "#{lower_ext.upcase}::#{clazz.name.delete_prefix("#{ext.upcase}::")}"
+        const_get(mod_name) if const_defined?(mod_name)
+      end
 
       Override.extensions[clazz].each do |method|
-        unless core_class.instance_methods(false).include?(method)
-          raise_error! MissingOverrideError, "Method #{method} is not defined on core class #{core_class}"
+        unless valid_sources.any? { |src| src.method_defined?(method, false) }
+          raise_error! MissingOverrideError, "Method #{method} is not defined on #{core_class} or a lower extension"
         end
       end
     end
@@ -57,15 +67,18 @@ module Sagittarius
     end
 
     def self.verify_missing_overrides!(clazz, extended_modules)
-      clazz.instance_methods(false).each do |method|
-        extended_modules.each do |ext|
-          overrides = Override.extensions[ext]
+      extended_modules.each_with_index do |ext, index|
+        lower_sources = [clazz] + extended_modules[0...index]
 
+        ext.instance_methods(false).each do |method|
+          source = lower_sources.find { |src| src.method_defined?(method, false) }
+          next unless source
+
+          overrides = Override.extensions[ext]
           next if !overrides.nil? && overrides.include?(method)
 
-          if ext.instance_methods(false).include?(method)
-            raise_error! MissingOverrideError, "Method #{method} is not marked as override in #{ext}"
-          end
+          raise_error! MissingOverrideError,
+                       "Method #{method} in #{ext} overrides #{source} but is not marked as override"
         end
       end
     end

@@ -1,15 +1,20 @@
 # frozen_string_literal: true
 
 class ParameterDefinition < ApplicationRecord
+  include HasTranslation
+
   belongs_to :runtime_parameter_definition
 
   belongs_to :function_definition, inverse_of: :parameter_definitions
 
   has_many :node_parameters, inverse_of: :parameter_definition
 
-  has_many :names, -> { by_purpose(:name) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :descriptions, -> { by_purpose(:description) }, class_name: 'Translation', as: :owner, inverse_of: :owner
-  has_many :documentations, -> { by_purpose(:documentation) }, class_name: 'Translation', as: :owner, inverse_of: :owner
+  has_translation :names, purpose: :name
+  has_translation :descriptions, purpose: :description
+  has_translation :documentations, purpose: :documentation
+
+  validates :optional, inclusion: { in: [true, false] }
+  validates :hidden, inclusion: { in: [true, false] }
 
   validate :function_definition_matches_definition
 
@@ -25,6 +30,8 @@ class ParameterDefinition < ApplicationRecord
     Tucana::Shared::ParameterDefinition.new(
       runtime_name: runtime_parameter_definition.runtime_name,
       default_value: Tucana::Shared::Value.from_ruby(default_value),
+      optional: optional,
+      hidden: hidden,
       name: names.map(&:to_grpc),
       description: descriptions.map(&:to_grpc),
       documentation: documentations.map(&:to_grpc)

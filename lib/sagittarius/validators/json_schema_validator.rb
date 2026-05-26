@@ -9,7 +9,8 @@
 module Sagittarius
   module Validators
     class JsonSchemaValidator < ActiveModel::EachValidator
-      FilenameError = Class.new(StandardError)
+      class FilenameError < StandardError
+      end
       BASE_DIRECTORY = %w[app models json_schemas].freeze
 
       def initialize(options)

@@ -14,11 +14,14 @@ class Runtime < ApplicationRecord
                       inverse_of: :runtimes
   has_many :primary_projects, class_name: 'NamespaceProject', inverse_of: :primary_runtime
 
+  has_many :runtime_modules, inverse_of: :runtime
+
   has_many :data_types, inverse_of: :runtime
 
   has_many :runtime_function_definitions, inverse_of: :runtime
-  has_many :function_definitions, through: :runtime_function_definitions
+  has_many :function_definitions, inverse_of: :runtime
 
+  has_many :runtime_flow_types, inverse_of: :runtime
   has_many :flow_types, inverse_of: :runtime
 
   validates :name, presence: true,

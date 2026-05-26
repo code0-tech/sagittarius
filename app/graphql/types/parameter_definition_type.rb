@@ -21,6 +21,9 @@ module Types
     field :default_value, GraphQL::Types::JSON,
           null: true, description: 'Default value of the parameter'
 
+    field :hidden, Boolean, null: false, description: 'Indicates if the parameter is hidden'
+    field :optional, Boolean, null: false, description: 'Indicates if the parameter is optional'
+
     id_field ParameterDefinition
     timestamps
 
