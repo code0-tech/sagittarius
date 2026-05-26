@@ -1680,10 +1680,11 @@ ALTER TABLE ONLY flow_types
 ALTER TABLE ONLY namespace_role_project_assignments
     ADD CONSTRAINT fk_rails_69066bda8f FOREIGN KEY (project_id) REFERENCES namespace_projects(id);
 
-ALTER TABLE ONLY user_organization_pins
-    ADD CONSTRAINT fk_rails_6b125cdf79 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
 ALTER TABLE ONLY flow_types
     ADD CONSTRAINT fk_rails_69115ada7f FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY user_organization_pins
+    ADD CONSTRAINT fk_rails_6b125cdf79 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_member_roles
     ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES namespace_members(id) ON DELETE CASCADE;
