@@ -18,7 +18,7 @@ module Namespaces
           unless Ability.allowed?(
             current_authentication,
             :assign_project_runtimes,
-            runtime_assignment.namespace_project
+            runtime_assignment
           )
             return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
           end
