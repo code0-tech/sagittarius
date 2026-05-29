@@ -17,7 +17,7 @@ module Namespaces
         def execute
           unless Ability.allowed?(
             current_authentication,
-            :assign_project_runtimes,
+            :update_module_configurations,
             runtime_assignment
           )
             return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
@@ -59,11 +59,11 @@ module Namespaces
           )
           db_configurations = []
           kept_definition_ids = []
+          definitions = configuration_definitions.index_by(&:id)
 
           module_configurations.each do |configuration_input|
-            definition = runtime_assignment.runtime.module_configuration_definitions.find_by(
-              id: configuration_input.module_configuration_definition_id.model_id
-            )
+            definition_id = configuration_input.module_configuration_definition_id.model_id.to_i
+            definition = definitions[definition_id]
 
             if definition.nil?
               t.rollback_and_return! ServiceResponse.error(
@@ -90,9 +90,17 @@ module Namespaces
 
           runtime_assignment.module_configurations
                             .where.not(module_configuration_definition_id: kept_definition_ids)
-                            .destroy_all
+                            .delete_all
 
           db_configurations
+        end
+
+        def configuration_definitions
+          definition_ids = module_configurations.map do |configuration_input|
+            configuration_input.module_configuration_definition_id.model_id
+          end
+
+          runtime_assignment.runtime.module_configuration_definitions.where(id: definition_ids)
         end
       end
     end

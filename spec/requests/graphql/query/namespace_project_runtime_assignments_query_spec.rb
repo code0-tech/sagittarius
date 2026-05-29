@@ -56,7 +56,6 @@ RSpec.describe 'namespace project runtime assignments Query' do
 
   before do
     stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: project)
-    stub_allowed_ability(NamespaceProjectPolicy, :assign_project_runtimes, user: current_user, subject: project)
 
     post_graphql query,
                  variables: {

@@ -12,6 +12,7 @@ module Mutations
                    description: 'The full set of saved module configurations for this assignment.'
           argument :namespace_project_runtime_assignment_id,
                    Types::GlobalIdType[::NamespaceProjectRuntimeAssignment],
+                   required: true,
                    description: 'The project runtime assignment to update.'
 
           field :namespace_project_runtime_assignment, Types::NamespaceProjectRuntimeAssignmentType,

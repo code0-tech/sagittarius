@@ -45,7 +45,12 @@ RSpec.describe Namespaces::Projects::RuntimeAssignments::UpdateModuleConfigurati
 
   context 'when user has permission' do
     before do
-      stub_allowed_ability(NamespaceProjectPolicy, :assign_project_runtimes, user: current_user, subject: project)
+      stub_allowed_ability(
+        NamespaceProjectRuntimeAssignmentPolicy,
+        :update_module_configurations,
+        user: current_user,
+        subject: runtime_assignment
+      )
     end
 
     it { is_expected.to be_success }

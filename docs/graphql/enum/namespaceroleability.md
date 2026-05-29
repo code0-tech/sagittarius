@@ -28,6 +28,7 @@ Represents abilities that can be granted to roles in namespaces.
 | `READ_NAMESPACE_PROJECT` | Allows to read the project of the namespace |
 | `ROTATE_RUNTIME_TOKEN` | Allows to regenerate a runtime token |
 | `UPDATE_FLOW` | Allows to update flows in the project |
+| `UPDATE_MODULE_CONFIGURATIONS` | Allows to update module configurations in the project |
 | `UPDATE_NAMESPACE_PROJECT` | Allows to update the project of the namespace |
 | `UPDATE_NAMESPACE_ROLE` | Allows to update the namespace role |
 | `UPDATE_ORGANIZATION` | Allows to update the organization |

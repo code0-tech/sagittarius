@@ -67,7 +67,12 @@ RSpec.describe 'namespacesProjectsRuntimeAssignmentsUpdateModuleConfigurations M
   context 'when user has permission' do
     before do
       create(:namespace_member, namespace: namespace, user: current_user)
-      stub_allowed_ability(NamespaceProjectPolicy, :assign_project_runtimes, user: current_user, subject: project)
+      stub_allowed_ability(
+        NamespaceProjectRuntimeAssignmentPolicy,
+        :update_module_configurations,
+        user: current_user,
+        subject: runtime_assignment
+      )
       stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: project)
     end
 
