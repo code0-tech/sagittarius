@@ -4,6 +4,9 @@ class NamespaceProjectRuntimeAssignment < ApplicationRecord
   belongs_to :runtime, inverse_of: :project_assignments
   belongs_to :namespace_project, inverse_of: :runtime_assignments
 
+  has_many :module_configurations,
+           inverse_of: :namespace_project_runtime_assignment
+
   validates :runtime, uniqueness: { scope: :namespace_project_id }
 
   validate :validate_namespaces, if: :runtime_changed?

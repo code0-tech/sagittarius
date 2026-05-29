@@ -12,6 +12,9 @@ module Types
 
     field :slug, String, null: false, description: 'Slug of the project used in URLs to identify flows'
 
+    field :runtime_assignments, Types::NamespaceProjectRuntimeAssignmentType.connection_type,
+          null: false,
+          description: 'Runtime assignments of this project.'
     field :runtimes, Types::RuntimeType.connection_type, null: false, description: 'Runtimes assigned to this project'
 
     field :roles, Types::NamespaceRoleType.connection_type, null: false,

@@ -28,6 +28,7 @@ class NamespaceRoleAbility < ApplicationRecord
     create_flow: { db: 24, description: 'Allows to create flows in a namespace project' },
     delete_flow: { db: 25, description: 'Allows to delete flows in a namespace project' },
     update_flow: { db: 26, description: 'Allows to update flows in the project' },
+    update_module_configurations: { db: 27, description: 'Allows to update module configurations in the project' },
   }.with_indifferent_access
   enum :ability, ABILITIES.transform_values { |v| v[:db] }, prefix: :can
 

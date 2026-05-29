@@ -79,5 +79,41 @@ RSpec.describe CustomizablePermission do
     end
   end
 
+  context 'when the subject belongs to a project' do
+    subject { policy_class.new(create_authentication(current_user), runtime_assignment) }
+
+    let(:policy_class) do
+      Class.new(BasePolicy) do
+        include CustomizablePermission
+
+        namespace_resolver { |runtime_assignment| runtime_assignment.namespace_project.namespace }
+
+        customizable_permission :update_module_configurations
+      end
+    end
+    let(:runtime_assignment) do
+      create(:namespace_project_runtime_assignment, namespace_project: project, runtime: runtime)
+    end
+    let(:project) { create(:namespace_project, namespace: namespace) }
+    let(:runtime) { create(:runtime, namespace: namespace) }
+
+    before do
+      create(:namespace_role_project_assignment, role: namespace_role, project: assigned_project)
+      create(:namespace_role_ability, namespace_role: namespace_role, ability: :update_module_configurations)
+    end
+
+    context 'when checking on an assignment for the assigned project' do
+      let(:assigned_project) { project }
+
+      it { is_expected.to be_allowed(:update_module_configurations) }
+    end
+
+    context 'when checking on an assignment for another project' do
+      let(:assigned_project) { create(:namespace_project, namespace: namespace) }
+
+      it { is_expected.not_to be_allowed(:update_module_configurations) }
+    end
+  end
+
   it { is_expected.not_to be_allowed(:create_namespace_role) }
 end

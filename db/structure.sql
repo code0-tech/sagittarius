@@ -467,6 +467,24 @@ CREATE SEQUENCE module_configuration_definitions_id_seq
 
 ALTER SEQUENCE module_configuration_definitions_id_seq OWNED BY module_configuration_definitions.id;
 
+CREATE TABLE module_configurations (
+    id bigint NOT NULL,
+    namespace_project_runtime_assignment_id bigint CONSTRAINT module_configurations_namespace_project_runtime_assign_not_null NOT NULL,
+    module_configuration_definition_id bigint CONSTRAINT module_configurations_module_configuration_definition__not_null NOT NULL,
+    value jsonb,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE module_configurations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE module_configurations_id_seq OWNED BY module_configurations.id;
+
 CREATE TABLE namespace_member_roles (
     id bigint CONSTRAINT organization_member_roles_id_not_null NOT NULL,
     role_id bigint CONSTRAINT organization_member_roles_role_id_not_null NOT NULL,
@@ -1112,6 +1130,8 @@ ALTER TABLE ONLY module_configuration_definition_data_type_links ALTER COLUMN id
 
 ALTER TABLE ONLY module_configuration_definitions ALTER COLUMN id SET DEFAULT nextval('module_configuration_definitions_id_seq'::regclass);
 
+ALTER TABLE ONLY module_configurations ALTER COLUMN id SET DEFAULT nextval('module_configurations_id_seq'::regclass);
+
 ALTER TABLE ONLY namespace_member_roles ALTER COLUMN id SET DEFAULT nextval('namespace_member_roles_id_seq'::regclass);
 
 ALTER TABLE ONLY namespace_members ALTER COLUMN id SET DEFAULT nextval('namespace_members_id_seq'::regclass);
@@ -1247,6 +1267,9 @@ ALTER TABLE ONLY module_configuration_definition_data_type_links
 ALTER TABLE ONLY module_configuration_definitions
     ADD CONSTRAINT module_configuration_definitions_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY module_configurations
+    ADD CONSTRAINT module_configurations_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY namespace_member_roles
     ADD CONSTRAINT namespace_member_roles_pkey PRIMARY KEY (id);
 
@@ -1347,6 +1370,12 @@ CREATE UNIQUE INDEX idx_flow_types_on_runtime_module_id_identifier ON flow_types
 CREATE UNIQUE INDEX idx_function_definitions_on_runtime_id_identifier ON function_definitions USING btree (runtime_id, identifier);
 
 CREATE UNIQUE INDEX idx_module_config_links_on_config_id_data_type_id ON module_configuration_definition_data_type_links USING btree (module_configuration_definition_id, referenced_data_type_id);
+
+CREATE INDEX idx_module_configs_on_assignment_id ON module_configurations USING btree (namespace_project_runtime_assignment_id);
+
+CREATE UNIQUE INDEX idx_module_configs_on_assignment_id_and_definition_id ON module_configurations USING btree (namespace_project_runtime_assignment_id, module_configuration_definition_id);
+
+CREATE INDEX idx_module_configs_on_definition_id ON module_configurations USING btree (module_configuration_definition_id);
 
 CREATE UNIQUE INDEX idx_module_configs_on_module_id_identifier ON module_configuration_definitions USING btree (runtime_module_id, identifier);
 
@@ -1596,8 +1625,14 @@ ALTER TABLE ONLY parameter_definitions
 ALTER TABLE ONLY module_configuration_definition_data_type_links
     ADD CONSTRAINT fk_rails_42593aae68 FOREIGN KEY (module_configuration_definition_id) REFERENCES module_configuration_definitions(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY module_configurations
+    ADD CONSTRAINT fk_rails_42e0cac371 FOREIGN KEY (module_configuration_definition_id) REFERENCES module_configuration_definitions(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY data_type_data_type_links
     ADD CONSTRAINT fk_rails_443c90661b FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
+
+ALTER TABLE ONLY module_configurations
+    ADD CONSTRAINT fk_rails_47f7323aca FOREIGN KEY (namespace_project_runtime_assignment_id) REFERENCES namespace_project_runtime_assignments(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT fk_rails_48f4bbe3b6 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;

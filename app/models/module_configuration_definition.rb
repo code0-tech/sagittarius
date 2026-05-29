@@ -7,6 +7,7 @@ class ModuleConfigurationDefinition < ApplicationRecord
 
   belongs_to :runtime_module, inverse_of: :module_configuration_definitions
 
+  has_many :module_configurations, inverse_of: :module_configuration_definition
   has_many :module_configuration_definition_data_type_links, inverse_of: :module_configuration_definition
   has_many :referenced_data_types,
            through: :module_configuration_definition_data_type_links,
