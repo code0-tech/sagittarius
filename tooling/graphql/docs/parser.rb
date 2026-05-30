@@ -30,6 +30,7 @@ module Tooling
 
           process_interfaces
           process_mutations
+          process_subscriptions
           reject_types
         end
 
@@ -39,10 +40,14 @@ module Tooling
               name = element[:name]
               next true if name.start_with?('__')
               next true if type == :object && name == 'Mutation'
+              next true if type == :object && name == 'Subscription'
 
-              next true if type == :object && name.end_with?('Payload') && elements[:mutation].find do |mutation|
-                mutation[:name] == name.chomp('Payload').camelcase(:lower)
-              end
+              next true if type == :object && name.end_with?('Payload') && (
+                elements[:mutation].find { |mutation| mutation[:name] == name.chomp('Payload').camelcase(:lower) } ||
+                elements[:subscription]&.find do |subscription|
+                  subscription[:type][:name] == name
+                end
+              )
 
               type == :input_object && name.end_with?('Input') && elements[:mutation].find do |mutation|
                 mutation[:name] == name.chomp('Input').camelcase(:lower)
@@ -81,6 +86,23 @@ module Tooling
           end
 
           elements[:mutation] = mutations
+        end
+
+        def process_subscriptions
+          subscription_type = elements[:object].find { |obj| obj[:name] == 'Subscription' }
+          return if subscription_type.nil?
+
+          subscriptions = subscription_type[:fields]
+
+          subscriptions.each do |subscription|
+            payload_object = elements[:object].find { |type| type[:name] == subscription[:type][:name] }
+            assert!(payload_object.present?,
+                    "Cannot find #{subscription[:type][:name]} as payload for #{subscription[:name]}")
+
+            subscription[:fields] = payload_object[:fields]
+          end
+
+          elements[:subscription] = subscriptions
         end
 
         def parse_type_specific(type, element)

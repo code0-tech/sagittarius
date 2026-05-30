@@ -18,6 +18,7 @@ module Tooling
             enum: parser.elements[:enum],
             object: parser.elements[:object],
             mutation: parser.elements[:mutation],
+            subscription: parser.elements[:subscription],
             input_object: parser.elements[:input_object],
           }
         end
