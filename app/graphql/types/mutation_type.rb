@@ -13,6 +13,7 @@ module Types
     mount_mutation Mutations::Namespaces::Projects::AssignRuntimes
     mount_mutation Mutations::Namespaces::Projects::Create
     mount_mutation Mutations::Namespaces::Projects::Delete
+    mount_mutation Mutations::Namespaces::Projects::RuntimeAssignments::UpdateModuleConfigurations
     mount_mutation Mutations::Namespaces::Projects::Update
     mount_mutation Mutations::Namespaces::Projects::Flows::Create
     mount_mutation Mutations::Namespaces::Projects::Flows::Delete
