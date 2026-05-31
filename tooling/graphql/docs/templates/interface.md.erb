@@ -39,7 +39,7 @@ Returns [`<%= field[:type][:info] %>`](../<%= field[:type][:path] %>.md).
 
 | Name | Type | Description |
 |------|------|-------------|
-<% sorted_by_name.call(field[:arguments]).each do |argument| -%>
+<% sorted_by_name.call(documented_arguments.call(field)).each do |argument| -%>
 | `<%= argument[:name] %>` | [`<%= argument[:type][:info] %>`](../<%= argument[:type][:path] %>.md) | <%= argument[:description] %> |
 <% end -%>
 <% end -%>

@@ -33,9 +33,5 @@ Returns [`DailyRuntimeUsageConnection!`](../object/dailyruntimeusageconnection.m
 
 | Name | Type | Description |
 |------|------|-------------|
-| `after` | [`String`](../scalar/string.md) | Returns the elements in the list that come after the specified cursor. |
-| `before` | [`String`](../scalar/string.md) | Returns the elements in the list that come before the specified cursor. |
-| `first` | [`Int`](../scalar/int.md) | Returns the first _n_ elements from the list. |
 | `from` | [`Date`](../scalar/date.md) | Only return usage entries on or after this day |
-| `last` | [`Int`](../scalar/int.md) | Returns the last _n_ elements from the list. |
 | `to` | [`Date`](../scalar/date.md) | Only return usage entries on or before this day |
