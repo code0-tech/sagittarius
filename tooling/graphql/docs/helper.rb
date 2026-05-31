@@ -33,12 +33,16 @@ module Tooling
           type_name.present? && type_name.ends_with?('Connection')
         end
 
-        def arguments?(field)
+        def documented_arguments(field)
           args = field[:arguments]
-          return false if args.blank?
-          return true unless connection?(field)
+          return [] if args.blank?
+          return args unless connection?(field)
 
-          args.any? { |arg| CONNECTION_ARGS.exclude?(arg[:name]) }
+          args.reject { |arg| CONNECTION_ARGS.include?(arg[:name]) }
+        end
+
+        def arguments?(field)
+          documented_arguments(field).present?
         end
 
         def render(type, object)
@@ -48,7 +52,8 @@ module Tooling
           ).result_with_hash(
             object: object,
             sorted_by_name: method(:sorted_by_name),
-            has_arguments: method(:arguments?)
+            has_arguments: method(:arguments?),
+            documented_arguments: method(:documented_arguments)
           )
 
           [filename, content]
