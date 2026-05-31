@@ -48,30 +48,6 @@ Returns [`Organization`](../object/organization.md).
 | `id` | [`OrganizationID`](../scalar/organizationid.md) | GlobalID of the target organization |
 | `name` | [`String`](../scalar/string.md) | Name of the target organization |
 
-### testExecution
-
-Find a test execution
-
-Returns [`TestExecution`](../object/testexecution.md).
-
-| Name | Type | Description |
-|------|------|-------------|
-| `id` | [`TestExecutionID!`](../scalar/testexecutionid.md) | GlobalID of the target test execution |
-
-### testExecutions
-
-Find test executions for a flow
-
-Returns [`TestExecutionConnection!`](../object/testexecutionconnection.md).
-
-| Name | Type | Description |
-|------|------|-------------|
-| `after` | [`String`](../scalar/string.md) | Returns the elements in the list that come after the specified cursor. |
-| `before` | [`String`](../scalar/string.md) | Returns the elements in the list that come before the specified cursor. |
-| `first` | [`Int`](../scalar/int.md) | Returns the first _n_ elements from the list. |
-| `flowId` | [`FlowID!`](../scalar/flowid.md) | GlobalID of the flow to find test executions for |
-| `last` | [`Int`](../scalar/int.md) | Returns the last _n_ elements from the list. |
-
 ### user
 
 Find a user

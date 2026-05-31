@@ -1,5 +1,5 @@
 ---
-title: TestExecutionNodeResultEdge
+title: ExecutionResultEdge
 ---
 
 An edge in a connection.
@@ -9,4 +9,4 @@ An edge in a connection.
 | Name | Type | Description |
 |------|------|-------------|
 | `cursor` | [`String!`](../scalar/string.md) | A cursor for use in pagination. |
-| `node` | [`TestExecutionNodeResult`](../object/testexecutionnoderesult.md) | The item at the end of the edge. |
+| `node` | [`ExecutionResult`](../object/executionresult.md) | The item at the end of the edge. |

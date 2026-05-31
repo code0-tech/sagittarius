@@ -7,11 +7,11 @@ module Types
     authorize :read_flow
     declarative_policy_subject(&:flow)
 
-    field :error, GraphQL::Types::JSON,
+    field :error, Types::ExecutionErrorType,
           null: true,
           description: 'Error returned by the execution result'
     field :finished_at, Types::TimeType,
-          null: true,
+          null: false,
           description: 'Time when this execution result finished'
     field :flow, Types::FlowType,
           null: false,
@@ -19,11 +19,11 @@ module Types
     field :input, GraphQL::Types::JSON,
           null: true,
           description: 'Input recorded in the execution result'
-    field :node_results, Types::ExecutionResultNodeResultType.connection_type,
+    field :node_results, [Types::ExecutionResultNodeResultType],
           null: false,
           description: 'Node results produced by this execution result'
     field :started_at, Types::TimeType,
-          null: true,
+          null: false,
           description: 'Time when this execution result started'
     field :success, GraphQL::Types::JSON,
           null: true,

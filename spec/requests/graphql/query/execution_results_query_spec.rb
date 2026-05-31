@@ -23,7 +23,16 @@ RSpec.describe 'execution results Query' do
            execution_result: execution_result,
            node_function: node_function,
            position: 0,
-           success: { 'node' => 'done' })
+           success: nil,
+           error: {
+             'code' => 'E_NODE',
+             'category' => 'runtime',
+             'message' => 'Node failed',
+             'timestamp' => 1_780_000_000,
+             'version' => '0.0.72',
+             'dependencies' => { 'module' => '1.0.0' },
+             'details' => { 'reason' => 'invalid' },
+           })
   end
   let!(:parameter_result) do
     create(:execution_result_parameter_result,
@@ -51,22 +60,25 @@ RSpec.describe 'execution results Query' do
                   id
                   input
                   success
-                  error
                   flow { id }
                   nodeResults {
-                    nodes {
+                    id
+                    position
+                    success
+                    error {
+                      code
+                      category
+                      message
+                      timestamp
+                      version
+                      dependencies
+                      details
+                    }
+                    nodeFunction { id }
+                    parameterResults {
                       id
                       position
-                      success
-                      error
-                      nodeFunction { id }
-                      parameterResults {
-                        nodes {
-                          id
-                          position
-                          value
-                        }
-                      }
+                      value
                     }
                   }
                 }
@@ -100,26 +112,31 @@ RSpec.describe 'execution results Query' do
       'id' => execution_result.to_global_id.to_s,
       'input' => { 'prompt' => 'pong' },
       'success' => { 'ok' => true },
-      'error' => nil,
       'flow' => { 'id' => flow.to_global_id.to_s }
     )
 
-    expect(execution_node.dig('nodeResults', 'nodes')).to contain_exactly(
+    expect(execution_node['nodeResults']).to contain_exactly(
       a_hash_including(
         'id' => node_result.to_global_id.to_s,
         'position' => 0,
-        'success' => { 'node' => 'done' },
-        'error' => nil,
+        'success' => nil,
+        'error' => {
+          'code' => 'E_NODE',
+          'category' => 'runtime',
+          'message' => 'Node failed',
+          'timestamp' => '1780000000',
+          'version' => '0.0.72',
+          'dependencies' => { 'module' => '1.0.0' },
+          'details' => { 'reason' => 'invalid' },
+        },
         'nodeFunction' => { 'id' => node_function.to_global_id.to_s },
-        'parameterResults' => {
-          'nodes' => contain_exactly(
-            a_hash_including(
-              'id' => parameter_result.to_global_id.to_s,
-              'position' => 0,
-              'value' => { 'value' => 'done' }
-            )
-          ),
-        }
+        'parameterResults' => contain_exactly(
+          a_hash_including(
+            'id' => parameter_result.to_global_id.to_s,
+            'position' => 0,
+            'value' => { 'value' => 'done' }
+          )
+        )
       )
     )
 

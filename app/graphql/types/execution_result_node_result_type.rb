@@ -7,21 +7,21 @@ module Types
     authorize :read_flow
     declarative_policy_subject { |node_result| node_result.execution_result.flow }
 
-    field :error, GraphQL::Types::JSON,
+    field :error, Types::ExecutionErrorType,
           null: true,
           description: 'Error returned by this node execution'
     field :finished_at, Types::TimeType,
-          null: true,
+          null: false,
           description: 'Time when this node execution finished'
     field :node_function, Types::NodeFunctionType, null: true, description: 'Node function associated with this result'
-    field :parameter_results, Types::ExecutionResultParameterResultType.connection_type,
+    field :parameter_results, [Types::ExecutionResultParameterResultType],
           null: false,
           description: 'Parameter results produced by this node execution'
     field :position, Integer,
           null: false,
           description: 'Position of this node result in the execution result'
     field :started_at, Types::TimeType,
-          null: true,
+          null: false,
           description: 'Time when this node execution started'
     field :success, GraphQL::Types::JSON,
           null: true,
