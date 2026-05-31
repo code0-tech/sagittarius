@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class TestExecutionPolicy < BasePolicy
+class ExecutionResultPolicy < BasePolicy
   delegate { subject.flow }
 end

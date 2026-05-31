@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module Types
-  class TestExecutionNodeResultType < Types::BaseObject
-    description 'Represents a node result of a test execution'
+  class ExecutionResultNodeResultType < Types::BaseObject
+    description 'Represents a node result of an execution result'
 
     authorize :read_flow
-    declarative_policy_subject { |node_result| node_result.test_execution.flow }
+    declarative_policy_subject { |node_result| node_result.execution_result.flow }
 
     field :error, GraphQL::Types::JSON,
           null: true,
@@ -13,11 +13,8 @@ module Types
     field :finished_at, Types::TimeType,
           null: true,
           description: 'Time when this node execution finished'
-    # rubocop:disable GraphQL/ExtractType -- these fields expose Tucana's node result identity directly
     field :node_function, Types::NodeFunctionType, null: true, description: 'Node function associated with this result'
-    field :node_id, String, null: false, description: 'Runtime node identifier returned by Tucana'
-    # rubocop:enable GraphQL/ExtractType
-    field :parameter_results, Types::TestExecutionParameterResultType.connection_type,
+    field :parameter_results, Types::ExecutionResultParameterResultType.connection_type,
           null: false,
           description: 'Parameter results produced by this node execution'
     field :position, Integer,
@@ -30,12 +27,8 @@ module Types
           null: true,
           description: 'Successful value returned by this node execution'
 
-    id_field TestExecutionNodeResult
+    id_field ExecutionResultNodeResult
     timestamps
-
-    def node_id
-      object.node_id.to_s
-    end
 
     def parameter_results
       object.parameter_results.order(:position)

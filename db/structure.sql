@@ -182,6 +182,71 @@ CREATE SEQUENCE data_types_id_seq
 
 ALTER SEQUENCE data_types_id_seq OWNED BY data_types.id;
 
+CREATE TABLE execution_result_node_results (
+    id bigint NOT NULL,
+    execution_result_id bigint NOT NULL,
+    node_function_id bigint NOT NULL,
+    "position" integer NOT NULL,
+    started_at timestamp with time zone NOT NULL,
+    finished_at timestamp with time zone NOT NULL,
+    success jsonb,
+    error jsonb,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT check_3a8075f638 CHECK ((num_nonnulls(success, error) <= 1))
+);
+
+CREATE SEQUENCE execution_result_node_results_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE execution_result_node_results_id_seq OWNED BY execution_result_node_results.id;
+
+CREATE TABLE execution_result_parameter_results (
+    id bigint NOT NULL,
+    execution_result_node_result_id bigint CONSTRAINT execution_result_parameter__execution_result_node_resu_not_null NOT NULL,
+    "position" integer NOT NULL,
+    value jsonb NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE execution_result_parameter_results_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE execution_result_parameter_results_id_seq OWNED BY execution_result_parameter_results.id;
+
+CREATE TABLE execution_results (
+    id bigint NOT NULL,
+    flow_id bigint NOT NULL,
+    execution_identifier text NOT NULL,
+    input jsonb,
+    started_at timestamp with time zone NOT NULL,
+    finished_at timestamp with time zone NOT NULL,
+    success jsonb,
+    error jsonb,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT check_1e7a71dfb7 CHECK ((char_length(execution_identifier) <= 200)),
+    CONSTRAINT check_5bf29caaec CHECK ((num_nonnulls(success, error) <= 1))
+);
+
+CREATE SEQUENCE execution_results_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE execution_results_id_seq OWNED BY execution_results.id;
+
 CREATE TABLE flow_data_type_links (
     id bigint NOT NULL,
     flow_id bigint NOT NULL,
@@ -1007,73 +1072,6 @@ CREATE SEQUENCE sub_flows_id_seq
 
 ALTER SEQUENCE sub_flows_id_seq OWNED BY sub_flows.id;
 
-CREATE TABLE test_execution_node_results (
-    id bigint NOT NULL,
-    test_execution_id bigint NOT NULL,
-    node_function_id bigint,
-    node_id bigint NOT NULL,
-    "position" integer NOT NULL,
-    started_at timestamp with time zone,
-    finished_at timestamp with time zone,
-    success jsonb,
-    error jsonb,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_b4af97dd8c CHECK ((num_nonnulls(success, error) <= 1))
-);
-
-CREATE SEQUENCE test_execution_node_results_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE test_execution_node_results_id_seq OWNED BY test_execution_node_results.id;
-
-CREATE TABLE test_execution_parameter_results (
-    id bigint NOT NULL,
-    test_execution_node_result_id bigint CONSTRAINT test_execution_parameter_re_test_execution_node_result_not_null NOT NULL,
-    "position" integer NOT NULL,
-    value jsonb NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE test_execution_parameter_results_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE test_execution_parameter_results_id_seq OWNED BY test_execution_parameter_results.id;
-
-CREATE TABLE test_executions (
-    id bigint NOT NULL,
-    flow_id bigint NOT NULL,
-    execution_identifier text NOT NULL,
-    body jsonb,
-    input jsonb,
-    started_at timestamp with time zone,
-    finished_at timestamp with time zone,
-    success jsonb,
-    error jsonb,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_c30c9646df CHECK ((char_length(execution_identifier) <= 200)),
-    CONSTRAINT check_e9273192bd CHECK ((num_nonnulls(success, error) <= 1))
-);
-
-CREATE SEQUENCE test_executions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE test_executions_id_seq OWNED BY test_executions.id;
-
 CREATE TABLE translations (
     id bigint NOT NULL,
     code text NOT NULL,
@@ -1177,6 +1175,12 @@ ALTER TABLE ONLY data_type_rules ALTER COLUMN id SET DEFAULT nextval('data_type_
 
 ALTER TABLE ONLY data_types ALTER COLUMN id SET DEFAULT nextval('data_types_id_seq'::regclass);
 
+ALTER TABLE ONLY execution_result_node_results ALTER COLUMN id SET DEFAULT nextval('execution_result_node_results_id_seq'::regclass);
+
+ALTER TABLE ONLY execution_result_parameter_results ALTER COLUMN id SET DEFAULT nextval('execution_result_parameter_results_id_seq'::regclass);
+
+ALTER TABLE ONLY execution_results ALTER COLUMN id SET DEFAULT nextval('execution_results_id_seq'::regclass);
+
 ALTER TABLE ONLY flow_data_type_links ALTER COLUMN id SET DEFAULT nextval('flow_data_type_links_id_seq'::regclass);
 
 ALTER TABLE ONLY flow_settings ALTER COLUMN id SET DEFAULT nextval('flow_settings_id_seq'::regclass);
@@ -1251,12 +1255,6 @@ ALTER TABLE ONLY sub_flow_settings ALTER COLUMN id SET DEFAULT nextval('sub_flow
 
 ALTER TABLE ONLY sub_flows ALTER COLUMN id SET DEFAULT nextval('sub_flows_id_seq'::regclass);
 
-ALTER TABLE ONLY test_execution_node_results ALTER COLUMN id SET DEFAULT nextval('test_execution_node_results_id_seq'::regclass);
-
-ALTER TABLE ONLY test_execution_parameter_results ALTER COLUMN id SET DEFAULT nextval('test_execution_parameter_results_id_seq'::regclass);
-
-ALTER TABLE ONLY test_executions ALTER COLUMN id SET DEFAULT nextval('test_executions_id_seq'::regclass);
-
 ALTER TABLE ONLY translations ALTER COLUMN id SET DEFAULT nextval('translations_id_seq'::regclass);
 
 ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_identities_id_seq'::regclass);
@@ -1294,6 +1292,15 @@ ALTER TABLE ONLY data_type_rules
 
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT data_types_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY execution_result_node_results
+    ADD CONSTRAINT execution_result_node_results_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY execution_result_parameter_results
+    ADD CONSTRAINT execution_result_parameter_results_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY execution_results
+    ADD CONSTRAINT execution_results_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY flow_data_type_links
     ADD CONSTRAINT flow_data_type_links_pkey PRIMARY KEY (id);
@@ -1424,15 +1431,6 @@ ALTER TABLE ONLY sub_flow_settings
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT sub_flows_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY test_execution_node_results
-    ADD CONSTRAINT test_execution_node_results_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY test_execution_parameter_results
-    ADD CONSTRAINT test_execution_parameter_results_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY test_executions
-    ADD CONSTRAINT test_executions_pkey PRIMARY KEY (id);
-
 ALTER TABLE ONLY translations
     ADD CONSTRAINT translations_pkey PRIMARY KEY (id);
 
@@ -1446,6 +1444,16 @@ ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 CREATE UNIQUE INDEX idx_data_types_on_runtime_module_id_identifier ON data_types USING btree (runtime_module_id, identifier);
+
+CREATE UNIQUE INDEX idx_exec_result_node_results_on_execution_id_and_position ON execution_result_node_results USING btree (execution_result_id, "position");
+
+CREATE INDEX idx_exec_result_param_results_on_node_result_id ON execution_result_parameter_results USING btree (execution_result_node_result_id);
+
+CREATE UNIQUE INDEX idx_exec_result_param_results_on_node_result_id_and_position ON execution_result_parameter_results USING btree (execution_result_node_result_id, "position");
+
+CREATE UNIQUE INDEX idx_execution_results_on_flow_id_and_identifier ON execution_results USING btree (flow_id, execution_identifier);
+
+CREATE INDEX idx_execution_results_on_identifier ON execution_results USING btree (execution_identifier);
 
 CREATE UNIQUE INDEX idx_flow_types_on_runtime_module_id_identifier ON flow_types USING btree (runtime_module_id, identifier);
 
@@ -1488,18 +1496,6 @@ CREATE UNIQUE INDEX idx_rft_on_runtime_module_id_identifier ON runtime_flow_type
 CREATE UNIQUE INDEX idx_rft_settings_on_rft_id_identifier ON runtime_flow_type_settings USING btree (runtime_flow_type_id, identifier);
 
 CREATE UNIQUE INDEX idx_runtime_modules_on_runtime_id_identifier ON runtime_modules USING btree (runtime_id, identifier);
-
-CREATE UNIQUE INDEX idx_test_exec_node_results_on_execution_id_and_position ON test_execution_node_results USING btree (test_execution_id, "position");
-
-CREATE INDEX idx_test_exec_node_results_on_node_function_id ON test_execution_node_results USING btree (node_function_id);
-
-CREATE INDEX idx_test_exec_param_results_on_node_result_id ON test_execution_parameter_results USING btree (test_execution_node_result_id);
-
-CREATE UNIQUE INDEX idx_test_exec_param_results_on_node_result_id_and_position ON test_execution_parameter_results USING btree (test_execution_node_result_id, "position");
-
-CREATE UNIQUE INDEX idx_test_executions_on_flow_id_and_identifier ON test_executions USING btree (flow_id, execution_identifier);
-
-CREATE INDEX idx_test_executions_on_identifier ON test_executions USING btree (execution_identifier);
 
 CREATE INDEX index_active_storage_attachments_on_blob_id ON active_storage_attachments USING btree (blob_id);
 
@@ -1677,14 +1673,14 @@ ALTER TABLE ONLY node_parameters
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT fk_rails_118c914ed0 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY test_execution_parameter_results
-    ADD CONSTRAINT fk_rails_17de35e7b9 FOREIGN KEY (test_execution_node_result_id) REFERENCES test_execution_node_results(id) ON DELETE CASCADE;
-
 ALTER TABLE ONLY flow_types
     ADD CONSTRAINT fk_rails_18bfb8e8af FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT fk_rails_18c14268dd FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY execution_result_parameter_results
+    ADD CONSTRAINT fk_rails_1f1d03785e FOREIGN KEY (execution_result_node_result_id) REFERENCES execution_result_node_results(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
@@ -1700,6 +1696,9 @@ ALTER TABLE ONLY node_parameters
 
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_32ab48790a FOREIGN KEY (node_parameter_id) REFERENCES node_parameters(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY execution_results
+    ADD CONSTRAINT fk_rails_359854c0d0 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_flow_types
     ADD CONSTRAINT fk_rails_3675f29c4e FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
@@ -1728,8 +1727,8 @@ ALTER TABLE ONLY module_configurations
 ALTER TABLE ONLY data_type_data_type_links
     ADD CONSTRAINT fk_rails_443c90661b FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
-ALTER TABLE ONLY test_executions
-    ADD CONSTRAINT fk_rails_4509b2ce84 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
+ALTER TABLE ONLY execution_result_node_results
+    ADD CONSTRAINT fk_rails_46bee8fa63 FOREIGN KEY (execution_result_id) REFERENCES execution_results(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY module_configurations
     ADD CONSTRAINT fk_rails_47f7323aca FOREIGN KEY (namespace_project_runtime_assignment_id) REFERENCES namespace_project_runtime_assignments(id) ON DELETE CASCADE;
@@ -1751,9 +1750,6 @@ ALTER TABLE ONLY node_functions
 
 ALTER TABLE ONLY backup_codes
     ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY test_execution_node_results
-    ADD CONSTRAINT fk_rails_55b069711a FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY sub_flow_settings
     ADD CONSTRAINT fk_rails_55f76c79cc FOREIGN KEY (sub_flow_id) REFERENCES sub_flows(id) ON DELETE CASCADE;
@@ -1842,11 +1838,11 @@ ALTER TABLE ONLY flows
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT fk_rails_ac308a3f72 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY execution_result_node_results
+    ADD CONSTRAINT fk_rails_afa2397dd4 FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY runtime_flow_type_data_type_links
     ADD CONSTRAINT fk_rails_b300bcf944 FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY test_execution_node_results
-    ADD CONSTRAINT fk_rails_bd2022459f FOREIGN KEY (test_execution_id) REFERENCES test_executions(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_project_runtime_assignments
     ADD CONSTRAINT fk_rails_c019e5b233 FOREIGN KEY (namespace_project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;

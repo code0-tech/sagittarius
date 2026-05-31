@@ -38,9 +38,18 @@ module Types
           description: 'Nodes of the flow',
           method: :node_functions
 
-    field :test_executions, Types::TestExecutionType.connection_type,
+    # rubocop:disable GraphQL/ExtractType -- execution result lookup is intentionally scoped through Flow
+    field :execution_result, Types::ExecutionResultType,
+          null: true,
+          description: 'Find an execution result by runtime identifier' do
+      argument :execution_identifier, GraphQL::Types::String, required: true,
+                                                              description: 'Runtime identifier of the execution result'
+    end
+
+    field :execution_results, Types::ExecutionResultType.connection_type,
           null: false,
-          description: 'Test executions of the flow'
+          description: 'Execution results of the flow'
+    # rubocop:enable GraphQL/ExtractType
 
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,
@@ -59,6 +68,10 @@ module Types
 
     def linked_data_types
       DataTypesFinder.new({ flow: object, expand_recursively: true }).execute
+    end
+
+    def execution_result(execution_identifier:)
+      object.execution_results.find_by(execution_identifier: execution_identifier)
     end
   end
 end

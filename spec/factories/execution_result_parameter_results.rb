@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :test_execution_parameter_result do
-    test_execution_node_result
+  factory :execution_result_parameter_result do
+    execution_result_node_result
     sequence(:position)
     value { { 'parameter' => 'ok' } }
   end

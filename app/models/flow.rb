@@ -20,7 +20,7 @@ class Flow < ApplicationRecord
 
   has_many :flow_settings, class_name: 'FlowSetting', inverse_of: :flow
   has_many :node_functions, class_name: 'NodeFunction', inverse_of: :flow
-  has_many :test_executions, inverse_of: :flow, dependent: :destroy
+  has_many :execution_results, inverse_of: :flow
 
   has_many :flow_data_type_links, inverse_of: :flow
   has_many :referenced_data_types, through: :flow_data_type_links, source: :referenced_data_type

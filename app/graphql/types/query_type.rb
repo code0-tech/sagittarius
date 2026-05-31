@@ -44,20 +44,6 @@ module Types
 
     field :global_runtimes, Types::RuntimeType.connection_type, null: false, description: 'Find runtimes'
 
-    # rubocop:disable GraphQL/ExtractType -- these are intentionally at the root
-    field :test_execution, Types::TestExecutionType, null: true, description: 'Find a test execution' do
-      argument :id, Types::GlobalIdType[::TestExecution], required: true,
-                                                          description: 'GlobalID of the target test execution'
-    end
-
-    field :test_executions, Types::TestExecutionType.connection_type,
-          null: false,
-          description: 'Find test executions for a flow' do
-      argument :flow_id, Types::GlobalIdType[::Flow], required: true,
-                                                      description: 'GlobalID of the flow to find test executions for'
-    end
-    # rubocop:enable GraphQL/ExtractType
-
     def application
       {}
     end
@@ -98,14 +84,6 @@ module Types
 
     def global_runtimes
       Runtime.where(namespace: nil)
-    end
-
-    def test_execution(id:)
-      SagittariusSchema.object_from_id(id)
-    end
-
-    def test_executions(flow_id:)
-      Flow.find(flow_id.model_id).test_executions.order(created_at: :desc, id: :desc)
     end
 
     def current_authentication

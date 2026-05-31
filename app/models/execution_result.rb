@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-class TestExecution < ApplicationRecord
-  belongs_to :flow, inverse_of: :test_executions
+class ExecutionResult < ApplicationRecord
+  attr_readonly :execution_identifier
+
+  belongs_to :flow, inverse_of: :execution_results
 
   has_many :node_results,
-           class_name: 'TestExecutionNodeResult',
-           inverse_of: :test_execution,
-           dependent: :destroy
+           class_name: 'ExecutionResultNodeResult',
+           inverse_of: :execution_result
 
   validates :execution_identifier, presence: true,
                                    allow_blank: false,

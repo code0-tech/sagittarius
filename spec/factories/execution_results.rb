@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  sequence(:test_execution_identifier) { |n| "execution-#{n}" }
+  sequence(:execution_result_identifier) { |n| "execution-#{n}" }
 
-  factory :test_execution do
+  factory :execution_result do
     flow
-    execution_identifier { generate(:test_execution_identifier) }
-    body { { 'input' => 'request' } }
+    execution_identifier { generate(:execution_result_identifier) }
     input { { 'input' => 'result' } }
     started_at { 2.minutes.ago }
     finished_at { 1.minute.ago }
