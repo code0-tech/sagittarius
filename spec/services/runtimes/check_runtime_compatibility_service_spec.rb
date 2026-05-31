@@ -80,19 +80,33 @@ RSpec.describe Runtimes::CheckRuntimeCompatibilityService do
              runtime_flow_type: runtime_flow_type,
              identifier: 'ft1',
              version: '2.2.0')
-      create(
+      primary_rfd = create(
         :runtime_function_definition,
         runtime_name: 'rfd1',
         runtime: primary_runtime,
         runtime_module: primary_module,
         version: '3.0.0'
       )
-      create(
+      secondary_rfd = create(
         :runtime_function_definition,
         runtime_name: 'rfd1',
         runtime: runtime,
         runtime_module: secondary_module,
         version: '3.1.0'
+      )
+      create(
+        :function_definition,
+        runtime_function_definition: primary_rfd,
+        identifier: 'fd1',
+        runtime: primary_runtime,
+        runtime_module: primary_module
+      )
+      create(
+        :function_definition,
+        runtime_function_definition: secondary_rfd,
+        identifier: 'fd1',
+        runtime: runtime,
+        runtime_module: secondary_module
       )
     end
 

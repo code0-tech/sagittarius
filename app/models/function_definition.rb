@@ -22,6 +22,8 @@ class FunctionDefinition < ApplicationRecord
   validates :identifier, presence: true, uniqueness: { case_sensitive: false, scope: :runtime_id }
   validates :design, length: { maximum: 200 }
 
+  delegate :parsed_version, to: :runtime_function_definition
+
   def to_grpc
     Tucana::Shared::FunctionDefinition.new(
       runtime_name: identifier,
