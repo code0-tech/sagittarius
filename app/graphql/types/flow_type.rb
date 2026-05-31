@@ -38,6 +38,10 @@ module Types
           description: 'Nodes of the flow',
           method: :node_functions
 
+    field :test_executions, Types::TestExecutionType.connection_type,
+          null: false,
+          description: 'Test executions of the flow'
+
     field :linked_data_types, Types::DataTypeType.connection_type,
           null: false,
           description: 'The data types that are referenced in this flow'
