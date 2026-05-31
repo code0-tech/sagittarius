@@ -14,7 +14,7 @@ class CreateExecutionResults < Code0::ZeroTrack::Database::Migration[1.0]
       t.check_constraint 'num_nonnulls(success, error) <= 1',
                          name: check_constraint_name(:execution_results, :result, :at_most_one)
 
-      t.index %i[flow_id execution_identifier],
+      t.index '"flow_id", LOWER("execution_identifier")',
               unique: true,
               name: 'idx_execution_results_on_flow_id_and_identifier'
       t.index :execution_identifier, name: 'idx_execution_results_on_identifier'
@@ -22,12 +22,11 @@ class CreateExecutionResults < Code0::ZeroTrack::Database::Migration[1.0]
       t.timestamps_with_timezone
     end
 
-    create_table :execution_result_node_results do |t|
+    create_table :execution_node_results do |t|
       t.references :execution_result, null: false, foreign_key: { on_delete: :cascade }, index: false
       t.references :node_function,
-                   null: false,
-                   foreign_key: { to_table: :node_functions, on_delete: :cascade },
-                   index: false
+                   null: true,
+                   foreign_key: { to_table: :node_functions, on_delete: :nullify }
       t.integer :position, null: false
       t.datetime_with_timezone :started_at, null: false
       t.datetime_with_timezone :finished_at, null: false
@@ -44,11 +43,11 @@ class CreateExecutionResults < Code0::ZeroTrack::Database::Migration[1.0]
       t.timestamps_with_timezone
     end
 
-    create_table :execution_result_parameter_results do |t|
+    create_table :execution_parameter_results do |t|
       t.references :execution_result_node_result,
                    null: false,
                    foreign_key: { on_delete: :cascade },
-                   index: { name: 'idx_exec_result_param_results_on_node_result_id' }
+                   index: false
       t.integer :position, null: false
       t.jsonb :value, null: false
 
