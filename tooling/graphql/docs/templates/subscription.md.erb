@@ -1,0 +1,25 @@
+---
+title: <%= object[:name] %>
+---
+
+<%= object[:description].chomp %>
+<% unless object[:markdown_documentation].nil? -%>
+
+<%= object[:markdown_documentation].chomp %>
+<% end -%>
+
+## Arguments
+
+| Name | Type | Description |
+|------|------|-------------|
+<% sorted_by_name.call(object[:arguments]).each do |argument| -%>
+| `<%= argument[:name] %>` | [`<%= argument[:type][:info] %>`](../<%= argument[:type][:path] %>.md) | <%= argument[:description] %> |
+<% end -%>
+
+## Fields
+
+| Name | Type | Description |
+|------|------|-------------|
+<% sorted_by_name.call(object[:fields]).each do |field| -%>
+| `<%= field[:name] %>` | [`<%= field[:type][:info] %>`](../<%= field[:type][:path] %>.md) | <%= field[:description] %> |
+<% end -%>

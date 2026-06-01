@@ -4,15 +4,18 @@
 class SagittariusSchema < GraphQL::Schema
   mutation(Types::MutationType)
   query(Types::QueryType)
+  subscription(Types::SubscriptionType)
 
   default_max_page_size 50
   max_depth 20
   connections.add(ActiveRecord::Relation, Sagittarius::Graphql::StableConnection)
 
+  use GraphQL::Subscriptions::ActionCableSubscriptions
+
   # For batch-loading (see https://graphql-ruby.org/dataloader/overview.html)
   use GraphQL::Dataloader
 
-  use GraphQL::Schema::Visibility, profiles: {
+  use GraphQL::Schema::Visibility, preload: true, profiles: {
     execution: {},
     types: {},
     docs: {},
