@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module Types
-  class ExecutionResultParameterResultType < Types::BaseObject
-    description 'Represents a parameter result of an execution result node result'
+  class ExecutionParameterResultType < Types::BaseObject
+    description 'Represents a parameter result of an execution node result'
 
     authorize :read_flow
     declarative_policy_subject do |parameter_result|
-      parameter_result.execution_result_node_result.execution_result.flow
+      parameter_result.execution_node_result.execution_result.flow
     end
 
     field :position, Integer,
@@ -16,7 +16,7 @@ module Types
           null: false,
           description: 'Value returned for this parameter'
 
-    id_field ExecutionResultParameterResult
+    id_field ExecutionParameterResult
     timestamps
   end
 end

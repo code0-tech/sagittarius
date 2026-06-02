@@ -14,7 +14,7 @@ Represents an execution result
 | `flow` | [`Flow!`](../object/flow.md) | Flow executed by this execution result |
 | `id` | [`ExecutionResultID!`](../scalar/executionresultid.md) | Global ID of this ExecutionResult |
 | `input` | [`JSON`](../scalar/json.md) | Input recorded in the execution result |
-| `nodeResults` | [`[ExecutionResultNodeResult!]!`](../object/executionresultnoderesult.md) | Node results produced by this execution result |
+| `nodeResults` | [`[ExecutionNodeResult!]!`](../object/executionnoderesult.md) | Node results produced by this execution result |
 | `startedAt` | [`Time!`](../scalar/time.md) | Time when this execution result started |
 | `success` | [`JSON`](../scalar/json.md) | Successful value returned by the execution result |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this ExecutionResult was last updated |

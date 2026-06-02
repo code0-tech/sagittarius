@@ -19,7 +19,7 @@ module Types
     field :input, GraphQL::Types::JSON,
           null: true,
           description: 'Input recorded in the execution result'
-    field :node_results, [Types::ExecutionResultNodeResultType],
+    field :node_results, [Types::ExecutionNodeResultType],
           null: false,
           description: 'Node results produced by this execution result'
     field :started_at, Types::TimeType,

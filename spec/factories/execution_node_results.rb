@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :execution_result_node_result do
+  factory :execution_node_result do
     execution_result
     node_function { nil }
     sequence(:position)

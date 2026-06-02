@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class ExecutionResultNodeResultPolicy < BasePolicy
+class ExecutionNodeResultPolicy < BasePolicy
   delegate { subject.execution_result }
 end

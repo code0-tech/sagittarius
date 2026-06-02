@@ -6,7 +6,7 @@ class ExecutionResult < ApplicationRecord
   belongs_to :flow, inverse_of: :execution_results
 
   has_many :node_results,
-           class_name: 'ExecutionResultNodeResult',
+           class_name: 'ExecutionNodeResult',
            inverse_of: :execution_result
 
   validates :execution_identifier, presence: true,

@@ -19,7 +19,7 @@ RSpec.describe 'execution results Query' do
            success: { 'ok' => true })
   end
   let(:node_result) do
-    create(:execution_result_node_result,
+    create(:execution_node_result,
            execution_result: execution_result,
            node_function: node_function,
            position: 0,
@@ -35,8 +35,8 @@ RSpec.describe 'execution results Query' do
            })
   end
   let!(:parameter_result) do
-    create(:execution_result_parameter_result,
-           execution_result_node_result: node_result,
+    create(:execution_parameter_result,
+           execution_node_result: node_result,
            position: 0,
            value: { 'value' => 'done' })
   end

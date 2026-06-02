@@ -34,26 +34,26 @@ class CreateExecutionResults < Code0::ZeroTrack::Database::Migration[1.0]
       t.jsonb :error
 
       t.check_constraint 'num_nonnulls(success, error) <= 1',
-                         name: check_constraint_name(:execution_result_node_results, :result, :at_most_one)
+                         name: check_constraint_name(:execution_node_results, :result, :at_most_one)
 
       t.index %i[execution_result_id position],
               unique: true,
-              name: 'idx_exec_result_node_results_on_execution_id_and_position'
+              name: 'idx_exec_node_results_on_execution_id_and_position'
 
       t.timestamps_with_timezone
     end
 
     create_table :execution_parameter_results do |t|
-      t.references :execution_result_node_result,
+      t.references :execution_node_result,
                    null: false,
                    foreign_key: { on_delete: :cascade },
                    index: false
       t.integer :position, null: false
       t.jsonb :value, null: false
 
-      t.index %i[execution_result_node_result_id position],
+      t.index %i[execution_node_result_id position],
               unique: true,
-              name: 'idx_exec_result_param_results_on_node_result_id_and_position'
+              name: 'idx_exec_param_results_on_node_result_id_and_position'
 
       t.timestamps_with_timezone
     end

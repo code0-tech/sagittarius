@@ -13,7 +13,7 @@ module Types
     field :version, String, null: true, description: 'Runtime version that returned the error'
 
     def timestamp
-      Time.utc.at(object['timestamp'])
+      object['timestamp']&.to_s
     end
   end
 end

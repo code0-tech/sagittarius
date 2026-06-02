@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class ExecutionResultNodeResultType < Types::BaseObject
+  class ExecutionNodeResultType < Types::BaseObject
     description 'Represents a node result of an execution result'
 
     authorize :read_flow
@@ -14,7 +14,7 @@ module Types
           null: false,
           description: 'Time when this node execution finished'
     field :node_function, Types::NodeFunctionType, null: true, description: 'Node function associated with this result'
-    field :parameter_results, [Types::ExecutionResultParameterResultType],
+    field :parameter_results, [Types::ExecutionParameterResultType],
           null: false,
           description: 'Parameter results produced by this node execution'
     field :position, Integer,
@@ -27,7 +27,7 @@ module Types
           null: true,
           description: 'Successful value returned by this node execution'
 
-    id_field ExecutionResultNodeResult
+    id_field ExecutionNodeResult
     timestamps
 
     def parameter_results

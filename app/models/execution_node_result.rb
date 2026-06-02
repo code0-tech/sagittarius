@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-class ExecutionResultNodeResult < ApplicationRecord
+class ExecutionNodeResult < ApplicationRecord
   belongs_to :execution_result, inverse_of: :node_results
-  belongs_to :node_function
+  belongs_to :node_function, optional: true
 
   has_many :parameter_results,
-           class_name: 'ExecutionResultParameterResult',
-           inverse_of: :execution_result_node_result
+           class_name: 'ExecutionParameterResult',
+           inverse_of: :execution_node_result
 
   validates :position, presence: true, numericality: { only_integer: true }
   validate :only_one_result_present
