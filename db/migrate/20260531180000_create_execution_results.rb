@@ -11,7 +11,7 @@ class CreateExecutionResults < Code0::ZeroTrack::Database::Migration[1.0]
       t.jsonb :success
       t.jsonb :error
 
-      t.check_constraint 'num_nonnulls(success, error) <= 1',
+      t.check_constraint 'num_nonnulls(success, error) = 1',
                          name: check_constraint_name(:execution_results, :result, :at_most_one)
 
       t.index '"flow_id", LOWER("execution_identifier")',
@@ -33,7 +33,7 @@ class CreateExecutionResults < Code0::ZeroTrack::Database::Migration[1.0]
       t.jsonb :success
       t.jsonb :error
 
-      t.check_constraint 'num_nonnulls(success, error) <= 1',
+      t.check_constraint 'num_nonnulls(success, error) = 1',
                          name: check_constraint_name(:execution_node_results, :result, :at_most_one)
 
       t.index %i[execution_result_id position],

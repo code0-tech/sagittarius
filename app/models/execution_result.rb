@@ -17,7 +17,7 @@ class ExecutionResult < ApplicationRecord
   private
 
   def only_one_result_present
-    return if [!success.nil?, !error.nil?].count(true) <= 1
+    return if [!success.nil?, !error.nil?].count(true) == 1
 
     errors.add(:base, 'Only one of success or error must be present')
   end

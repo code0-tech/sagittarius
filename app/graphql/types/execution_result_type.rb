@@ -5,7 +5,6 @@ module Types
     description 'Represents an execution result'
 
     authorize :read_flow
-    declarative_policy_subject(&:flow)
 
     field :error, Types::ExecutionErrorType,
           null: true,
@@ -19,7 +18,7 @@ module Types
     field :input, GraphQL::Types::JSON,
           null: true,
           description: 'Input recorded in the execution result'
-    field :node_results, [Types::ExecutionNodeResultType],
+    field :node_results, Types::ExecutionNodeResultType.connection_type,
           null: false,
           description: 'Node results produced by this execution result'
     field :started_at, Types::TimeType,

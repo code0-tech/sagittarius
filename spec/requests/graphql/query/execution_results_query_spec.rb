@@ -62,23 +62,25 @@ RSpec.describe 'execution results Query' do
                   success
                   flow { id }
                   nodeResults {
-                    id
-                    position
-                    success
-                    error {
-                      code
-                      category
-                      message
-                      timestamp
-                      version
-                      dependencies
-                      details
-                    }
-                    nodeFunction { id }
-                    parameterResults {
+                    nodes {
                       id
                       position
-                      value
+                      success
+                      error {
+                        code
+                        category
+                        message
+                        timestamp
+                        version
+                        dependencies
+                        details
+                      }
+                      nodeFunction { id }
+                      parameterResults {
+                        id
+                        position
+                        value
+                      }
                     }
                   }
                 }
@@ -115,7 +117,7 @@ RSpec.describe 'execution results Query' do
       'flow' => { 'id' => flow.to_global_id.to_s }
     )
 
-    expect(execution_node['nodeResults']).to contain_exactly(
+    expect(execution_node['nodeResults']['nodes']).to contain_exactly(
       a_hash_including(
         'id' => node_result.to_global_id.to_s,
         'position' => 0,

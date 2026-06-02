@@ -5,7 +5,6 @@ module Types
     description 'Represents a node result of an execution result'
 
     authorize :read_flow
-    declarative_policy_subject { |node_result| node_result.execution_result.flow }
 
     field :error, Types::ExecutionErrorType,
           null: true,

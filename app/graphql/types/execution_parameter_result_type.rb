@@ -5,10 +5,6 @@ module Types
     description 'Represents a parameter result of an execution node result'
 
     authorize :read_flow
-    declarative_policy_subject do |parameter_result|
-      parameter_result.execution_node_result.execution_result.flow
-    end
-
     field :position, Integer,
           null: false,
           description: 'Position of this parameter result in the node result'
