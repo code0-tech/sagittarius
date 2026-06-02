@@ -85,6 +85,7 @@ class ErrorCode
       invalid_data_type: { description: 'The data type is invalid because of active model errors' },
       data_type_not_found: { description: 'The data type with the given identifier was not found' },
       invalid_flow_type: { description: 'The flow type is invalid because of active model errors' },
+      invalid_runtime_usage: { description: 'The runtime usage is invalid because of active model errors' },
       no_data_type_for_identifier: { description: 'No data type could be found for the given identifier' },
       cyclic_data_type_reference: { description: 'A data type dependency cycle was detected' },
       invalid_data_type_link: { description: 'The data type link is invalid because of active model errors' },

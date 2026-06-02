@@ -53,6 +53,7 @@ Represents the available error responses
 | `INVALID_RUNTIME_PARAMETER_DEFINITION` | The runtime parameter definition is invalid |
 | `INVALID_RUNTIME_STATUS` | The runtime status is invalid because of active model errors |
 | `INVALID_RUNTIME_STATUS_CONFIGURATION` | The runtime status configuration is invalid because of active model errors |
+| `INVALID_RUNTIME_USAGE` | The runtime usage is invalid because of active model errors |
 | `INVALID_SETTING` | Invalid setting provided |
 | `INVALID_TOTP_SECRET` | The TOTP secret is invalid or cannot be verified |
 | `INVALID_USER` | The user is invalid because of active model errors |

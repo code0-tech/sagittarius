@@ -121,6 +121,25 @@ CREATE SEQUENCE backup_codes_id_seq
 
 ALTER SEQUENCE backup_codes_id_seq OWNED BY backup_codes.id;
 
+CREATE TABLE daily_runtime_usages (
+    id bigint NOT NULL,
+    flow_id bigint,
+    namespace_id bigint NOT NULL,
+    day date NOT NULL,
+    usage numeric DEFAULT 0.0 NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE daily_runtime_usages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE daily_runtime_usages_id_seq OWNED BY daily_runtime_usages.id;
+
 CREATE TABLE data_type_data_type_links (
     id bigint NOT NULL,
     data_type_id bigint NOT NULL,
@@ -1104,6 +1123,8 @@ ALTER TABLE ONLY audit_events ALTER COLUMN id SET DEFAULT nextval('audit_events_
 
 ALTER TABLE ONLY backup_codes ALTER COLUMN id SET DEFAULT nextval('backup_codes_id_seq'::regclass);
 
+ALTER TABLE ONLY daily_runtime_usages ALTER COLUMN id SET DEFAULT nextval('daily_runtime_usages_id_seq'::regclass);
+
 ALTER TABLE ONLY data_type_data_type_links ALTER COLUMN id SET DEFAULT nextval('data_type_data_type_links_id_seq'::regclass);
 
 ALTER TABLE ONLY data_type_rules ALTER COLUMN id SET DEFAULT nextval('data_type_rules_id_seq'::regclass);
@@ -1212,6 +1233,9 @@ ALTER TABLE ONLY audit_events
 
 ALTER TABLE ONLY backup_codes
     ADD CONSTRAINT backup_codes_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY daily_runtime_usages
+    ADD CONSTRAINT daily_runtime_usages_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY data_type_data_type_links
     ADD CONSTRAINT data_type_data_type_links_pkey PRIMARY KEY (id);
@@ -1420,6 +1444,16 @@ CREATE UNIQUE INDEX index_application_settings_on_setting ON application_setting
 CREATE INDEX index_audit_events_on_author_id ON audit_events USING btree (author_id);
 
 CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes USING btree (user_id, lower(token));
+
+CREATE INDEX index_daily_runtime_usages_on_flow_id ON daily_runtime_usages USING btree (flow_id);
+
+CREATE INDEX index_daily_runtime_usages_on_flow_id_and_day ON daily_runtime_usages USING btree (flow_id, day);
+
+CREATE INDEX index_daily_runtime_usages_on_namespace_id ON daily_runtime_usages USING btree (namespace_id);
+
+CREATE INDEX index_daily_runtime_usages_on_namespace_id_and_day ON daily_runtime_usages USING btree (namespace_id, day);
+
+CREATE UNIQUE INDEX index_daily_runtime_usages_on_namespace_id_and_flow_id_and_day ON daily_runtime_usages USING btree (namespace_id, flow_id, day);
 
 CREATE INDEX index_data_type_rules_on_data_type_id ON data_type_rules USING btree (data_type_id);
 
@@ -1667,6 +1701,9 @@ ALTER TABLE ONLY module_configuration_definitions
 ALTER TABLE ONLY runtime_function_definition_data_type_links
     ADD CONSTRAINT fk_rails_5a52fd74a0 FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
+ALTER TABLE ONLY daily_runtime_usages
+    ADD CONSTRAINT fk_rails_5bcc54b4a2 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE SET NULL;
+
 ALTER TABLE ONLY namespace_role_project_assignments
     ADD CONSTRAINT fk_rails_623f8a5b72 FOREIGN KEY (role_id) REFERENCES namespace_roles(id);
 
@@ -1738,6 +1775,9 @@ ALTER TABLE ONLY flows
 
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT fk_rails_ac308a3f72 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY daily_runtime_usages
+    ADD CONSTRAINT fk_rails_b14fc7ae0a FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_flow_type_data_type_links
     ADD CONSTRAINT fk_rails_b300bcf944 FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;

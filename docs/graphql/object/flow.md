@@ -22,3 +22,16 @@ Represents a flow
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Flow was last updated |
 | `userAbilities` | [`FlowUserAbilities!`](../object/flowuserabilities.md) | Abilities for the current user on this Flow |
 | `validationStatus` | [`FlowValidationStatus!`](../enum/flowvalidationstatus.md) | The validation status of the flow |
+
+## Fields with arguments
+
+### dailyRuntimeUsages
+
+Daily runtime usage entries for this flow
+
+Returns [`DailyRuntimeUsageConnection!`](../object/dailyruntimeusageconnection.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `from` | [`Date`](../scalar/date.md) | Only return usage entries on or after this day |
+| `to` | [`Date`](../scalar/date.md) | Only return usage entries on or before this day |
