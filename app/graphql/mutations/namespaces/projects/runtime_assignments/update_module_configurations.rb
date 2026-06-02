@@ -15,16 +15,16 @@ module Mutations
                    required: true,
                    description: 'The project runtime assignment to update.'
 
-          field :namespace_project_runtime_assignment, Types::NamespaceProjectRuntimeAssignmentType,
+          field :module_configurations, [Types::ModuleConfigurationType],
                 null: true,
-                description: 'The updated project runtime assignment.'
+                description: 'The updated module configurations.'
 
           def resolve(namespace_project_runtime_assignment_id:, module_configurations:)
             runtime_assignment = SagittariusSchema.object_from_id(namespace_project_runtime_assignment_id)
 
             if runtime_assignment.nil?
               return {
-                namespace_project_runtime_assignment: nil,
+                module_configurations: nil,
                 errors: [create_error(:runtime_not_assigned, 'Invalid project runtime assignment')],
               }
             end
@@ -33,7 +33,7 @@ module Mutations
               current_authentication,
               runtime_assignment,
               module_configurations
-            ).execute.to_mutation_response(success_key: :namespace_project_runtime_assignment)
+            ).execute.to_mutation_response(success_key: :module_configurations)
           end
         end
       end

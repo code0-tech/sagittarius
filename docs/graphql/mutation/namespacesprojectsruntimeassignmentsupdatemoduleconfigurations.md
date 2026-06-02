@@ -18,4 +18,4 @@ Updates the saved module configurations for a project runtime assignment.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |
-| `namespaceProjectRuntimeAssignment` | [`NamespaceProjectRuntimeAssignment`](../object/namespaceprojectruntimeassignment.md) | The updated project runtime assignment. |
+| `moduleConfigurations` | [`[ModuleConfiguration!]`](../object/moduleconfiguration.md) | The updated module configurations. |

@@ -42,7 +42,7 @@ module Namespaces
               }
             )
 
-            ServiceResponse.success(message: 'Updated module configurations', payload: runtime_assignment)
+            ServiceResponse.success(message: 'Updated module configurations', payload: db_configurations)
           end
 
           return response if response.error?
