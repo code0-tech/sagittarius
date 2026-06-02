@@ -10,6 +10,7 @@ Represents a flow
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Flow was created |
 | `disabledReason` | [`FlowDisabledReason`](../enum/flowdisabledreason.md) | The reason why the flow is disabled, if it is disabled |
+| `executionResults` | [`ExecutionResultConnection!`](../object/executionresultconnection.md) | Execution results of the flow |
 | `id` | [`FlowID!`](../scalar/flowid.md) | Global ID of this Flow |
 | `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this flow |
 | `name` | [`String!`](../scalar/string.md) | Name of the flow |
@@ -22,3 +23,15 @@ Represents a flow
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Flow was last updated |
 | `userAbilities` | [`FlowUserAbilities!`](../object/flowuserabilities.md) | Abilities for the current user on this Flow |
 | `validationStatus` | [`FlowValidationStatus!`](../enum/flowvalidationstatus.md) | The validation status of the flow |
+
+## Fields with arguments
+
+### executionResult
+
+Find an execution result by runtime identifier
+
+Returns [`ExecutionResult`](../object/executionresult.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `executionIdentifier` | [`String!`](../scalar/string.md) | Runtime identifier of the execution result |
