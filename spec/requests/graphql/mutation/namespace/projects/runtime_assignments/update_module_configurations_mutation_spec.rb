@@ -12,19 +12,12 @@ RSpec.describe 'namespacesProjectsRuntimeAssignmentsUpdateModuleConfigurations M
       mutation($input: NamespacesProjectsRuntimeAssignmentsUpdateModuleConfigurationsInput!) {
         namespacesProjectsRuntimeAssignmentsUpdateModuleConfigurations(input: $input) {
           #{error_query}
-          namespaceProjectRuntimeAssignment {
+          moduleConfigurations {
             id
-            compatible
-            runtime { id }
-            moduleConfigurations {
-              nodes {
-                id
-                value
-                definition {
-                  id
-                  identifier
-                }
-              }
+            value
+            definition {
+              id
+              identifier
             }
           }
         }
@@ -81,15 +74,12 @@ RSpec.describe 'namespacesProjectsRuntimeAssignmentsUpdateModuleConfigurations M
 
       mutate!
 
-      response_assignment = graphql_data_at(
+      response_configurations = graphql_data_at(
         :namespaces_projects_runtime_assignments_update_module_configurations,
-        :namespace_project_runtime_assignment
+        :module_configurations
       )
 
-      expect(response_assignment['id']).to eq(runtime_assignment.to_global_id.to_s)
-      expect(response_assignment['compatible']).to be(true)
-      expect(response_assignment.dig('runtime', 'id')).to eq(runtime.to_global_id.to_s)
-      expect(response_assignment.dig('moduleConfigurations', 'nodes')).to contain_exactly(
+      expect(response_configurations).to contain_exactly(
         a_hash_including(
           'value' => 'secret',
           'definition' => a_hash_including(
@@ -116,7 +106,7 @@ RSpec.describe 'namespacesProjectsRuntimeAssignmentsUpdateModuleConfigurations M
 
       expect(
         graphql_data_at(:namespaces_projects_runtime_assignments_update_module_configurations,
-                        :namespace_project_runtime_assignment)
+                        :module_configurations)
       ).to be_nil
       expect(
         graphql_data_at(:namespaces_projects_runtime_assignments_update_module_configurations, :errors, :error_code)

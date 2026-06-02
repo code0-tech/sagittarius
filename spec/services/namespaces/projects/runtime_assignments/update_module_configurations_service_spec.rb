@@ -54,7 +54,7 @@ RSpec.describe Namespaces::Projects::RuntimeAssignments::UpdateModuleConfigurati
     end
 
     it { is_expected.to be_success }
-    it { expect(service_response.payload).to eq(runtime_assignment) }
+    it { expect(service_response.payload).to match_array(runtime_assignment.module_configurations) }
     it { expect { service_response }.to change { ModuleConfiguration.count }.by(2) }
 
     it 'updates the runtime directly after persisting' do
