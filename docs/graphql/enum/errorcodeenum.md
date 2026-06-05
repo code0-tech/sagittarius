@@ -27,6 +27,7 @@ Represents the available error responses
 | `INVALID_ATTACHMENT` | The attachment is invalid because of active model errors |
 | `INVALID_DATA_TYPE` | The data type is invalid because of active model errors |
 | `INVALID_DATA_TYPE_LINK` | The data type link is invalid because of active model errors |
+| `INVALID_EXECUTION_RESULT` | The execution result is invalid because of active model errors |
 | `INVALID_EXTERNAL_IDENTITY` | This external identity is invalid |
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |

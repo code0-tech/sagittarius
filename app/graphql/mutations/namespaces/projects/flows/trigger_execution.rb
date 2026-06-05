@@ -42,7 +42,7 @@ module Mutations
               current_authentication,
               flow: flow,
               runtime: runtime,
-              input: input,
+              input: input
             ).execute.to_mutation_response(success_key: :execution_identifier)
           end
         end
