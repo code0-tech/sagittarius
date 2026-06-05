@@ -16,8 +16,8 @@ module Sagittarius
           execute(request: nil, call: call, method: method, &block)
         end
 
-        def bidi_streamer(request: nil, call: nil, method: nil, &block)
-          execute(request: request, call: call, method: method, &block)
+        def bidi_streamer(requests: nil, request: nil, call: nil, method: nil, &block)
+          execute(request: requests || request, call: call, method: method, &block)
         end
 
         def execute(request:, call:, method:)

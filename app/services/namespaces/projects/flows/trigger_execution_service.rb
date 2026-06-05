@@ -23,10 +23,10 @@ module Namespaces
           execution_request = Tucana::Sagittarius::TestExecutionRequest.new(
             flow_id: flow.id,
             execution_identifier: execution_identifier,
-            body: input
+            body: Tucana::Shared::Value.from_ruby(input)
           )
 
-          # TODO: send request via stream
+          ExecutionHandler.send_execution_request(runtime.id, execution_request)
 
           ServiceResponse.success(message: 'Triggered test execution', payload: execution_identifier)
         end
