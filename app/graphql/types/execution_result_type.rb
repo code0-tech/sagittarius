@@ -9,9 +9,9 @@ module Types
     field :error, Types::ExecutionErrorType,
           null: true,
           description: 'Error returned by the execution result'
-    field :finished_at, Types::TimeType,
+    field :finished_at, Types::BigIntType,
           null: false,
-          description: 'Time when this execution result finished'
+          description: 'Unix epoch time in microseconds when this execution result finished'
     field :flow, Types::FlowType,
           null: false,
           description: 'Flow executed by this execution result'
@@ -21,9 +21,9 @@ module Types
     field :node_results, Types::ExecutionNodeResultType.connection_type,
           null: false,
           description: 'Node results produced by this execution result'
-    field :started_at, Types::TimeType,
+    field :started_at, Types::BigIntType,
           null: false,
-          description: 'Time when this execution result started'
+          description: 'Unix epoch time in microseconds when this execution result started'
     field :success, GraphQL::Types::JSON,
           null: true,
           description: 'Successful value returned by the execution result'

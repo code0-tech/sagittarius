@@ -7,8 +7,8 @@ FactoryBot.define do
     flow
     execution_identifier { generate(:execution_result_identifier) }
     input { { 'input' => 'result' } }
-    started_at { 2.minutes.ago }
-    finished_at { 1.minute.ago }
+    started_at { (2.minutes.ago.to_r * 1_000_000).to_i }
+    finished_at { (1.minute.ago.to_r * 1_000_000).to_i }
     success { { 'value' => true } }
     error { nil }
   end

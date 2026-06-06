@@ -9,9 +9,9 @@ module Types
     field :error, Types::ExecutionErrorType,
           null: true,
           description: 'Error returned by this node execution'
-    field :finished_at, Types::TimeType,
+    field :finished_at, Types::BigIntType,
           null: false,
-          description: 'Time when this node execution finished'
+          description: 'Unix epoch time in microseconds when this node execution finished'
     field :node_function, Types::NodeFunctionType, null: true, description: 'Node function associated with this result'
     field :parameter_results, [Types::ExecutionParameterResultType],
           null: false,
@@ -19,9 +19,9 @@ module Types
     field :position, Integer,
           null: false,
           description: 'Position of this node result in the execution result'
-    field :started_at, Types::TimeType,
+    field :started_at, Types::BigIntType,
           null: false,
-          description: 'Time when this node execution started'
+          description: 'Unix epoch time in microseconds when this node execution started'
     field :success, GraphQL::Types::JSON,
           null: true,
           description: 'Successful value returned by this node execution'

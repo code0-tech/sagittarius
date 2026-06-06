@@ -6,8 +6,8 @@ class CreateExecutionResults < Code0::ZeroTrack::Database::Migration[1.0]
       t.references :flow, null: false, foreign_key: { to_table: :flows, on_delete: :cascade }, index: false
       t.text :execution_identifier, null: false, limit: 200
       t.jsonb :input
-      t.datetime_with_timezone :started_at, null: false
-      t.datetime_with_timezone :finished_at, null: false
+      t.bigint :started_at, null: false
+      t.bigint :finished_at, null: false
       t.jsonb :success
       t.jsonb :error
 
@@ -28,8 +28,8 @@ class CreateExecutionResults < Code0::ZeroTrack::Database::Migration[1.0]
                    null: true,
                    foreign_key: { to_table: :node_functions, on_delete: :nullify }
       t.integer :position, null: false
-      t.datetime_with_timezone :started_at, null: false
-      t.datetime_with_timezone :finished_at, null: false
+      t.bigint :started_at, null: false
+      t.bigint :finished_at, null: false
       t.jsonb :success
       t.jsonb :error
 
