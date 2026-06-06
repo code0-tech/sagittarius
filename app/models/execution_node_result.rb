@@ -9,6 +9,7 @@ class ExecutionNodeResult < ApplicationRecord
            inverse_of: :execution_node_result
 
   validates :position, presence: true, numericality: { only_integer: true }
+  validates :started_at, :finished_at, numericality: { only_integer: true }
   validate :only_one_result_present
 
   private

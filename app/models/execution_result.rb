@@ -12,6 +12,7 @@ class ExecutionResult < ApplicationRecord
   validates :execution_identifier, presence: true,
                                    allow_blank: false,
                                    uniqueness: { case_sensitive: false, scope: :flow_id }
+  validates :started_at, :finished_at, numericality: { only_integer: true }
   validate :only_one_result_present
 
   private

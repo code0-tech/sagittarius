@@ -9,11 +9,15 @@ module Types
     field :dependencies, GraphQL::Types::JSON, null: false, description: 'Dependency versions for the runtime error'
     field :details, GraphQL::Types::JSON, null: true, description: 'Structured runtime error details'
     field :message, String, null: true, description: 'Message of the runtime error'
-    field :timestamp, String, null: true, description: 'Runtime timestamp for the error'
+    field :timestamp, Types::BigIntType,
+          null: true,
+          description: 'Unix epoch runtime timestamp in microseconds for the error'
     field :version, String, null: true, description: 'Runtime version that returned the error'
 
     def timestamp
-      object['timestamp']&.to_s
+      return if object['timestamp'].nil?
+
+      Integer(object['timestamp'])
     end
   end
 end

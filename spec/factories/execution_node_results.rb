@@ -5,8 +5,8 @@ FactoryBot.define do
     execution_result
     node_function { nil }
     sequence(:position)
-    started_at { 2.minutes.ago }
-    finished_at { 1.minute.ago }
+    started_at { (2.minutes.ago.to_r * 1_000_000).to_i }
+    finished_at { (1.minute.ago.to_r * 1_000_000).to_i }
     success { { 'node' => 'ok' } }
     error { nil }
   end

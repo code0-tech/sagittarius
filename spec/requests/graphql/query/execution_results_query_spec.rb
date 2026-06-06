@@ -16,6 +16,8 @@ RSpec.describe 'execution results Query' do
            flow: flow,
            execution_identifier: 'execution-1',
            input: { 'prompt' => 'pong' },
+           started_at: 1_717_661_234_567_890,
+           finished_at: 1_717_661_235_678_901,
            success: { 'ok' => true })
   end
   let(:node_result) do
@@ -23,12 +25,14 @@ RSpec.describe 'execution results Query' do
            execution_result: execution_result,
            node_function: node_function,
            position: 0,
+           started_at: 1_717_661_234_890_123,
+           finished_at: 1_717_661_235_123_456,
            success: nil,
            error: {
              'code' => 'E_NODE',
              'category' => 'runtime',
              'message' => 'Node failed',
-             'timestamp' => 1_780_000_000,
+             'timestamp' => 1_717_661_234_567_890,
              'version' => '0.0.72',
              'dependencies' => { 'module' => '1.0.0' },
              'details' => { 'reason' => 'invalid' },
@@ -59,12 +63,16 @@ RSpec.describe 'execution results Query' do
                 nodes {
                   id
                   input
+                  startedAt
+                  finishedAt
                   success
                   flow { id }
                   nodeResults {
                     nodes {
                       id
                       position
+                      startedAt
+                      finishedAt
                       success
                       error {
                         code
@@ -113,6 +121,8 @@ RSpec.describe 'execution results Query' do
     expect(execution_node).to include(
       'id' => execution_result.to_global_id.to_s,
       'input' => { 'prompt' => 'pong' },
+      'startedAt' => 1_717_661_234_567_890,
+      'finishedAt' => 1_717_661_235_678_901,
       'success' => { 'ok' => true },
       'flow' => { 'id' => flow.to_global_id.to_s }
     )
@@ -121,12 +131,14 @@ RSpec.describe 'execution results Query' do
       a_hash_including(
         'id' => node_result.to_global_id.to_s,
         'position' => 0,
+        'startedAt' => 1_717_661_234_890_123,
+        'finishedAt' => 1_717_661_235_123_456,
         'success' => nil,
         'error' => {
           'code' => 'E_NODE',
           'category' => 'runtime',
           'message' => 'Node failed',
-          'timestamp' => '1780000000',
+          'timestamp' => 1_717_661_234_567_890,
           'version' => '0.0.72',
           'dependencies' => { 'module' => '1.0.0' },
           'details' => { 'reason' => 'invalid' },

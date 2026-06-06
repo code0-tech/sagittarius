@@ -39,6 +39,14 @@ const scalars = {
   Time: {
     input: 'string',
     output: 'string',
+  },
+  Date: {
+    input: 'string',
+    output: 'string',
+  },
+  BigInt: {
+    input: 'number',
+    output: 'number',
   }
 }
 

@@ -13,5 +13,5 @@ Represents an execution error returned by the runtime
 | `dependencies` | [`JSON!`](../scalar/json.md) | Dependency versions for the runtime error |
 | `details` | [`JSON`](../scalar/json.md) | Structured runtime error details |
 | `message` | [`String`](../scalar/string.md) | Message of the runtime error |
-| `timestamp` | [`String`](../scalar/string.md) | Runtime timestamp for the error |
+| `timestamp` | [`BigInt`](../scalar/bigint.md) | Unix epoch runtime timestamp in microseconds for the error |
 | `version` | [`String`](../scalar/string.md) | Runtime version that returned the error |
