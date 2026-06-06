@@ -7,8 +7,8 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
 
   let(:flow) { create(:flow) }
   let(:node_function) { create(:node_function, flow: flow) }
-  let(:started_at) { 1_780_430_000_000 }
-  let(:finished_at) { 1_780_430_002_000 }
+  let(:started_at) { 1_780_430_000_000_000 }
+  let(:finished_at) { 1_780_430_002_000_000 }
 
   let(:grpc_result) do
     Tucana::Shared::ExecutionResult.new(
@@ -53,8 +53,8 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       input: { 'input' => 'value' },
       success: { 'result' => true },
       error: nil,
-      started_at: Time.zone.at(0, started_at, :millisecond),
-      finished_at: Time.zone.at(0, finished_at, :millisecond)
+      started_at: started_at,
+      finished_at: finished_at
     )
 
     node_result = execution_result.node_results.sole

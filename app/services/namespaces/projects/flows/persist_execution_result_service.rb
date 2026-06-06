@@ -39,8 +39,8 @@ module Namespaces
           result = flow.execution_results.build(
             execution_identifier: grpc_result.execution_identifier,
             input: grpc_result.input&.to_ruby(true),
-            started_at: milliseconds_to_time(grpc_result.started_at),
-            finished_at: milliseconds_to_time(grpc_result.finished_at)
+            started_at: grpc_result.started_at,
+            finished_at: grpc_result.finished_at
           )
 
           assign_result(result, grpc_result)
@@ -53,8 +53,8 @@ module Namespaces
           grpc_result.node_execution_results.each_with_index do |node_result, index|
             node_record = result.node_results.build(
               position: index,
-              started_at: milliseconds_to_time(node_result.started_at),
-              finished_at: milliseconds_to_time(node_result.finished_at),
+              started_at: node_result.started_at,
+              finished_at: node_result.finished_at,
               node_function: NodeFunction.find_by(id: node_result.node_id)
             )
 
@@ -91,10 +91,6 @@ module Namespaces
             dependencies: error.dependencies.to_h,
             details: error.details&.to_h,
           }
-        end
-
-        def milliseconds_to_time(milliseconds)
-          Time.zone.at(0, milliseconds, :millisecond)
         end
       end
     end
