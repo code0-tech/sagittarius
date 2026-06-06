@@ -78,6 +78,16 @@ module GrpcStreamHandler
 
     queue = Queue.new
 
+    queues = GrpcStreamHandler.yielders[clazz] ||= {}
+    method_queues = queues[method] ||= {}
+    runtime_queues = method_queues[runtime_id] ||= []
+
+    runtime_queues.each { |existing_queue| existing_queue << :end }
+    runtime_queues.clear
+    runtime_queues << queue
+
+    yield queue if block_given?
+
     enumerator = Enumerator.new do |y|
       loop do
         item = queue.pop(timeout: 1)
@@ -89,20 +99,15 @@ module GrpcStreamHandler
           Runtime.update(runtime_id, last_heartbeat: Time.zone.now)
         rescue GRPC::Core::CallError
           logger.info(message: 'Stream was closed from client side (probably)')
-          clazz.try("#{method}_died", runtime_id)
 
           raise
         end
       end
+    ensure
       logger.info(message: 'Stream was closed from server side')
+      GrpcStreamHandler.yielders.dig(clazz, method, runtime_id)&.delete(queue)
       clazz.try("#{method}_died", runtime_id)
     end
-
-    GrpcStreamHandler.yielders[clazz] ||= {}
-    GrpcStreamHandler.yielders[clazz][method] ||= {}
-    GrpcStreamHandler.yielders[clazz][method][runtime_id] ||= []
-
-    GrpcStreamHandler.yielders[clazz][method][runtime_id] << queue
 
     clazz.try("#{method}_started", runtime_id)
 
