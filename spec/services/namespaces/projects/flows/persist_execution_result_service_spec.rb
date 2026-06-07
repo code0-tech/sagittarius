@@ -77,6 +77,37 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     expect(SubscriptionTriggers).to have_received(:execution_result).with(service_response.payload)
   end
 
+  context 'when a parameter result is an empty struct' do
+    let(:grpc_result) do
+      Tucana::Shared::ExecutionResult.new(
+        execution_identifier: 'execution-identifier',
+        flow_id: flow.id,
+        started_at: started_at,
+        finished_at: finished_at,
+        input: Tucana::Shared::Value.from_ruby('input' => 'value'),
+        success: Tucana::Shared::Value.from_ruby('result' => true),
+        node_execution_results: [
+          Tucana::Shared::NodeExecutionResult.new(
+            node_id: node_function.id,
+            started_at: started_at,
+            finished_at: finished_at,
+            success: Tucana::Shared::Value.from_ruby('node' => 'ok'),
+            parameter_results: [
+              Tucana::Shared::NodeParameterNodeExecutionResult.new(
+                value: Tucana::Shared::Value.from_ruby({})
+              )
+            ]
+          )
+        ]
+      )
+    end
+
+    it 'persists the empty object as a valid JSON value' do
+      expect(service_response).to be_success
+      expect(service_response.payload.node_results.sole.parameter_results.sole.value).to eq({})
+    end
+  end
+
   context 'when the result is an error' do
     let(:grpc_result) do
       Tucana::Shared::ExecutionResult.new(
