@@ -4,7 +4,7 @@ module Subscriptions
   module Namespaces
     module Projects
       module Flows
-        class ExecutionResultSubscription < BaseSubscription
+        class ExecutionResult < BaseSubscription
           description 'Subscription to asynchronously receive an execution result'
 
           argument :execution_identifier,
@@ -18,7 +18,7 @@ module Subscriptions
                 description: 'The execution result of the relevant execution'
 
           def subscribe(execution_identifier:)
-            result = ExecutionResult.find_by(execution_identifier: execution_identifier)
+            result = ::ExecutionResult.find_by(execution_identifier: execution_identifier)
 
             if result.present?
               unsubscribe({ execution_result: result })

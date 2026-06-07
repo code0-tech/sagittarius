@@ -172,4 +172,43 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       expect(service_response.payload[:error_code]).to eq(:invalid_execution_result)
     end
   end
+
+  context 'with subscription integration', type: :channel do
+    include AuthenticationHelpers
+    include ActionCable::Channel::TestCase::Behavior
+
+    include_context 'with graphql subscription support'
+
+    tests GraphqlChannel
+
+    let(:user) { create(:user) }
+    let(:token) { "Session #{authorization_token(user)}" }
+
+    before do
+      allow(SubscriptionTriggers).to receive(:execution_result).and_call_original
+
+      create(:namespace_member, namespace: flow.project.namespace, user: user)
+      stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: user, subject: flow.project)
+
+      subscribe(token: token)
+
+      perform :execute,
+              query: <<~GQL,
+                subscription($executionIdentifier: String!) {
+                  namespacesProjectsFlowsExecutionResult(executionIdentifier: $executionIdentifier) {
+                    executionResult { success }
+                  }
+                }
+              GQL
+              variables: { executionIdentifier: 'execution-identifier' }
+    end
+
+    it 'delivers the execution result to subscribers without visibility profile error' do
+      service_response
+
+      result = transmissions.last
+      expect(result.dig('result', 'data', 'namespacesProjectsFlowsExecutionResult', 'executionResult', 'success'))
+        .to eq({ 'result' => true })
+    end
+  end
 end
