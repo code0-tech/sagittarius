@@ -14,6 +14,7 @@ Root Query type
 | `globalRuntimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Find runtimes |
 | `organizations` | [`OrganizationConnection!`](../object/organizationconnection.md) | Find organizations |
 | `users` | [`UserConnection!`](../object/userconnection.md) | Find users |
+| `velorumModels` | [`[VelorumModel!]!`](../object/velorummodel.md) | Find models available through Velorum |
 
 ## Fields with arguments
 
