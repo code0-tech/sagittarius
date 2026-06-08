@@ -15,7 +15,6 @@ RSpec.describe SagittariusSchema.types['RuntimeModule'] do
       version
       definitions
       runtime
-      status
       dataTypes
       runtimeFlowTypes
       flowTypes

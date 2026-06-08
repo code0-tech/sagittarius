@@ -10,4 +10,3 @@ The enum status of the detailed status
 | `NOT_RESPONDING` | The runtime is not responding to heartbeats |
 | `RUNNING` | The runtime is running and healthy |
 | `STOPPED` | The runtime has been stopped |
-| `UNKNOWN` | The runtime status is unknown |

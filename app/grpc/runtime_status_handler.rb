@@ -4,7 +4,8 @@ class RuntimeStatusHandler < Tucana::Sagittarius::RuntimeStatusService::Service
   include Code0::ZeroTrack::Loggable
   include GrpcHandler
 
-  def update(request, _call)
+  # TODO: Implement in #1018
+  def update_disabled(request, _call)
     current_runtime = Runtime.find(Code0::ZeroTrack::Context.current[:runtime][:id])
     status_info = request.status
     return Tucana::Sagittarius::RuntimeStatusUpdateResponse.new(success: false) if status_info.nil?

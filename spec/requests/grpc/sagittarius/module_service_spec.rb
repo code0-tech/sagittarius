@@ -125,7 +125,6 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
           ],
           definitions: [
             {
-              flow_type_identifier: ['FORM'],
               endpoint: {
                 host: 'localhost',
                 port: 8080,
@@ -192,7 +191,6 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
 
       module_definition = runtime_module.runtime_module_definitions.sole
       expect(module_definition).to have_attributes(
-        flow_type_identifiers: ['FORM'],
         host: 'localhost',
         port: 8080,
         endpoint: '/execute'

@@ -112,14 +112,13 @@ module Runtimes
         def update_module_definitions(module_records, t)
           modules.each do |grpc_module|
             runtime_module = module_records.fetch(grpc_module)
-            runtime_module.runtime_module_definitions.destroy_all
+            runtime_module.runtime_module_definitions.delete_all
 
             grpc_module.definitions.each do |definition|
               next unless definition.value == :endpoint
 
               endpoint = definition.endpoint
               module_definition = runtime_module.runtime_module_definitions.build(
-                flow_type_identifiers: definition.flow_type_identifier.to_a,
                 host: endpoint.host,
                 port: endpoint.port,
                 endpoint: endpoint.endpoint

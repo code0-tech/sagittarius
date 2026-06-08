@@ -11,6 +11,7 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
       modules
       description
       projects
+      statuses
       status
       token
       userAbilities
@@ -42,12 +43,6 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
             runtimes {
               nodes {
                 id
-                status {
-                  id
-                  status
-                  uptime
-                  uptimes
-                }
                 token
               }
             }
@@ -61,17 +56,6 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
     it 'does not expose token' do
       expect(graphql_data_at(:namespace, :runtimes, :nodes, :id).first).to eq(runtime.to_global_id.to_s)
       expect(graphql_data_at(:namespace, :runtimes, :nodes, :token).first).to be_nil
-    end
-
-    it 'exposes the runtime status object' do
-      status = graphql_data_at(:namespace, :runtimes, :nodes, 0, :status)
-
-      expect(status).to include(
-        'id' => runtime.runtime_status.to_global_id.to_s,
-        'status' => 'NOT_RESPONDING',
-        'uptime' => 0.0,
-        'uptimes' => Array.new(14, 0.0)
-      )
     end
   end
 end

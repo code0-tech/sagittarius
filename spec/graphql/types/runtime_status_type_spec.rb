@@ -7,9 +7,10 @@ RSpec.describe SagittariusSchema.types['RuntimeStatus'] do
     %w[
       id
       status
+      configurations
       lastHeartbeat
-      uptime
-      uptimes
+      type
+      identifier
       createdAt
       updatedAt
     ]

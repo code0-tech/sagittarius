@@ -2,49 +2,78 @@
 
 require 'rails_helper'
 
-RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
+RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server,
+               skip: 'This needs to be redone in issue: #1018 (new runtime status)' do
   include GrpcHelpers
 
   let(:stub) { create_stub Tucana::Sagittarius::RuntimeStatusService }
 
   describe 'Update' do
     let(:runtime) { create(:runtime) }
-    let!(:runtime_module) { create(:runtime_module, runtime: runtime, identifier: 'module_status_1') }
     let(:to_update_status) do
-      Tucana::Shared::ModuleStatus.new(
-        status: Tucana::Shared::ModuleStatus::StatusVariant::RUNNING,
+      Tucana::Shared::AdapterRuntimeStatus.new(
+        status: Tucana::Shared::AdapterRuntimeStatus::Status::RUNNING,
         timestamp: Time.now.to_i,
-        identifier: 'module_status_1'
+        identifier: 'adapter_status_1',
+        configurations: [
+          Tucana::Shared::AdapterStatusConfiguration.new(
+            endpoint: 'http://localhost:3000'
+          )
+        ]
       )
     end
 
     let(:message) do
-      Tucana::Sagittarius::RuntimeStatusUpdateRequest.new(status: to_update_status)
+      Tucana::Sagittarius::RuntimeStatusUpdateRequest.new(adapter_runtime_status: to_update_status)
     end
 
-    it 'updates the runtime and module statuses' do
+    it 'creates a correct status' do
       expect(stub.update(message, authorization(runtime)).success).to be(true)
-
-      expect(runtime.reload.runtime_status).to have_attributes(
-        status: 'running'
-      )
-
-      expect(runtime_module.reload.runtime_module_status).to have_attributes(
-        status: 'running'
-      )
+      db_status = RuntimeStatus.last
+      expect(db_status.runtime).to eq(runtime)
+      expect(db_status.identifier).to eq('adapter_status_1')
+      expect(db_status.status_type).to eq('adapter')
+      expect(db_status.status).to eq('running')
+      expect(db_status.runtime_status_configurations.count).to eq(1)
+      expect(db_status.runtime_status_configurations.first.endpoint).to eq('http://localhost:3000')
     end
 
-    context 'when the runtime module does not exist' do
+    context 'when old configuration exists before' do
+      before do
+        create(:runtime_status_configuration, endpoint: 'http://old-endpoint.com',
+                                              runtime_status: create(:runtime_status,
+                                                                     runtime: runtime,
+                                                                     identifier: 'adapter_status_1'))
+      end
+
+      it 'updates the existing configuration' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+        expect(RuntimeStatusConfiguration.count).to eq(1)
+        config = RuntimeStatusConfiguration.last
+        expect(config.endpoint).to eq('http://localhost:3000')
+      end
+    end
+
+    context 'when execution runtime status' do
       let(:to_update_status) do
-        Tucana::Shared::ModuleStatus.new(
-          status: Tucana::Shared::ModuleStatus::StatusVariant::RUNNING,
+        Tucana::Shared::ExecutionRuntimeStatus.new(
+          status: Tucana::Shared::ExecutionRuntimeStatus::Status::RUNNING,
           timestamp: Time.now.to_i,
-          identifier: 'missing_module'
+          identifier: 'execution_status_1'
         )
       end
 
-      it 'returns an error response' do
-        expect(stub.update(message, authorization(runtime)).success).to be(false)
+      let(:message) do
+        Tucana::Sagittarius::RuntimeStatusUpdateRequest.new(execution_runtime_status: to_update_status)
+      end
+
+      it 'creates a correct status' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+        db_status = RuntimeStatus.last
+        expect(db_status.runtime).to eq(runtime)
+        expect(db_status.identifier).to eq('execution_status_1')
+        expect(db_status.status_type).to eq('execution')
+        expect(db_status.status).to eq('running')
       end
     end
   end

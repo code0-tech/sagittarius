@@ -23,7 +23,7 @@ RSpec.describe Runtime do
                                          .inverse_of(:runtimes)
     }
 
-    it { is_expected.to have_one(:runtime_status).inverse_of(:runtime) }
+    it { is_expected.to have_many(:runtime_statuses).inverse_of(:runtime) }
   end
 
   describe 'validations' do

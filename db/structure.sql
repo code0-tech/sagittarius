@@ -925,7 +925,6 @@ ALTER SEQUENCE runtime_function_definitions_id_seq OWNED BY runtime_function_def
 CREATE TABLE runtime_module_definitions (
     id bigint NOT NULL,
     runtime_module_id bigint NOT NULL,
-    flow_type_identifiers text[] DEFAULT '{}'::text[] NOT NULL,
     host text NOT NULL,
     port bigint NOT NULL,
     endpoint text NOT NULL,
@@ -941,24 +940,6 @@ CREATE SEQUENCE runtime_module_definitions_id_seq
     CACHE 1;
 
 ALTER SEQUENCE runtime_module_definitions_id_seq OWNED BY runtime_module_definitions.id;
-
-CREATE TABLE runtime_module_statuses (
-    id bigint NOT NULL,
-    runtime_module_id bigint NOT NULL,
-    status integer DEFAULT 4 NOT NULL,
-    last_heartbeat timestamp with time zone,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE runtime_module_statuses_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE runtime_module_statuses_id_seq OWNED BY runtime_module_statuses.id;
 
 CREATE TABLE runtime_modules (
     id bigint NOT NULL,
@@ -1028,7 +1009,9 @@ CREATE TABLE runtime_statuses (
     id bigint NOT NULL,
     runtime_id bigint NOT NULL,
     status integer DEFAULT 0 NOT NULL,
+    status_type integer DEFAULT 0 NOT NULL,
     last_heartbeat timestamp with time zone,
+    identifier text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
@@ -1280,8 +1263,6 @@ ALTER TABLE ONLY runtime_function_definitions ALTER COLUMN id SET DEFAULT nextva
 
 ALTER TABLE ONLY runtime_module_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_module_definitions_id_seq'::regclass);
 
-ALTER TABLE ONLY runtime_module_statuses ALTER COLUMN id SET DEFAULT nextval('runtime_module_statuses_id_seq'::regclass);
-
 ALTER TABLE ONLY runtime_modules ALTER COLUMN id SET DEFAULT nextval('runtime_modules_id_seq'::regclass);
 
 ALTER TABLE ONLY runtime_parameter_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_parameter_definitions_id_seq'::regclass);
@@ -1450,9 +1431,6 @@ ALTER TABLE ONLY runtime_function_definitions
 
 ALTER TABLE ONLY runtime_module_definitions
     ADD CONSTRAINT runtime_module_definitions_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY runtime_module_statuses
-    ADD CONSTRAINT runtime_module_statuses_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY runtime_modules
     ADD CONSTRAINT runtime_modules_pkey PRIMARY KEY (id);
@@ -1684,11 +1662,9 @@ CREATE UNIQUE INDEX index_runtime_flow_types_on_runtime_id_and_identifier ON run
 
 CREATE INDEX index_runtime_module_definitions_on_runtime_module_id ON runtime_module_definitions USING btree (runtime_module_id);
 
-CREATE UNIQUE INDEX index_runtime_module_statuses_on_runtime_module_id ON runtime_module_statuses USING btree (runtime_module_id);
-
 CREATE INDEX index_runtime_status_configurations_on_runtime_status_id ON runtime_status_configurations USING btree (runtime_status_id);
 
-CREATE UNIQUE INDEX index_runtime_statuses_on_runtime_id ON runtime_statuses USING btree (runtime_id);
+CREATE INDEX index_runtime_statuses_on_runtime_id ON runtime_statuses USING btree (runtime_id);
 
 CREATE INDEX index_runtimes_on_namespace_id ON runtimes USING btree (namespace_id);
 
@@ -1731,9 +1707,6 @@ ALTER TABLE ONLY flow_types
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT fk_rails_18c14268dd FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY runtime_module_statuses
-    ADD CONSTRAINT fk_rails_19736617d3 FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;

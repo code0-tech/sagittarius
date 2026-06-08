@@ -14,7 +14,7 @@ module Types
     field :data_types, Types::DataTypeType.connection_type, null: false, description: 'Data types of the runtime module'
     field :definitions, Types::RuntimeModuleDefinitionType.connection_type,
           null: false,
-          description: 'Endpoint definitions of the runtime module',
+          description: 'Definitions of the runtime module',
           method: :runtime_module_definitions
     field :descriptions, [Types::TranslationType], null: true, description: 'Descriptions of the runtime module'
     field :documentation, String, null: false, description: 'Documentation URL of the runtime module'
@@ -29,10 +29,6 @@ module Types
     field :runtime_flow_types, Types::RuntimeFlowTypeType.connection_type,
           null: false,
           description: 'Runtime flow types of the runtime module'
-    field :status, Types::RuntimeModuleStatusType,
-          null: false,
-          description: 'The status of the runtime module',
-          method: :ensure_runtime_module_status!
     # rubocop:disable GraphQL/ExtractType
     field :runtime_function_definitions, Types::RuntimeFunctionDefinitionType.connection_type,
           null: false,

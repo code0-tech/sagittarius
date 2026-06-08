@@ -1,36 +1,37 @@
 # frozen_string_literal: true
 
 class RuntimeStatus < ApplicationRecord
-  belongs_to :runtime, inverse_of: :runtime_status
+  belongs_to :runtime, inverse_of: :runtime_statuses
+  has_many :runtime_status_configurations, inverse_of: :runtime_status
 
   STATUS_TYPES = {
     not_responding: 0,
     not_ready: 1,
     running: 2,
     stopped: 3,
-    unknown: 4,
   }.with_indifferent_access
 
   enum :status, STATUS_TYPES, default: :stopped
 
-  HEARTBEAT_WINDOW = 10.minutes
+  STATUS_TYPE_TYPES = {
+    adapter: 0,
+    execution: 1,
+  }.with_indifferent_access
 
-  def self.status_for_heartbeat(last_heartbeat)
-    last_heartbeat && last_heartbeat >= HEARTBEAT_WINDOW.ago ? :running : :not_responding
-  end
+  enum :status_type, STATUS_TYPE_TYPES
 
-  def current_status
-    return 'not_responding' if last_heartbeat.blank?
-    return 'not_responding' if last_heartbeat < HEARTBEAT_WINDOW.ago
+  validates :identifier, presence: true,
+                         allow_blank: false,
+                         uniqueness: { case_sensitive: false, scope: :runtime_id }
 
-    status
-  end
+  validate :runtime_status_configurations_only_for_adapter
 
-  def uptime
-    current_status == 'not_responding' ? 0.0 : 100.0
-  end
+  private
 
-  def uptimes
-    Array.new(14, uptime)
+  def runtime_status_configurations_only_for_adapter
+    return if adapter?
+    return if runtime_status_configurations.empty?
+
+    errors.add(:runtime_status_configurations, :only_allowed_for_adapters)
   end
 end

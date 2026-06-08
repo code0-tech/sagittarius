@@ -12,6 +12,12 @@ RSpec.describe RuntimeModuleDefinition do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:host) }
     it { is_expected.to validate_presence_of(:endpoint) }
-    it { is_expected.to validate_numericality_of(:port).only_integer.is_greater_than_or_equal_to(0) }
+
+    it {
+      is_expected.to validate_numericality_of(:port)
+        .only_integer
+        .is_greater_than_or_equal_to(0)
+        .is_less_than_or_equal_to(65_535)
+    }
   end
 end
