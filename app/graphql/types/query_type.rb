@@ -43,6 +43,7 @@ module Types
     field :users, Types::UserType.connection_type, null: false, description: 'Find users'
 
     field :global_runtimes, Types::RuntimeType.connection_type, null: false, description: 'Find runtimes'
+    field :velorum_models, [Types::VelorumModelType], null: false, description: 'Find models available through Velorum'
 
     def application
       {}
@@ -84,6 +85,10 @@ module Types
 
     def global_runtimes
       Runtime.where(namespace: nil)
+    end
+
+    def velorum_models
+      ::Velorum::ModelsService.new.execute
     end
 
     def current_authentication

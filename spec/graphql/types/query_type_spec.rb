@@ -14,6 +14,7 @@ RSpec.describe SagittariusSchema.types['Query'] do
       users
       user
       global_runtimes
+      velorum_models
       namespace
     ]
   end
