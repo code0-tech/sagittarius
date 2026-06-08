@@ -21,8 +21,8 @@ class ExecutionHandler < Tucana::Sagittarius::ExecutionService::Service
     end
 
     Thread.new do
-      ActiveRecord::Base.connection_pool.with_connection do
-        requests.each do |request|
+      requests.each do |request|
+        ApplicationRecord.connection_pool.with_connection do
           case request.data
           when :logon
             logger.info(message: 'Execution runtime sent logon', runtime_id: current_runtime_id)

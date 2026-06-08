@@ -1,5 +1,5 @@
 ---
-title: executionResultSubscription
+title: namespacesProjectsFlowsExecutionResult
 ---
 
 Subscription to asynchronously receive an execution result
