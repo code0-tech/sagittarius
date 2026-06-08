@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :runtime_status do
-    status { :stopped }
+  factory :runtime_module_status do
+    runtime_module
+    status { :unknown }
     last_heartbeat { Time.zone.today }
-    runtime
   end
 end

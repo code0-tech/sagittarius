@@ -13,7 +13,9 @@ RSpec.describe SagittariusSchema.types['RuntimeModule'] do
       author
       icon
       version
+      definitions
       runtime
+      status
       dataTypes
       runtimeFlowTypes
       flowTypes

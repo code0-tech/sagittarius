@@ -4,6 +4,7 @@ module Types
   class RuntimeStatusStatusEnum < Types::BaseEnum
     description 'The enum status of the detailed status'
 
+    value :UNKNOWN, 'The runtime status is unknown', value: 'unknown'
     value :NOT_RESPONDING, 'The runtime is not responding to heartbeats', value: 'not_responding'
     value :NOT_READY, 'The runtime is not ready to compute stuff', value: 'not_ready'
     value :RUNNING, 'The runtime is running and healthy', value: 'running'

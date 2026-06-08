@@ -13,6 +13,8 @@ RSpec.describe RuntimeModule do
     it { is_expected.to have_many(:runtime_function_definitions).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:function_definitions).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:module_configuration_definitions).inverse_of(:runtime_module) }
+    it { is_expected.to have_many(:runtime_module_definitions).inverse_of(:runtime_module) }
+    it { is_expected.to have_one(:runtime_module_status).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:names).class_name('Translation').inverse_of(:owner) }
     it { is_expected.to have_many(:descriptions).class_name('Translation').inverse_of(:owner) }
   end

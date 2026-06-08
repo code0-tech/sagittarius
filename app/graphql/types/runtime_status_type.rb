@@ -6,23 +6,19 @@ module Types
 
     authorize :read_runtime
 
-    field :configurations, Types::RuntimeStatusConfigurationType.connection_type,
-          null: false,
-          description: 'The detailed configuration entries for this runtime status (only for adapters)',
-          method: :runtime_status_configurations
-    field :identifier, String,
-          null: false,
-          description: 'The unique identifier for this runtime status'
     field :last_heartbeat, Types::TimeType,
           null: true,
           description: 'The timestamp of the last heartbeat received from the runtime'
     field :status, Types::RuntimeStatusStatusEnum,
           null: false,
-          description: 'The current status of the runtime (e.g. running, stopped)'
-    field :type, Types::RuntimeStatusTypeEnum,
+          description: 'The current status of the runtime',
+          method: :current_status
+    field :uptime, Float,
           null: false,
-          description: 'The type of runtime status information (e.g. adapter, execution)',
-          method: :status_type
+          description: 'Current uptime percentage for the runtime'
+    field :uptimes, [Float],
+          null: false,
+          description: 'Uptime percentages for the last 14 days'
 
     id_field RuntimeStatus
     timestamps

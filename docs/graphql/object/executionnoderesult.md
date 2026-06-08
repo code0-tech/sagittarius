@@ -11,6 +11,7 @@ Represents a node result of an execution result
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this ExecutionNodeResult was created |
 | `error` | [`ExecutionError`](../object/executionerror.md) | Error returned by this node execution |
 | `finishedAt` | [`BigInt!`](../scalar/bigint.md) | Unix epoch time in microseconds when this node execution finished |
+| `functionDefinition` | [`FunctionDefinition`](../object/functiondefinition.md) | Function definition associated with this sub-flow result |
 | `id` | [`ExecutionNodeResultID!`](../scalar/executionnoderesultid.md) | Global ID of this ExecutionNodeResult |
 | `nodeFunction` | [`NodeFunction`](../object/nodefunction.md) | Node function associated with this result |
 | `parameterResults` | [`[ExecutionParameterResult!]!`](../object/executionparameterresult.md) | Parameter results produced by this node execution |

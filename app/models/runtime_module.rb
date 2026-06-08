@@ -11,6 +11,8 @@ class RuntimeModule < ApplicationRecord
   has_many :runtime_function_definitions, inverse_of: :runtime_module
   has_many :function_definitions, inverse_of: :runtime_module
   has_many :module_configuration_definitions, inverse_of: :runtime_module
+  has_many :runtime_module_definitions, inverse_of: :runtime_module
+  has_one :runtime_module_status, inverse_of: :runtime_module
 
   has_translation :names, purpose: :name
   has_translation :descriptions, purpose: :description
@@ -23,6 +25,10 @@ class RuntimeModule < ApplicationRecord
   validates :icon, length: { maximum: 100 }
 
   validate :validate_version
+
+  def ensure_runtime_module_status!
+    runtime_module_status || create_runtime_module_status!(status: :unknown)
+  end
 
   def validate_version
     return errors.add(:version, :blank) if version.blank?

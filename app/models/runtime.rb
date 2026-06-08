@@ -7,7 +7,7 @@ class Runtime < ApplicationRecord
 
   token_attr :token, prefix: 's_rt_', length: 48
 
-  has_many :runtime_statuses, inverse_of: :runtime
+  has_one :runtime_status, inverse_of: :runtime
 
   has_many :project_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :runtime
   has_many :projects, class_name: 'NamespaceProject', through: :project_assignments, source: :namespace_project,
@@ -33,11 +33,26 @@ class Runtime < ApplicationRecord
   validates :description, length: { maximum: 500 }, exclusion: { in: [nil] }
 
   before_validation :strip_whitespace
+  after_save :sync_runtime_status_heartbeat!, if: :saved_change_to_last_heartbeat?
+
+  def ensure_runtime_status!
+    runtime_status || create_runtime_status!(
+      last_heartbeat: last_heartbeat,
+      status: RuntimeStatus.status_for_heartbeat(last_heartbeat)
+    )
+  end
 
   private
 
   def strip_whitespace
     name&.strip!
     description&.strip!
+  end
+
+  def sync_runtime_status_heartbeat!
+    ensure_runtime_status!.update!(
+      last_heartbeat: last_heartbeat,
+      status: RuntimeStatus.status_for_heartbeat(last_heartbeat)
+    )
   end
 end

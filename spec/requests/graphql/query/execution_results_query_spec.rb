@@ -83,6 +83,7 @@ RSpec.describe 'execution results Query' do
                         dependencies
                         details
                       }
+                      functionDefinition { id }
                       nodeFunction { id }
                       parameterResults {
                         id
@@ -143,6 +144,7 @@ RSpec.describe 'execution results Query' do
           'dependencies' => { 'module' => '1.0.0' },
           'details' => { 'reason' => 'invalid' },
         },
+        'functionDefinition' => nil,
         'nodeFunction' => { 'id' => node_function.to_global_id.to_s },
         'parameterResults' => contain_exactly(
           a_hash_including(

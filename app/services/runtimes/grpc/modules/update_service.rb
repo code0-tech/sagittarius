@@ -30,6 +30,7 @@ module Runtimes
             next module_records unless module_records.success?
 
             update_data_types(module_records.payload, t)
+            update_module_definitions(module_records.payload, t)
             update_definition_services(module_records.payload, t)
 
             UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
@@ -104,6 +105,33 @@ module Runtimes
                 runtime_module
               ).execute
               t.rollback_and_return! response unless response.success?
+            end
+          end
+        end
+
+        def update_module_definitions(module_records, t)
+          modules.each do |grpc_module|
+            runtime_module = module_records.fetch(grpc_module)
+            runtime_module.runtime_module_definitions.destroy_all
+
+            grpc_module.definitions.each do |definition|
+              next unless definition.value == :endpoint
+
+              endpoint = definition.endpoint
+              module_definition = runtime_module.runtime_module_definitions.build(
+                flow_type_identifiers: definition.flow_type_identifier.to_a,
+                host: endpoint.host,
+                port: endpoint.port,
+                endpoint: endpoint.endpoint
+              )
+
+              next if module_definition.save
+
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Failed to update runtime module definition',
+                error_code: :invalid_runtime_module_definition,
+                details: module_definition.errors
+              )
             end
           end
         end
