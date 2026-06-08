@@ -108,6 +108,38 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     end
   end
 
+  context 'when a node execution result targets a function definition' do
+    let(:function_definition) { create(:function_definition) }
+    let(:grpc_result) do
+      Tucana::Shared::ExecutionResult.new(
+        execution_identifier: 'execution-identifier',
+        flow_id: flow.id,
+        started_at: started_at,
+        finished_at: finished_at,
+        input: Tucana::Shared::Value.from_ruby('input' => 'value'),
+        success: Tucana::Shared::Value.from_ruby('result' => true),
+        node_execution_results: [
+          Tucana::Shared::NodeExecutionResult.new(
+            function_id: function_definition.id,
+            started_at: started_at,
+            finished_at: finished_at,
+            success: Tucana::Shared::Value.from_ruby('function' => 'ok')
+          )
+        ]
+      )
+    end
+
+    it 'persists the function definition as the execution target' do
+      expect(service_response).to be_success
+
+      expect(service_response.payload.node_results.sole).to have_attributes(
+        node_function: nil,
+        function_definition: function_definition,
+        success: { 'function' => 'ok' }
+      )
+    end
+  end
+
   context 'when the result is an error' do
     let(:grpc_result) do
       Tucana::Shared::ExecutionResult.new(

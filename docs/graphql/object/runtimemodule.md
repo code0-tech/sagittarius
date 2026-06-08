@@ -12,6 +12,7 @@ Represents a runtime module
 | `configurationDefinitions` | [`ModuleConfigurationDefinitionConnection!`](../object/moduleconfigurationdefinitionconnection.md) | Configuration definitions of the runtime module |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeModule was created |
 | `dataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | Data types of the runtime module |
+| `definitions` | [`RuntimeModuleDefinitionConnection!`](../object/runtimemoduledefinitionconnection.md) | Definitions of the runtime module |
 | `descriptions` | [`[Translation!]`](../object/translation.md) | Descriptions of the runtime module |
 | `documentation` | [`String!`](../scalar/string.md) | Documentation URL of the runtime module |
 | `flowTypes` | [`FlowTypeConnection!`](../object/flowtypeconnection.md) | Flow types of the runtime module |

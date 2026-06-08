@@ -11,6 +11,7 @@ class RuntimeModule < ApplicationRecord
   has_many :runtime_function_definitions, inverse_of: :runtime_module
   has_many :function_definitions, inverse_of: :runtime_module
   has_many :module_configuration_definitions, inverse_of: :runtime_module
+  has_many :runtime_module_definitions, inverse_of: :runtime_module
 
   has_translation :names, purpose: :name
   has_translation :descriptions, purpose: :description

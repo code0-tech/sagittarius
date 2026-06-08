@@ -123,6 +123,15 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
               hidden: true,
             }
           ],
+          definitions: [
+            {
+              endpoint: {
+                host: 'localhost',
+                port: 8080,
+                endpoint: '/execute',
+              },
+            }
+          ],
         }
       ]
     end
@@ -179,6 +188,13 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
       expect(configuration).to have_attributes(type: 'TEXT', default_value: 'secret', optional: true, hidden: true)
       expect(configuration.names.first.content).to eq('API key')
       expect(configuration.referenced_data_types).to contain_exactly(text)
+
+      module_definition = runtime_module.runtime_module_definitions.sole
+      expect(module_definition).to have_attributes(
+        host: 'localhost',
+        port: 8080,
+        endpoint: '/execute'
+      )
     end
 
     context 'when data types reference data types from another module' do

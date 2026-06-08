@@ -15,7 +15,8 @@ module Runtimes
 
       def execute
         transactional do |t|
-          runtime.last_heartbeat = Time.zone.now
+          heartbeat = Time.zone.at(status_info.timestamp.to_i)
+          runtime.last_heartbeat = heartbeat
 
           unless runtime.save
             t.rollback_and_return ServiceResponse.error(
@@ -25,18 +26,9 @@ module Runtimes
             )
           end
 
-          db_status = runtime.runtime_statuses.find_or_initialize_by(identifier: status_info.identifier)
-
-          db_status.last_heartbeat = Time.zone.at(status_info.timestamp.to_i)
-          db_status.status_type = if status_info.is_a?(Tucana::Shared::AdapterRuntimeStatus)
-                                    :adapter
-                                  else
-                                    :execution
-                                  end
-
+          db_status = runtime.runtime_status || runtime.build_runtime_status
+          db_status.last_heartbeat = heartbeat
           db_status.status = status_info.status.downcase
-
-          update_configurations(db_status, status_info, t) if status_info.is_a?(Tucana::Shared::AdapterRuntimeStatus)
 
           unless db_status.save
             t.rollback_and_return! ServiceResponse.error(
@@ -46,27 +38,27 @@ module Runtimes
             )
           end
 
+          module_record = runtime.runtime_modules.find_by(identifier: status_info.identifier)
+          if module_record.nil?
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Runtime module not found',
+              error_code: :runtime_module_not_found
+            )
+          end
+
+          module_status = module_record.runtime_module_status || module_record.build_runtime_module_status
+          module_status.last_heartbeat = heartbeat
+          module_status.status = status_info.status.downcase
+
+          unless module_status.save
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Failed to save runtime module status',
+              error_code: :invalid_runtime_module_status,
+              details: module_status.errors
+            )
+          end
+
           return ServiceResponse.success(message: 'Updated runtime status')
-        end
-      end
-
-      private
-
-      def update_configurations(db_status, status_info, t)
-        db_configs = db_status.runtime_status_configurations.first(status_info.configurations.size)
-
-        status_info.configurations.each_with_index do |config, index|
-          db_configs[index] ||= db_status.runtime_status_configurations.build
-
-          db_configs[index].endpoint = config.endpoint
-
-          next if db_configs[index].save
-
-          t.rollback_and_return! ServiceResponse.error(
-            message: 'Failed to save runtime status configuration',
-            error_code: :invalid_runtime_status_configuration,
-            details: db_configs.errors
-          )
         end
       end
     end

@@ -55,7 +55,8 @@ module Namespaces
               position: index,
               started_at: node_result.started_at,
               finished_at: node_result.finished_at,
-              node_function: NodeFunction.find_by(id: node_result.node_id)
+              node_function: node_function_for(node_result),
+              function_definition: function_definition_for(node_result)
             )
 
             assign_result(node_record, node_result)
@@ -70,6 +71,18 @@ module Namespaces
               value: parameter_result.value.to_ruby(true)
             )
           end
+        end
+
+        def node_function_for(node_result)
+          return unless node_result.id == :node_id
+
+          NodeFunction.find_by(id: node_result.node_id)
+        end
+
+        def function_definition_for(node_result)
+          return unless node_result.id == :function_id
+
+          FunctionDefinition.find_by(id: node_result.function_id)
         end
 
         def assign_result(record, grpc_record)

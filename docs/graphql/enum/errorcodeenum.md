@@ -51,6 +51,8 @@ Represents the available error responses
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |
 | `INVALID_RUNTIME_FUNCTION_DEFINITION` | The runtime function definition is invalid |
 | `INVALID_RUNTIME_MODULE` | The runtime module is invalid |
+| `INVALID_RUNTIME_MODULE_DEFINITION` | The runtime module definition is invalid |
+| `INVALID_RUNTIME_MODULE_STATUS` | The runtime module status is invalid |
 | `INVALID_RUNTIME_PARAMETER_DEFINITION` | The runtime parameter definition is invalid |
 | `INVALID_RUNTIME_STATUS` | The runtime status is invalid because of active model errors |
 | `INVALID_RUNTIME_STATUS_CONFIGURATION` | The runtime status configuration is invalid because of active model errors |
@@ -85,6 +87,7 @@ Represents the available error responses
 | `REFERENCED_VALUE_NOT_FOUND` | A referenced value could not be found |
 | `REGISTRATION_DISABLED` | Self-registration is disabled |
 | `RUNTIME_MISMATCH` | Resources are from different runtimes |
+| `RUNTIME_MODULE_NOT_FOUND` | The runtime module with the given identifier was not found |
 | `RUNTIME_NOT_ASSIGNED` | The runtime is not assigned to the project |
 | `RUNTIME_NOT_COMPATIBLE` | The runtime is not compatible with the primary runtime |
 | `RUNTIME_NOT_FOUND` | The runtime with the given identifier was not found |

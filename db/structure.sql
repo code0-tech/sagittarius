@@ -193,6 +193,7 @@ CREATE TABLE execution_node_results (
     error jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
+    function_definition_id bigint,
     CONSTRAINT check_26548a5903 CHECK ((num_nonnulls(success, error) = 1))
 );
 
@@ -921,6 +922,27 @@ CREATE SEQUENCE runtime_function_definitions_id_seq
 
 ALTER SEQUENCE runtime_function_definitions_id_seq OWNED BY runtime_function_definitions.id;
 
+CREATE TABLE runtime_module_definitions (
+    id bigint NOT NULL,
+    runtime_module_id bigint NOT NULL,
+    host text NOT NULL,
+    port bigint NOT NULL,
+    endpoint text NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT check_5328b69b6f CHECK ((char_length(host) <= 253)),
+    CONSTRAINT check_5a8231f609 CHECK ((char_length(endpoint) <= 2048))
+);
+
+CREATE SEQUENCE runtime_module_definitions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE runtime_module_definitions_id_seq OWNED BY runtime_module_definitions.id;
+
 CREATE TABLE runtime_modules (
     id bigint NOT NULL,
     runtime_id bigint NOT NULL,
@@ -1241,6 +1263,8 @@ ALTER TABLE ONLY runtime_function_definition_data_type_links ALTER COLUMN id SET
 
 ALTER TABLE ONLY runtime_function_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_function_definitions_id_seq'::regclass);
 
+ALTER TABLE ONLY runtime_module_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_module_definitions_id_seq'::regclass);
+
 ALTER TABLE ONLY runtime_modules ALTER COLUMN id SET DEFAULT nextval('runtime_modules_id_seq'::regclass);
 
 ALTER TABLE ONLY runtime_parameter_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_parameter_definitions_id_seq'::regclass);
@@ -1407,6 +1431,9 @@ ALTER TABLE ONLY runtime_function_definition_data_type_links
 ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT runtime_function_definitions_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY runtime_module_definitions
+    ADD CONSTRAINT runtime_module_definitions_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY runtime_modules
     ADD CONSTRAINT runtime_modules_pkey PRIMARY KEY (id);
 
@@ -1512,6 +1539,8 @@ CREATE UNIQUE INDEX "index_backup_codes_on_user_id_LOWER_token" ON backup_codes 
 CREATE INDEX index_data_type_rules_on_data_type_id ON data_type_rules USING btree (data_type_id);
 
 CREATE UNIQUE INDEX index_data_types_on_runtime_id_and_identifier ON data_types USING btree (runtime_id, identifier);
+
+CREATE INDEX index_execution_node_results_on_function_definition_id ON execution_node_results USING btree (function_definition_id);
 
 CREATE INDEX index_execution_node_results_on_node_function_id ON execution_node_results USING btree (node_function_id);
 
@@ -1632,6 +1661,8 @@ CREATE INDEX index_reference_values_on_node_function_id ON reference_values USIN
 CREATE INDEX index_reference_values_on_node_parameter_id ON reference_values USING btree (node_parameter_id);
 
 CREATE UNIQUE INDEX index_runtime_flow_types_on_runtime_id_and_identifier ON runtime_flow_types USING btree (runtime_id, identifier);
+
+CREATE INDEX index_runtime_module_definitions_on_runtime_module_id ON runtime_module_definitions USING btree (runtime_module_id);
 
 CREATE INDEX index_runtime_status_configurations_on_runtime_status_id ON runtime_status_configurations USING btree (runtime_status_id);
 
@@ -1820,6 +1851,9 @@ ALTER TABLE ONLY reference_values
 ALTER TABLE ONLY data_type_data_type_links
     ADD CONSTRAINT fk_rails_90fbf0d8ef FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY runtime_module_definitions
+    ADD CONSTRAINT fk_rails_9249522e69 FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY reference_paths
     ADD CONSTRAINT fk_rails_92e51047ea FOREIGN KEY (reference_value_id) REFERENCES reference_values(id) ON DELETE CASCADE;
 
@@ -1840,6 +1874,9 @@ ALTER TABLE ONLY flows
 
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT fk_rails_ac308a3f72 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY execution_node_results
+    ADD CONSTRAINT fk_rails_b0dba391fc FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY runtime_flow_type_data_type_links
     ADD CONSTRAINT fk_rails_b300bcf944 FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;

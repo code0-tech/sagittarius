@@ -5,7 +5,6 @@ module Types
     description 'A runtime status information entry'
 
     authorize :read_runtime
-
     field :configurations, Types::RuntimeStatusConfigurationType.connection_type,
           null: false,
           description: 'The detailed configuration entries for this runtime status (only for adapters)',
@@ -18,10 +17,10 @@ module Types
           description: 'The timestamp of the last heartbeat received from the runtime'
     field :status, Types::RuntimeStatusStatusEnum,
           null: false,
-          description: 'The current status of the runtime (e.g. running, stopped)'
-    field :type, Types::RuntimeStatusTypeEnum,
+          description: 'The current status of the runtime'
+    field :type, RuntimeStatusTypeEnum,
           null: false,
-          description: 'The type of runtime status information (e.g. adapter, execution)',
+          description: 'Type of the runtime status',
           method: :status_type
 
     id_field RuntimeStatus

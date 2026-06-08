@@ -12,6 +12,10 @@ module Types
           description: 'Configuration definitions of the runtime module',
           method: :module_configuration_definitions
     field :data_types, Types::DataTypeType.connection_type, null: false, description: 'Data types of the runtime module'
+    field :definitions, Types::RuntimeModuleDefinitionType.connection_type,
+          null: false,
+          description: 'Definitions of the runtime module',
+          method: :runtime_module_definitions
     field :descriptions, [Types::TranslationType], null: true, description: 'Descriptions of the runtime module'
     field :documentation, String, null: false, description: 'Documentation URL of the runtime module'
     field :flow_types, Types::FlowTypeType.connection_type, null: false, description: 'Flow types of the runtime module'

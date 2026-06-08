@@ -12,6 +12,9 @@ module Types
     field :finished_at, Types::BigIntType,
           null: false,
           description: 'Unix epoch time in microseconds when this node execution finished'
+    field :function_definition, Types::FunctionDefinitionType,
+          null: true,
+          description: 'Function definition associated with this sub-flow result'
     field :node_function, Types::NodeFunctionType, null: true, description: 'Node function associated with this result'
     field :parameter_results, [Types::ExecutionParameterResultType],
           null: false,

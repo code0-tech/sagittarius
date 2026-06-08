@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server do
+RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server,
+               skip: 'This needs to be redone in issue: #1018 (new runtime status)' do
   include GrpcHelpers
 
   let(:stub) { create_stub Tucana::Sagittarius::RuntimeStatusService }
