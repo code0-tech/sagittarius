@@ -17,8 +17,7 @@ module Types
           description: 'The timestamp of the last heartbeat received from the runtime'
     field :status, Types::RuntimeStatusStatusEnum,
           null: false,
-          description: 'The current status of the runtime',
-          method: :current_status
+          description: 'The current status of the runtime'
     field :type, RuntimeStatusTypeEnum,
           null: false,
           description: 'Type of the runtime status',
