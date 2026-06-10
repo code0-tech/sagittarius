@@ -112,26 +112,31 @@ module Runtimes
         def update_module_definitions(module_records, t)
           modules.each do |grpc_module|
             runtime_module = module_records.fetch(grpc_module)
-            runtime_module.runtime_module_definitions.delete_all
+            db_module_definitions = runtime_module.runtime_module_definitions.first(grpc_module.definitions.length)
 
-            grpc_module.definitions.each do |definition|
+            grpc_module.definitions.each_with_index do |definition, index|
               next unless definition.value == :endpoint
 
               endpoint = definition.endpoint
-              module_definition = runtime_module.runtime_module_definitions.build(
+              db_module_definitions[index] ||= runtime_module.runtime_module_definitions.build
+              db_module_definitions[index].nilify_attributes!
+
+              db_module_definitions[index].assign_attributes(
                 host: endpoint.host,
                 port: endpoint.port,
                 endpoint: endpoint.endpoint
               )
 
-              next if module_definition.save
+              next if db_module_definitions[index].save
 
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Failed to update runtime module definition',
                 error_code: :invalid_runtime_module_definition,
-                details: module_definition.errors
+                details: db_module_definitions[index].errors
               )
             end
+
+            runtime_module.runtime_module_definitions.excluding(db_module_definitions).delete_all
           end
         end
 
