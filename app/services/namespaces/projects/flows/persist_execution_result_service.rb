@@ -68,7 +68,7 @@ module Namespaces
           node_result.parameter_results.each_with_index do |parameter_result, index|
             node_record.parameter_results.build(
               position: index,
-              value: parameter_result.value.to_ruby(true)
+              value: parameter_result.value&.to_ruby(true)
             )
           end
         end

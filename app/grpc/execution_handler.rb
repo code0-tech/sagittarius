@@ -25,17 +25,18 @@ class ExecutionHandler < Tucana::Sagittarius::ExecutionService::Service
         ApplicationRecord.connection_pool.with_connection do
           case request.data
           when :logon
-            logger.info(message: 'Execution runtime sent logon', runtime_id: current_runtime_id)
+            logger.info(message: 'Execution runtime sent logon')
           when :response
             handle_execution_result(request.response, current_runtime_id)
           end
         end
       end
     rescue StandardError => e
-      logger.error(message: 'Error reading execution stream', error: e.message, runtime_id: current_runtime_id)
+      logger.error(message: 'Error reading execution stream', error: e.message,
+                   backtrace: e.backtrace)
       outbound_queue << :end if outbound_queue
     ensure
-      logger.info(message: 'Execution runtime request stream closed', runtime_id: current_runtime_id)
+      logger.info(message: 'Execution runtime request stream closed')
     end
 
     enumerator
@@ -81,7 +82,7 @@ class ExecutionHandler < Tucana::Sagittarius::ExecutionService::Service
       runtime_id: runtime_id,
       execution_identifier: execution_result.execution_identifier,
       error: response.message,
-      details: response.payload
+      details: response.payload.errors.full_messages
     )
   end
 end

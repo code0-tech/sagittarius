@@ -194,7 +194,7 @@ CREATE TABLE execution_node_results (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     function_definition_id bigint,
-    CONSTRAINT check_26548a5903 CHECK ((num_nonnulls(success, error) = 1))
+    CONSTRAINT check_26548a5903 CHECK ((num_nonnulls(success, error) <= 1))
 );
 
 CREATE SEQUENCE execution_node_results_id_seq
@@ -210,7 +210,7 @@ CREATE TABLE execution_parameter_results (
     id bigint NOT NULL,
     execution_node_result_id bigint NOT NULL,
     "position" integer NOT NULL,
-    value jsonb NOT NULL,
+    value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
@@ -236,7 +236,7 @@ CREATE TABLE execution_results (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     CONSTRAINT check_1e7a71dfb7 CHECK ((char_length(execution_identifier) <= 200)),
-    CONSTRAINT check_5bf29caaec CHECK ((num_nonnulls(success, error) = 1))
+    CONSTRAINT check_5bf29caaec CHECK ((num_nonnulls(success, error) <= 1))
 );
 
 CREATE SEQUENCE execution_results_id_seq

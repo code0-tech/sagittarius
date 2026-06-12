@@ -64,7 +64,7 @@ module GrpcStreamHandler
           queues&.each do |queue|
             queue << decoded_data
           rescue StandardError => e
-            logger.error(message: 'Error while yielding data', error: e.message)
+            logger.error(message: 'Error while yielding data', error: e.message, backtrace: e.backtrace)
           end
         end
       end
