@@ -108,6 +108,64 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     end
   end
 
+  context 'when a parameter result value is JSON null' do
+    let(:grpc_result) do
+      Tucana::Shared::ExecutionResult.new(
+        execution_identifier: 'execution-identifier',
+        flow_id: flow.id,
+        started_at: started_at,
+        finished_at: finished_at,
+        input: Tucana::Shared::Value.from_ruby('input' => 'value'),
+        success: Tucana::Shared::Value.from_ruby('result' => true),
+        node_execution_results: [
+          Tucana::Shared::NodeExecutionResult.new(
+            node_id: node_function.id,
+            started_at: started_at,
+            finished_at: finished_at,
+            success: Tucana::Shared::Value.from_ruby('node' => 'ok'),
+            parameter_results: [
+              Tucana::Shared::NodeParameterNodeExecutionResult.new(
+                value: Tucana::Shared::Value.from_ruby(nil)
+              )
+            ]
+          )
+        ]
+      )
+    end
+
+    it 'persists the null parameter result' do
+      expect(service_response).to be_success
+      expect(service_response.payload.node_results.sole.parameter_results.sole.value).to be_nil
+    end
+  end
+
+  context 'when the execution result success is JSON null' do
+    let(:grpc_result) do
+      Tucana::Shared::ExecutionResult.new(
+        execution_identifier: 'execution-identifier',
+        flow_id: flow.id,
+        started_at: started_at,
+        finished_at: finished_at,
+        input: Tucana::Shared::Value.from_ruby('input' => 'value'),
+        success: Tucana::Shared::Value.from_ruby(nil),
+        node_execution_results: [
+          Tucana::Shared::NodeExecutionResult.new(
+            node_id: node_function.id,
+            started_at: started_at,
+            finished_at: finished_at,
+            success: Tucana::Shared::Value.from_ruby(nil)
+          )
+        ]
+      )
+    end
+
+    it 'persists null success values' do
+      expect(service_response).to be_success
+      expect(service_response.payload.success).to be_nil
+      expect(service_response.payload.node_results.sole.success).to be_nil
+    end
+  end
+
   context 'when a node execution result targets a function definition' do
     let(:function_definition) { create(:function_definition) }
     let(:grpc_result) do

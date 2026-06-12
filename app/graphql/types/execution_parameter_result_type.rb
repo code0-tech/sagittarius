@@ -9,7 +9,7 @@ module Types
           null: false,
           description: 'Position of this parameter result in the node result'
     field :value, GraphQL::Types::JSON,
-          null: false,
+          null: true,
           description: 'Value returned for this parameter'
 
     id_field ExecutionParameterResult
