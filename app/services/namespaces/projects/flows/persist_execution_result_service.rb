@@ -6,10 +6,11 @@ module Namespaces
       class PersistExecutionResultService
         include Code0::ZeroTrack::Loggable
 
-        attr_reader :grpc_result
+        attr_reader :grpc_result, :runtime_id
 
-        def initialize(grpc_result)
+        def initialize(grpc_result, runtime_id: nil)
           @grpc_result = grpc_result
+          @runtime_id = runtime_id
         end
 
         def execute
@@ -56,7 +57,7 @@ module Namespaces
               started_at: node_result.started_at,
               finished_at: node_result.finished_at,
               node_function: node_function_for(node_result),
-              function_definition: function_definition_for(node_result)
+              function_definition: function_definition_for(node_result, result.flow)
             )
 
             assign_result(node_record, node_result)
@@ -79,10 +80,19 @@ module Namespaces
           NodeFunction.find_by(id: node_result.node_id)
         end
 
-        def function_definition_for(node_result)
-          return unless node_result.id == :function_id
+        def function_definition_for(node_result, flow)
+          return unless node_result.id == :function_identifier
 
-          FunctionDefinition.find_by(id: node_result.function_id)
+          runtime = runtime_for(flow)
+          return if runtime.nil?
+
+          FunctionDefinition.find_by(runtime: runtime, identifier: node_result.function_identifier)
+        end
+
+        def runtime_for(flow)
+          return Runtime.find_by(id: runtime_id) if runtime_id.present?
+
+          flow.project.primary_runtime || flow.flow_type.runtime
         end
 
         def assign_result(record, grpc_record)

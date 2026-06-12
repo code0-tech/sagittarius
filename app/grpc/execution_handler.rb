@@ -74,7 +74,10 @@ class ExecutionHandler < Tucana::Sagittarius::ExecutionService::Service
       execution_identifier: execution_result.execution_identifier
     )
 
-    response = Namespaces::Projects::Flows::PersistExecutionResultService.new(execution_result).execute
+    response = Namespaces::Projects::Flows::PersistExecutionResultService.new(
+      execution_result,
+      runtime_id: runtime_id
+    ).execute
     return if response.success?
 
     logger.error(
