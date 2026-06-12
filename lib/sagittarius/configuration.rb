@@ -52,6 +52,12 @@ module Sagittarius
           },
           secret_key_base: 'MVMD6CtQwEWrQ28TdokQakbG2FG5abOn',
         },
+        velorum: {
+          enabled: false,
+          host: 'localhost:50052',
+          jwt_secret: nil,
+          jwt_ttl_minutes: 8,
+        },
         application_setting_overrides: {},
       }
     end

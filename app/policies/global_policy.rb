@@ -12,6 +12,7 @@ class GlobalPolicy < BasePolicy
     enable :read_flow_type
     enable :read_flow_type_setting
     enable :read_metadata
+    enable :read_velorum_config
   end
 
   rule { admin }.policy do
