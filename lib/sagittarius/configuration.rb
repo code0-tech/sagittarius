@@ -53,9 +53,9 @@ module Sagittarius
           secret_key_base: 'MVMD6CtQwEWrQ28TdokQakbG2FG5abOn',
         },
         velorum: {
-          grpc: {
-            host: 'localhost:50052',
-          },
+          host: 'localhost:50052',
+          security_token: nil,
+          jwt_ttl_minutes: 8,
         },
         application_setting_overrides: {},
       }
