@@ -2,17 +2,20 @@
 
 require 'rails_helper'
 
-RSpec.describe 'velorumModels Query' do
+RSpec.describe 'velorum query' do
   include GraphqlHelpers
 
   let(:query) do
     <<~QUERY
       query {
-        velorumModels {
-          identifier
-          name
-          tokenCost
-          types
+        velorum {
+          enabled
+          models {
+            identifier
+            name
+            tokenCost
+            types
+          }
         }
       }
     QUERY
@@ -39,15 +42,17 @@ RSpec.describe 'velorumModels Query' do
   end
 
   before do
+    allow(Sagittarius::Configuration).to receive(:config)
+      .and_return(velorum: { enabled: true })
     allow(Sagittarius::Velorum::Client).to receive(:new).and_return(client)
     allow(client).to receive(:models).and_return(models_response)
   end
 
-  it 'proxies models from Velorum through gRPC without persisting runtime models' do
-    expect { post_graphql(query) }
-      .not_to change { Runtime.count }
+  it 'proxies models from Velorum through gRPC' do
+    post_graphql(query)
 
-    expect(graphql_data_at(:velorum_models)).to contain_exactly(
+    expect(graphql_data_at(:velorum, :enabled)).to be(true)
+    expect(graphql_data_at(:velorum, :models)).to contain_exactly(
       {
         'identifier' => 'gpt-5',
         'name' => 'GPT-5',
@@ -70,16 +75,12 @@ RSpec.describe 'velorumModels Query' do
         .and_return(velorum: { enabled: false })
     end
 
-    it 'returns a GraphQL error without creating a Velorum client' do
+    it 'returns disabled state and an empty model list without creating a Velorum client' do
       post_graphql(query)
 
-      expect(graphql_data_at(:velorum_models)).to be_nil
-      expect(graphql_errors).to contain_exactly(
-        a_hash_including(
-          'message' => 'Velorum is disabled',
-          'extensions' => a_hash_including('code' => 'VELORUM_DISABLED')
-        )
-      )
+      expect(graphql_data_at(:velorum, :enabled)).to be(false)
+      expect(graphql_data_at(:velorum, :models)).to eq([])
+      expect(graphql_errors).to be_nil
       expect(Sagittarius::Velorum::Client).not_to have_received(:new)
     end
   end

@@ -29,7 +29,7 @@ rails:
 velorum:
   enabled: true
   host: 'localhost:50052'
-  security_token:
+  jwt_secret:
   jwt_ttl_minutes: 8
 
 application_setting_overrides: {}

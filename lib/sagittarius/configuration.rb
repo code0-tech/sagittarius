@@ -55,7 +55,7 @@ module Sagittarius
         velorum: {
           enabled: true,
           host: 'localhost:50052',
-          security_token: nil,
+          jwt_secret: nil,
           jwt_ttl_minutes: 8,
         },
         application_setting_overrides: {},

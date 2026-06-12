@@ -1,19 +1,15 @@
 # frozen_string_literal: true
 
-require 'base64'
-require 'json'
-require 'openssl'
-
 module Sagittarius
   module Velorum
     class Client
       def initialize(
         host: Sagittarius::Configuration.config[:velorum][:host],
-        security_token: ENV.fetch('VELORUM_SECURITY_TOKEN', Sagittarius::Configuration.config[:velorum][:security_token]),
+        jwt_secret: Sagittarius::Configuration.config[:velorum][:jwt_secret],
         jwt_ttl_minutes: Sagittarius::Configuration.config[:velorum][:jwt_ttl_minutes]
       )
         @host = host
-        @security_token = security_token
+        @jwt_secret = jwt_secret
         @jwt_ttl_minutes = jwt_ttl_minutes
       end
 
@@ -23,7 +19,7 @@ module Sagittarius
 
       private
 
-      attr_reader :host, :security_token, :jwt_ttl_minutes
+      attr_reader :host, :jwt_secret, :jwt_ttl_minutes
 
       def stub
         @stub ||= Tucana::Velorum::InfoService::Stub.new(host, :this_channel_is_insecure)
@@ -36,9 +32,7 @@ module Sagittarius
       end
 
       def jwt
-        if security_token.to_s.empty?
-          raise ArgumentError, 'VELORUM_SECURITY_TOKEN or velorum.security_token must be configured'
-        end
+        raise ArgumentError, 'velorum.jwt_secret must be configured' if jwt_secret.to_s.empty?
 
         header = {
           alg: 'HS256',
@@ -50,7 +44,7 @@ module Sagittarius
           exp: now + jwt_ttl_minutes.to_i.minutes.to_i,
         }
         body = [header, payload].map { |part| base64_url_encode(part.to_json) }.join('.')
-        signature = OpenSSL::HMAC.digest('SHA256', security_token, body)
+        signature = OpenSSL::HMAC.digest('SHA256', jwt_secret, body)
 
         "#{body}.#{base64_url_encode(signature)}"
       end

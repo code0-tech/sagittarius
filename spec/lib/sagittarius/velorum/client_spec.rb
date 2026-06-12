@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Sagittarius::Velorum::Client do
   let(:stub) { instance_double(Tucana::Velorum::InfoService::Stub) }
   let(:response) { Tucana::Velorum::ModelsResponse.new }
-  let(:security_token) { 'velorum-secret' }
+  let(:jwt_secret) { 'velorum-secret' }
   let(:jwt_ttl_minutes) { 15 }
   let(:time) { Time.zone.local(2026, 6, 12, 10, 0, 0) }
 
@@ -18,7 +18,7 @@ RSpec.describe Sagittarius::Velorum::Client do
   it 'uses the configured Velorum gRPC host to request models' do
     described_class.new(
       host: 'velorum.example:50052',
-      security_token: security_token,
+      jwt_secret: jwt_secret,
       jwt_ttl_minutes: jwt_ttl_minutes
     ).models
 
@@ -34,7 +34,7 @@ RSpec.describe Sagittarius::Velorum::Client do
   it 'passes a signed JWT in the authentication metadata expected by Velorum' do
     described_class.new(
       host: 'velorum.example:50052',
-      security_token: security_token,
+      jwt_secret: jwt_secret,
       jwt_ttl_minutes: jwt_ttl_minutes
     ).models
 
@@ -43,7 +43,7 @@ RSpec.describe Sagittarius::Velorum::Client do
       encoded_header, encoded_payload, encoded_signature = token.split('.')
       signature_body = [encoded_header, encoded_payload].join('.')
       expected_signature = Base64.urlsafe_encode64(
-        OpenSSL::HMAC.digest('SHA256', security_token, signature_body),
+        OpenSSL::HMAC.digest('SHA256', jwt_secret, signature_body),
         padding: false
       )
 
@@ -59,9 +59,9 @@ RSpec.describe Sagittarius::Velorum::Client do
     end
   end
 
-  it 'raises a clear error when no Velorum security token is configured' do
+  it 'raises a clear error when no Velorum JWT secret is configured' do
     expect do
-      described_class.new(host: 'velorum.example:50052', security_token: nil).models
-    end.to raise_error(ArgumentError, 'VELORUM_SECURITY_TOKEN or velorum.security_token must be configured')
+      described_class.new(host: 'velorum.example:50052', jwt_secret: nil).models
+    end.to raise_error(ArgumentError, 'velorum.jwt_secret must be configured')
   end
 end

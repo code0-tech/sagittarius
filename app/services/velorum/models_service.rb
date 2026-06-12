@@ -8,12 +8,7 @@ module Velorum
     end
 
     def execute
-      unless config[:enabled]
-        raise GraphQL::ExecutionError.new(
-          'Velorum is disabled',
-          extensions: { code: 'VELORUM_DISABLED' }
-        )
-      end
+      return [] unless config[:enabled]
 
       client.models.models
     end
