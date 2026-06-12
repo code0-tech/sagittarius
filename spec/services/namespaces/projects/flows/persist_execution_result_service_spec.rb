@@ -3,11 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
-  subject(:service_response) { described_class.new(grpc_result, runtime_id: runtime_id).execute }
+  subject(:service_response) { described_class.new(grpc_result).execute }
 
   let(:flow) { create(:flow) }
   let(:node_function) { create(:node_function, flow: flow) }
-  let(:runtime_id) { nil }
   let(:started_at) { 1_780_430_000_000_000 }
   let(:finished_at) { 1_780_430_002_000_000 }
 
@@ -169,9 +168,6 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
 
   context 'when a node execution result targets a function definition' do
     let(:function_definition) { create(:function_definition) }
-    let!(:other_function_definition) do
-      create(:function_definition, identifier: function_definition.identifier)
-    end
 
     let(:grpc_result) do
       Tucana::Shared::ExecutionResult.new(
@@ -206,16 +202,12 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       )
     end
 
-    context 'when a runtime id is provided' do
-      let(:runtime_id) { other_function_definition.runtime_id }
+    it 'ignores matching definitions from other runtimes' do
+      expect(service_response).to be_success
 
-      it 'looks up the function definition in the connected runtime' do
-        expect(service_response).to be_success
-
-        expect(service_response.payload.node_results.sole).to have_attributes(
-          function_definition: other_function_definition
-        )
-      end
+      expect(service_response.payload.node_results.sole).to have_attributes(
+        function_definition: function_definition
+      )
     end
   end
 
