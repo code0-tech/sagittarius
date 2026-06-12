@@ -21,6 +21,7 @@ RSpec.describe 'velorum query' do
     QUERY
   end
 
+  let(:current_user) { create(:user) }
   let(:client) { instance_double(Sagittarius::Velorum::Client) }
   let(:models_response) do
     Tucana::Velorum::ModelsResponse.new(
@@ -49,7 +50,7 @@ RSpec.describe 'velorum query' do
   end
 
   it 'proxies models from Velorum through gRPC' do
-    post_graphql(query)
+    post_graphql(query, current_user: current_user)
 
     expect(graphql_data_at(:velorum, :enabled)).to be(true)
     expect(graphql_data_at(:velorum, :models)).to contain_exactly(
@@ -76,7 +77,7 @@ RSpec.describe 'velorum query' do
     end
 
     it 'returns disabled state and an empty model list without creating a Velorum client' do
-      post_graphql(query)
+      post_graphql(query, current_user: current_user)
 
       expect(graphql_data_at(:velorum, :enabled)).to be(false)
       expect(graphql_data_at(:velorum, :models)).to eq([])

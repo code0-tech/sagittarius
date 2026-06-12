@@ -4,6 +4,9 @@ module Types
   class VelorumType < Types::BaseObject
     description 'Represents Velorum integration information'
 
+    authorize :read_velorum_config
+    declarative_policy_subject { :global }
+
     field :enabled, Boolean, null: false, description: 'Whether Velorum is enabled'
     field :models, [Types::VelorumModelType], null: false, description: 'Find models available through Velorum'
 
