@@ -63,4 +63,24 @@ RSpec.describe 'velorumModels Query' do
     )
     expect(client).to have_received(:models)
   end
+
+  context 'when Velorum is disabled' do
+    before do
+      allow(Sagittarius::Configuration).to receive(:config)
+        .and_return(velorum: { enabled: false })
+    end
+
+    it 'returns a GraphQL error without creating a Velorum client' do
+      post_graphql(query)
+
+      expect(graphql_data_at(:velorum_models)).to be_nil
+      expect(graphql_errors).to contain_exactly(
+        a_hash_including(
+          'message' => 'Velorum is disabled',
+          'extensions' => a_hash_including('code' => 'VELORUM_DISABLED')
+        )
+      )
+      expect(Sagittarius::Velorum::Client).not_to have_received(:new)
+    end
+  end
 end

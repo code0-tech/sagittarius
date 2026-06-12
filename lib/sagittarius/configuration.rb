@@ -53,6 +53,7 @@ module Sagittarius
           secret_key_base: 'MVMD6CtQwEWrQ28TdokQakbG2FG5abOn',
         },
         velorum: {
+          enabled: true,
           host: 'localhost:50052',
           security_token: nil,
           jwt_ttl_minutes: 8,
