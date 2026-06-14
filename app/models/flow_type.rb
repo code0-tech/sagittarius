@@ -42,4 +42,23 @@ class FlowType < ApplicationRecord
   def runtime_identifier
     runtime_flow_type&.identifier
   end
+
+  def to_grpc
+    Tucana::Shared::FlowType.new(
+      identifier: identifier,
+      settings: flow_type_settings.map(&:to_grpc),
+      editable: editable,
+      name: names.map(&:to_grpc),
+      description: descriptions.map(&:to_grpc),
+      documentation: documentations.map(&:to_grpc),
+      display_message: display_messages.map(&:to_grpc),
+      alias: aliases.map(&:to_grpc),
+      version: version,
+      display_icon: display_icon,
+      definition_source: definition_source,
+      linked_data_type_identifiers: referenced_data_types.map(&:identifier),
+      signature: signature,
+      runtime_identifier: runtime_identifier
+    )
+  end
 end

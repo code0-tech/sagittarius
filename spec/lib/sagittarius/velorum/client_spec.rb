@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Sagittarius::Velorum::Client do
-  let(:stub) { instance_double(Tucana::Velorum::InfoService::Stub) }
+  let(:info_stub) { instance_double(Tucana::Velorum::InfoService::Stub) }
+  let(:generate_stub) { instance_double(Tucana::Velorum::GenerateService::Stub) }
   let(:response) { Tucana::Velorum::ModelsResponse.new }
   let(:jwt_secret) { 'velorum-secret' }
   let(:jwt_ttl_minutes) { 15 }
@@ -11,8 +12,13 @@ RSpec.describe Sagittarius::Velorum::Client do
 
   before do
     allow(Time).to receive(:now).and_return(time)
-    allow(Tucana::Velorum::InfoService::Stub).to receive(:new).and_return(stub)
-    allow(stub).to receive(:models).and_return(response)
+    allow(Tucana::Velorum::InfoService::Stub).to receive(:new).and_return(info_stub)
+    allow(Tucana::Velorum::GenerateService::Stub).to receive(:new).and_return(generate_stub)
+    allow(info_stub).to receive(:models).and_return(response)
+    allow(generate_stub).to receive_messages(
+      prompt: Tucana::Velorum::FlowResponse.new,
+      flow: Tucana::Velorum::FlowResponse.new
+    )
   end
 
   it 'uses the configured Velorum gRPC host to request models' do
@@ -25,7 +31,7 @@ RSpec.describe Sagittarius::Velorum::Client do
     expect(Tucana::Velorum::InfoService::Stub)
       .to have_received(:new)
       .with('velorum.example:50052', :this_channel_is_insecure)
-    expect(stub).to have_received(:models).with(
+    expect(info_stub).to have_received(:models).with(
       an_instance_of(Tucana::Velorum::ModelsRequest),
       metadata: a_hash_including(authorization: kind_of(String))
     )
@@ -38,7 +44,7 @@ RSpec.describe Sagittarius::Velorum::Client do
       jwt_ttl_minutes: jwt_ttl_minutes
     ).models
 
-    expect(stub).to have_received(:models) do |_, options|
+    expect(info_stub).to have_received(:models) do |_, options|
       token = options.fetch(:metadata).fetch(:authorization)
       encoded_header, encoded_payload, encoded_signature = token.split('.')
       signature_body = [encoded_header, encoded_payload].join('.')
@@ -57,6 +63,39 @@ RSpec.describe Sagittarius::Velorum::Client do
       )
       expect(encoded_signature).to eq(expected_signature)
     end
+  end
+
+  it 'uses the generated Velorum gRPC host to request flow generation from a prompt' do
+    request = Tucana::Velorum::PromptRequest.new(prompt: 'Generate a flow')
+
+    described_class.new(
+      host: 'velorum.example:50052',
+      jwt_secret: jwt_secret,
+      jwt_ttl_minutes: jwt_ttl_minutes
+    ).prompt(request)
+
+    expect(Tucana::Velorum::GenerateService::Stub)
+      .to have_received(:new)
+      .with('velorum.example:50052', :this_channel_is_insecure)
+    expect(generate_stub).to have_received(:prompt).with(
+      request,
+      metadata: a_hash_including(authorization: kind_of(String))
+    )
+  end
+
+  it 'uses the generated Velorum gRPC host to request flow generation from an existing flow' do
+    request = Tucana::Velorum::FlowRequest.new(prompt: 'Adjust the flow')
+
+    described_class.new(
+      host: 'velorum.example:50052',
+      jwt_secret: jwt_secret,
+      jwt_ttl_minutes: jwt_ttl_minutes
+    ).flow(request)
+
+    expect(generate_stub).to have_received(:flow).with(
+      request,
+      metadata: a_hash_including(authorization: kind_of(String))
+    )
   end
 
   it 'raises a clear error when no Velorum JWT secret is configured' do

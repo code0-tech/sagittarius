@@ -54,4 +54,39 @@ RSpec.describe FlowType do
       end
     end
   end
+
+  describe '#to_grpc' do
+    let(:flow_type) do
+      create(
+        :flow_type,
+        identifier: 'HTTP',
+        editable: true,
+        version: '1.2.3',
+        display_icon: 'network',
+        definition_source: 'sagittarius',
+        signature: '(input: REST_ADAPTER_INPUT): HTTP_RESPONSE',
+        flow_type_settings: [
+          build(:flow_type_setting, identifier: 'HTTP_URL', default_value: '/status')
+        ]
+      )
+    end
+
+    it 'returns a shared flow type definition' do
+      grpc_object = flow_type.to_grpc
+
+      expect(grpc_object).to be_a(Tucana::Shared::FlowType)
+      expect(grpc_object.to_h).to include(
+        identifier: 'HTTP',
+        editable: true,
+        version: '1.2.3',
+        display_icon: 'network',
+        definition_source: 'sagittarius',
+        signature: '(input: REST_ADAPTER_INPUT): HTTP_RESPONSE',
+        runtime_identifier: flow_type.runtime_flow_type.identifier,
+        settings: [
+          a_hash_including(identifier: 'HTTP_URL')
+        ]
+      )
+    end
+  end
 end

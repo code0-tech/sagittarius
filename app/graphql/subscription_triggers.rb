@@ -9,4 +9,13 @@ module SubscriptionTriggers
       context: { visibility_profile: :execution }
     )
   end
+
+  def self.velorum_generate_flow(id, flow)
+    SagittariusSchema.subscriptions.trigger(
+      :velorum_generate_flow,
+      { id: id },
+      flow,
+      context: { visibility_profile: :execution }
+    )
+  end
 end

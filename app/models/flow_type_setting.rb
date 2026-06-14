@@ -27,4 +27,18 @@ class FlowTypeSetting < ApplicationRecord
 
   scope :active, -> { where(removed_at: nil) }
   scope :removed, -> { where.not(removed_at: nil) }
+
+  def to_grpc
+    args = {
+      identifier: identifier,
+      unique: unique.to_s.upcase.to_sym,
+      name: names.map(&:to_grpc),
+      description: descriptions.map(&:to_grpc),
+      optional: optional,
+      hidden: hidden,
+    }
+    args[:default_value] = Tucana::Shared::Value.from_ruby(default_value) unless default_value.nil?
+
+    Tucana::Shared::FlowTypeSetting.new(**args)
+  end
 end

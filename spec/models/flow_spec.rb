@@ -140,4 +140,42 @@ RSpec.describe Flow do
       )
     end
   end
+
+  describe '#to_generation_grpc' do
+    let(:flow) do
+      create(
+        :flow,
+        flow_type: create(:flow_type, identifier: 'HTTP'),
+        flow_settings: [
+          create(:flow_setting, flow_setting_id: 'HTTP_URL', object: { url: '/some-url' })
+        ]
+      )
+    end
+
+    before do
+      runtime = create(:runtime, namespace: flow.project.namespace)
+      rfd = create(:runtime_function_definition, runtime: runtime)
+      fd = create(:function_definition, runtime_function_definition: rfd)
+      func = create(:node_function, function_definition: fd, flow: flow)
+
+      flow.update!(starting_node: func)
+    end
+
+    it 'returns a Velorum generation flow' do
+      grpc_object = flow.to_generation_grpc
+
+      expect(grpc_object).to be_a(Tucana::Shared::GenerationFlow)
+      expect(grpc_object.to_h).to include(
+        name: flow.name,
+        type: 'HTTP',
+        starting_node_id: flow.starting_node.id.to_s,
+        settings: [
+          a_hash_including(flow_setting_id: 'HTTP_URL')
+        ],
+        node_functions: [
+          a_hash_including(database_id: flow.starting_node.id)
+        ]
+      )
+    end
+  end
 end
