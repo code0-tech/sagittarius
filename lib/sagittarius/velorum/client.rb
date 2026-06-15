@@ -14,15 +14,27 @@ module Sagittarius
       end
 
       def models
-        stub.models(Tucana::Velorum::ModelsRequest.new, metadata: authentication_metadata)
+        info_stub.models(Tucana::Velorum::ModelsRequest.new, metadata: authentication_metadata)
+      end
+
+      def prompt(request)
+        generate_stub.prompt(request, metadata: authentication_metadata)
+      end
+
+      def flow(request)
+        generate_stub.flow(request, metadata: authentication_metadata)
       end
 
       private
 
       attr_reader :host, :jwt_secret, :jwt_ttl_minutes
 
-      def stub
-        @stub ||= Tucana::Velorum::InfoService::Stub.new(host, :this_channel_is_insecure)
+      def info_stub
+        @info_stub ||= Tucana::Velorum::InfoService::Stub.new(host, :this_channel_is_insecure)
+      end
+
+      def generate_stub
+        @generate_stub ||= Tucana::Velorum::GenerateService::Stub.new(host, :this_channel_is_insecure)
       end
 
       def authentication_metadata

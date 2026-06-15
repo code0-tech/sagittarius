@@ -64,4 +64,14 @@ class Flow < ApplicationRecord
       signature: signature
     )
   end
+
+  def to_generation_grpc
+    Tucana::Shared::GenerationFlow.new(
+      name: name,
+      type: flow_type.identifier,
+      starting_node_id: starting_node&.id&.to_s,
+      settings: flow_settings.map(&:to_grpc),
+      node_functions: node_functions.map(&:to_grpc)
+    )
+  end
 end

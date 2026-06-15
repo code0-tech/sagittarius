@@ -34,4 +34,32 @@ RSpec.describe FlowTypeSetting do
       expect(described_class.removed).not_to include(active_setting)
     end
   end
+
+  describe '#to_grpc' do
+    let(:setting) do
+      create(
+        :flow_type_setting,
+        identifier: 'HTTP_URL',
+        unique: :project,
+        default_value: '/status',
+        optional: true,
+        hidden: true
+      )
+    end
+
+    it 'returns a shared flow type setting definition' do
+      grpc_object = setting.to_grpc
+
+      expect(grpc_object).to be_a(Tucana::Shared::FlowTypeSetting)
+      expect(grpc_object.to_h).to include(
+        identifier: 'HTTP_URL',
+        unique: :PROJECT,
+        default_value: {
+          string_value: '/status',
+        },
+        optional: true,
+        hidden: true
+      )
+    end
+  end
 end
