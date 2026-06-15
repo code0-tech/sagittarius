@@ -5,6 +5,10 @@ require 'rails_helper'
 RSpec.describe Users::RegisterService do
   subject(:service_response) { described_class.new(username, email, password).execute }
 
+  before do
+    stub_application_settings(user_registration_enabled: true)
+  end
+
   context 'when user is valid' do
     let(:username) { generate(:username) }
     let(:email) { generate(:email) }
