@@ -13,7 +13,7 @@ module Sagittarius
           Sagittarius::Middleware::Grpc::Context.new,
           Sagittarius::Middleware::Grpc::Logger.new,
           Sagittarius::Middleware::Grpc::Authentication.new
-        ].reverse, pool_size: Configuration.config[:rails][:threads])
+        ].reverse, pool_size: Configuration.config[:rails][:grpc][:threads])
         logger.info('GRPC server created')
 
         @server.add_http2_port(HOST, :this_port_is_insecure)
