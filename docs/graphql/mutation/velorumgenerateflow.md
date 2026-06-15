@@ -20,4 +20,4 @@ Start a Velorum flow generation job.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `errors` | [`[Error!]!`](../object/error.md) | Errors encountered during execution of the mutation. |
-| `id` | [`String`](../scalar/string.md) | Identifier that can be used to subscribe to the generated flow response. |
+| `executionIdentifier` | [`String`](../scalar/string.md) | Identifier that can be used to subscribe to the generated flow response. |

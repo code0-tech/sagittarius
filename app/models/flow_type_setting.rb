@@ -36,8 +36,8 @@ class FlowTypeSetting < ApplicationRecord
       description: descriptions.map(&:to_grpc),
       optional: optional,
       hidden: hidden,
+      default_value: Tucana::Shared::Value.from_ruby(default_value),
     }
-    args[:default_value] = Tucana::Shared::Value.from_ruby(default_value) unless default_value.nil?
 
     Tucana::Shared::FlowTypeSetting.new(**args)
   end

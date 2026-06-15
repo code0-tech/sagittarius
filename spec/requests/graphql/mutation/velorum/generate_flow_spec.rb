@@ -11,7 +11,7 @@ RSpec.describe 'velorumGenerateFlow Mutation' do
     <<~GQL
       mutation($input: VelorumGenerateFlowInput!) {
         velorumGenerateFlow(input: $input) {
-          id
+          executionIdentifier
           #{error_query}
         }
       }
@@ -40,14 +40,14 @@ RSpec.describe 'velorumGenerateFlow Mutation' do
     stub_allowed_ability(NamespaceProjectPolicy, :create_flow, user: current_user, subject: project)
   end
 
-  it 'returns a generation id and enqueues the Velorum generation job' do
+  it 'returns an execution identifier and enqueues the Velorum generation job' do
     mutate!
 
-    id = graphql_data_at(:velorum_generate_flow, :id)
-    expect(id).to be_present
+    execution_identifier = graphql_data_at(:velorum_generate_flow, :execution_identifier)
+    expect(execution_identifier).to be_present
     expect(graphql_data_at(:velorum_generate_flow, :errors)).to eq([])
     expect(VelorumGenerateFlowJob).to have_received(:perform_later).with(
-      id,
+      execution_identifier,
       project.id,
       'Generate a flow',
       'gpt-5',
@@ -64,7 +64,7 @@ RSpec.describe 'velorumGenerateFlow Mutation' do
     it 'returns an error and does not enqueue a job' do
       mutate!
 
-      expect(graphql_data_at(:velorum_generate_flow, :id)).to be_nil
+      expect(graphql_data_at(:velorum_generate_flow, :execution_identifier)).to be_nil
       expect(graphql_data_at(:velorum_generate_flow, :errors, 0, :error_code)).to eq('INVALID_SETTING')
       expect(VelorumGenerateFlowJob).not_to have_received(:perform_later)
     end

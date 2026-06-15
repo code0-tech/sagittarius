@@ -10,10 +10,10 @@ module SubscriptionTriggers
     )
   end
 
-  def self.velorum_generate_flow(id, flow)
+  def self.velorum_generate_flow(execution_identifier, flow)
     SagittariusSchema.subscriptions.trigger(
       :velorum_generate_flow,
-      { id: id },
+      { execution_identifier: execution_identifier },
       flow,
       context: { visibility_profile: :execution }
     )

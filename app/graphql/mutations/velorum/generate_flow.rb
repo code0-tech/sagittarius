@@ -5,7 +5,7 @@ module Mutations
     class GenerateFlow < BaseMutation
       description 'Start a Velorum flow generation job.'
 
-      field :id,
+      field :execution_identifier,
             type: GraphQL::Types::String,
             null: true,
             description: 'Identifier that can be used to subscribe to the generated flow response.'
@@ -42,10 +42,10 @@ module Mutations
 
         return error_response(:missing_permission, 'Missing permission') unless allowed?(project, flow)
 
-        id = SecureRandom.uuid
-        VelorumGenerateFlowJob.perform_later(id, project.id, prompt, model_identifier, flow&.id)
+        execution_identifier = SecureRandom.uuid
+        VelorumGenerateFlowJob.perform_later(execution_identifier, project.id, prompt, model_identifier, flow&.id)
 
-        { id: id, errors: [] }
+        { execution_identifier: execution_identifier, errors: [] }
       end
 
       private
@@ -65,7 +65,7 @@ module Mutations
 
       def error_response(error_code, message)
         {
-          id: nil,
+          execution_identifier: nil,
           errors: [create_error(error_code, message)],
         }
       end

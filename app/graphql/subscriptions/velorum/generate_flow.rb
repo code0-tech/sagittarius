@@ -5,7 +5,7 @@ module Subscriptions
     class GenerateFlow < BaseSubscription
       description 'Generate a flow through Velorum and close the subscription with the generated flow'
 
-      argument :id,
+      argument :execution_identifier,
                type: GraphQL::Types::String,
                required: true,
                description: 'Velorum generation request identifier returned by the mutation'

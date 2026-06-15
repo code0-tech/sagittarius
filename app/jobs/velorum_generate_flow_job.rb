@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VelorumGenerateFlowJob < ApplicationJob
-  def perform(id, project_id, prompt, model_identifier, flow_id = nil)
+  def perform(execution_identifier, project_id, prompt, model_identifier, flow_id = nil)
     project = NamespaceProject.find_by(id: project_id)
     return if project.nil?
 
@@ -18,6 +18,6 @@ class VelorumGenerateFlowJob < ApplicationJob
     ).execute
     return unless response.success?
 
-    SubscriptionTriggers.velorum_generate_flow(id, response.payload[:flow])
+    SubscriptionTriggers.velorum_generate_flow(execution_identifier, response.payload[:flow])
   end
 end
