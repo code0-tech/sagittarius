@@ -8,13 +8,13 @@ Root Query type
 
 | Name | Type | Description |
 |------|------|-------------|
+| `ai` | [`AI`](../object/ai.md) | Get AI information |
 | `application` | [`Application!`](../object/application.md) | Get application information |
 | `currentAuthentication` | [`Authentication`](../union/authentication.md) | Get the currently logged in authentication |
 | `currentUser` | [`User`](../object/user.md) | Get the currently logged in user |
 | `globalRuntimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Find runtimes |
 | `organizations` | [`OrganizationConnection!`](../object/organizationconnection.md) | Find organizations |
 | `users` | [`UserConnection!`](../object/userconnection.md) | Find users |
-| `velorum` | [`Velorum`](../object/velorum.md) | Get Velorum information |
 
 ## Fields with arguments
 

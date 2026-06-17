@@ -7,7 +7,7 @@ module Types
     include Sagittarius::Graphql::MountSubscription
 
     mount_subscription Subscriptions::Namespaces::Projects::Flows::ExecutionResult
-    mount_subscription Subscriptions::Velorum::GenerateFlow
+    mount_subscription Subscriptions::AI::GenerateFlow
     mount_subscription Subscriptions::Echo
   end
 end

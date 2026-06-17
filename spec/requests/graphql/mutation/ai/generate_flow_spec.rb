@@ -2,15 +2,15 @@
 
 require 'rails_helper'
 
-RSpec.describe 'velorumGenerateFlow Mutation' do
+RSpec.describe 'aiGenerateFlow Mutation' do
   include GraphqlHelpers
 
   subject(:mutate!) { post_graphql mutation, variables: variables, current_user: current_user }
 
   let(:mutation) do
     <<~GQL
-      mutation($input: VelorumGenerateFlowInput!) {
-        velorumGenerateFlow(input: $input) {
+      mutation($input: AIGenerateFlowInput!) {
+        aiGenerateFlow(input: $input) {
           executionIdentifier
           #{error_query}
         }
@@ -43,9 +43,9 @@ RSpec.describe 'velorumGenerateFlow Mutation' do
   it 'returns an execution identifier and enqueues the Velorum generation job' do
     mutate!
 
-    execution_identifier = graphql_data_at(:velorum_generate_flow, :execution_identifier)
+    execution_identifier = graphql_data_at(:ai_generate_flow, :execution_identifier)
     expect(execution_identifier).to be_present
-    expect(graphql_data_at(:velorum_generate_flow, :errors)).to eq([])
+    expect(graphql_data_at(:ai_generate_flow, :errors)).to eq([])
     expect(VelorumGenerateFlowJob).to have_received(:perform_later).with(
       execution_identifier,
       project.id,
@@ -55,7 +55,7 @@ RSpec.describe 'velorumGenerateFlow Mutation' do
     )
   end
 
-  context 'when Velorum is disabled' do
+  context 'when AI is disabled' do
     before do
       allow(Sagittarius::Configuration).to receive(:config)
         .and_return(velorum: { enabled: false })
@@ -64,8 +64,8 @@ RSpec.describe 'velorumGenerateFlow Mutation' do
     it 'returns an error and does not enqueue a job' do
       mutate!
 
-      expect(graphql_data_at(:velorum_generate_flow, :execution_identifier)).to be_nil
-      expect(graphql_data_at(:velorum_generate_flow, :errors, 0, :error_code)).to eq('INVALID_SETTING')
+      expect(graphql_data_at(:ai_generate_flow, :execution_identifier)).to be_nil
+      expect(graphql_data_at(:ai_generate_flow, :errors, 0, :error_code)).to eq('INVALID_SETTING')
       expect(VelorumGenerateFlowJob).not_to have_received(:perform_later)
     end
   end

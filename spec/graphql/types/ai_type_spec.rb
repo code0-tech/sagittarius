@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Types::VelorumType do
+RSpec.describe Types::AIType do
   let(:fields) do
     %w[
       enabled
@@ -10,7 +10,7 @@ RSpec.describe Types::VelorumType do
     ]
   end
 
-  it { expect(described_class.graphql_name).to eq('Velorum') }
+  it { expect(described_class.graphql_name).to eq('AI') }
   it { expect(described_class).to have_graphql_fields(fields) }
   it { expect(described_class).to require_graphql_authorizations(:read_velorum_config) }
 end

@@ -13,7 +13,7 @@ RSpec.describe VelorumGenerateFlowJob do
 
   before do
     allow(Velorum::GenerateFlowService).to receive(:new).and_return(service)
-    allow(SubscriptionTriggers).to receive(:velorum_generate_flow)
+    allow(SubscriptionTriggers).to receive(:ai_generate_flow)
   end
 
   it 'calls Velorum in the background and triggers the subscription response' do
@@ -29,7 +29,7 @@ RSpec.describe VelorumGenerateFlowJob do
       flow: nil,
       authorize: false
     )
-    expect(SubscriptionTriggers).to have_received(:velorum_generate_flow).with(execution_identifier, flow)
+    expect(SubscriptionTriggers).to have_received(:ai_generate_flow).with(execution_identifier, flow)
   end
 
   it 'does not trigger the subscription when the project is gone' do
@@ -38,6 +38,6 @@ RSpec.describe VelorumGenerateFlowJob do
     end
 
     expect(Velorum::GenerateFlowService).not_to have_received(:new)
-    expect(SubscriptionTriggers).not_to have_received(:velorum_generate_flow)
+    expect(SubscriptionTriggers).not_to have_received(:ai_generate_flow)
   end
 end
