@@ -158,6 +158,24 @@ RSpec.describe Velorum::GenerateFlowService do
     end
   end
 
+  context 'when Velorum returns a gRPC error' do
+    before do
+      allow(client).to receive(:prompt).and_raise(
+        GRPC::BadStatus.new_status_exception(GRPC::Core::StatusCodes::INTERNAL, 'Unexpected generation error')
+      )
+    end
+
+    it 'returns an error response' do
+      expect(service_response).to be_error
+      expect(service_response.message).to eq('Flow generation failed')
+      expect(service_response.payload[:error_code]).to eq(:flow_generation_failed)
+      expect(service_response.payload[:details]).to include(
+        grpc_code: GRPC::Core::StatusCodes::INTERNAL,
+        grpc_details: 'Unexpected generation error'
+      )
+    end
+  end
+
   context 'when Velorum is disabled' do
     subject(:service_response) do
       described_class.new(

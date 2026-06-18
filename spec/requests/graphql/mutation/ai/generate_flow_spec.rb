@@ -9,7 +9,7 @@ RSpec.describe 'aiGenerateFlow Mutation' do
 
   let(:mutation) do
     <<~GQL
-      mutation($input: AIGenerateFlowInput!) {
+      mutation($input: AiGenerateFlowInput!) {
         aiGenerateFlow(input: $input) {
           executionIdentifier
           #{error_query}

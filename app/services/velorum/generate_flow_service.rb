@@ -39,11 +39,13 @@ module Velorum
       ServiceResponse.success(
         message: 'Generated flow',
         payload: {
-          flow: GenerationFlowSerializer.new(response.flow).to_h,
+          flow: GenerationFlowSerializer.new(response.flow, project: project).to_h,
           cached_until: response.cached_until,
           usage: response.usage,
         }
       )
+    rescue GRPC::BadStatus => e
+      flow_generation_failed_response(e)
     end
 
     private
@@ -135,6 +137,17 @@ module Velorum
 
     def no_primary_runtime_response
       ServiceResponse.error(message: 'Project has no primary runtime', error_code: :no_primary_runtime)
+    end
+
+    def flow_generation_failed_response(error)
+      ServiceResponse.error(
+        message: 'Flow generation failed',
+        error_code: :flow_generation_failed,
+        details: {
+          grpc_code: error.respond_to?(:code) ? error.code : nil,
+          grpc_details: error.respond_to?(:details) ? error.details : error.message,
+        }
+      )
     end
   end
 end

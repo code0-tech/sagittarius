@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Types::AIModelType do
+RSpec.describe Types::AiModelType do
   let(:fields) do
     %w[
       identifier
@@ -12,6 +12,6 @@ RSpec.describe Types::AIModelType do
     ]
   end
 
-  it { expect(described_class.graphql_name).to eq('AIModel') }
+  it { expect(described_class.graphql_name).to eq('AiModel') }
   it { expect(described_class).to have_graphql_fields(fields) }
 end

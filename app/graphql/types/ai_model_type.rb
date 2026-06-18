@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module Types
-  class AIModelType < Types::BaseObject
+  class AiModelType < Types::BaseObject
     description 'Represents a model available through AI'
 
     field :identifier, String, null: false, description: 'Unique model identifier'
     field :name, String, null: false, description: 'Human-readable model name'
     field :token_cost, Float, null: false, description: 'Token cost for using this model'
-    field :types, [Types::AIModelTypeEnum],
+    field :types, [Types::AiModelTypeEnum],
           null: false,
           description: 'Capabilities supported by this model',
           method: :type

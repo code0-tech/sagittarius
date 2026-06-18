@@ -14,4 +14,4 @@ Generate a flow through AI and close the subscription with the generated flow
 
 | Name | Type | Description |
 |------|------|-------------|
-| `flow` | [`AIGenerationFlow`](../object/aigenerationflow.md) | Generated flow returned by AI |
+| `flow` | [`AiGenerationFlow`](../object/aigenerationflow.md) | Generated flow returned by AI |

@@ -7,6 +7,8 @@ module Types
     include Sagittarius::Graphql::MountMutation
 
     mount_mutation Mutations::ApplicationSettings::Update
+    mount_mutation Mutations::Ai::GenerateFlow
+    mount_mutation Mutations::Echo
     mount_mutation Mutations::Namespaces::Members::AssignRoles
     mount_mutation Mutations::Namespaces::Members::Delete
     mount_mutation Mutations::Namespaces::Members::Invite
@@ -47,8 +49,6 @@ module Types
     mount_mutation Mutations::Users::PasswordReset
     mount_mutation Mutations::Users::Register
     mount_mutation Mutations::Users::Update
-    mount_mutation Mutations::AI::GenerateFlow
-    mount_mutation Mutations::Echo
   end
 end
 

@@ -8,7 +8,7 @@ Root Query type
 
 | Name | Type | Description |
 |------|------|-------------|
-| `ai` | [`AI`](../object/ai.md) | Get AI information |
+| `ai` | [`Ai`](../object/ai.md) | Get AI information |
 | `application` | [`Application!`](../object/application.md) | Get application information |
 | `currentAuthentication` | [`Authentication`](../union/authentication.md) | Get the currently logged in authentication |
 | `currentUser` | [`User`](../object/user.md) | Get the currently logged in user |

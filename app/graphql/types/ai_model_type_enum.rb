@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class AIModelTypeEnum < Types::BaseEnum
+  class AiModelTypeEnum < Types::BaseEnum
     description 'Supported AI model capabilities'
 
     value :UNKNOWN, 'Unknown model capability', value: :UNKNOWN

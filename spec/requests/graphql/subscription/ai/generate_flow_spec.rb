@@ -13,6 +13,8 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
   let(:user) { create(:user) }
   let(:token) { "Session #{authorization_token(user)}" }
   let(:execution_identifier) { SecureRandom.uuid }
+  let(:function_definition) { create(:function_definition, identifier: 'sum') }
+  let(:parameter_definition_id) { 'gid://sagittarius/ParameterDefinition/2' }
   let(:flow) do
     {
       name: 'Generated flow',
@@ -29,12 +31,14 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
       nodes: [
         {
           id: 'generated-1',
+          function_definition: function_definition,
           function_identifier: 'sum',
           definition_source: 'runtime',
           next_node_id: nil,
           parameters: [
             {
               id: 'generated-parameter-1-1',
+              parameter_definition_id: '2',
               parameter_identifier: 'left',
               cast: nil,
               value: { literal_value: 1 },
@@ -60,17 +64,29 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
             }
             nodes {
               id
+              functionDefinition {
+                id
+                identifier
+              }
               functionIdentifier
               definitionSource
               nextNodeId
               parameters {
                 id
+                parameterDefinitionId
                 parameterIdentifier
                 cast
                 value {
                   literalValue
                   referenceValue {
+                    flowInput
+                    nodeId
                     nodeFunctionId
+                    inputType {
+                      nodeId
+                      parameterIndex
+                      inputIndex
+                    }
                     parameterIndex
                     inputIndex
                     referencePath {
@@ -126,12 +142,17 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
         'nodes' => [
           {
             'id' => 'gid://sagittarius/NodeFunction/generated-1',
+            'functionDefinition' => {
+              'id' => function_definition.to_global_id.to_s,
+              'identifier' => 'sum',
+            },
             'functionIdentifier' => 'sum',
             'definitionSource' => 'runtime',
             'nextNodeId' => nil,
             'parameters' => [
               {
                 'id' => 'gid://sagittarius/NodeParameter/generated-parameter-1-1',
+                'parameterDefinitionId' => parameter_definition_id,
                 'parameterIdentifier' => 'left',
                 'cast' => nil,
                 'value' => {

@@ -1,5 +1,5 @@
 ---
-title: AIModelType
+title: AiModelType
 ---
 
 Supported AI model capabilities

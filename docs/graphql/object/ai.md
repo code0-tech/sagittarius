@@ -1,5 +1,5 @@
 ---
-title: AI
+title: Ai
 ---
 
 Represents AI integration information
@@ -9,4 +9,4 @@ Represents AI integration information
 | Name | Type | Description |
 |------|------|-------------|
 | `enabled` | [`Boolean!`](../scalar/boolean.md) | Whether AI is enabled |
-| `models` | [`[AIModel!]!`](../object/aimodel.md) | Find models available through AI |
+| `models` | [`[AiModel!]!`](../object/aimodel.md) | Find models available through AI |

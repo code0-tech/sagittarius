@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Mutations
-  module AI
+  module Ai
     class GenerateFlow < BaseMutation
       description 'Start an AI flow generation job.'
 

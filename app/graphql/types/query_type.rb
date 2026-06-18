@@ -42,7 +42,7 @@ module Types
 
     field :users, Types::UserType.connection_type, null: false, description: 'Find users'
 
-    field :ai, Types::AIType, null: true, description: 'Get AI information'
+    field :ai, Types::AiType, null: true, description: 'Get AI information'
     field :global_runtimes, Types::RuntimeType.connection_type, null: false, description: 'Find runtimes'
 
     def application

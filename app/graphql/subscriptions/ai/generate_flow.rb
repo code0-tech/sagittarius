@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Subscriptions
-  module AI
+  module Ai
     class GenerateFlow < BaseSubscription
       description 'Generate a flow through AI and close the subscription with the generated flow'
 
@@ -11,7 +11,7 @@ module Subscriptions
                description: 'AI generation request identifier returned by the mutation'
 
       field :flow,
-            type: Types::AIGenerationFlowType,
+            type: Types::Ai::GenerationFlowType,
             null: true,
             description: 'Generated flow returned by AI'
 
