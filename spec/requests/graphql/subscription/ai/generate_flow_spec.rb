@@ -14,7 +14,16 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
   let(:token) { "Session #{authorization_token(user)}" }
   let(:execution_identifier) { SecureRandom.uuid }
   let(:function_definition) { create(:function_definition, identifier: 'sum') }
-  let(:parameter_definition_id) { 'gid://sagittarius/ParameterDefinition/2' }
+  let(:parameter_definition) do
+    create(
+      :parameter_definition,
+      function_definition: function_definition,
+      runtime_parameter_definition: create(
+        :runtime_parameter_definition,
+        runtime_function_definition: function_definition.runtime_function_definition
+      )
+    )
+  end
   let(:flow) do
     {
       name: 'Generated flow',
@@ -32,16 +41,52 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
         {
           id: 'generated-1',
           function_definition: function_definition,
-          function_identifier: 'sum',
-          definition_source: 'runtime',
           next_node_id: nil,
           parameters: [
             {
               id: 'generated-parameter-1-1',
-              parameter_definition_id: '2',
-              parameter_identifier: 'left',
+              parameter_definition: parameter_definition,
               cast: nil,
-              value: { literal_value: 1 },
+              value: 1,
+            },
+            {
+              id: 'generated-parameter-1-2',
+              parameter_definition: parameter_definition,
+              cast: nil,
+              value: {
+                generated_value_type: :reference_value,
+                id: 'generated-parameter-1-2-reference',
+                node_function_id: 'generated-1',
+                parameter_index: 1,
+                input_index: 2,
+                input_type_identifier: nil,
+                reference_path: [
+                  {
+                    id: 'generated-parameter-1-2-reference-path-1',
+                    path: 'result',
+                    array_index: nil,
+                  }
+                ],
+              },
+            },
+            {
+              id: 'generated-parameter-1-3',
+              parameter_definition: parameter_definition,
+              cast: nil,
+              value: {
+                generated_value_type: :sub_flow_value,
+                starting_node_id: 'generated-1',
+                function_identifier: 'sum',
+                signature: '(): undefined',
+                settings: [
+                  {
+                    identifier: 'region',
+                    default_value: 'eu',
+                    optional: false,
+                    hidden: true,
+                  }
+                ],
+              },
             }
           ],
         }
@@ -68,25 +113,20 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
                 id
                 identifier
               }
-              functionIdentifier
-              definitionSource
               nextNodeId
               parameters {
                 id
-                parameterDefinitionId
-                parameterIdentifier
+                parameterDefinition {
+                  id
+                }
                 cast
                 value {
-                  literalValue
-                  referenceValue {
-                    flowInput
-                    nodeId
+                  __typename
+                  ... on LiteralValue {
+                    value
+                  }
+                  ... on AiGenerationReferenceValue {
                     nodeFunctionId
-                    inputType {
-                      nodeId
-                      parameterIndex
-                      inputIndex
-                    }
                     parameterIndex
                     inputIndex
                     referencePath {
@@ -94,9 +134,8 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
                       arrayIndex
                     }
                   }
-                  subFlowValue {
+                  ... on AiGenerationSubFlowValue {
                     startingNodeId
-                    functionIdentifier
                     signature
                     settings {
                       identifier
@@ -146,19 +185,56 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
               'id' => function_definition.to_global_id.to_s,
               'identifier' => 'sum',
             },
-            'functionIdentifier' => 'sum',
-            'definitionSource' => 'runtime',
             'nextNodeId' => nil,
             'parameters' => [
               {
                 'id' => 'gid://sagittarius/NodeParameter/generated-parameter-1-1',
-                'parameterDefinitionId' => parameter_definition_id,
-                'parameterIdentifier' => 'left',
+                'parameterDefinition' => {
+                  'id' => parameter_definition.to_global_id.to_s,
+                },
                 'cast' => nil,
                 'value' => {
-                  'literalValue' => 1,
-                  'referenceValue' => nil,
-                  'subFlowValue' => nil,
+                  '__typename' => 'LiteralValue',
+                  'value' => 1,
+                },
+              },
+              {
+                'id' => 'gid://sagittarius/NodeParameter/generated-parameter-1-2',
+                'parameterDefinition' => {
+                  'id' => parameter_definition.to_global_id.to_s,
+                },
+                'cast' => nil,
+                'value' => {
+                  '__typename' => 'AiGenerationReferenceValue',
+                  'nodeFunctionId' => 'gid://sagittarius/NodeFunction/generated-1',
+                  'parameterIndex' => 1,
+                  'inputIndex' => 2,
+                  'referencePath' => [
+                    {
+                      'path' => 'result',
+                      'arrayIndex' => nil,
+                    }
+                  ],
+                },
+              },
+              {
+                'id' => 'gid://sagittarius/NodeParameter/generated-parameter-1-3',
+                'parameterDefinition' => {
+                  'id' => parameter_definition.to_global_id.to_s,
+                },
+                'cast' => nil,
+                'value' => {
+                  '__typename' => 'AiGenerationSubFlowValue',
+                  'startingNodeId' => 'gid://sagittarius/NodeFunction/generated-1',
+                  'signature' => '(): undefined',
+                  'settings' => [
+                    {
+                      'identifier' => 'region',
+                      'defaultValue' => 'eu',
+                      'optional' => false,
+                      'hidden' => true,
+                    }
+                  ],
                 },
               }
             ],

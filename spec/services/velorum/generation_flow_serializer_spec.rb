@@ -24,15 +24,15 @@ RSpec.describe Velorum::GenerationFlowSerializer do
       runtime_function_definition: runtime_function_definition,
       runtime_name: 'right'
     )
-    first_parameter_definition = create(
-      :parameter_definition,
-      function_definition: function_definition,
-      runtime_parameter_definition: first_runtime_parameter
-    )
     create(
       :parameter_definition,
       function_definition: function_definition,
       runtime_parameter_definition: second_runtime_parameter
+    )
+    first_parameter_definition = create(
+      :parameter_definition,
+      function_definition: function_definition,
+      runtime_parameter_definition: first_runtime_parameter
     )
     flow = Tucana::Shared::GenerationFlow.new(
       name: 'Generated flow',
@@ -58,13 +58,11 @@ RSpec.describe Velorum::GenerationFlowSerializer do
         a_hash_including(
           id: 'generated-1',
           function_definition: function_definition,
-          function_identifier: 'sum',
           parameters: [
             a_hash_including(
               id: 'generated-parameter-1-1',
-              parameter_definition_id: first_parameter_definition.id,
-              parameter_identifier: 'left',
-              value: { literal_value: 1 }
+              parameter_definition: first_parameter_definition,
+              value: 1
             )
           ]
         )
@@ -102,14 +100,16 @@ RSpec.describe Velorum::GenerationFlowSerializer do
 
     expect(serialized[:nodes][0]).to include(id: 'generated-1', next_node_id: 'generated-2')
     expect(serialized[:nodes][1]).to include(id: 'generated-2', next_node_id: nil)
-    expect(serialized.dig(:nodes, 1, :parameters, 0, :value, :reference_value)).to include(
-      flow_input: false,
+    expect(serialized.dig(:nodes, 1, :parameters, 0, :value)).to include(
+      generated_value_type: :reference_value,
       node_function_id: nil,
-      reference_path: [{ path: 'result', array_index: nil }]
+      reference_path: [
+        include(path: 'result', array_index: nil)
+      ]
     )
   end
 
-  it 'preserves gRPC reference variants and sub-flow field names' do
+  it 'maps gRPC reference variants and sub-flow values to flow-shaped objects' do
     flow = Tucana::Shared::GenerationFlow.new(
       node_functions: [
         Tucana::Shared::NodeFunction.new(
@@ -155,32 +155,27 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     serialized = described_class.new(flow).to_h
 
     expect(serialized).not_to have_key(:node_functions)
-    expect(serialized.dig(:nodes, 0)).to include(id: '10', function_identifier: 'output')
-    expect(serialized.dig(:nodes, 0, :parameters, 0)).to include(id: 20, parameter_identifier: 'flow-input')
-    expect(serialized.dig(:nodes, 0, :parameters, 0, :value, :reference_value)).to include(
-      flow_input: true,
-      reference_path: [{ path: 'input', array_index: nil }]
+    expect(serialized.dig(:nodes, 0)).to include(id: '10')
+    expect(serialized.dig(:nodes, 0, :parameters, 0)).to include(id: 20)
+    expect(serialized.dig(:nodes, 0, :parameters, 0, :value)).to include(
+      generated_value_type: :reference_value,
+      node_function_id: nil,
+      reference_path: [
+        include(path: 'input', array_index: nil)
+      ]
     )
-    expect(serialized.dig(:nodes, 0, :parameters, 1, :value, :reference_value)).to include(
-      input_type: {
-        node_id: '10',
-        parameter_index: 1,
-        input_index: 2,
-      }
+    expect(serialized.dig(:nodes, 0, :parameters, 1, :value)).to include(
+      generated_value_type: :reference_value,
+      node_function_id: '10',
+      parameter_index: 1,
+      input_index: 2
     )
     expect(serialized.dig(:nodes, 0, :parameters, 2, :value)).to include(
-      sub_flow: {
-        starting_node_id: nil,
-        function_identifier: 'helper',
-        signature: '(): undefined',
-        settings: [],
-      },
-      sub_flow_value: {
-        starting_node_id: nil,
-        function_identifier: 'helper',
-        signature: '(): undefined',
-        settings: [],
-      }
+      generated_value_type: :sub_flow_value,
+      starting_node_id: nil,
+      function_identifier: 'helper',
+      signature: '(): undefined',
+      settings: []
     )
   end
 end

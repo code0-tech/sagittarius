@@ -26,25 +26,21 @@ const FLOW_SELECTION = process.env.FLOW_SELECTION || (GENERATE_FIELD === 'aiGene
           id
           identifier
         }
-        functionIdentifier
-        definitionSource
         nextNodeId
         parameters {
           id
-          parameterDefinitionId
-          parameterIdentifier
+          parameterDefinition {
+            id
+            identifier
+          }
           cast
           value {
-            literalValue
-            referenceValue {
-              flowInput
-              nodeId
+            __typename
+            ... on LiteralValue {
+              value
+            }
+            ... on AiGenerationReferenceValue {
               nodeFunctionId
-              inputType {
-                nodeId
-                parameterIndex
-                inputIndex
-              }
               parameterIndex
               inputIndex
               referencePath {
@@ -52,20 +48,8 @@ const FLOW_SELECTION = process.env.FLOW_SELECTION || (GENERATE_FIELD === 'aiGene
                 arrayIndex
               }
             }
-            subFlow {
+            ... on AiGenerationSubFlowValue {
               startingNodeId
-              functionIdentifier
-              signature
-              settings {
-                identifier
-                defaultValue
-                optional
-                hidden
-              }
-            }
-            subFlowValue {
-              startingNodeId
-              functionIdentifier
               signature
               settings {
                 identifier

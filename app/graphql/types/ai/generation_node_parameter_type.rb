@@ -9,20 +9,13 @@ module Types
       field :id, Types::GlobalIdType[::NodeParameter],
             null: false,
             description: 'Generated global ID for this parameter.'
-      # rubocop:disable GraphQL/ExtractType -- generated parameters mirror the flow input shape.
-      field :parameter_definition_id, Types::GlobalIdType[::ParameterDefinition],
+      field :parameter_definition, Types::ParameterDefinitionType,
             null: true,
-            description: 'Resolved parameter definition ID for the generated parameter.'
-      field :parameter_identifier, String, null: true, description: 'The generated runtime parameter identifier.'
-      # rubocop:enable GraphQL/ExtractType
-      field :value, Types::Ai::GenerationNodeValueType, null: false, description: 'The generated parameter value.'
+            description: 'Resolved parameter definition for the generated parameter.'
+      field :value, Types::Ai::GenerationNodeValueType, null: true, description: 'The generated parameter value.'
 
       def id
         Sagittarius::Utils.generated_global_id(object[:id], ::NodeParameter)
-      end
-
-      def parameter_definition_id
-        Sagittarius::Utils.generated_global_id(object[:parameter_definition_id], ::ParameterDefinition)
       end
     end
   end

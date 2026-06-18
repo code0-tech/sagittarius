@@ -69,9 +69,7 @@ module Velorum
       {
         id: generated_node_ids.fetch(node),
         function_definition: function_definition,
-        function_identifier: node.runtime_function_id,
         next_node_id: node_reference_id(node.next_node_id) || generated_next_node_id(index),
-        definition_source: node.definition_source,
         parameters: node.parameters.map.with_index do |parameter, parameter_index|
           parameter_to_h(parameter, index, parameter_index, function_definition)
         end,
@@ -80,49 +78,51 @@ module Velorum
 
     def parameter_to_h(parameter, node_index, parameter_index, function_definition)
       parameter_definition = parameter_definition_for(function_definition, parameter_index)
+      parameter_id = blank_zero(parameter.database_id) || "generated-parameter-#{node_index + 1}-#{parameter_index + 1}"
 
       {
-        id: blank_zero(parameter.database_id) || "generated-parameter-#{node_index + 1}-#{parameter_index + 1}",
-        parameter_definition_id: parameter_definition&.id,
-        parameter_identifier: parameter.runtime_parameter_id,
+        id: parameter_id,
+        parameter_definition: parameter_definition,
         cast: parameter.cast,
-        value: node_value_to_h(parameter.value),
+        value: node_value_to_h(parameter.value, parameter_id),
       }
     end
 
-    def node_value_to_h(value)
-      return {} if value.nil?
+    def node_value_to_h(value, id)
+      return if value.nil?
 
       if value.literal_value
-        { literal_value: value.literal_value.to_ruby(true) }
+        value.literal_value.to_ruby(true)
       elsif value.reference_value
-        { reference_value: reference_value_to_h(value.reference_value) }
+        reference_value_to_h(value.reference_value, id)
       elsif value.sub_flow
-        sub_flow = sub_flow_to_h(value.sub_flow)
-        { sub_flow: sub_flow, sub_flow_value: sub_flow }
-      else
-        {}
+        sub_flow_to_h(value.sub_flow)
       end
     end
 
-    def reference_value_to_h(value)
-      hash = {
-        flow_input: value.flow_input.present?,
-        reference_path: value.paths.map { |path| reference_path_to_h(path) },
-      }
+    def reference_value_to_h(value, id)
+      node_function_id = nil
+      parameter_index = nil
+      input_index = nil
 
       if value.input_type
         input_type = input_type_to_h(value.input_type)
-        hash[:input_type] = input_type
-        hash[:node_function_id] = input_type[:node_id]
-        hash[:parameter_index] = blank_zero(value.input_type.parameter_index)
-        hash[:input_index] = blank_zero(value.input_type.input_index)
+        node_function_id = input_type[:node_id]
+        parameter_index = input_type[:parameter_index]
+        input_index = input_type[:input_index]
       elsif !value.flow_input
-        hash[:node_id] = node_reference_id(value.node_id)
-        hash[:node_function_id] = hash[:node_id]
+        node_function_id = node_reference_id(value.node_id)
       end
 
-      hash
+      {
+        generated_value_type: :reference_value,
+        id: "#{id}-reference",
+        node_function_id: node_function_id,
+        parameter_index: parameter_index,
+        input_index: input_index,
+        input_type_identifier: nil,
+        reference_path: value.paths.map.with_index { |path, index| reference_path_to_h(path, id, index) },
+      }
     end
 
     def input_type_to_h(input_type)
@@ -133,8 +133,9 @@ module Velorum
       }
     end
 
-    def reference_path_to_h(path)
+    def reference_path_to_h(path, value_id, index)
       {
+        id: "#{value_id}-reference-path-#{index + 1}",
         path: path.path,
         array_index: blank_zero(path.array_index),
       }
@@ -142,6 +143,7 @@ module Velorum
 
     def sub_flow_to_h(sub_flow)
       {
+        generated_value_type: :sub_flow_value,
         starting_node_id: node_reference_id(sub_flow.starting_node_id),
         function_identifier: sub_flow.function_identifier,
         signature: sub_flow.signature,
@@ -195,8 +197,14 @@ module Velorum
     def parameter_definition_for(function_definition, index)
       return if function_definition.nil?
 
-      parameter_definitions_by_node[function_definition] ||= function_definition.parameter_definitions.to_a
+      parameter_definitions_by_node[function_definition] ||= ordered_parameter_definitions(function_definition)
       parameter_definitions_by_node[function_definition][index]
+    end
+
+    def ordered_parameter_definitions(function_definition)
+      function_definition
+        .parameter_definitions
+        .sort_by { |definition| definition.runtime_parameter_definition&.id || definition.id }
     end
 
     def runtime
