@@ -8,58 +8,91 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
   let(:runtime) { create(:runtime) }
   let(:namespace_project) { create(:namespace_project) }
   let(:flow_type) { create(:flow_type, runtime: runtime) }
-  let(:runtime_function_definition) { create(:runtime_function_definition, runtime: runtime) }
+  let(:runtime_function_definition) do
+    create(:runtime_function_definition, runtime: runtime, signature: '(arg: string): void')
+  end
   let(:function_definition) do
     create(:function_definition, runtime_function_definition: runtime_function_definition).tap do |fd|
-      rpd = create(:runtime_parameter_definition, runtime_function_definition: runtime_function_definition)
+      rpd = create(
+        :runtime_parameter_definition,
+        runtime_function_definition: runtime_function_definition,
+        runtime_name: 'arg'
+      )
       create(:parameter_definition, runtime_parameter_definition: rpd, function_definition: fd)
     end
   end
-  let(:node_function) { create(:node_function, flow: flow, function_definition: function_definition) }
+  let(:node_function) do
+    create(:node_function, function_definition: function_definition).tap do |nf|
+      create(
+        :node_parameter,
+        parameter_definition: function_definition.parameter_definitions[0],
+        node_function: nf,
+        literal_value: '1'
+      )
+    end
+  end
   let(:flow) do
-    create(:flow, project: namespace_project, flow_type: flow_type, validation_status: :unvalidated,
-                  starting_node: nil)
+    create(
+      :flow,
+      project: namespace_project,
+      flow_type: flow_type,
+      validation_status: :unvalidated,
+      starting_node: node_function
+    ).tap do |f|
+      node_function.update!(flow: f)
+    end
   end
 
-  before do
-    flow.update!(starting_node: node_function)
-    allow(UpdateRuntimesForProjectJob).to receive(:perform_later)
+  context 'with fixed validation results' do
+    before do
+      flow.update!(starting_node: node_function)
+      allow(UpdateRuntimesForProjectJob).to receive(:perform_later)
 
-    result = Triangulum::Validation::Result.new(valid?: valid, return_type: nil, diagnostics: [])
-    allow(Triangulum::Validation).to receive(:new).and_return(
-      instance_double(Triangulum::Validation, validate: result)
-    )
+      result = Triangulum::Validation::Result.new(valid?: valid, return_type: nil, diagnostics: [])
+      allow(Triangulum::Validation).to receive(:new).and_return(
+        instance_double(Triangulum::Validation, validate: result)
+      )
+    end
+
+    context 'when validation passes' do
+      let(:valid) { true }
+
+      it 'sets validation status to valid' do
+        service.execute
+
+        expect(flow.reload.validation_status).to eq('valid')
+      end
+
+      it 'enqueues UpdateRuntimesForProjectJob' do
+        service.execute
+
+        expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
+      end
+    end
+
+    context 'when validation fails' do
+      let(:valid) { false }
+
+      it 'sets validation status to invalid' do
+        service.execute
+
+        expect(flow.reload.validation_status).to eq('invalid')
+      end
+
+      it 'enqueues UpdateRuntimesForProjectJob' do
+        service.execute
+
+        expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
+      end
+    end
   end
 
-  context 'when validation passes' do
-    let(:valid) { true }
-
+  context 'when calling triangulum without mocking' do
     it 'sets validation status to valid' do
-      service.execute
+      result = service.execute
 
+      expect(result).to have_attributes(valid?: true, diagnostics: [])
       expect(flow.reload.validation_status).to eq('valid')
-    end
-
-    it 'enqueues UpdateRuntimesForProjectJob' do
-      service.execute
-
-      expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
-    end
-  end
-
-  context 'when validation fails' do
-    let(:valid) { false }
-
-    it 'sets validation status to invalid' do
-      service.execute
-
-      expect(flow.reload.validation_status).to eq('invalid')
-    end
-
-    it 'enqueues UpdateRuntimesForProjectJob' do
-      service.execute
-
-      expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
     end
   end
 end
