@@ -29,6 +29,8 @@ module Namespaces
           end
 
           UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+
+          result
         end
       end
     end

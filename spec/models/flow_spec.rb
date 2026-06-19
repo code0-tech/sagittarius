@@ -104,7 +104,7 @@ RSpec.describe Flow do
           node_functions: [
             {
               database_id: starting_node.id,
-              runtime_function_id: starting_node.function_definition.runtime_function_definition.runtime_name,
+              runtime_function_id: starting_node.function_definition.identifier,
               parameters: [
                 {
                   database_id: starting_node.node_parameters.first.id,
