@@ -128,10 +128,6 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
             settings {
               id
               flowSettingIdentifier
-              flowTypeSetting {
-                id
-                identifier
-              }
               value
               cast
             }
@@ -154,9 +150,11 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
                     value
                   }
                   ... on AiGenerationReferenceValue {
+                    id
                     nodeFunctionId
                     parameterIndex
                     inputIndex
+                    inputTypeIdentifier
                     referencePath {
                       path
                       arrayIndex
@@ -209,10 +207,6 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
           {
             'id' => 'gid://sagittarius/FlowSetting/1',
             'flowSettingIdentifier' => 'region',
-            'flowTypeSetting' => {
-              'id' => flow_type_setting.to_global_id.to_s,
-              'identifier' => 'region',
-            },
             'value' => 'eu',
             'cast' => nil,
           }
@@ -245,9 +239,11 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
                 'cast' => nil,
                 'value' => {
                   '__typename' => 'AiGenerationReferenceValue',
+                  'id' => 'gid://sagittarius/ReferenceValue/generated-parameter-1-2-reference',
                   'nodeFunctionId' => 'gid://sagittarius/NodeFunction/generated-1',
                   'parameterIndex' => 1,
                   'inputIndex' => 2,
+                  'inputTypeIdentifier' => nil,
                   'referencePath' => [
                     {
                       'path' => 'result',

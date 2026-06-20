@@ -92,12 +92,12 @@ module Velorum
         function_definition: function_definition,
         next_node_id: node_reference_id(node.next_node_id) || generated_next_node_id(index),
         parameters: node.parameters.map.with_index do |parameter, parameter_index|
-          parameter_to_h(parameter, parameter_index, function_definition)
+          parameter_to_h(parameter, parameter_index, function_definition, generated_node_ids.fetch(node))
         end,
       }
     end
 
-    def parameter_to_h(parameter, parameter_index, function_definition)
+    def parameter_to_h(parameter, parameter_index, function_definition, node_id)
       parameter_definition = parameter_definition_for(function_definition, parameter_index)
       if runtime.present? && function_definition.present? && parameter_definition.nil?
         raise_unresolved_definition(
@@ -113,11 +113,11 @@ module Velorum
         id: parameter_id,
         parameter_definition: parameter_definition,
         cast: blank_zero(parameter.cast),
-        value: node_value_to_h(parameter.value, parameter_id),
+        value: node_value_to_h(parameter.value, parameter_id, node_id: node_id, parameter_index: parameter_index),
       }
     end
 
-    def node_value_to_h(value, id)
+    def node_value_to_h(value, id, node_id:, parameter_index:)
       return if value.nil?
 
       if value.literal_value
@@ -126,31 +126,33 @@ module Velorum
           value: value.literal_value.to_ruby(true),
         }
       elsif value.reference_value
-        reference_value_to_h(value.reference_value, id)
+        reference_value_to_h(value.reference_value, id, node_id: node_id, parameter_index: parameter_index)
       elsif value.sub_flow
         sub_flow_to_h(value.sub_flow)
       end
     end
 
-    def reference_value_to_h(value, id)
+    def reference_value_to_h(value, id, node_id:, parameter_index:)
       node_function_id = nil
-      parameter_index = nil
       input_index = nil
+      referenced_parameter_index = nil
 
       if value.input_type
         input_type = input_type_to_h(value.input_type)
         node_function_id = input_type[:node_id]
-        parameter_index = input_type[:parameter_index]
+        referenced_parameter_index = input_type[:parameter_index]
         input_index = input_type[:input_index]
       elsif !value.flow_input
         node_function_id = node_reference_id(value.node_id)
       end
 
+      reference_value_id = id ? "#{id}-reference" : "#{node_id}-parameter-#{parameter_index + 1}-reference"
+
       {
         generated_value_type: :reference_value,
-        id: id && "#{id}-reference",
+        id: reference_value_id,
         node_function_id: node_function_id,
-        parameter_index: parameter_index,
+        parameter_index: referenced_parameter_index,
         input_index: input_index,
         input_type_identifier: nil,
         reference_path: value.paths.map.with_index { |path, index| reference_path_to_h(path, id, index) },
