@@ -27,9 +27,30 @@ RSpec.describe Velorum::GenerateFlowService do
       flow_types: [flow_type]
     )
   end
-  let(:function_definition) { instance_double(FunctionDefinition, to_grpc: grpc_function_definition) }
+  let(:function_definition) do
+    instance_double(
+      FunctionDefinition,
+      to_grpc: grpc_function_definition,
+      identifier: 'sum',
+      runtime_function_definition: runtime_function_definition,
+      parameter_definitions: [parameter_definition]
+    )
+  end
+  let(:runtime_function_definition) { instance_double(RuntimeFunctionDefinition, runtime_name: 'sum') }
+  let(:parameter_definition) do
+    instance_double(ParameterDefinition, runtime_parameter_definition: runtime_parameter_definition)
+  end
+  let(:runtime_parameter_definition) { instance_double(RuntimeParameterDefinition, id: 1) }
   let(:data_type) { instance_double(DataType, to_grpc: grpc_data_type) }
-  let(:flow_type) { instance_double(FlowType, to_grpc: grpc_flow_type) }
+  let(:flow_type) do
+    instance_double(
+      FlowType,
+      to_grpc: grpc_flow_type,
+      identifier: 'default',
+      flow_type_settings: [flow_type_setting]
+    )
+  end
+  let(:flow_type_setting) { instance_double(FlowTypeSetting, id: 1, identifier: 'region') }
   let(:grpc_function_definition) { Tucana::Shared::FunctionDefinition.new(runtime_name: 'sum') }
   let(:grpc_data_type) { Tucana::Shared::DefinitionDataType.new(identifier: 'number') }
   let(:grpc_flow_type) { Tucana::Shared::FlowType.new(identifier: 'default') }
@@ -103,7 +124,7 @@ RSpec.describe Velorum::GenerateFlowService do
     expect(service_response.payload).to include(cached_until: cached_until, usage: 42)
     expect(service_response.payload[:flow]).to include(
       name: 'Generated flow',
-      type: 'default',
+      type: flow_type,
       starting_node_id: '1'
     )
   end
@@ -172,6 +193,67 @@ RSpec.describe Velorum::GenerateFlowService do
       expect(service_response.payload[:details]).to include(
         grpc_code: GRPC::Core::StatusCodes::INTERNAL,
         grpc_details: 'Unexpected generation error'
+      )
+    end
+  end
+
+  context 'when Velorum returns a flow type that is not present in the runtime' do
+    let(:generated_flow) do
+      Tucana::Shared::GenerationFlow.new(
+        name: 'Generated flow',
+        type: 'REST'
+      )
+    end
+
+    it 'returns an error response with the unresolved type' do
+      expect(service_response).to be_error
+      expect(service_response.message).to eq('Flow generation failed')
+      expect(service_response.payload[:error_code]).to eq(:flow_generation_failed)
+      expect(service_response.payload[:details]).to include(type: 'REST')
+    end
+  end
+
+  context 'when Velorum returns a runtime flow type identifier' do
+    let(:flow_type) do
+      instance_double(
+        FlowType,
+        to_grpc: grpc_flow_type,
+        identifier: 'rest-endpoint',
+        runtime_flow_type: instance_double(RuntimeFlowType, identifier: 'REST'),
+        flow_type_settings: [flow_type_setting]
+      )
+    end
+    let(:generated_flow) do
+      Tucana::Shared::GenerationFlow.new(
+        name: 'Generated flow',
+        type: 'REST'
+      )
+    end
+
+    it 'serializes the flow with the matching app flow type' do
+      expect(service_response).to be_success
+      expect(service_response.payload[:flow]).to include(type: flow_type)
+    end
+  end
+
+  context 'when Velorum returns a function that is not present in the runtime' do
+    let(:generated_flow) do
+      Tucana::Shared::GenerationFlow.new(
+        name: 'Generated flow',
+        type: 'default',
+        node_functions: [
+          Tucana::Shared::NodeFunction.new(runtime_function_id: 'http::request::send')
+        ]
+      )
+    end
+
+    it 'returns an error response with the unresolved function identifier' do
+      expect(service_response).to be_error
+      expect(service_response.message).to eq('Flow generation failed')
+      expect(service_response.payload[:error_code]).to eq(:flow_generation_failed)
+      expect(service_response.payload[:details]).to include(
+        runtime_function_id: 'http::request::send',
+        node_index: 0
       )
     end
   end

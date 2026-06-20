@@ -2,6 +2,8 @@
 
 module Velorum
   class GenerateFlowService
+    include Code0::ZeroTrack::Loggable
+
     CACHE_KEY_PREFIX = 'velorum/generate_flow_definitions'
 
     def initialize(
@@ -34,17 +36,23 @@ module Velorum
       return no_primary_runtime_response if runtime.nil?
 
       response = flow.present? ? client.flow(flow_request) : client.prompt(prompt_request)
+      logger.debug(
+        message: 'Velorum generated flow gRPC response',
+        flow: grpc_message_to_h(response.flow)
+      )
       write_cache(response.cached_until)
+
+      serialized_flow = GenerationFlowSerializer.new(response.flow, project: project).to_h
 
       ServiceResponse.success(
         message: 'Generated flow',
         payload: {
-          flow: GenerationFlowSerializer.new(response.flow, project: project).to_h,
+          flow: serialized_flow,
           cached_until: response.cached_until,
           usage: response.usage,
         }
       )
-    rescue GRPC::BadStatus => e
+    rescue GenerationFlowSerializer::UnresolvedDefinitionError, GRPC::BadStatus => e
       flow_generation_failed_response(e)
     end
 
@@ -104,6 +112,13 @@ module Velorum
       (Time.now.to_f * 1000).to_i
     end
 
+    def grpc_message_to_h(message)
+      return if message.nil?
+      return message.to_h if message.respond_to?(:to_h)
+
+      message.inspect
+    end
+
     def runtime
       project.primary_runtime
     end
@@ -143,11 +158,17 @@ module Velorum
       ServiceResponse.error(
         message: 'Flow generation failed',
         error_code: :flow_generation_failed,
-        details: {
-          grpc_code: error.respond_to?(:code) ? error.code : nil,
-          grpc_details: error.respond_to?(:details) ? error.details : error.message,
-        }
+        details: flow_generation_error_details(error)
       )
+    end
+
+    def flow_generation_error_details(error)
+      return error.details if error.is_a?(GenerationFlowSerializer::UnresolvedDefinitionError)
+
+      {
+        grpc_code: error.respond_to?(:code) ? error.code : nil,
+        grpc_details: error.respond_to?(:details) ? error.details : error.message,
+      }
     end
   end
 end

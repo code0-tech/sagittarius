@@ -2,6 +2,15 @@
 
 module Velorum
   class GenerationFlowSerializer
+    class UnresolvedDefinitionError < StandardError
+      attr_reader :details
+
+      def initialize(message, details = {})
+        @details = details
+        super(message)
+      end
+    end
+
     def initialize(flow, project: nil)
       @flow = flow
       @project = project
@@ -9,17 +18,22 @@ module Velorum
       @generated_node_ids = {}.compare_by_identity
       @function_definitions_by_runtime_id = {}
       @parameter_definitions_by_node = {}.compare_by_identity
+      @flow_type_settings_by_flow_type = {}.compare_by_identity
     end
 
     def to_h
       prepare_node_ids
       prepare_definition_ids
+      flow_type = flow_type_for(flow.type)
+      if runtime.present? && flow_type.nil?
+        raise_unresolved_definition('Generated flow type is unknown', type: flow.type)
+      end
 
       {
         name: flow.name,
-        type: flow.type,
+        type: flow_type,
         starting_node_id: node_reference_id(flow.starting_node_id) || generated_starting_node_id,
-        settings: flow.settings.map.with_index { |setting, index| flow_setting_to_h(setting, index) },
+        settings: flow.settings.map.with_index { |setting, index| flow_setting_to_h(setting, index, flow_type) },
         nodes: serialized_nodes,
       }
     end
@@ -27,7 +41,7 @@ module Velorum
     private
 
     attr_reader :flow, :project, :node_id_by_source_id, :generated_node_ids, :function_definitions_by_runtime_id,
-                :parameter_definitions_by_node
+                :parameter_definitions_by_node, :flow_type_settings_by_flow_type
 
     def serialized_nodes
       @serialized_nodes ||= flow.node_functions.map.with_index { |node, index| node_to_h(node, index) }
@@ -65,25 +79,40 @@ module Velorum
 
     def node_to_h(node, index)
       function_definition = function_definition_for(node)
+      if runtime.present? && function_definition.nil?
+        raise_unresolved_definition(
+          'Generated function definition is unknown',
+          runtime_function_id: node.runtime_function_id,
+          node_index: index
+        )
+      end
 
       {
         id: generated_node_ids.fetch(node),
         function_definition: function_definition,
         next_node_id: node_reference_id(node.next_node_id) || generated_next_node_id(index),
         parameters: node.parameters.map.with_index do |parameter, parameter_index|
-          parameter_to_h(parameter, index, parameter_index, function_definition)
+          parameter_to_h(parameter, parameter_index, function_definition)
         end,
       }
     end
 
-    def parameter_to_h(parameter, node_index, parameter_index, function_definition)
+    def parameter_to_h(parameter, parameter_index, function_definition)
       parameter_definition = parameter_definition_for(function_definition, parameter_index)
-      parameter_id = blank_zero(parameter.database_id) || "generated-parameter-#{node_index + 1}-#{parameter_index + 1}"
+      if runtime.present? && function_definition.present? && parameter_definition.nil?
+        raise_unresolved_definition(
+          'Generated parameter definition is unknown',
+          function_definition_id: record_id(function_definition),
+          runtime_parameter_id: parameter.runtime_parameter_id,
+          parameter_index: parameter_index
+        )
+      end
+      parameter_id = blank_zero(parameter.database_id)
 
       {
         id: parameter_id,
         parameter_definition: parameter_definition,
-        cast: parameter.cast,
+        cast: blank_zero(parameter.cast),
         value: node_value_to_h(parameter.value, parameter_id),
       }
     end
@@ -92,7 +121,10 @@ module Velorum
       return if value.nil?
 
       if value.literal_value
-        value.literal_value.to_ruby(true)
+        {
+          generated_value_type: :literal_value,
+          value: value.literal_value.to_ruby(true),
+        }
       elsif value.reference_value
         reference_value_to_h(value.reference_value, id)
       elsif value.sub_flow
@@ -116,7 +148,7 @@ module Velorum
 
       {
         generated_value_type: :reference_value,
-        id: "#{id}-reference",
+        id: id && "#{id}-reference",
         node_function_id: node_function_id,
         parameter_index: parameter_index,
         input_index: input_index,
@@ -135,17 +167,25 @@ module Velorum
 
     def reference_path_to_h(path, value_id, index)
       {
-        id: "#{value_id}-reference-path-#{index + 1}",
+        id: value_id && "#{value_id}-reference-path-#{index + 1}",
         path: path.path,
         array_index: blank_zero(path.array_index),
       }
     end
 
     def sub_flow_to_h(sub_flow)
+      function_definition = function_definition_for_identifier(sub_flow.function_identifier)
+      if runtime.present? && sub_flow.function_identifier.present? && function_definition.nil?
+        raise_unresolved_definition(
+          'Generated sub-flow function definition is unknown',
+          function_identifier: sub_flow.function_identifier
+        )
+      end
+
       {
         generated_value_type: :sub_flow_value,
         starting_node_id: node_reference_id(sub_flow.starting_node_id),
-        function_identifier: sub_flow.function_identifier,
+        function_definition: function_definition,
         signature: sub_flow.signature,
         settings: sub_flow.settings.map { |setting| sub_flow_setting_to_h(setting) },
       }
@@ -160,12 +200,23 @@ module Velorum
       }
     end
 
-    def flow_setting_to_h(setting, index)
+    def flow_setting_to_h(setting, index, flow_type)
+      flow_type_setting = flow_type_setting_for(flow_type, setting, index)
+      if runtime.present? && flow_type.present? && flow_type_setting.nil?
+        raise_unresolved_definition(
+          'Generated flow setting is unknown',
+          flow_type_id: record_id(flow_type),
+          flow_setting_id: setting.flow_setting_id,
+          flow_setting_index: index
+        )
+      end
+
       {
-        id: blank_zero(setting.database_id) || "generated-setting-#{index + 1}",
-        flow_setting_id: setting.flow_setting_id,
+        id: blank_zero(setting.database_id) || index + 1,
+        flow_setting_identifier: flow_type_setting&.identifier || blank_zero(setting.flow_setting_id),
+        flow_type_setting: flow_type_setting,
         value: setting.value&.to_ruby(true),
-        cast: setting.cast,
+        cast: blank_zero(setting.cast),
       }
     end
 
@@ -191,7 +242,32 @@ module Velorum
     end
 
     def function_definition_for(node)
-      function_definitions_by_runtime_id[node.runtime_function_id]
+      function_definition_for_identifier(node.runtime_function_id)
+    end
+
+    def function_definition_for_identifier(identifier)
+      function_definitions_by_runtime_id[identifier]
+    end
+
+    def flow_type_for(identifier)
+      return if runtime.nil?
+
+      flow_types = runtime.flow_types
+      flow_types = flow_types.includes(:flow_type_settings, :runtime_flow_type) if flow_types.respond_to?(:includes)
+
+      if flow_types.respond_to?(:find_by)
+        flow_types.find_by(identifier: identifier.to_s) ||
+          flow_types.find { |flow_type| runtime_flow_type_identifier(flow_type) == identifier.to_s }
+      else
+        flow_types.find { |flow_type| flow_type.identifier == identifier.to_s } ||
+          flow_types.find { |flow_type| runtime_flow_type_identifier(flow_type) == identifier.to_s }
+      end
+    end
+
+    def runtime_flow_type_identifier(flow_type)
+      return unless flow_type.respond_to?(:runtime_flow_type)
+
+      flow_type.runtime_flow_type&.identifier
     end
 
     def parameter_definition_for(function_definition, index)
@@ -205,6 +281,30 @@ module Velorum
       function_definition
         .parameter_definitions
         .sort_by { |definition| definition.runtime_parameter_definition&.id || definition.id }
+    end
+
+    def flow_type_setting_for(flow_type, setting, index)
+      return if flow_type.nil?
+
+      flow_type_settings_by_flow_type[flow_type] ||= flow_type.flow_type_settings.sort_by(&:id)
+      flow_type_settings = flow_type_settings_by_flow_type[flow_type]
+
+      return flow_type_settings[index] if index_identifier?(setting.flow_setting_id, 'setting')
+      return flow_type_settings[index] if setting.flow_setting_id.blank?
+
+      flow_type_settings.find { |type_setting| type_setting.identifier == setting.flow_setting_id }
+    end
+
+    def index_identifier?(identifier, prefix)
+      identifier.to_s.match?(/\A#{Regexp.escape(prefix)}_\d+\z/)
+    end
+
+    def record_id(object)
+      object.id if object.respond_to?(:id)
+    end
+
+    def raise_unresolved_definition(message, details)
+      raise UnresolvedDefinitionError.new(message, details)
     end
 
     def runtime

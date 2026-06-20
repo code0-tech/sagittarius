@@ -15,7 +15,7 @@ module Types
       field :starting_node_id, Types::GlobalIdType[::NodeFunction],
             null: true,
             description: 'Generated starting node ID.'
-      field :type, String, null: true, description: 'Generated flow type identifier.'
+      field :type, Types::FlowTypeType, null: false, description: 'Resolved generated flow type.'
 
       def starting_node_id
         Sagittarius::Utils.generated_global_id(object[:starting_node_id], ::NodeFunction)

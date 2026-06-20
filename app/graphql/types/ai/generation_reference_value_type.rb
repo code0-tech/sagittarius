@@ -30,11 +30,11 @@ module Types
             description: 'The generated reference paths.'
 
       def node_function_id
-        Sagittarius::Utils.generated_global_id(object[:node_function_id], ::NodeFunction)
+        Sagittarius::Utils.generated_global_id(object[:node_function_id] || object['node_function_id'], ::NodeFunction)
       end
 
       def node_id
-        Sagittarius::Utils.generated_global_id(object[:node_id], ::NodeFunction)
+        Sagittarius::Utils.generated_global_id(object[:node_id] || object['node_id'], ::NodeFunction)
       end
     end
   end

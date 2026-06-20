@@ -7,10 +7,10 @@ module Types
 
       field :cast, String, null: true, description: 'The generated cast applied to the parameter.'
       field :id, Types::GlobalIdType[::NodeParameter],
-            null: false,
-            description: 'Generated global ID for this parameter.'
-      field :parameter_definition, Types::ParameterDefinitionType,
             null: true,
+            description: 'Existing global ID for this parameter, when returned by the runtime.'
+      field :parameter_definition, Types::ParameterDefinitionType,
+            null: false,
             description: 'Resolved parameter definition for the generated parameter.'
       field :value, Types::Ai::GenerationNodeValueType, null: true, description: 'The generated parameter value.'
 
