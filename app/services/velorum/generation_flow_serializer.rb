@@ -19,6 +19,8 @@ module Velorum
       @function_definitions_by_runtime_id = {}
       @parameter_definitions_by_node = {}.compare_by_identity
       @flow_type_settings_by_flow_type = {}.compare_by_identity
+      @generated_parameter_id_sequence = 0
+      @generated_reference_path_id_sequence = 0
     end
 
     def to_h
@@ -92,12 +94,12 @@ module Velorum
         function_definition: function_definition,
         next_node_id: node_reference_id(node.next_node_id) || generated_next_node_id(index),
         parameters: node.parameters.map.with_index do |parameter, parameter_index|
-          parameter_to_h(parameter, parameter_index, function_definition, generated_node_ids.fetch(node))
+          parameter_to_h(parameter, parameter_index, function_definition)
         end,
       }
     end
 
-    def parameter_to_h(parameter, parameter_index, function_definition, node_id)
+    def parameter_to_h(parameter, parameter_index, function_definition)
       parameter_definition = parameter_definition_for(function_definition, parameter_index)
       if runtime.present? && function_definition.present? && parameter_definition.nil?
         raise_unresolved_definition(
@@ -107,17 +109,17 @@ module Velorum
           parameter_index: parameter_index
         )
       end
-      parameter_id = blank_zero(parameter.database_id)
+      parameter_id = blank_zero(parameter.database_id) || generated_parameter_id
 
       {
         id: parameter_id,
         parameter_definition: parameter_definition,
         cast: blank_zero(parameter.cast),
-        value: node_value_to_h(parameter.value, parameter_id, node_id: node_id, parameter_index: parameter_index),
+        value: node_value_to_h(parameter.value, parameter_id),
       }
     end
 
-    def node_value_to_h(value, id, node_id:, parameter_index:)
+    def node_value_to_h(value, id)
       return if value.nil?
 
       if value.literal_value
@@ -126,13 +128,13 @@ module Velorum
           value: value.literal_value.to_ruby(true),
         }
       elsif value.reference_value
-        reference_value_to_h(value.reference_value, id, node_id: node_id, parameter_index: parameter_index)
+        reference_value_to_h(value.reference_value, id)
       elsif value.sub_flow
         sub_flow_to_h(value.sub_flow)
       end
     end
 
-    def reference_value_to_h(value, id, node_id:, parameter_index:)
+    def reference_value_to_h(value, id)
       node_function_id = nil
       input_index = nil
       referenced_parameter_index = nil
@@ -146,16 +148,14 @@ module Velorum
         node_function_id = node_reference_id(value.node_id)
       end
 
-      reference_value_id = id ? "#{id}-reference" : "#{node_id}-parameter-#{parameter_index + 1}-reference"
-
       {
         generated_value_type: :reference_value,
-        id: reference_value_id,
+        id: id,
         node_function_id: node_function_id,
         parameter_index: referenced_parameter_index,
         input_index: input_index,
         input_type_identifier: nil,
-        reference_path: value.paths.map.with_index { |path, index| reference_path_to_h(path, id, index) },
+        reference_path: value.paths.map { |path| reference_path_to_h(path) },
       }
     end
 
@@ -167,9 +167,9 @@ module Velorum
       }
     end
 
-    def reference_path_to_h(path, value_id, index)
+    def reference_path_to_h(path)
       {
-        id: value_id && "#{value_id}-reference-path-#{index + 1}",
+        id: generated_reference_path_id,
         path: path.path,
         array_index: blank_zero(path.array_index),
       }
@@ -303,6 +303,14 @@ module Velorum
 
     def record_id(object)
       object.id if object.respond_to?(:id)
+    end
+
+    def generated_parameter_id
+      @generated_parameter_id_sequence += 1
+    end
+
+    def generated_reference_path_id
+      @generated_reference_path_id_sequence += 1
     end
 
     def raise_unresolved_definition(message, details)

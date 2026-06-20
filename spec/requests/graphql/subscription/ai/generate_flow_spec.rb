@@ -62,7 +62,7 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
           next_node_id: nil,
           parameters: [
             {
-              id: nil,
+              id: 1,
               parameter_definition: parameter_definition,
               cast: nil,
               value: {
@@ -71,19 +71,19 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
               },
             },
             {
-              id: nil,
+              id: 2,
               parameter_definition: parameter_definition,
               cast: nil,
               value: {
                 generated_value_type: :reference_value,
-                id: 'generated-parameter-1-2-reference',
+                id: 2,
                 node_function_id: 'generated-1',
                 parameter_index: 1,
                 input_index: 2,
                 input_type_identifier: nil,
                 reference_path: [
                   {
-                    id: 'generated-parameter-1-2-reference-path-1',
+                    id: 1,
                     path: 'result',
                     array_index: nil,
                   }
@@ -91,7 +91,7 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
               },
             },
             {
-              id: nil,
+              id: 3,
               parameter_definition: parameter_definition,
               cast: nil,
               value: {
@@ -221,7 +221,7 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
             'nextNodeId' => nil,
             'parameters' => [
               {
-                'id' => nil,
+                'id' => 'gid://sagittarius/NodeParameter/1',
                 'parameterDefinition' => {
                   'id' => parameter_definition.to_global_id.to_s,
                 },
@@ -232,14 +232,14 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
                 },
               },
               {
-                'id' => nil,
+                'id' => 'gid://sagittarius/NodeParameter/2',
                 'parameterDefinition' => {
                   'id' => parameter_definition.to_global_id.to_s,
                 },
                 'cast' => nil,
                 'value' => {
                   '__typename' => 'AiGenerationReferenceValue',
-                  'id' => 'gid://sagittarius/ReferenceValue/generated-parameter-1-2-reference',
+                  'id' => 'gid://sagittarius/ReferenceValue/2',
                   'nodeFunctionId' => 'gid://sagittarius/NodeFunction/generated-1',
                   'parameterIndex' => 1,
                   'inputIndex' => 2,
@@ -253,7 +253,7 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
                 },
               },
               {
-                'id' => nil,
+                'id' => 'gid://sagittarius/NodeParameter/3',
                 'parameterDefinition' => {
                   'id' => parameter_definition.to_global_id.to_s,
                 },

@@ -77,7 +77,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
           function_definition: function_definition,
           parameters: [
             a_hash_including(
-              id: nil,
+              id: 1,
               parameter_definition: first_parameter_definition,
               value: {
                 generated_value_type: :literal_value,
@@ -141,7 +141,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     expect(serialized[:nodes][1]).to include(id: 'generated-2', next_node_id: nil)
     expect(serialized.dig(:nodes, 1, :parameters, 0, :value)).to include(
       generated_value_type: :reference_value,
-      id: 'generated-2-parameter-1-reference',
+      id: 1,
       node_function_id: nil,
       reference_path: [
         include(path: 'result', array_index: nil)
@@ -199,7 +199,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     expect(serialized.dig(:nodes, 0, :parameters, 0)).to include(id: 20)
     expect(serialized.dig(:nodes, 0, :parameters, 0, :value)).to include(
       generated_value_type: :reference_value,
-      id: '20-reference',
+      id: 20,
       node_function_id: nil,
       reference_path: [
         include(path: 'input', array_index: nil)
@@ -207,7 +207,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     )
     expect(serialized.dig(:nodes, 0, :parameters, 1, :value)).to include(
       generated_value_type: :reference_value,
-      id: '10-parameter-2-reference',
+      id: 1,
       node_function_id: '10',
       parameter_index: 1,
       input_index: 2
