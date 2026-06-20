@@ -212,7 +212,7 @@ module Velorum
       end
 
       {
-        id: blank_zero(setting.database_id) || index + 1,
+        id: blank_zero(setting.database_id) || (index + 1),
         flow_setting_identifier: flow_type_setting&.identifier || blank_zero(setting.flow_setting_id),
         flow_type_setting: flow_type_setting,
         value: setting.value&.to_ruby(true),
