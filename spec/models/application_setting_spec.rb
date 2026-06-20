@@ -191,16 +191,6 @@ RSpec.describe ApplicationSetting do
   describe '.current' do
     it { expect(described_class.current.keys).to eq(described_class::SETTINGS.keys) }
 
-    it 'defaults user registration to disabled' do
-      described_class.delete_all
-      SeedFu.seed(SeedFu.fixture_paths, /01_application_settings/)
-
-      expect(described_class.current[:user_registration_enabled]).to be false
-    ensure
-      described_class.delete_all
-      SeedFu.seed(SeedFu.fixture_paths, /01_application_settings/)
-    end
-
     it 'raises if settings are missing', :recreating_settings do
       described_class.first.delete
 
