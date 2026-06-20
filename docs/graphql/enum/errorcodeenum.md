@@ -18,6 +18,7 @@ Represents the available error responses
 | `FAILED_TO_INVALIDATE_OLD_BACKUP_CODES` | The old backup codes could not be deleted |
 | `FAILED_TO_RESET_PASSWORD` | Failed to reset the user password |
 | `FAILED_TO_SAVE_VALID_BACKUP_CODE` | The new backup codes could not be saved |
+| `FLOW_GENERATION_FAILED` | Flow generation failed |
 | `FLOW_NOT_FOUND` | The flow with the given identifier was not found |
 | `FLOW_TYPE_NOT_FOUND` | The flow type with the given identifier was not found |
 | `GENERIC_KEY_NOT_FOUND` | The given key was not found in the data type |

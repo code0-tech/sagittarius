@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 module Subscriptions
-  module Velorum
+  module Ai
     class GenerateFlow < BaseSubscription
-      description 'Generate a flow through Velorum and close the subscription with the generated flow'
+      description 'Generate a flow through AI and close the subscription with the generated flow'
 
       argument :execution_identifier,
                type: GraphQL::Types::String,
                required: true,
-               description: 'Velorum generation request identifier returned by the mutation'
+               description: 'AI generation request identifier returned by the mutation'
 
       field :flow,
-            type: GraphQL::Types::JSON,
+            type: Types::Ai::GenerationFlowType,
             null: true,
-            description: 'Generated flow returned by Velorum'
+            description: 'Generated flow returned by AI'
 
       def subscribe(**)
         :no_response

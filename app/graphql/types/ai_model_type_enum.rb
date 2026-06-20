@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Types
-  class VelorumModelTypeEnum < Types::BaseEnum
-    description 'Supported Velorum model capabilities'
+  class AiModelTypeEnum < Types::BaseEnum
+    description 'Supported AI model capabilities'
 
     value :UNKNOWN, 'Unknown model capability', value: :UNKNOWN
     value :EXPLAIN, 'Model can explain flows', value: :EXPLAIN

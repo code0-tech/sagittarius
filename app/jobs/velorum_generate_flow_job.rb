@@ -16,8 +16,7 @@ class VelorumGenerateFlowJob < ApplicationJob
       flow: flow,
       authorize: false
     ).execute
-    return unless response.success?
 
-    SubscriptionTriggers.velorum_generate_flow(execution_identifier, response.payload[:flow])
+    SubscriptionTriggers.ai_generate_flow(execution_identifier, response.success? ? response.payload[:flow] : nil)
   end
 end

@@ -2,13 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe 'velorum query' do
+RSpec.describe 'ai query' do
   include GraphqlHelpers
 
   let(:query) do
     <<~QUERY
       query {
-        velorum {
+        ai {
           enabled
           models {
             identifier
@@ -49,11 +49,11 @@ RSpec.describe 'velorum query' do
     allow(client).to receive(:models).and_return(models_response)
   end
 
-  it 'proxies models from Velorum through gRPC' do
+  it 'proxies models from AI through gRPC' do
     post_graphql(query, current_user: current_user)
 
-    expect(graphql_data_at(:velorum, :enabled)).to be(true)
-    expect(graphql_data_at(:velorum, :models)).to contain_exactly(
+    expect(graphql_data_at(:ai, :enabled)).to be(true)
+    expect(graphql_data_at(:ai, :models)).to contain_exactly(
       {
         'identifier' => 'gpt-5',
         'name' => 'GPT-5',
@@ -70,7 +70,7 @@ RSpec.describe 'velorum query' do
     expect(client).to have_received(:models)
   end
 
-  context 'when Velorum is disabled' do
+  context 'when AI is disabled' do
     before do
       allow(Sagittarius::Configuration).to receive(:config)
         .and_return(velorum: { enabled: false })
@@ -79,8 +79,8 @@ RSpec.describe 'velorum query' do
     it 'returns disabled state and an empty model list without creating a Velorum client' do
       post_graphql(query, current_user: current_user)
 
-      expect(graphql_data_at(:velorum, :enabled)).to be(false)
-      expect(graphql_data_at(:velorum, :models)).to eq([])
+      expect(graphql_data_at(:ai, :enabled)).to be(false)
+      expect(graphql_data_at(:ai, :models)).to eq([])
       expect(graphql_errors).to be_nil
       expect(Sagittarius::Velorum::Client).not_to have_received(:new)
     end

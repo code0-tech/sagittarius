@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Mutations
-  module Velorum
+  module Ai
     class GenerateFlow < BaseMutation
-      description 'Start a Velorum flow generation job.'
+      description 'Start an AI flow generation job.'
 
       field :execution_identifier,
             type: GraphQL::Types::String,
@@ -17,7 +17,7 @@ module Mutations
       argument :model_identifier,
                type: GraphQL::Types::String,
                required: true,
-               description: 'Selected Velorum model identifier'
+               description: 'Selected AI model identifier'
       argument :project_id,
                type: Types::GlobalIdType[::NamespaceProject],
                required: true,
@@ -25,10 +25,10 @@ module Mutations
       argument :prompt,
                type: GraphQL::Types::String,
                required: true,
-               description: 'Prompt to send to Velorum'
+               description: 'Prompt to send to AI'
 
       def resolve(project_id:, prompt:, model_identifier:, flow_id: nil)
-        return error_response(:invalid_setting, 'Velorum is disabled') unless velorum_enabled?
+        return error_response(:invalid_setting, 'AI is disabled') unless ai_enabled?
 
         project = SagittariusSchema.object_from_id(project_id)
         return error_response(:project_not_found, 'Invalid project id') if project.nil?
@@ -50,7 +50,7 @@ module Mutations
 
       private
 
-      def velorum_enabled?
+      def ai_enabled?
         Sagittarius::Configuration.config[:velorum][:enabled]
       end
 

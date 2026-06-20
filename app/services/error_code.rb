@@ -58,6 +58,7 @@ class ErrorCode
       invalid_namespace_member: { description: 'The namespace member is invalid because of active model errors' },
       invalid_attachment: { description: 'The attachment is invalid because of active model errors' },
       invalid_flow: { description: 'The flow is invalid because of active model errors' },
+      flow_generation_failed: { description: 'Flow generation failed' },
       project_not_found: { description: 'The namespace project with the given identifier was not found' },
       runtime_not_found: { description: 'The runtime with the given identifier was not found' },
       runtime_not_assigned: { description: 'The runtime is not assigned to the project' },

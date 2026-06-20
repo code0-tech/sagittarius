@@ -1,8 +1,8 @@
 ---
-title: velorumGenerateFlow
+title: aiGenerateFlow
 ---
 
-Start a Velorum flow generation job.
+Start an AI flow generation job.
 
 ## Arguments
 
@@ -10,9 +10,9 @@ Start a Velorum flow generation job.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `flowId` | [`FlowID`](../scalar/flowid.md) | Flow to update with the prompt |
-| `modelIdentifier` | [`String!`](../scalar/string.md) | Selected Velorum model identifier |
+| `modelIdentifier` | [`String!`](../scalar/string.md) | Selected AI model identifier |
 | `projectId` | [`NamespaceProjectID!`](../scalar/namespaceprojectid.md) | Project to generate a flow for |
-| `prompt` | [`String!`](../scalar/string.md) | Prompt to send to Velorum |
+| `prompt` | [`String!`](../scalar/string.md) | Prompt to send to AI |
 
 ## Fields
 

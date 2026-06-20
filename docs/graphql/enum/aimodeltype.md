@@ -1,8 +1,8 @@
 ---
-title: VelorumModelType
+title: AiModelType
 ---
 
-Supported Velorum model capabilities
+Supported AI model capabilities
 
 | Value | Description |
 |-------|-------------|

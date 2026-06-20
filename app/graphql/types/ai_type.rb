@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module Types
-  class VelorumType < Types::BaseObject
-    description 'Represents Velorum integration information'
+  class AiType < Types::BaseObject
+    description 'Represents AI integration information'
 
     authorize :read_velorum_config
     declarative_policy_subject { :global }
 
-    field :enabled, Boolean, null: false, description: 'Whether Velorum is enabled'
-    field :models, [Types::VelorumModelType], null: false, description: 'Find models available through Velorum'
+    field :enabled, Boolean, null: false, description: 'Whether AI is enabled'
+    field :models, [Types::AiModelType], null: false, description: 'Find models available through AI'
 
     def enabled
       config[:enabled]
