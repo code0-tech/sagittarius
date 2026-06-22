@@ -61,7 +61,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     expect(described_class.new(flow, project: project).to_h).to include(
       name: 'Generated flow',
       type: flow_type,
-      starting_node_id: 'generated-1',
+      starting_node_id: nil,
       settings: [
         a_hash_including(
           id: 1,
@@ -287,5 +287,49 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     expect(serialized).to include(starting_node_id: '7')
     expect(serialized[:nodes][0]).to include(id: '6', next_node_id: nil)
     expect(serialized[:nodes][1]).to include(id: '7', next_node_id: '6')
+  end
+
+  it 'does not infer a starting node when starting_node_id is absent' do
+    flow_type = create(:flow_type, runtime: runtime, identifier: 'REST')
+    create(:flow_type_setting, flow_type: flow_type)
+    create(:flow_type_setting, flow_type: flow_type)
+    create(:flow_type_setting, flow_type: flow_type)
+    flow = Tucana::Shared::GenerationFlow.new(
+      name: 'Hello World Flow',
+      type: 'REST',
+      node_functions: [],
+      settings: [
+        Tucana::Shared::FlowSetting.new(value: Tucana::Shared::Value.from_ruby({})),
+        Tucana::Shared::FlowSetting.new(value: Tucana::Shared::Value.from_ruby('/hello')),
+        Tucana::Shared::FlowSetting.new(value: Tucana::Shared::Value.from_ruby('GET'))
+      ]
+    )
+
+    serialized = described_class.new(flow, project: project).to_h
+
+    expect(serialized).to include(
+      name: 'Hello World Flow',
+      type: flow_type,
+      starting_node_id: nil,
+      nodes: []
+    )
+  end
+
+  it 'does not serialize a None starting node reference' do
+    flow_type = create(:flow_type, runtime: runtime, identifier: 'REST')
+    flow = Tucana::Shared::GenerationFlow.new(
+      name: 'Hello World Flow',
+      type: 'REST',
+      node_functions: [],
+      starting_node_id: 'None'
+    )
+
+    serialized = described_class.new(flow, project: project).to_h
+
+    expect(serialized).to include(
+      type: flow_type,
+      starting_node_id: nil,
+      nodes: []
+    )
   end
 end

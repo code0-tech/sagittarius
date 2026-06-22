@@ -34,7 +34,7 @@ module Velorum
       {
         name: flow.name,
         type: flow_type,
-        starting_node_id: node_reference_id(flow.starting_node_id) || generated_starting_node_id,
+        starting_node_id: starting_node_id_for,
         settings: flow.settings.map.with_index { |setting, index| flow_setting_to_h(setting, index, flow_type) },
         nodes: serialized_nodes,
       }
@@ -224,13 +224,13 @@ module Velorum
 
     def node_reference_id(value)
       value = blank_zero(value)
-      return if value.blank?
+      return if value.blank? || value.to_s == 'None'
 
       node_id_by_source_id.fetch(value.to_s, value)
     end
 
-    def generated_starting_node_id
-      generated_node_ids.values.first
+    def starting_node_id_for
+      node_reference_id(flow.starting_node_id)
     end
 
     def generated_next_node_id(index)
