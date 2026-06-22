@@ -92,7 +92,7 @@ module Velorum
       {
         id: generated_node_ids.fetch(node),
         function_definition: function_definition,
-        next_node_id: node_reference_id(node.next_node_id) || generated_next_node_id(index),
+        next_node_id: next_node_id_for(node, index),
         parameters: node.parameters.map.with_index do |parameter, parameter_index|
           parameter_to_h(parameter, parameter_index, function_definition)
         end,
@@ -235,6 +235,10 @@ module Velorum
 
     def generated_next_node_id(index)
       flow.node_functions[index + 1]&.then { |next_node| generated_node_ids.fetch(next_node) }
+    end
+
+    def next_node_id_for(node, index)
+      node_reference_id(node.next_node_id) || (node.has_next_node_id? ? generated_next_node_id(index) : nil)
     end
 
     def blank_zero(value)

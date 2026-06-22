@@ -109,13 +109,14 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     )
   end
 
-  it 'maps generated node IDs into references and inferred next-node links' do
+  it 'maps generated node IDs into references and explicit fallback next-node links' do
     flow = Tucana::Shared::GenerationFlow.new(
       name: 'Generated flow',
       type: 'default',
       node_functions: [
         Tucana::Shared::NodeFunction.new(
           runtime_function_id: 'input',
+          next_node_id: 0,
           parameters: []
         ),
         Tucana::Shared::NodeFunction.new(
@@ -261,5 +262,30 @@ RSpec.describe Velorum::GenerationFlowSerializer do
       generated_value_type: :sub_flow_value,
       function_definition: function_definition
     )
+  end
+
+  it 'does not infer a next-node link when next_node_id is absent' do
+    flow = Tucana::Shared::GenerationFlow.new(
+      name: 'Generated flow',
+      type: 'default',
+      node_functions: [
+        Tucana::Shared::NodeFunction.new(
+          database_id: 6,
+          runtime_function_id: 'rest::control::respond'
+        ),
+        Tucana::Shared::NodeFunction.new(
+          database_id: 7,
+          runtime_function_id: 'std::control::value',
+          next_node_id: 6
+        )
+      ],
+      starting_node_id: '7'
+    )
+
+    serialized = described_class.new(flow).to_h
+
+    expect(serialized).to include(starting_node_id: '7')
+    expect(serialized[:nodes][0]).to include(id: '6', next_node_id: nil)
+    expect(serialized[:nodes][1]).to include(id: '7', next_node_id: '6')
   end
 end
