@@ -73,7 +73,18 @@ RSpec.describe Namespaces::Projects::AssignRuntimesService do
       context 'when adding multiple runtimes' do
         let(:runtimes) { 2.times.map { create(:runtime, namespace: project.namespace) } }
 
-        it { expect { service_response }.not_to change { project.reload.primary_runtime } }
+        it { expect { service_response }.to change { project.reload.primary_runtime }.to(runtimes.first) }
+
+        context 'when the current primary runtime remains assigned' do
+          let(:primary_runtime) { create(:runtime, namespace: project.namespace) }
+          let(:runtimes) { [create(:runtime, namespace: project.namespace), primary_runtime] }
+
+          before do
+            project.update!(primary_runtime: primary_runtime)
+          end
+
+          it { expect { service_response }.not_to change { project.reload.primary_runtime } }
+        end
       end
     end
 
@@ -85,6 +96,7 @@ RSpec.describe Namespaces::Projects::AssignRuntimesService do
       let(:runtimes) { [] }
 
       before do
+        project.update!(primary_runtime: runtime)
         stub_allowed_ability(NamespaceProjectPolicy, :assign_project_runtimes, user: current_user, subject: project)
       end
 
@@ -116,6 +128,8 @@ RSpec.describe Namespaces::Projects::AssignRuntimesService do
           { namespace_project_id: project.id }
         )
       end
+
+      it { expect { service_response }.to change { project.reload.primary_runtime }.to(nil) }
     end
 
     context 'when adding and removing a runtime' do

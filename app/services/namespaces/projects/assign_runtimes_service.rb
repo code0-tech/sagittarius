@@ -24,7 +24,7 @@ module Namespaces
           end
 
           namespace_project.runtimes = runtimes
-          namespace_project.primary_runtime = runtimes.first if runtimes.size == 1
+          namespace_project.primary_runtime = primary_runtime_after_assignment
 
           unless namespace_project.save
             t.rollback_and_return! ServiceResponse.error(
@@ -49,6 +49,15 @@ module Namespaces
 
           ServiceResponse.success(message: 'Assigned runtimes to a project', payload: namespace_project)
         end
+      end
+
+      private
+
+      def primary_runtime_after_assignment
+        return if runtimes.empty?
+        return namespace_project.primary_runtime if runtimes.include?(namespace_project.primary_runtime)
+
+        runtimes.first
       end
     end
   end

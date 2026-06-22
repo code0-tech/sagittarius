@@ -34,7 +34,7 @@ module Velorum
       {
         name: flow.name,
         type: flow_type,
-        starting_node_id: node_reference_id(flow.starting_node_id) || generated_starting_node_id,
+        starting_node_id: starting_node_id_for,
         settings: flow.settings.map.with_index { |setting, index| flow_setting_to_h(setting, index, flow_type) },
         nodes: serialized_nodes,
       }
@@ -92,7 +92,7 @@ module Velorum
       {
         id: generated_node_ids.fetch(node),
         function_definition: function_definition,
-        next_node_id: node_reference_id(node.next_node_id) || generated_next_node_id(index),
+        next_node_id: next_node_id_for(node, index),
         parameters: node.parameters.map.with_index do |parameter, parameter_index|
           parameter_to_h(parameter, parameter_index, function_definition)
         end,
@@ -224,17 +224,21 @@ module Velorum
 
     def node_reference_id(value)
       value = blank_zero(value)
-      return if value.blank?
+      return if value.blank? || value.to_s == 'None'
 
       node_id_by_source_id.fetch(value.to_s, value)
     end
 
-    def generated_starting_node_id
-      generated_node_ids.values.first
+    def starting_node_id_for
+      node_reference_id(flow.starting_node_id)
     end
 
     def generated_next_node_id(index)
       flow.node_functions[index + 1]&.then { |next_node| generated_node_ids.fetch(next_node) }
+    end
+
+    def next_node_id_for(node, index)
+      node_reference_id(node.next_node_id) || (node.has_next_node_id? ? generated_next_node_id(index) : nil)
     end
 
     def blank_zero(value)

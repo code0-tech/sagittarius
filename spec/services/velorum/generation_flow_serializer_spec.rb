@@ -61,7 +61,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     expect(described_class.new(flow, project: project).to_h).to include(
       name: 'Generated flow',
       type: flow_type,
-      starting_node_id: 'generated-1',
+      starting_node_id: nil,
       settings: [
         a_hash_including(
           id: 1,
@@ -109,13 +109,14 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     )
   end
 
-  it 'maps generated node IDs into references and inferred next-node links' do
+  it 'maps generated node IDs into references and explicit fallback next-node links' do
     flow = Tucana::Shared::GenerationFlow.new(
       name: 'Generated flow',
       type: 'default',
       node_functions: [
         Tucana::Shared::NodeFunction.new(
           runtime_function_id: 'input',
+          next_node_id: 0,
           parameters: []
         ),
         Tucana::Shared::NodeFunction.new(
@@ -260,6 +261,75 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     expect(serialized.dig(:nodes, 0, :parameters, 0, :value)).to include(
       generated_value_type: :sub_flow_value,
       function_definition: function_definition
+    )
+  end
+
+  it 'does not infer a next-node link when next_node_id is absent' do
+    flow = Tucana::Shared::GenerationFlow.new(
+      name: 'Generated flow',
+      type: 'default',
+      node_functions: [
+        Tucana::Shared::NodeFunction.new(
+          database_id: 6,
+          runtime_function_id: 'rest::control::respond'
+        ),
+        Tucana::Shared::NodeFunction.new(
+          database_id: 7,
+          runtime_function_id: 'std::control::value',
+          next_node_id: 6
+        )
+      ],
+      starting_node_id: '7'
+    )
+
+    serialized = described_class.new(flow).to_h
+
+    expect(serialized).to include(starting_node_id: '7')
+    expect(serialized[:nodes][0]).to include(id: '6', next_node_id: nil)
+    expect(serialized[:nodes][1]).to include(id: '7', next_node_id: '6')
+  end
+
+  it 'does not infer a starting node when starting_node_id is absent' do
+    flow_type = create(:flow_type, runtime: runtime, identifier: 'REST')
+    create(:flow_type_setting, flow_type: flow_type)
+    create(:flow_type_setting, flow_type: flow_type)
+    create(:flow_type_setting, flow_type: flow_type)
+    flow = Tucana::Shared::GenerationFlow.new(
+      name: 'Hello World Flow',
+      type: 'REST',
+      node_functions: [],
+      settings: [
+        Tucana::Shared::FlowSetting.new(value: Tucana::Shared::Value.from_ruby({})),
+        Tucana::Shared::FlowSetting.new(value: Tucana::Shared::Value.from_ruby('/hello')),
+        Tucana::Shared::FlowSetting.new(value: Tucana::Shared::Value.from_ruby('GET'))
+      ]
+    )
+
+    serialized = described_class.new(flow, project: project).to_h
+
+    expect(serialized).to include(
+      name: 'Hello World Flow',
+      type: flow_type,
+      starting_node_id: nil,
+      nodes: []
+    )
+  end
+
+  it 'does not serialize a None starting node reference' do
+    flow_type = create(:flow_type, runtime: runtime, identifier: 'REST')
+    flow = Tucana::Shared::GenerationFlow.new(
+      name: 'Hello World Flow',
+      type: 'REST',
+      node_functions: [],
+      starting_node_id: 'None'
+    )
+
+    serialized = described_class.new(flow, project: project).to_h
+
+    expect(serialized).to include(
+      type: flow_type,
+      starting_node_id: nil,
+      nodes: []
     )
   end
 end
