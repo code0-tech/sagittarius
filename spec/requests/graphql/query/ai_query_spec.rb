@@ -85,4 +85,20 @@ RSpec.describe 'ai query' do
       expect(Sagittarius::Velorum::Client).not_to have_received(:new)
     end
   end
+
+  context 'when Velorum is unreachable' do
+    before do
+      allow(client).to receive(:models).and_raise(
+        GRPC::BadStatus.new_status_exception(GRPC::Core::StatusCodes::UNAVAILABLE, 'Connection refused')
+      )
+    end
+
+    it 'returns enabled state and an empty model list without GraphQL errors' do
+      post_graphql(query, current_user: current_user)
+
+      expect(graphql_data_at(:ai, :enabled)).to be(true)
+      expect(graphql_data_at(:ai, :models)).to eq([])
+      expect(graphql_errors).to be_nil
+    end
+  end
 end
