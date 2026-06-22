@@ -15,7 +15,7 @@ include:
     - bundle install --jobs $(nproc)
 
 .rails:
-  image: ghcr.io/code0-tech/build-images/ruby-postgres:404.1-ruby-3.4.7-postgres-18.3
+  image: ghcr.io/code0-tech/build-images/ruby-postgres:431.1-ruby-3.4.7-postgres-18.3
   before_script:
     - cp tooling/pipeline/sagittarius.yml config/sagittarius.yml
     - !reference [.bundle, before_script]
