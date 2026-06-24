@@ -269,7 +269,7 @@ CREATE TABLE flow_settings (
     id bigint NOT NULL,
     flow_id bigint NOT NULL,
     flow_setting_id text NOT NULL,
-    object jsonb NOT NULL,
+    object jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     "cast" text,

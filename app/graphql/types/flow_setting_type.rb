@@ -16,7 +16,7 @@ module Types
           description: 'The identifier of the flow setting'
 
     field :value, GraphQL::Types::JSON,
-          null: false,
+          null: true,
           method: :object,
           description: 'The value of the flow setting'
 

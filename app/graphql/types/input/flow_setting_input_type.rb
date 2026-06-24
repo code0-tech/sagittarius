@@ -8,7 +8,7 @@ module Types
       argument :cast, String,
                required: false,
                description: 'The cast applied to the flow setting'
-      argument :value, GraphQL::Types::JSON, required: true,
+      argument :value, GraphQL::Types::JSON, required: :nullable,
                                              description: 'The value of the flow setting'
     end
   end

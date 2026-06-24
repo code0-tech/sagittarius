@@ -259,6 +259,25 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
         target_type: 'NamespaceProject'
       )
     end
+
+    context 'when a flow setting value is null' do
+      before do
+        input[:flowInput][:settings][:value] = nil
+      end
+
+      it 'updates the flow setting with a null value' do
+        mutate!
+
+        setting_response = graphql_data_at(:namespaces_projects_flows_update, :flow, :settings, :nodes).first
+        setting = SagittariusSchema.object_from_id(setting_response['id'])
+
+        expect(setting_response).to include(
+          'flowSettingIdentifier' => flow_type.flow_type_settings.first.identifier,
+          'value' => nil
+        )
+        expect(setting.object).to be_nil
+      end
+    end
   end
 
   context 'when updating a sub-flow by function identifier' do
