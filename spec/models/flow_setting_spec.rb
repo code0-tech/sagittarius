@@ -8,4 +8,8 @@ RSpec.describe FlowSetting do
   describe 'associations' do
     it { is_expected.to belong_to(:flow).optional }
   end
+
+  describe 'validations' do
+    it { is_expected.to allow_value(nil).for(:object) }
+  end
 end
