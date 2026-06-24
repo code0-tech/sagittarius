@@ -62,7 +62,20 @@ module Types
       define_method(:user_abilities) { object || {} }
     end
 
-    def self.lookahead_field(field, base_scope:, lookaheads: [], conditional_lookaheads: {})
+    def self.lookahead_preload(field, preload, profile: nil)
+      @lookahead_preloads ||= Hash.new { |hash, key| hash[key] = {} }
+      @lookahead_preloads[profile][field] = preload
+    end
+
+    def self.lookahead_preloads(profile: nil)
+      own_preloads = @lookahead_preloads || {}
+      base_preloads = superclass.respond_to?(:lookahead_preloads) ? superclass.lookahead_preloads : {}
+
+      base_preloads.merge(own_preloads.fetch(nil, {})).merge(own_preloads.fetch(profile, {}))
+    end
+
+    def self.lookahead_field(field, base_scope:, lookaheads: [], conditional_lookaheads: {}, preload_type: nil,
+                             preload_profile: nil)
       define_method(field) do |*_args, lookahead:, **_kwargs|
         field_selected = lambda do |f|
           lookahead.selects?(f) ||
@@ -70,6 +83,8 @@ module Types
             lookahead.selection(:edges).selection(:node).selects?(f)
         end
 
+        type_lookaheads = preload_type&.lookahead_preloads(profile: preload_profile) || {}
+        conditional_lookaheads = conditional_lookaheads.merge(type_lookaheads)
         scope = lookaheads.reduce(base_scope.call(object)) { |acc, f| acc.preload(f) }
 
         conditional_lookaheads.reduce(scope) do |acc, (f, preload_field)|
