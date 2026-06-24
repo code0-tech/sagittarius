@@ -25,7 +25,7 @@ RSpec.describe ModuleConfigurationDefinition do
     it { is_expected.to validate_length_of(:identifier).is_at_most(50) }
     it { is_expected.to validate_uniqueness_of(:identifier).scoped_to(:runtime_module_id) }
     it { is_expected.to validate_presence_of(:type) }
-    it { is_expected.to validate_length_of(:type).is_at_most(2000) }
+    it { is_expected.to validate_length_of(:type).is_at_most(8192) }
     it { is_expected.to allow_values(true, false).for(:optional) }
     it { is_expected.to allow_values(true, false).for(:hidden) }
   end

@@ -17,7 +17,7 @@ class ModuleConfigurationDefinition < ApplicationRecord
   has_translation :descriptions, purpose: :description
 
   validates :identifier, presence: true, length: { maximum: 50 }, uniqueness: { scope: :runtime_module_id }
-  validates :type, presence: true, length: { maximum: 2000 }
+  validates :type, presence: true, length: { maximum: 8192 }
   validates :optional, inclusion: { in: [true, false] }
   validates :hidden, inclusion: { in: [true, false] }
 end
