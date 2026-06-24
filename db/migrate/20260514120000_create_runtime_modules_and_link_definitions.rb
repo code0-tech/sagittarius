@@ -18,7 +18,7 @@ class CreateRuntimeModulesAndLinkDefinitions < Code0::ZeroTrack::Database::Migra
     create_table :module_configuration_definitions do |t|
       t.references :runtime_module, null: false, foreign_key: { on_delete: :cascade }, index: false
       t.text :identifier, null: false, limit: 50
-      t.text :type, null: false, limit: 8192
+      t.text :type, null: false, limit: 2000
       t.jsonb :default_value
       t.boolean :optional, null: false, default: false
       t.boolean :hidden, null: false, default: false
