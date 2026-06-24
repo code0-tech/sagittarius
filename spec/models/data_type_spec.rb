@@ -21,7 +21,7 @@ RSpec.describe DataType do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:type) }
-    it { is_expected.to validate_length_of(:type).is_at_most(2000) }
+    it { is_expected.to validate_length_of(:type).is_at_most(8192) }
     it { is_expected.to validate_length_of(:definition_source).is_at_most(50) }
 
     describe '#validate_version' do
