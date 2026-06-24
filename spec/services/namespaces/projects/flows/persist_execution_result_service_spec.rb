@@ -3,9 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
-  subject(:service_response) { described_class.new(grpc_result).execute }
+  subject(:service_response) { described_class.new(grpc_result, runtime.id).execute }
 
-  let(:flow) { create(:flow) }
+  let(:runtime) { create(:runtime) }
+  let(:project) { create(:namespace_project, primary_runtime: runtime) }
+  let(:flow) { create(:flow, project: project) }
   let(:node_function) { create(:node_function, flow: flow) }
   let(:started_at) { 1_780_430_000_000_000 }
   let(:finished_at) { 1_780_430_002_000_000 }
@@ -35,6 +37,8 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
   end
 
   before do
+    create(:namespace_project_runtime_assignment, runtime: runtime, namespace_project: project)
+
     allow(SubscriptionTriggers).to receive(:execution_result)
   end
 
@@ -167,7 +171,10 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
   end
 
   context 'when a node execution result targets a function definition' do
-    let(:function_definition) { create(:function_definition) }
+    let(:runtime_function_definition) { create(:runtime_function_definition, runtime: runtime) }
+    let(:function_definition) do
+      create(:function_definition, runtime_function_definition: runtime_function_definition)
+    end
 
     let(:grpc_result) do
       Tucana::Shared::ExecutionResult.new(
@@ -188,10 +195,6 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       )
     end
 
-    before do
-      flow.project.update!(primary_runtime: function_definition.runtime)
-    end
-
     it 'persists the function definition as the execution target' do
       expect(service_response).to be_success
 
@@ -203,6 +206,8 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     end
 
     it 'ignores matching definitions from other runtimes' do
+      create(:function_definition, identifier: function_definition.identifier)
+
       expect(service_response).to be_success
 
       expect(service_response.payload.node_results.sole).to have_attributes(
@@ -262,6 +267,83 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     it 'returns an error' do
       expect(service_response).to be_error
       expect(service_response.payload[:error_code]).to eq(:flow_not_found)
+    end
+  end
+
+  context 'when the flow project is not assigned to the runtime' do
+    let(:runtime) { create(:runtime) }
+    let(:other_runtime) { create(:runtime) }
+    let(:project) { create(:namespace_project, primary_runtime: other_runtime) }
+
+    before do
+      NamespaceProjectRuntimeAssignment.where(runtime: runtime, namespace_project: project).destroy_all
+      create(:namespace_project_runtime_assignment, runtime: other_runtime, namespace_project: project)
+    end
+
+    it 'returns an error without persisting the result' do
+      expect { service_response }.not_to change { ExecutionResult.count }
+
+      expect(service_response).to be_error
+      expect(service_response.payload[:error_code]).to eq(:flow_not_found)
+    end
+  end
+
+  context 'when a node result references a node from another flow' do
+    let(:other_flow) { create(:flow, project: project) }
+    let(:other_node_function) { create(:node_function, flow: other_flow) }
+
+    let(:grpc_result) do
+      Tucana::Shared::ExecutionResult.new(
+        execution_identifier: 'execution-identifier',
+        flow_id: flow.id,
+        started_at: started_at,
+        finished_at: finished_at,
+        success: Tucana::Shared::Value.from_ruby('result' => true),
+        node_execution_results: [
+          Tucana::Shared::NodeExecutionResult.new(
+            node_id: other_node_function.id,
+            started_at: started_at,
+            finished_at: finished_at,
+            success: Tucana::Shared::Value.from_ruby('node' => 'ok')
+          )
+        ]
+      )
+    end
+
+    it 'does not attach the foreign node function' do
+      expect { service_response }.not_to change { ExecutionResult.count }
+
+      expect(service_response).to be_error
+      expect(service_response.payload[:error_code]).to eq(:invalid_execution_result)
+    end
+  end
+
+  context 'when a node result references a function definition from another runtime' do
+    let(:other_function_definition) { create(:function_definition) }
+
+    let(:grpc_result) do
+      Tucana::Shared::ExecutionResult.new(
+        execution_identifier: 'execution-identifier',
+        flow_id: flow.id,
+        started_at: started_at,
+        finished_at: finished_at,
+        success: Tucana::Shared::Value.from_ruby('result' => true),
+        node_execution_results: [
+          Tucana::Shared::NodeExecutionResult.new(
+            function_identifier: other_function_definition.identifier,
+            started_at: started_at,
+            finished_at: finished_at,
+            success: Tucana::Shared::Value.from_ruby('function' => 'ok')
+          )
+        ]
+      )
+    end
+
+    it 'does not attach the foreign function definition' do
+      expect { service_response }.not_to change { ExecutionResult.count }
+
+      expect(service_response).to be_error
+      expect(service_response.payload[:error_code]).to eq(:invalid_execution_result)
     end
   end
 
