@@ -87,7 +87,7 @@ class MigrateDataTypesToTucana0055 < Code0::ZeroTrack::Database::Migration[1.0]
     # Creation of tables and relations for the new data types
     # rubocop:disable Rails/NotNullColumn -- backwards compatibility intentionally ignored
     add_column :runtime_function_definitions, :signature, :text, null: false, limit: 500
-    add_column :data_types, :type, :text, null: false, limit: 2000
+    add_column :data_types, :type, :text, null: false, limit: 8192
     add_column :flow_type_settings, :type, :text, null: false, limit: 2000
     add_column :flow_types, :input_type, :text, limit: 2000
     add_column :flow_types, :return_type, :text, limit: 2000
