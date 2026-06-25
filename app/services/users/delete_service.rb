@@ -17,6 +17,8 @@ module Users
       end
 
       transactional do |t|
+        audit_author_id = user == current_authentication.user ? User.ghost.id : current_authentication.user.id
+
         user.destroy
 
         if user.persisted?
@@ -29,7 +31,7 @@ module Users
 
         AuditService.audit(
           :user_deleted,
-          author_id: current_authentication.user.id,
+          author_id: audit_author_id,
           entity: user,
           target: AuditEvent::GLOBAL_TARGET,
           details: {}
