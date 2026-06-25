@@ -3,6 +3,9 @@
 class User < ApplicationRecord
   include NamespaceParent
 
+  GHOST_USERNAME = 'ghost'
+  GHOST_EMAIL = 'ghost@code0.tech'
+
   has_secure_password
 
   validates :username, length: { maximum: 50 },
@@ -30,6 +33,17 @@ class User < ApplicationRecord
   has_many :user_identities, inverse_of: :user
 
   has_one_attached :avatar
+
+  before_destroy :prevent_destroy_ghost_user, prepend: true
+  before_destroy :reassign_authored_audit_events_to_ghost_user
+
+  def self.ghost
+    find_by!(username: GHOST_USERNAME)
+  end
+
+  def ghost?
+    username == GHOST_USERNAME
+  end
 
   def mfa_enabled?
     totp_secret != nil
@@ -67,6 +81,23 @@ class User < ApplicationRecord
 
   generates_token_for :password_reset, expires_in: 15.minutes do
     password_digest&.last(20)
+  end
+
+  private
+
+  def prevent_destroy_ghost_user
+    return unless ghost?
+
+    errors.add(:base, :invalid, message: 'Cannot delete ghost user')
+    throw :abort
+  end
+
+  def reassign_authored_audit_events_to_ghost_user
+    ghost_user = self.class.ghost
+
+    authored_audit_events.find_each do |audit_event|
+      audit_event.update!(author: ghost_user)
+    end
   end
 end
 
