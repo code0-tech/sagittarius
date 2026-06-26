@@ -1,25 +1,15 @@
-# README
+# Sagittarius
+The orchestrating backend for CodeZero
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+- Provides the GraphQL API for managing organizations, namespaces, projects, runtimes and flows
+- Stores flow definitions, runtime metadata, module configurations and execution results
+- Coordinates user authentication, roles, licenses and project permissions
+- Connects the application layer with runtime services through gRPC
 
-Things you may want to cover:
+## Used Technologies
 
-* Ruby version
+[Ruby on Rails](https://rubyonrails.org/) x [GraphQL](https://graphql.org/) x [gRPC](https://grpc.io/)
 
-* System dependencies
+## Documentation
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
+Read the [Sagittarius Documentation](https://docs.code0.tech/sagittarius/).
