@@ -12,4 +12,4 @@ The orchestrating backend for CodeZero
 
 ## Documentation
 
-Read the [Sagittarius Documentation](https://docs.code0.tech/sagittarius/).
+Read the [Sagittarius Documentation](https://docs.codezero.build/sagittarius/).
