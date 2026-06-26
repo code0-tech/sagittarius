@@ -20,13 +20,14 @@ module Sagittarius
     def self.defaults
       {
         rails: {
-          threads: 3,
           web: {
+            threads: 3,
             port: 3000,
             force_ssl: nil,
             bind: nil,
           },
           grpc: {
+            threads: 3,
             host: '0.0.0.0:50051',
           },
           log_level: 'info',

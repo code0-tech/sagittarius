@@ -8,10 +8,9 @@ require_relative 'environment'
 
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers: a minimum and maximum.
-# Any libraries that use thread pools should be configured to match
-# the maximum value specified for Puma. Default is set to 5 threads for minimum
-# and maximum; this matches the default thread size of Active Record.
-thread_count = Sagittarius::Configuration.config[:rails][:threads]
+# Default is set to 5 threads for minimum and maximum; this matches the default
+# thread size of Active Record.
+thread_count = Sagittarius::Configuration.config[:rails][:web][:threads]
 threads thread_count, thread_count
 
 # Specifies that the worker count should equal the number of processors in production.

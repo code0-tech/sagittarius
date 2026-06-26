@@ -7,7 +7,10 @@ RSpec.describe Sagittarius::Configuration do
     let(:yaml_config) do
       <<~CONFIG
         rails:
-          threads: 4
+          web:
+            threads: 4
+          grpc:
+            threads: 8
       CONFIG
     end
 
@@ -20,7 +23,12 @@ RSpec.describe Sagittarius::Configuration do
     end
 
     it 'loads the config' do
-      expect(described_class.config).to include(rails: a_hash_including(threads: 4))
+      expect(described_class.config).to include(
+        rails: a_hash_including(
+          web: a_hash_including(threads: 4),
+          grpc: a_hash_including(threads: 8)
+        )
+      )
     end
   end
 
