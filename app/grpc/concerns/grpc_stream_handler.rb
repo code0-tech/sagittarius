@@ -96,7 +96,11 @@ module GrpcStreamHandler
 
         begin
           y << item
-          Runtime.update(runtime_id, last_heartbeat: Time.zone.now)
+          ApplicationRecord.connection_pool.with_connection do
+            Runtime.update(runtime_id, last_heartbeat: Time.zone.now)
+          end
+        rescue ActiveRecord::ActiveRecordError => e
+          logger.warn(message: 'Failed to update runtime heartbeat', exception: e.message, backtrace: e.backtrace)
         rescue GRPC::Core::CallError
           logger.info(message: 'Stream was closed from client side (probably)')
 
