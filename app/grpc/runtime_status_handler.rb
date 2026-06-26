@@ -17,6 +17,6 @@ class RuntimeStatusHandler < Tucana::Sagittarius::RuntimeStatusService::Service
 
     logger.debug("RuntimeFunctionHandler#update response: #{response.inspect}")
 
-    Tucana::Sagittarius::RuntimeStatusUpdateResponse.new(success: response.success?)
+    response.to_grpc_response(Tucana::Sagittarius::RuntimeStatusUpdateResponse)
   end
 end

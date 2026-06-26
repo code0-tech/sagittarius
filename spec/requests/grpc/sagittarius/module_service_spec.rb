@@ -351,6 +351,44 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
       end
     end
 
+    context 'when the module is invalid' do
+      let(:modules) do
+        [
+          {
+            identifier: 'module-a',
+            version: '1.0.0',
+            definition_data_types: [
+              {
+                identifier: 'A_TYPE',
+                type: 'A' * 9000,
+                linked_data_type_identifiers: [],
+                version: '1.0.0',
+                definition_source: 'module-a',
+              }
+            ],
+            runtime_flow_types: [],
+            flow_types: [],
+            runtime_function_definitions: [],
+            function_definitions: [],
+            configurations: [],
+          }
+        ]
+      end
+
+      it 'returns the appropriate error' do
+        response = stub.update(message, authorization(runtime))
+        expect(response.success).to be(false)
+        expect(response.error.details).to contain_exactly(
+          Tucana::Shared::ServiceErrorDetails.new(
+            active_model_error: Tucana::Shared::ServiceActiveModelError.new(
+              attribute: 'type',
+              type: 'too_long'
+            )
+          )
+        )
+      end
+    end
+
     context 'when module is locked by another transaction' do
       let!(:runtime_module) { create(:runtime_module, runtime: runtime, identifier: 'taurus') }
       let(:modules) do

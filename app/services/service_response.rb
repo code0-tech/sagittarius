@@ -67,4 +67,31 @@ class ServiceResponse
     { success_key => nil,
       errors: [Sagittarius::Graphql::ErrorContainer.new(payload[:error_code], payload[:details])] }
   end
+
+  def to_grpc_response(proto_class, **additional_kwargs)
+    if error?
+      d = if payload[:details].is_a?(ActiveModel::Errors)
+            payload[:details].errors.map do |e|
+              Tucana::Shared::ServiceErrorDetails.new(
+                active_model_error: Tucana::Shared::ServiceActiveModelError.new(
+                  attribute: e.attribute,
+                  type: e.type
+                )
+              )
+            end
+          else
+            # Tucana does not support any details except active model errors (as of 0.0.75)
+            []
+          end
+
+      additional_kwargs[:error] ||= Tucana::Shared::ServiceError.new(
+        message: message,
+        details: d
+      )
+    end
+    proto_class.new(
+      success: success?,
+      **additional_kwargs
+    )
+  end
 end
