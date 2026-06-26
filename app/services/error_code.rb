@@ -106,6 +106,7 @@ class ErrorCode
       missing_definition: { description: 'The primary runtime has more definitions than this one' },
       outdated_definition: { description: 'The primary runtime has a newer definition than this one' },
       invalid_execution_result: { description: 'The execution result is invalid because of active model errors' },
+      lock_timeout: { description: 'Could not acquire a database lock in time' },
     }
   end
   # rubocop:enable Layout/LineLength

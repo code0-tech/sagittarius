@@ -350,5 +350,50 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
         expect(data_type.reload.removed_at).to be_present
       end
     end
+
+    context 'when module is locked by another transaction' do
+      let!(:runtime_module) { create(:runtime_module, runtime: runtime, identifier: 'taurus') }
+      let(:modules) do
+        [
+          {
+            identifier: 'taurus',
+            version: '1.2.3',
+            definition_data_types: [],
+            runtime_flow_types: [],
+            flow_types: [],
+            runtime_function_definitions: [],
+            function_definitions: [],
+            configurations: [],
+          }
+        ]
+      end
+
+      it 'returns an error instead of deadlocking' do
+        lock_acquired = Concurrent::Event.new
+        test_done = Concurrent::Event.new
+
+        lock_thread = Thread.new do
+          ActiveRecord::Base.connection_pool.with_connection do |conn|
+            conn.execute('BEGIN')
+            conn.execute(
+              "SELECT * FROM runtime_modules WHERE id = #{runtime_module.id} FOR UPDATE"
+            )
+            lock_acquired.set
+            test_done.wait(10)
+          ensure
+            conn.execute('ROLLBACK')
+          end
+        end
+
+        lock_acquired.wait
+
+        response = stub.update(message, authorization(runtime))
+        expect(response.success).to be(false)
+        expect(response.error.message).to eq('Could not acquire lock on modules')
+      ensure
+        test_done&.set
+        lock_thread&.join
+      end
+    end
   end
 end
