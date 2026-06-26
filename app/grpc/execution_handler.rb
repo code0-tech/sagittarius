@@ -20,14 +20,18 @@ class ExecutionHandler < Tucana::Sagittarius::ExecutionService::Service
       outbound_queue = queue
     end
 
+    correlation_id = Code0::ZeroTrack::Context.correlation_id
+
     Thread.new do
-      requests.each do |request|
-        ApplicationRecord.connection_pool.with_connection do
-          case request.data
-          when :logon
-            logger.info(message: 'Execution runtime sent logon')
-          when :response
-            handle_execution_result(request.response, current_runtime_id)
+      Code0::ZeroTrack::Context.with_context(Code0::ZeroTrack::Context::CORRELATION_ID_KEY => correlation_id) do
+        requests.each do |request|
+          ApplicationRecord.connection_pool.with_connection do
+            case request.data
+            when :logon
+              logger.info(message: 'Execution runtime sent logon')
+            when :response
+              handle_execution_result(request.response, current_runtime_id)
+            end
           end
         end
       end
