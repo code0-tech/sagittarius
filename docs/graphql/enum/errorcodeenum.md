@@ -66,6 +66,7 @@ Represents the available error responses
 | `IS_PRIMARY_RUNTIME` | This runtime is the primary runtime of a project |
 | `LICENSE_NOT_FOUND` | The license with the given identifier was not found |
 | `LOADING_IDENTITY_FAILED` | Failed to load user identity from external provider |
+| `LOCK_TIMEOUT` | Could not acquire a database lock in time |
 | `MFA_FAILED` | Invalid MFA data provided |
 | `MFA_REQUIRED` | MFA is required |
 | `MISSING_DEFINITION` | The primary runtime has more definitions than this one |
