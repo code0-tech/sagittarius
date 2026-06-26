@@ -69,11 +69,9 @@ module RuboCop
         end
 
         def extract_all_error_codes
-          files = Dir.glob("#{__dir__}/../../../../**/app/services/**/error_code.rb")
-
           merged = {}
 
-          files.each do |path|
+          error_code_files.each do |path|
             next unless File.exist?(path)
 
             ast = RuboCop::ProcessedSource.new(File.read(path), RUBY_VERSION.to_f).ast
@@ -94,6 +92,14 @@ module RuboCop
 
         def in_service?(node)
           dirname(node).include?('app/services') # .include? because the path is ../app/services/...
+        end
+
+        def external_dependency_checksum
+          Digest::SHA256.hexdigest(error_code_files.filter_map { |f| File.read(f) if File.exist?(f) }.join)
+        end
+
+        def error_code_files
+          @error_code_files ||= Dir.glob("#{__dir__}/../../../../**/app/services/**/error_code.rb")
         end
       end
     end
