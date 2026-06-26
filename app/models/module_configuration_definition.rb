@@ -20,4 +20,11 @@ class ModuleConfigurationDefinition < ApplicationRecord
   validates :type, presence: true, length: { maximum: 8192 }
   validates :optional, inclusion: { in: [true, false] }
   validates :hidden, inclusion: { in: [true, false] }
+
+  def to_default_grpc
+    Tucana::Shared::ModuleConfiguration.new(
+      identifier: identifier,
+      value: Tucana::Shared::Value.from_ruby(default_value)
+    )
+  end
 end

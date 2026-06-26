@@ -25,7 +25,7 @@ module Runtimes
         end
 
         def execute
-          transactional do |t|
+          response = transactional do |t|
             lock_existing_modules(t)
 
             module_records = update_modules(t)
@@ -35,12 +35,16 @@ module Runtimes
             update_module_definitions(module_records.payload, t)
             update_definition_services(module_records.payload, t)
 
-            UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
-
             logger.info(message: 'Updated modules for runtime', runtime_id: current_runtime.id)
 
             ServiceResponse.success(message: 'Updated modules', payload: modules)
           end
+
+          return response if response.error?
+
+          update_runtime_compatibility
+          FlowHandler.update_runtime(current_runtime)
+          response
         end
 
         protected
@@ -160,6 +164,17 @@ module Runtimes
             runtime_module: runtime_module,
             update_runtime_compatibility: false
           )
+        end
+
+        def update_runtime_compatibility
+          current_runtime.project_assignments.find_each do |assignment|
+            response = Runtimes::CheckRuntimeCompatibilityService.new(
+              assignment.runtime,
+              assignment.namespace_project
+            ).execute
+
+            assignment.update!(compatible: response.success?)
+          end
         end
       end
     end

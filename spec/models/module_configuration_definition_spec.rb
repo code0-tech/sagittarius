@@ -29,4 +29,15 @@ RSpec.describe ModuleConfigurationDefinition do
     it { is_expected.to allow_values(true, false).for(:optional) }
     it { is_expected.to allow_values(true, false).for(:hidden) }
   end
+
+  describe '#to_default_grpc' do
+    it 'serializes the identifier and default value as a module configuration' do
+      configuration_definition.update!(identifier: 'apiKey', default_value: 'default-secret')
+
+      grpc_configuration = configuration_definition.to_default_grpc
+
+      expect(grpc_configuration.identifier).to eq('apiKey')
+      expect(grpc_configuration.value.to_ruby(true)).to eq('default-secret')
+    end
+  end
 end
