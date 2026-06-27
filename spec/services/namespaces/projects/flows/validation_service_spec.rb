@@ -46,7 +46,7 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
   context 'with fixed validation results' do
     before do
       flow.update!(starting_node: node_function)
-      allow(UpdateRuntimesForProjectJob).to receive(:perform_later)
+      allow(UpdateFlowForProjectJob).to receive(:perform_later)
 
       result = Triangulum::Validation::Result.new(valid?: valid, return_type: nil, diagnostics: [])
       allow(Triangulum::Validation).to receive(:new).and_return(
@@ -63,10 +63,10 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
         expect(flow.reload.validation_status).to eq('valid')
       end
 
-      it 'enqueues UpdateRuntimesForProjectJob' do
+      it 'enqueues UpdateFlowForProjectJob' do
         service.execute
 
-        expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
+        expect(UpdateFlowForProjectJob).to have_received(:perform_later).with(flow.id)
       end
     end
 
@@ -79,10 +79,18 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
         expect(flow.reload.validation_status).to eq('invalid')
       end
 
-      it 'enqueues UpdateRuntimesForProjectJob' do
+      it 'does not enqueue a runtime update for a newly created invalid flow' do
         service.execute
 
-        expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
+        expect(UpdateFlowForProjectJob).not_to have_received(:perform_later)
+      end
+
+      it 'does not enqueue a deletion when a previously valid flow becomes invalid' do
+        flow.update!(validation_status: :valid)
+
+        service.execute
+
+        expect(UpdateFlowForProjectJob).not_to have_received(:perform_later)
       end
     end
   end

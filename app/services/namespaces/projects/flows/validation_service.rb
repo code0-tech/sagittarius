@@ -28,7 +28,7 @@ module Namespaces
             flow.update!(validation_status: :invalid)
           end
 
-          UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+          UpdateFlowForProjectJob.perform_later(flow.id) if result.valid?
 
           result
         end
