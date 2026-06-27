@@ -11,6 +11,7 @@ Represents a user
 | `admin` | [`Boolean`](../scalar/boolean.md) | Global admin status of the user |
 | `avatarPath` | [`String`](../scalar/string.md) | The avatar if present of the user |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this User was created |
+| `deletionRestriction` | [`UserDeletionRestriction`](../enum/userdeletionrestriction.md) | The reason why this user cannot be deleted |
 | `email` | [`String`](../scalar/string.md) | Email of the user |
 | `emailVerifiedAt` | [`Time`](../scalar/time.md) | Email verification date of the user if present |
 | `firstname` | [`String`](../scalar/string.md) | Firstname of the user |

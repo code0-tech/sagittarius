@@ -16,6 +16,9 @@ module Users
         return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
       end
 
+      deletion_error = validate_deletion
+      return deletion_error if deletion_error
+
       transactional do |t|
         user.destroy
 
@@ -38,5 +41,22 @@ module Users
         ServiceResponse.success(message: 'Deleted user', payload: user)
       end
     end
+
+    def deletion_restriction
+      :last_administrator if user.admin? && !User.where.not(id: user.id).exists?(admin: true)
+    end
+
+    private
+
+    def validate_deletion
+      return unless deletion_restriction == :last_administrator
+
+      ServiceResponse.error(
+        message: 'The last instance administrator cannot be deleted',
+        error_code: :cannot_delete_last_administrator
+      )
+    end
   end
 end
+
+Users::DeleteService.prepend_extensions

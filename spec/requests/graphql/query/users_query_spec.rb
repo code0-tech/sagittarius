@@ -12,6 +12,7 @@ RSpec.describe 'users Query' do
           nodes {
             id
             username
+            deletionRestriction
           }
         }
       }
@@ -47,6 +48,12 @@ RSpec.describe 'users Query' do
 
     it 'returns all users' do
       expect(graphql_data_at(:users, :nodes)).to have_attributes(length: 4)
+    end
+
+    it 'returns the deletion restriction for the last administrator' do
+      admin = graphql_data_at(:users, :nodes).find { |user| user['id'] == current_user.to_global_id.to_s }
+
+      expect(admin['deletionRestriction']).to eq('LAST_ADMINISTRATOR')
     end
   end
 end

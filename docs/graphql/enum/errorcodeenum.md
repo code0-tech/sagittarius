@@ -6,7 +6,9 @@ Represents the available error responses
 
 | Value | Description |
 |-------|-------------|
+| `CANNOT_DELETE_LAST_ADMINISTRATOR` | The last instance administrator cannot be deleted |
 | `CANNOT_DELETE_LAST_ADMIN_ROLE` | This action would remove the last administrative role |
+| `CANNOT_DELETE_USER_WITH_ACTIVE_SUBSCRIPTION` | A user with an active subscription cannot delete itself |
 | `CANNOT_MODIFY_ADMIN` | Only administrators can modify admin status of users |
 | `CANNOT_MODIFY_OWN_ADMIN` | Users cannot modify their own admin status |
 | `CANNOT_REMOVE_LAST_ADMINISTRATOR` | This action would remove the last administrator |
