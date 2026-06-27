@@ -179,6 +179,26 @@ RSpec.describe Velorum::GenerateFlowService do
     end
   end
 
+  context 'when the runtime has no definitions' do
+    let(:runtime) do
+      instance_double(
+        Runtime,
+        id: 9,
+        function_definitions: [],
+        data_types: [],
+        flow_types: []
+      )
+    end
+
+    it 'returns an error without calling Velorum' do
+      expect(service_response).to be_error
+      expect(service_response.message).to eq('No definitions are available to generate a flow')
+      expect(service_response.payload[:error_code]).to eq(:no_definitions)
+      expect(client).not_to have_received(:prompt)
+      expect(client).not_to have_received(:flow)
+    end
+  end
+
   context 'when Velorum returns a gRPC error' do
     before do
       allow(client).to receive(:prompt).and_raise(

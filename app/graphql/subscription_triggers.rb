@@ -10,11 +10,11 @@ module SubscriptionTriggers
     )
   end
 
-  def self.ai_generate_flow(execution_identifier, flow)
+  def self.ai_generate_flow(execution_identifier, flow, errors: [])
     SagittariusSchema.subscriptions.trigger(
       :ai_generate_flow,
       { execution_identifier: execution_identifier },
-      flow,
+      { flow: flow, errors: errors },
       context: { visibility_profile: :execution }
     )
   end
