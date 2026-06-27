@@ -20,6 +20,8 @@ Represents a user
 | `mfaStatus` | [`MfaStatus`](../object/mfastatus.md) | Multi-factor authentication status of this user |
 | `namespace` | [`Namespace`](../object/namespace.md) | Namespace of this user |
 | `namespaceMemberships` | [`NamespaceMemberConnection!`](../object/namespacememberconnection.md) | Namespace Memberships of this user |
+| `organizationPins` | [`[UserOrganizationPin!]!`](../object/userorganizationpin.md) | Pinned organizations of this user with explicit priority |
+| `pinnedOrganizations` | [`[Organization!]!`](../object/organization.md) | Pinned organizations of this user ordered by pin priority |
 | `readme` | [`String`](../scalar/string.md) | Readme of the user |
 | `sessions` | [`UserSessionConnection!`](../object/usersessionconnection.md) | Sessions of this user |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this User was last updated |

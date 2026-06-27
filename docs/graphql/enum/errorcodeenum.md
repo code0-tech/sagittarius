@@ -61,6 +61,7 @@ Represents the available error responses
 | `INVALID_TOTP_SECRET` | The TOTP secret is invalid or cannot be verified |
 | `INVALID_USER` | The user is invalid because of active model errors |
 | `INVALID_USER_IDENTITY` | The user identity is invalid because of active model errors |
+| `INVALID_USER_ORGANIZATION_PIN` | The user organization pin is invalid because of active model errors |
 | `INVALID_USER_SESSION` | The user session is invalid because of active model errors |
 | `INVALID_VERIFICATION_CODE` | Invalid verification code provided |
 | `IS_PRIMARY_RUNTIME` | This runtime is the primary runtime of a project |
