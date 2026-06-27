@@ -48,7 +48,8 @@ module Types
 
     lookahead_field :namespace_memberships,
                     base_scope: ->(object) { object.namespace_memberships },
-                    conditional_lookaheads: { user: :user, namespace: { namespace: :namespace_members } }
+                    preload_type: Types::NamespaceMemberType,
+                    preload_profile: :namespace_memberships
 
     expose_abilities %i[
       manage_mfa
