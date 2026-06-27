@@ -60,11 +60,11 @@ RSpec.describe Namespaces::Projects::Flows::DeleteService do
     end
 
     it 'queues job to update runtimes' do
-      allow(UpdateRuntimesForProjectJob).to receive(:perform_later)
+      allow(DeleteFlowForProjectJob).to receive(:perform_later)
 
       service_response
 
-      expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
+      expect(DeleteFlowForProjectJob).to have_received(:perform_later).with(namespace_project.id, flow.id)
     end
   end
 end

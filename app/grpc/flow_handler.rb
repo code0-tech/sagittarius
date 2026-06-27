@@ -7,6 +7,22 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
 
   grpc_stream :update
 
+  def self.update_flow(flow)
+    response = Tucana::Sagittarius::FlowResponse.new(updated_flow: flow.to_grpc)
+    send_to_project_runtimes(flow.project, response)
+  end
+
+  def self.delete_flow(project, flow_id)
+    response = Tucana::Sagittarius::FlowResponse.new(deleted_flow_id: flow_id)
+    send_to_project_runtimes(project, response)
+  end
+
+  def self.send_to_project_runtimes(project, response)
+    project.runtime_assignments.compatible.find_each do |assignment|
+      send_update(response, assignment.runtime_id)
+    end
+  end
+
   def self.update_runtime(runtime)
     assignments = runtime.project_assignments.compatible.includes(
       :namespace_project,
