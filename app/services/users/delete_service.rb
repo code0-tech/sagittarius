@@ -46,7 +46,7 @@ module Users
       :last_administrator if user.admin? && !User.where.not(id: user.id).exists?(admin: true)
     end
 
-    private
+    protected
 
     def validate_deletion
       return unless deletion_restriction == :last_administrator

@@ -16,7 +16,7 @@ module CLOUD
         :active_subscription if license_data&.options&.[](:subscription)
       end
 
-      private
+      protected
 
       override :validate_deletion
       def validate_deletion
