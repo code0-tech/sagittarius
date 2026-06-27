@@ -127,12 +127,12 @@ CREATE TABLE ar_internal_metadata (
 CREATE TABLE audit_events (
     id bigint NOT NULL,
     author_id bigint NOT NULL,
-    entity_id bigint NOT NULL,
+    entity_id integer NOT NULL,
     entity_type text NOT NULL,
     action_type integer NOT NULL,
     details jsonb NOT NULL,
     ip_address inet,
-    target_id bigint NOT NULL,
+    target_id integer NOT NULL,
     target_type text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL

@@ -14,6 +14,17 @@ RSpec.describe Translation do
     it { is_expected.to validate_presence_of(:content) }
   end
 
+  describe 'polymorphic owner cleanup trigger' do
+    it 'deletes translations when an owner is deleted directly in PostgreSQL' do
+      owner = create(:data_type)
+      translation = create(:translation, owner: owner)
+
+      DataType.where(id: owner.id).delete_all
+
+      expect(described_class).not_to exist(translation.id)
+    end
+  end
+
   describe '#to_grpc' do
     it 'matches the model' do
       grpc_object = translation.to_grpc
