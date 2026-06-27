@@ -57,7 +57,7 @@ module Namespaces
               started_at: node_result.started_at,
               finished_at: node_result.finished_at,
               node_function: node_function_for(node_result, result.flow),
-              function_definition: function_definition_for(node_result)
+              function_definition: function_definition_for(node_result, result.flow)
             )
 
             assign_result(node_record, node_result)
@@ -89,10 +89,13 @@ module Namespaces
           flow.node_functions.find_by(id: node_result.node_id)
         end
 
-        def function_definition_for(node_result)
+        def function_definition_for(node_result, flow)
           return unless node_result.id == :function_identifier
 
-          FunctionDefinition.find_by(runtime_id: runtime_id, identifier: node_result.function_identifier)
+          FunctionDefinition.find_by(
+            runtime: flow.project.primary_runtime,
+            identifier: node_result.function_identifier
+          )
         end
 
         def assign_result(record, grpc_record)
