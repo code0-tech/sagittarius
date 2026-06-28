@@ -125,7 +125,7 @@ module Velorum
     end
 
     def definitions?
-      runtime.function_definitions.any? || runtime.data_types.any? || runtime.flow_types.any?
+      runtime.function_definitions.any? && runtime.flow_types.any?
     end
 
     def client
@@ -161,7 +161,7 @@ module Velorum
 
     def no_definitions_response
       ServiceResponse.error(
-        message: 'No definitions are available to generate a flow',
+        message: 'The primary runtime must provide functions and flow types',
         error_code: :no_definitions
       )
     end

@@ -10,10 +10,6 @@ module Subscriptions
                required: true,
                description: 'AI generation request identifier returned by the mutation'
 
-      field :errors,
-            type: [Types::Errors::ErrorType],
-            null: false,
-            description: 'Errors encountered while generating the flow'
       field :flow,
             type: Types::Ai::GenerationFlowType,
             null: true,
@@ -24,7 +20,7 @@ module Subscriptions
       end
 
       def update(*)
-        unsubscribe(object)
+        unsubscribe(flow: object)
       end
     end
   end

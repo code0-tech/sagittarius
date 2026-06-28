@@ -118,9 +118,6 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
     <<~GQL
       subscription($executionIdentifier: String!) {
         aiGenerateFlow(executionIdentifier: $executionIdentifier) {
-          errors {
-            errorCode
-          }
           flow {
             name
             type {
@@ -199,7 +196,6 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
 
     expect(transmissions.last).to include('more' => false)
     expect(transmissions.last.dig('result', 'data', 'aiGenerateFlow')).to eq(
-      'errors' => [],
       'flow' => {
         'name' => 'Generated flow',
         'type' => {
@@ -284,24 +280,6 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
           }
         ],
       }
-    )
-  end
-
-  it 'delivers an error and closes the subscription when generation cannot start' do
-    perform :execute,
-            query: subscription_query,
-            variables: { executionIdentifier: execution_identifier }
-
-    error = {
-      error_code: :no_definitions,
-      details: [{ message: 'No definitions are available to generate a flow' }],
-    }
-    SubscriptionTriggers.ai_generate_flow(execution_identifier, nil, errors: [error])
-
-    expect(transmissions.last).to include('more' => false)
-    expect(transmissions.last.dig('result', 'data', 'aiGenerateFlow')).to eq(
-      'errors' => [{ 'errorCode' => 'NO_DEFINITIONS' }],
-      'flow' => nil
     )
   end
 end
