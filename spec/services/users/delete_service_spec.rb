@@ -26,6 +26,26 @@ RSpec.describe Users::DeleteService do
     )
   end
 
+  context 'when the user is the last administrator' do
+    let(:user) { current_user }
+
+    it 'does not delete the user' do
+      expect(service_response).not_to be_success
+      expect(service_response.payload[:error_code]).to eq(:cannot_delete_last_administrator)
+      expect(User.exists?(user.id)).to be true
+      is_expected.not_to create_audit_event(:user_deleted)
+    end
+  end
+
+  context 'when the user is an administrator and another administrator exists' do
+    let(:user) { create(:user, :admin) }
+
+    it 'deletes the user successfully' do
+      expect { service_response }.to change { User.exists?(user.id) }.from(true).to(false)
+      expect(service_response).to be_success
+    end
+  end
+
   context 'when current user lacks permission' do
     let(:current_user) { create(:user) }
 
