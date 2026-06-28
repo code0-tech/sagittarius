@@ -36,7 +36,10 @@ RSpec.describe 'usersRegister Mutation' do
 
   let(:variables) { { input: input } }
 
-  before { post_graphql mutation, variables: variables }
+  before do
+    stub_application_settings(user_registration_enabled: true)
+    post_graphql mutation, variables: variables
+  end
 
   it 'creates the user' do
     expect(graphql_data_at(:users_register, :user_session, :user, :id)).to be_present

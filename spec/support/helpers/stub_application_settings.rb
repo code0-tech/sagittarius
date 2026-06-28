@@ -4,6 +4,8 @@ module StubApplicationSettings
   def stub_application_settings(settings)
     current_settings = ApplicationSetting.current
 
+    allow(current_settings).to receive(:[]).and_call_original
+
     settings.each do |key, value|
       allow(current_settings).to receive(:[]).with(key.to_sym).and_return(value)
       allow(current_settings).to receive(:[]).with(key.to_s).and_return(value)

@@ -44,6 +44,8 @@ RSpec.describe 'usersIdentityRegister Mutation' do
   end
 
   before do
+    stub_application_settings(user_registration_enabled: true)
+
     setup_identity_provider Code0::Identities::Identity.new(:google, 'identifier', 'username', 'test@code0.tech',
                                                             'firstname', 'lastname')
 
