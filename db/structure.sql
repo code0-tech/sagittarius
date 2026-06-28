@@ -1,3 +1,47 @@
+CREATE FUNCTION delete_data_types_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'DataType' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_flow_type_settings_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'FlowTypeSetting' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_flow_types_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'FlowType' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_function_definitions_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'FunctionDefinition' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_module_configuration_definitions_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'ModuleConfigurationDefinition' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_parameter_definitions_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'ParameterDefinition' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_runtime_flow_type_settings_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'RuntimeFlowTypeSetting' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_runtime_flow_types_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'RuntimeFlowType' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_runtime_function_definitions_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'RuntimeFunctionDefinition' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_runtime_modules_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'RuntimeModule' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
+CREATE FUNCTION delete_runtime_parameter_definitions_translations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN DELETE FROM "translations" WHERE "owner_type" = 'RuntimeParameterDefinition' AND "owner_id" IN (SELECT id FROM old_rows); RETURN NULL; END; $$;
+
 CREATE TABLE active_storage_attachments (
     id bigint NOT NULL,
     name character varying NOT NULL,
@@ -1697,6 +1741,28 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(ema
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
 
 CREATE UNIQUE INDEX index_users_on_totp_secret ON users USING btree (totp_secret) WHERE (totp_secret IS NOT NULL);
+
+CREATE TRIGGER trigger_delete_data_types_translations AFTER DELETE ON data_types REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_data_types_translations();
+
+CREATE TRIGGER trigger_delete_flow_type_settings_translations AFTER DELETE ON flow_type_settings REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_flow_type_settings_translations();
+
+CREATE TRIGGER trigger_delete_flow_types_translations AFTER DELETE ON flow_types REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_flow_types_translations();
+
+CREATE TRIGGER trigger_delete_function_definitions_translations AFTER DELETE ON function_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_function_definitions_translations();
+
+CREATE TRIGGER trigger_delete_module_configuration_definitions_translations AFTER DELETE ON module_configuration_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_module_configuration_definitions_translations();
+
+CREATE TRIGGER trigger_delete_parameter_definitions_translations AFTER DELETE ON parameter_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_parameter_definitions_translations();
+
+CREATE TRIGGER trigger_delete_runtime_flow_type_settings_translations AFTER DELETE ON runtime_flow_type_settings REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_runtime_flow_type_settings_translations();
+
+CREATE TRIGGER trigger_delete_runtime_flow_types_translations AFTER DELETE ON runtime_flow_types REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_runtime_flow_types_translations();
+
+CREATE TRIGGER trigger_delete_runtime_function_definitions_translations AFTER DELETE ON runtime_function_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_runtime_function_definitions_translations();
+
+CREATE TRIGGER trigger_delete_runtime_modules_translations AFTER DELETE ON runtime_modules REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_runtime_modules_translations();
+
+CREATE TRIGGER trigger_delete_runtime_parameter_definitions_translations AFTER DELETE ON runtime_parameter_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_runtime_parameter_definitions_translations();
 
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_0d79310cfa FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
