@@ -1163,6 +1163,7 @@ CREATE TABLE users (
     totp_secret text,
     email_verified_at timestamp with time zone,
     readme text,
+    user_type integer DEFAULT 0 NOT NULL,
     CONSTRAINT check_11461c37fb CHECK ((char_length(readme) <= 5000)),
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),

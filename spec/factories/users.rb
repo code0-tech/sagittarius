@@ -18,6 +18,10 @@ FactoryBot.define do
       admin { true }
     end
 
+    trait :ghost do
+      user_type { :ghost }
+    end
+
     trait :with_namespace do
       after :build, &:ensure_namespace
     end

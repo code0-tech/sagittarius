@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-return unless User.none?
+return unless User.regular.none?
 
 initial_root_email = ENV.fetch('INITIAL_ROOT_MAIL', nil)
 initial_root_password = ENV.fetch('INITIAL_ROOT_PASSWORD', SecureRandom.hex)

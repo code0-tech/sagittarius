@@ -31,6 +31,7 @@ RSpec.describe 'usersDelete Mutation' do
   let(:current_user) { create(:user, :admin) }
 
   before do
+    create(:user, :ghost)
     post_graphql mutation, variables: variables, current_user: current_user
   end
 
