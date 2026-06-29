@@ -17,8 +17,6 @@ module Types
 
       argument :type, Types::GlobalIdType[::FlowType], required: true,
                                                        description: 'The identifier of the flow type'
-
-      argument :signature, String, required: false, description: 'The signature of the flow'
     end
   end
 end

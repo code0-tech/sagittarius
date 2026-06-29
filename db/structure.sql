@@ -361,9 +361,7 @@ CREATE TABLE flows (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     validation_status integer DEFAULT 0 NOT NULL,
-    disabled_reason integer,
-    signature text DEFAULT ''::text NOT NULL,
-    CONSTRAINT check_8c731c24ec CHECK ((char_length(signature) <= 500))
+    disabled_reason integer
 );
 
 CREATE SEQUENCE flows_id_seq
