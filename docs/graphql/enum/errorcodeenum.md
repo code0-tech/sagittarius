@@ -80,6 +80,7 @@ Represents the available error responses
 | `NAMESPACE_ROLE_NOT_FOUND` | The namespace role with the given identifier was not found |
 | `NODE_NOT_FOUND` | The node with this id does not exist |
 | `NO_DATA_TYPE_FOR_IDENTIFIER` | No data type could be found for the given identifier |
+| `NO_DEFINITIONS` | No definitions are available to generate a flow |
 | `NO_FREE_LICENSE_SEATS` | There are no free license seats to complete this operation |
 | `NO_PRIMARY_RUNTIME` | The project does not have a primary runtime |
 | `ORGANIZATION_NOT_FOUND` | The organization with the given identifier was not found |
