@@ -17,7 +17,6 @@ Represents a flow
 | `nodes` | [`NodeFunctionConnection!`](../object/nodefunctionconnection.md) | Nodes of the flow |
 | `project` | [`NamespaceProject!`](../object/namespaceproject.md) | The project the flow belongs to |
 | `settings` | [`FlowSettingConnection!`](../object/flowsettingconnection.md) | The settings of the flow |
-| `signature` | [`String!`](../scalar/string.md) | The signature of the flow |
 | `startingNodeId` | [`NodeFunctionID`](../scalar/nodefunctionid.md) | The ID of the starting node of the flow |
 | `type` | [`FlowType!`](../object/flowtype.md) | The flow type of the flow |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Flow was last updated |

@@ -41,8 +41,6 @@ class Flow < ApplicationRecord
                    allow_blank: false,
                    uniqueness: { case_sensitive: false, scope: :project_id }
 
-  validates :signature, presence: true, length: { maximum: 500 }
-
   scope :enabled, -> { where(disabled_reason: nil) }
   scope :disabled, -> { where.not(disabled_reason: nil) }
 
@@ -61,7 +59,7 @@ class Flow < ApplicationRecord
       settings: flow_settings.map(&:to_grpc),
       starting_node_id: starting_node&.id,
       node_functions: node_functions.map(&:to_grpc),
-      signature: signature
+      signature: flow_type.signature
     )
   end
 

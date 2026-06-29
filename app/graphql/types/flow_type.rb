@@ -23,9 +23,6 @@ module Types
           null: false,
           method: :flow_settings,
           description: 'The settings of the flow'
-    field :signature, String,
-          null: false,
-          description: 'The signature of the flow'
     field :starting_node_id, Types::GlobalIdType[::NodeFunction],
           null: true,
           description: 'The ID of the starting node of the flow'

@@ -38,8 +38,7 @@ module Namespaces
             flow = Flow.new(
               project: namespace_project,
               name: flow_input.name,
-              flow_type: flow_type,
-              signature: flow_input.signature.presence || flow_type.signature
+              flow_type: flow_type
             )
 
             unless flow.save
