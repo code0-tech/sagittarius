@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-User.seed_once :username do |u|
-  u.username = User::GHOST_USERNAME
-  u.email = User::GHOST_EMAIL
-  u.password = SecureRandom.hex
-  u.admin = false
-end
-
 ApplicationSetting.seed_once :setting do |s|
   s.setting = :user_registration_enabled
   s.value = false

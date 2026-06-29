@@ -1165,6 +1165,7 @@ CREATE TABLE users (
     email_verified_at timestamp with time zone,
     readme text,
     blocked_at timestamp with time zone,
+    user_type integer DEFAULT 0 NOT NULL,
     CONSTRAINT check_11461c37fb CHECK ((char_length(readme) <= 5000)),
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),

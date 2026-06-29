@@ -9,9 +9,7 @@ RSpec.describe Users::DeleteService do
 
   let(:user) { create(:user) }
   let(:current_user) { create(:user, :admin) }
-  let!(:ghost_user) do
-    create(:user, username: User::GHOST_USERNAME, email: User::GHOST_EMAIL)
-  end
+  let!(:ghost_user) { create(:user, :ghost) }
 
   it 'deletes the user successfully' do
     namespace_id = user.ensure_namespace.id
@@ -86,9 +84,9 @@ RSpec.describe Users::DeleteService do
   context 'when deleting the ghost user' do
     let(:user) { ghost_user }
 
-    it 'returns an invalid user error' do
+    it 'returns a missing permission error' do
       expect(service_response).not_to be_success
-      expect(service_response.payload[:error_code]).to eq(:invalid_user)
+      expect(service_response.payload[:error_code]).to eq(:missing_permission)
       expect(User.exists?(ghost_user.id)).to be true
     end
   end
