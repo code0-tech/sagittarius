@@ -4,13 +4,26 @@ module Sagittarius
   class Configuration
     extend Code0::ZeroTrack::Memoize
 
+    CONFIG_FILES_ENV = 'SAGITTARIUS_CONFIG_FILES'
+
     def self.config
       memoize(:config) do
-        file_config = YAML.safe_load_file(Rails.root.join('config/sagittarius.yml')).deep_symbolize_keys
-        defaults.deep_merge(file_config)
-      rescue Errno::ENOENT # config file does not exist
+        configured_files = ENV.fetch(CONFIG_FILES_ENV, nil)
+        config_files(configured_files).reduce(defaults) do |config, config_file|
+          file_config = YAML.safe_load_file(config_file).deep_symbolize_keys
+          config.deep_merge(file_config)
+        end
+      rescue Errno::ENOENT
+        raise if configured_files.present?
+
         defaults
       end
+    end
+
+    def self.config_files(configured_files = ENV.fetch(CONFIG_FILES_ENV, nil))
+      return [Rails.root.join('config/sagittarius.yml')] if configured_files.blank?
+
+      configured_files.split(',').map(&:strip).reject(&:empty?)
     end
 
     def self.application_setting_overrides
