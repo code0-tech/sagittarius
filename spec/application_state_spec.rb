@@ -20,6 +20,17 @@ RSpec.describe 'application state', :eager_load do
 
   describe 'good_job' do
     it { expect(GoodJob.migrated?).to be true }
+
+    it 'log subscriber overrides all log messages' do
+      ignored_overrides = %i[info fatal debug unknown error warn logger]
+
+      GoodJob::LogSubscriber.instance_methods(false).each do |method|
+        next if ignored_overrides.include?(method)
+
+        expect(Sagittarius::Middleware::GoodJob::LogSubscriber.method_defined?(method, false))
+          .to be(true), "#{Sagittarius::Middleware::GoodJob::LogSubscriber} should define #{method}"
+      end
+    end
   end
 end
 # rubocop:enable RSpec/DescribeClass
