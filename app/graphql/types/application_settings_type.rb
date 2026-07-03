@@ -32,5 +32,9 @@ module Types
     field :identity_providers, Types::IdentityProviderType.connection_type,
           null: false,
           description: 'List of configured identity providers'
+
+    field :runtime_max_heartbeat_interval_minutes, GraphQL::Types::Int,
+          null: false,
+          description: 'The maximum amount of minutes a runtime is shown as connected after the last heartbeat'
   end
 end

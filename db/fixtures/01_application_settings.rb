@@ -34,3 +34,8 @@ ApplicationSetting.seed_once :setting do |s|
   s.setting = :legal_notice_url
   s.value = nil
 end
+
+ApplicationSetting.seed_once :setting do |s|
+  s.setting = :runtime_max_heartbeat_interval_minutes
+  s.value = 10
+end
