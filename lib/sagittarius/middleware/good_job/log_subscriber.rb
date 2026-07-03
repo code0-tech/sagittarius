@@ -118,6 +118,32 @@ module Sagittarius
           end
         end
 
+        def enqueue_concurrency_limit_exceeded(event)
+          job = event.payload[:job]
+          in_context do
+            logger.info(
+              message: 'Aborted enqueue of job because concurrency key has reached enqueue limit',
+              job_class: job.class.name,
+              execution_id: job.id,
+              concurrency_key: event.payload[:key],
+              concurrency_limit: event.payload[:limit]
+            )
+          end
+        end
+
+        def enqueue_concurrency_throttle_exceeded(event)
+          job = event.payload[:job]
+          in_context do
+            logger.info(
+              message: 'Aborted enqueue of job because concurrency key has reached throttle limit',
+              job_class: job.class.name,
+              execution_id: job.id,
+              concurrency_key: event.payload[:key],
+              concurrency_limit: event.payload[:limit]
+            )
+          end
+        end
+
         def systemd_watchdog_start(event)
           in_context { logger.info(message: 'Pinging systemd watchdog', interval_s: event.payload[:interval]) }
         end
