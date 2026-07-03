@@ -25,6 +25,9 @@ module Mutations
       argument :privacy_url, String,
                required: false,
                description: 'Set the URL to the privacy policy page.'
+      argument :runtime_max_heartbeat_interval_minutes, GraphQL::Types::Int,
+               required: false,
+               description: 'Set the maximum amount of minutes a runtime is shown as connected after the last heartbeat'
       argument :terms_and_conditions_url, String,
                required: false,
                description: 'Set the URL to the terms and conditions page.'
