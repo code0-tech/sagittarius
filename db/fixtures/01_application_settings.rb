@@ -2,7 +2,7 @@
 
 ApplicationSetting.seed_once :setting do |s|
   s.setting = :user_registration_enabled
-  s.value = true
+  s.value = false
 end
 
 ApplicationSetting.seed_once :setting do |s|
