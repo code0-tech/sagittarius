@@ -1,4 +1,6 @@
-# Setup
+---
+title: Setup
+---
 
 ## Configuration
 
