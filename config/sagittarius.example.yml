@@ -33,4 +33,11 @@ velorum:
   jwt_secret:
   jwt_ttl_minutes: 8
 
+opentelemetry:
+  enabled: false
+  service_name: sagittarius
+  logs_endpoint:
+  metrics_endpoint:
+  traces_endpoint:
+
 application_setting_overrides: {}

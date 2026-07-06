@@ -72,6 +72,13 @@ module Sagittarius
           jwt_secret: nil,
           jwt_ttl_minutes: 8,
         },
+        opentelemetry: {
+          enabled: false,
+          service_name: 'sagittarius',
+          logs_endpoint: nil,
+          metrics_endpoint: nil,
+          traces_endpoint: nil,
+        },
         application_setting_overrides: {},
       }
     end
