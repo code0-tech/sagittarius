@@ -360,7 +360,7 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
             definition_data_types: [
               {
                 identifier: 'A_TYPE',
-                type: 'A' * 9000,
+                type: 'A' * 66_000,
                 linked_data_type_identifiers: [],
                 version: '1.0.0',
                 definition_source: 'module-a',
