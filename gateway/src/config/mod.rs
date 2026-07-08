@@ -9,6 +9,7 @@ const CONFIG_FILE: &str = "gateway";
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
+#[derive(Default)]
 pub struct Config {
     pub backend: Backend,
     pub grpc: Grpc,
@@ -44,14 +45,6 @@ impl Default for Backend {
     }
 }
 
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            backend: Default::default(),
-            grpc: Default::default(),
-        }
-    }
-}
 
 impl Config {
     pub fn new() -> Self {
