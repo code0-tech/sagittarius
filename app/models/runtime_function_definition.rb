@@ -45,7 +45,7 @@ class RuntimeFunctionDefinition < ApplicationRecord
   def to_grpc
     Tucana::Shared::RuntimeFunctionDefinition.new(
       runtime_name: runtime_name,
-      runtime_parameter_definitions: parameters.map(&:to_grpc),
+      runtime_parameter_definitions: ordered_parameters.map(&:to_grpc),
       signature: signature,
       throws_error: throws_error,
       name: names.map(&:to_grpc),
@@ -60,5 +60,9 @@ class RuntimeFunctionDefinition < ApplicationRecord
       display_icon: display_icon,
       design: design
     )
+  end
+
+  def ordered_parameters
+    parameters.sort_by(&:id)
   end
 end
