@@ -3,6 +3,7 @@ use tonic::transport::{Channel, Endpoint};
 use tucana::sagittarius_rails::execution_service_client::ExecutionServiceClient;
 use tucana::sagittarius_rails::{ExecutionRequest, ExecutionResponse};
 
+#[derive(Clone)]
 pub struct SagittariusRailsExecutionServiceClient {
     inner: ExecutionServiceClient<Channel>,
 }
@@ -19,10 +20,10 @@ impl SagittariusRailsExecutionServiceClient {
     }
 
     pub async fn update(
-        &mut self,
+        &self,
         request: ExecutionRequest,
     ) -> Result<tonic::Response<ExecutionResponse>, tonic::Status> {
         log::debug!("Proxying a execution response.");
-        self.inner.update(request).await
+        self.inner.clone().update(request).await
     }
 }
