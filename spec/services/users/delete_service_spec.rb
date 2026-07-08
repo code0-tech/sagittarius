@@ -11,7 +11,12 @@ RSpec.describe Users::DeleteService do
   let(:current_user) { create(:user, :admin) }
 
   it 'deletes the user successfully' do
+    namespace_id = user.ensure_namespace.id
+
     expect { service_response }.to change { User.exists?(user.id) }.from(true).to(false)
+                                                                   .and change {
+                                                                          Namespace.exists?(namespace_id)
+                                                                        }.from(true).to(false)
     expect(service_response).to be_success
     expect(service_response.payload).to eq(user)
 

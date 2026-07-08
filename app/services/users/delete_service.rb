@@ -17,6 +17,8 @@ module Users
       end
 
       transactional do |t|
+        namespace = user.namespace
+
         user.destroy
 
         if user.persisted?
@@ -26,6 +28,8 @@ module Users
             details: user.errors
           )
         end
+
+        namespace&.delete
 
         AuditService.audit(
           :user_deleted,

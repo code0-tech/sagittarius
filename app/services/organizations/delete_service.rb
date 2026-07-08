@@ -17,6 +17,8 @@ module Organizations
       end
 
       transactional do |t|
+        namespace = organization.ensure_namespace
+
         organization.delete
 
         if organization.persisted?
@@ -25,12 +27,14 @@ module Organizations
                                                        details: organization.errors)
         end
 
+        namespace.delete
+
         AuditService.audit(
           :organization_deleted,
           author_id: current_authentication.user.id,
           entity: organization,
           details: {},
-          target: organization.ensure_namespace
+          target: namespace
         )
 
         ServiceResponse.success(message: 'Organization deleted', payload: organization)
