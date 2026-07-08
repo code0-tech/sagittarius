@@ -69,6 +69,26 @@ RSpec.describe 'namespacesRolesDelete Mutation' do
         target_type: 'Namespace'
       )
     end
+
+    context 'when role is assigned to a project' do
+      before do
+        create(:namespace_role_project_assignment,
+               role: namespace_role,
+               project: create(:namespace_project, namespace: namespace))
+      end
+
+      it 'deletes namespace role' do
+        mutate!
+
+        expect(graphql_data_at(:namespaces_roles_delete, :namespace_role, :id)).to be_present
+
+        expect(
+          SagittariusSchema.object_from_id(
+            graphql_data_at(:namespaces_roles_delete, :namespace_role, :id)
+          )
+        ).to be_nil
+      end
+    end
   end
 
   context 'when user is not a member of the namespace' do
