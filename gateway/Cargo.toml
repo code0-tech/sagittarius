@@ -4,11 +4,11 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-anyhow = "1.0.100"
-async-trait = "0.1.89"
-config = "0.15.25"
-log = "0.4.33"
-serde = { version = "1.0.228", features = ["derive"] }
-tokio = { version = "1.52.3", features = ["macros", "rt-multi-thread", "sync"] }
-tonic = "0.14.6"
-tucana = { path = "../../tucana/build/rust", features = ["sagittarius_gateway", "sagittarius_rails"] }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+config = { workspace = true }
+log = { workspace = true }
+serde = { workspace = true }
+tokio = { workspace = true }
+tonic = { workspace = true }
+tucana = { workspace = true }
