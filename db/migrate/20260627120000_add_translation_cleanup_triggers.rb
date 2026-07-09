@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require Rails.root.join('lib/sagittarius/database/polymorphic_cleanup_trigger')
 
 class AddTranslationCleanupTriggers < Code0::ZeroTrack::Database::Migration[1.0]
   include Sagittarius::Database::PolymorphicCleanupTrigger
