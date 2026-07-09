@@ -53,6 +53,20 @@ RSpec.describe Users::LoginService do
       it_behaves_like 'creates correct audit event', :username, :email
     end
 
+    context 'when user is blocked' do
+      let(:params) { { username: username, password: password } }
+
+      before do
+        current_user.update!(blocked_at: Time.zone.now)
+      end
+
+      it 'returns an error response' do
+        expect(service_response).to be_error
+        expect(service_response.payload[:error_code]).to eq(:user_blocked)
+        is_expected.not_to create_audit_event
+      end
+    end
+
     context 'when using mfa' do
       context 'when mfa is not activated' do
         let(:params) do
