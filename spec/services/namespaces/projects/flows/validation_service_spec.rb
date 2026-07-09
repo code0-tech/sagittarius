@@ -48,11 +48,13 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
       flow.update!(starting_node: node_function)
       allow(UpdateRuntimesForProjectJob).to receive(:perform_later)
 
-      result = Triangulum::Validation::Result.new(valid?: valid, return_type: nil, diagnostics: [])
+      result = Triangulum::Validation::Result.new(valid?: valid, return_type: nil, diagnostics: diagnostics)
       allow(Triangulum::Validation).to receive(:new).and_return(
         instance_double(Triangulum::Validation, validate: result)
       )
     end
+
+    let(:diagnostics) { [] }
 
     context 'when validation passes' do
       let(:valid) { true }
@@ -61,6 +63,12 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
         service.execute
 
         expect(flow.reload.validation_status).to eq('valid')
+      end
+
+      it 'clears validation diagnostics' do
+        service.execute
+
+        expect(flow.reload.validation_diagnostics).to eq([])
       end
 
       it 'enqueues UpdateRuntimesForProjectJob' do
@@ -72,11 +80,52 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
 
     context 'when validation fails' do
       let(:valid) { false }
+      let(:diagnostics) do
+        [
+          Triangulum::Validation::Diagnostic.new(
+            message: 'First validation failure',
+            code: 1001,
+            severity: 'error',
+            node_id: 123,
+            parameter_index: 0
+          ),
+          Triangulum::Validation::Diagnostic.new(
+            message: 'Second validation failure',
+            code: 1002,
+            severity: 'warning',
+            node_id: nil,
+            parameter_index: nil
+          )
+        ]
+      end
 
       it 'sets validation status to invalid' do
         service.execute
 
         expect(flow.reload.validation_status).to eq('invalid')
+      end
+
+      it 'stores validation diagnostics' do
+        service.execute
+
+        expect(flow.reload.validation_diagnostics).to eq(
+          [
+            {
+              'message' => 'First validation failure',
+              'code' => 1001,
+              'severity' => 'error',
+              'node_id' => 123,
+              'parameter_index' => 0,
+            },
+            {
+              'message' => 'Second validation failure',
+              'code' => 1002,
+              'severity' => 'warning',
+              'node_id' => nil,
+              'parameter_index' => nil,
+            }
+          ]
+        )
       end
 
       it 'enqueues UpdateRuntimesForProjectJob' do

@@ -363,6 +363,7 @@ CREATE TABLE flows (
     validation_status integer DEFAULT 0 NOT NULL,
     disabled_reason integer,
     signature text DEFAULT ''::text NOT NULL,
+    validation_diagnostics jsonb DEFAULT '[]'::jsonb NOT NULL,
     CONSTRAINT check_8c731c24ec CHECK ((char_length(signature) <= 500))
 );
 
