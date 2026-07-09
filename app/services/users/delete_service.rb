@@ -30,6 +30,14 @@ module Users
         end
 
         namespace&.delete
+        
+        if namespace.present? && namespace.persisted?
+          t.rollback_and_return! ServiceResponse.error(
+            message: 'Failed to delete user namespace',
+            error_code: :invalid_user,
+            details: namespace.errors
+          )
+        end
 
         AuditService.audit(
           :user_deleted,

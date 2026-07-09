@@ -28,13 +28,19 @@ module Organizations
         end
 
         namespace.delete
+        
+        if namespace.persisted?
+          t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete namespace',
+                                                       error_code: :invalid_organization,
+                                                       details: namespace.errors)
+        end
 
         AuditService.audit(
           :organization_deleted,
           author_id: current_authentication.user.id,
           entity: organization,
           details: {},
-          target: namespace
+          target: AuditEvent::GLOBAL_TARGET
         )
 
         ServiceResponse.success(message: 'Organization deleted', payload: organization)
