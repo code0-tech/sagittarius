@@ -9,6 +9,7 @@ Update an existing user.
 | Name | Type | Description |
 |------|------|-------------|
 | `admin` | [`Boolean`](../scalar/boolean.md) | New global admin status for the user. |
+| `blocked` | [`Boolean`](../scalar/boolean.md) | New blocked status for the user. |
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `email` | [`String`](../scalar/string.md) | New email for the user. |
 | `firstname` | [`String`](../scalar/string.md) | New firstname for the user. |

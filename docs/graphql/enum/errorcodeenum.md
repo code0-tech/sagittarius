@@ -7,8 +7,10 @@ Represents the available error responses
 | Value | Description |
 |-------|-------------|
 | `CANNOT_DELETE_LAST_ADMIN_ROLE` | This action would remove the last administrative role |
+| `CANNOT_MODERATE_USER` | Only administrators can modify moderation status of users |
 | `CANNOT_MODIFY_ADMIN` | Only administrators can modify admin status of users |
 | `CANNOT_MODIFY_OWN_ADMIN` | Users cannot modify their own admin status |
+| `CANNOT_MODIFY_OWN_BLOCKED_STATUS` | Users cannot modify their own blocked status |
 | `CANNOT_REMOVE_LAST_ADMINISTRATOR` | This action would remove the last administrator |
 | `CANNOT_REMOVE_LAST_ADMIN_ABILITY` | This action would remove the last administrative ability |
 | `CYCLIC_DATA_TYPE_REFERENCE` | A data type dependency cycle was detected |
@@ -98,6 +100,7 @@ Represents the available error responses
 | `TOTP_SECRET_ALREADY_SET` | This user already has TOTP set up |
 | `UNMODIFIABLE_FIELD` | The user is not permitted to modify this field |
 | `UNSUPPORTED_AUTHENTICATION` | The current authentication is not supported for this operation |
+| `USER_BLOCKED` | The user is blocked from accessing the application |
 | `USER_NOT_FOUND` | The user with the given identifier was not found |
 | `USER_SESSION_NOT_FOUND` | The user session with the given identifier was not found |
 | `WRONG_TOTP` | Invalid TOTP code provided |
