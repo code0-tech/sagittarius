@@ -148,7 +148,7 @@ GEM
       base64
       fiber-storage
       logger
-    grpc (1.81.1)
+    grpc (1.82.0)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     httparty (0.23.2)
