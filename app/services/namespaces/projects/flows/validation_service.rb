@@ -24,7 +24,7 @@ module Namespaces
 
           flow.update!(
             validation_status: result.valid? ? :valid : :invalid,
-            validation_message: validation_message(result)
+            validation_diagnostics: validation_diagnostics(result)
           )
 
           UpdateRuntimesForProjectJob.perform_later(flow.project.id)
@@ -34,10 +34,16 @@ module Namespaces
 
         private
 
-        def validation_message(result)
-          return [] if result.valid?
-
-          result.diagnostics.filter_map(&:message)
+        def validation_diagnostics(result)
+          result.diagnostics.map do |diagnostic|
+            {
+              message: diagnostic.message,
+              code: diagnostic.code,
+              severity: diagnostic.severity,
+              node_id: diagnostic.node_id,
+              parameter_index: diagnostic.parameter_index,
+            }
+          end
         end
       end
     end

@@ -17,9 +17,9 @@ module Types
           null: false,
           description: 'The validation status of the flow'
 
-    field :validation_message, [String],
+    field :validation_diagnostics, [Types::FlowValidationDiagnosticType],
           null: false,
-          description: 'The latest validation messages of the flow'
+          description: 'The latest validation diagnostics of the flow'
     # rubocop:enable GraphQL/ExtractType
 
     field :project, Types::NamespaceProjectType,

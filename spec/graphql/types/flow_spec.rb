@@ -8,7 +8,7 @@ RSpec.describe SagittariusSchema.types['Flow'] do
       name
       disabled_reason
       validation_status
-      validation_message
+      validation_diagnostics
       project
       settings
       signature
