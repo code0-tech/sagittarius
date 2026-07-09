@@ -9,6 +9,7 @@ RSpec.describe 'execution results Query' do
   let(:project) { create(:namespace_project, namespace: namespace) }
   let(:runtime) { create(:runtime, namespace: namespace) }
   let(:flow_type) { create(:flow_type, runtime: runtime) }
+  let(:validation_node_function) { create(:node_function) }
   let(:flow) do
     create(
       :flow,
@@ -19,7 +20,7 @@ RSpec.describe 'execution results Query' do
           'message' => 'Last validation failed',
           'code' => 1001,
           'severity' => 'error',
-          'node_id' => 123,
+          'node_id' => validation_node_function.id,
           'parameter_index' => 0,
         }
       ]
@@ -142,7 +143,7 @@ RSpec.describe 'execution results Query' do
           'message' => 'Last validation failed',
           'code' => 1001,
           'severity' => 'error',
-          'nodeId' => 123,
+          'nodeId' => validation_node_function.to_global_id.to_s,
           'parameterIndex' => 0,
         }
       ]
