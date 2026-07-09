@@ -44,13 +44,17 @@ RSpec.describe Organizations::DeleteService do
     it { expect { service_response }.to change { Organization.count }.by(-1) }
 
     it do
+      expect { service_response }.to change { Namespace.exists?(organization.namespace.id) }.from(true).to(false)
+    end
+
+    it do
       expect { service_response }.to create_audit_event(
         :organization_deleted,
         author_id: current_user.id,
         entity_type: 'Organization',
         details: {},
-        target_id: organization.namespace.id,
-        target_type: 'Namespace'
+        target_id: 0,
+        target_type: 'global'
       )
     end
   end
