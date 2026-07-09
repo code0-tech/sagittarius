@@ -14,7 +14,6 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
           #{error_query}
           flow {
             id
-            signature
             startingNodeId
             nodes {
               count
@@ -180,11 +179,8 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
         graphql_data_at(:namespaces_projects_flows_create, :flow)
       ).to match a_graphql_entity_for(
         flow,
-        :signature,
         starting_node_id: flow.starting_node.to_global_id.to_s
       )
-
-      expect(flow.signature).to eq(flow_type.signature)
 
       expect(graphql_data_at(:namespaces_projects_flows_create, :flow, :settings).size).to eq(1)
 
