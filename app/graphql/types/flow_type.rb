@@ -12,9 +12,15 @@ module Types
           null: true,
           description: 'The reason why the flow is disabled, if it is disabled'
 
+    # rubocop:disable GraphQL/ExtractType -- validation metadata is exposed directly on Flow
     field :validation_status, Types::FlowValidationStatusEnum,
           null: false,
           description: 'The validation status of the flow'
+
+    field :validation_message, [String],
+          null: false,
+          description: 'The latest validation messages of the flow'
+    # rubocop:enable GraphQL/ExtractType
 
     field :project, Types::NamespaceProjectType,
           null: false,

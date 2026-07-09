@@ -22,15 +22,22 @@ module Namespaces
             data_types.map(&:to_grpc)
           ).validate
 
-          if result.valid?
-            flow.update!(validation_status: :valid)
-          else
-            flow.update!(validation_status: :invalid)
-          end
+          flow.update!(
+            validation_status: result.valid? ? :valid : :invalid,
+            validation_message: validation_message(result)
+          )
 
           UpdateRuntimesForProjectJob.perform_later(flow.project.id)
 
           result
+        end
+
+        private
+
+        def validation_message(result)
+          return [] if result.valid?
+
+          result.diagnostics.filter_map(&:message)
         end
       end
     end
