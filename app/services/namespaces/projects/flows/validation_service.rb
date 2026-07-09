@@ -27,7 +27,7 @@ module Namespaces
             validation_diagnostics: result.diagnostics
           )
 
-          UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+          UpdateFlowForProjectJob.perform_later(flow.id) if result.valid?
 
           result
         end
