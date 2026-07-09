@@ -28,7 +28,7 @@ module Organizations
         end
 
         namespace.delete
-        
+
         if namespace.persisted?
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to delete namespace',
                                                        error_code: :invalid_organization,
