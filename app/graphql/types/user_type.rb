@@ -12,14 +12,14 @@ module Types
           null: true,
           description: 'Global admin status of the user',
           authorize: :read_admin_status
-    field :deletion_restriction, Types::UserDeletionRestrictionEnum,
-          null: true,
-          description: 'The reason why this user cannot be deleted'
     field :blocked, Boolean,
           null: true,
           description: 'Whether the user is blocked from accessing the application',
           authorize: :read_admin_status,
           method: :blocked?
+    field :deletion_restriction, Types::UserDeletionRestrictionEnum,
+          null: true,
+          description: 'The reason why this user cannot be deleted'
     field :email, String, null: true, description: 'Email of the user', authorize: :read_email
     field :email_verified_at, Types::TimeType,
           null: true,
