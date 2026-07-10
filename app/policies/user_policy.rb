@@ -3,7 +3,7 @@
 class UserPolicy < BasePolicy
   condition(:user_is_self) { subject.id == user&.id }
   condition(:user_is_admin) { user&.admin? || false }
-  condition(:user_is_regular) { subject.regular? }
+  condition(:subject_is_regular) { subject.regular? }
   condition(:admin_status_visible) { ApplicationSetting.current[:admin_status_visible] }
 
   rule { ~anonymous }.enable :read_user
@@ -13,11 +13,12 @@ class UserPolicy < BasePolicy
     enable :read_user_identity
     enable :update_attachment_avatar
     enable :read_email
+    enable :delete_user
     enable :read_admin_status
     enable :read_mfa_status
   end
 
-  rule { user_is_admin & user_is_regular }.enable :delete_user
+  rule { ~subject_is_regular }.prevent :delete_user
 
   rule { admin_status_visible & ~anonymous }.enable :read_admin_status
 
