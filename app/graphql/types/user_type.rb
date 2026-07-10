@@ -17,6 +17,9 @@ module Types
           description: 'Whether the user is blocked from accessing the application',
           authorize: :read_admin_status,
           method: :blocked?
+    field :deletion_restriction, Types::UserDeletionRestrictionEnum,
+          null: true,
+          description: 'The reason why this user cannot be deleted'
     field :email, String, null: true, description: 'Email of the user', authorize: :read_email
     field :email_verified_at, Types::TimeType,
           null: true,
@@ -76,6 +79,10 @@ module Types
         totp_enabled: object.totp_secret.present?,
         backup_codes_count: object.backup_codes.size,
       }
+    end
+
+    def deletion_restriction
+      Users::DeleteService.new(current_authentication, object).deletion_restriction
     end
   end
 end

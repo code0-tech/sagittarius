@@ -12,6 +12,7 @@ Represents a user
 | `avatarPath` | [`String`](../scalar/string.md) | The avatar if present of the user |
 | `blocked` | [`Boolean`](../scalar/boolean.md) | Whether the user is blocked from accessing the application |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this User was created |
+| `deletionRestriction` | [`UserDeletionRestriction`](../enum/userdeletionrestriction.md) | The reason why this user cannot be deleted |
 | `email` | [`String`](../scalar/string.md) | Email of the user |
 | `emailVerifiedAt` | [`Time`](../scalar/time.md) | Email verification date of the user if present |
 | `firstname` | [`String`](../scalar/string.md) | Firstname of the user |

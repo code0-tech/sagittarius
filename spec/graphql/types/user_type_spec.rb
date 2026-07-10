@@ -21,6 +21,7 @@ RSpec.describe SagittariusSchema.types['User'] do
       identities
       mfaStatus
       userAbilities
+      deletionRestriction
       createdAt
       updatedAt
     ]

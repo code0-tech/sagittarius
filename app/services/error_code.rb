@@ -17,6 +17,7 @@ class ErrorCode
       missing_permission: { description: 'The user is not permitted to perform this operation' },
       missing_parameter: { description: 'Not all required parameters are present' },
       cannot_remove_last_administrator: { description: 'This action would remove the last administrator' },
+      cannot_delete_last_administrator: { description: 'The last instance administrator cannot be deleted' },
       cannot_remove_last_admin_ability: { description: 'This action would remove the last administrative ability' },
       cannot_delete_last_admin_role: { description: 'This action would remove the last administrative role' },
       inconsistent_namespace: { description: 'Resources are from different namespaces' },
