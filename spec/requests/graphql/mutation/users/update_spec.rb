@@ -15,7 +15,6 @@ RSpec.describe 'usersUpdate Mutation' do
             username
             readme
             admin
-            blocked
           }
         }
       }
@@ -149,32 +148,6 @@ RSpec.describe 'usersUpdate Mutation' do
           target_type: 'User'
         )
       end
-    end
-  end
-
-  context 'when admin updates blocked status' do
-    let(:current_user) { create(:user, :admin) }
-    let(:user) { create(:user) }
-    let(:input) do
-      {
-        userId: user.to_global_id.to_s,
-        blocked: true,
-      }
-    end
-
-    it 'blocks the user' do
-      expect(graphql_data_at(:users_update, :user, :blocked)).to be(true)
-      expect(user.reload).to be_blocked
-
-      is_expected.to create_audit_event(
-        :user_updated,
-        author_id: current_user.id,
-        entity_id: user.id,
-        entity_type: 'User',
-        details: { blocked: true },
-        target_id: user.id,
-        target_type: 'User'
-      )
     end
   end
 

@@ -16,8 +16,7 @@ class ApplicationController < ActionController::API
   def create_authentication(token_type, token)
     case token_type
     when 'Session'
-      Sagittarius::Authentication.new(:session, UserSession.joins(:user).find_by(token: token, active: true,
-                                                                                 users: { blocked_at: nil }))
+      Sagittarius::Authentication.new(:session, UserSession.find_by(token: token, active: true))
     else
       Sagittarius::Authentication.new(:invalid, nil)
     end

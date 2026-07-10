@@ -13,7 +13,6 @@ RSpec.describe SagittariusSchema.types['User'] do
       lastname
       readme
       admin
-      blocked
       namespaceMemberships
       avatarPath
       emailVerifiedAt

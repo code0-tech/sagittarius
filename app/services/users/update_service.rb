@@ -34,18 +34,6 @@ module Users
         end
       end
 
-      if params.key?(:blocked)
-        unless current_authentication.user.admin?
-          return ServiceResponse.error(message: 'Cannot modify users moderation status because user isn`t admin',
-                                       error_code: :cannot_moderate_user)
-        end
-
-        if current_authentication.user == user
-          return ServiceResponse.error(message: 'Cannot modify own blocked status',
-                                       error_code: :cannot_modify_own_blocked_status)
-        end
-      end
-
       transactional do |t|
         mfa_type = nil
         if params.keys.intersect?(REQUIRES_MFA_FIELDS) && user.mfa_enabled? # is "critical" field
@@ -64,10 +52,7 @@ module Users
           end
         end
 
-        update_params = params.except(:blocked)
-        update_params[:blocked_at] = params[:blocked] ? Time.zone.now : nil if params.key?(:blocked)
-
-        success = user.update(update_params)
+        success = user.update(params)
         unless success
           t.rollback_and_return! ServiceResponse.error(
             message: 'Failed to update user',

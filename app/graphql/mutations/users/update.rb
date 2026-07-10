@@ -12,7 +12,6 @@ module Mutations
                description: 'ID of the user to update.'
 
       argument :admin, Boolean, required: false, description: 'New global admin status for the user.'
-      argument :blocked, Boolean, required: false, description: 'New blocked status for the user.'
       argument :email, String, required: false, description: 'New email for the user.'
       argument :firstname, String, required: false, description: 'New firstname for the user.'
       argument :lastname, String, required: false, description: 'New lastname for the user.'

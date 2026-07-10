@@ -44,18 +44,6 @@ RSpec.describe Users::Identity::LoginService do
       expect(service_response.payload.user.id).to eq(current_user.id)
       expect(service_response.payload.token).to be_present
     end
-
-    context 'when user is blocked' do
-      before do
-        current_user.update!(blocked_at: Time.zone.now)
-      end
-
-      it do
-        is_expected.not_to create_audit_event
-        expect(service_response).to be_error
-        expect(service_response.payload[:error_code]).to eq(:user_blocked)
-      end
-    end
   end
 
   context 'when user identity validation fails' do

@@ -18,10 +18,6 @@ FactoryBot.define do
       admin { true }
     end
 
-    trait :blocked do
-      blocked_at { Time.zone.now }
-    end
-
     trait :with_namespace do
       after :build, &:ensure_namespace
     end
