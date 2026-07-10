@@ -8,7 +8,7 @@ module EE
       def validate_user_limit!(t)
         license = License.current
         return if license.nil? || !license.restricted?(:user_count)
-        return if User.count <= license.restrictions[:user_count]
+        return if User.regular.count <= license.restrictions[:user_count]
 
         t.rollback_and_return! ServiceResponse.error(
           message: 'No free user seats in license',
