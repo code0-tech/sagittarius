@@ -19,9 +19,7 @@ RSpec.describe 'users Query' do
   end
 
   before do
-    create(:user)
-    create(:user)
-    create(:user)
+    create_list(:user, 3)
 
     post_graphql query, current_user: current_user
   end
@@ -46,7 +44,10 @@ RSpec.describe 'users Query' do
     let(:current_user) { create(:user, :admin) }
 
     it 'returns all users' do
-      expect(graphql_data_at(:users, :nodes)).to have_attributes(length: 4)
+      expected_ids = User.all.map { |user| user.to_gid.to_s }
+      returned_ids = graphql_data_at(:users, :nodes).pluck('id')
+
+      expect(returned_ids).to match_array(expected_ids)
     end
   end
 end

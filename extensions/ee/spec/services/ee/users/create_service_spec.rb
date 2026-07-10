@@ -26,4 +26,14 @@ RSpec.describe Users::CreateService do
     it { expect { service_response }.not_to change { User.count } }
     it { expect(service_response.payload[:error_code]).to eq(:no_free_license_seats) }
   end
+
+  context 'when non-regular users exist' do
+    before do
+      current_user
+      create(:user, :ghost)
+      create(:license, restrictions: { user_count: 2 })
+    end
+
+    it { is_expected.to be_success }
+  end
 end

@@ -18,7 +18,10 @@ module Users
 
       transactional do |t|
         namespace = user.namespace
+        ghost_user = User.ghost
+        audit_author_id = user == current_authentication.user ? ghost_user.id : current_authentication.user.id
 
+        user.authored_audit_events.update_all(author_id: ghost_user.id) # rubocop:disable Rails/SkipsModelValidations
         user.destroy
 
         if user.persisted?
@@ -41,7 +44,7 @@ module Users
 
         AuditService.audit(
           :user_deleted,
-          author_id: current_authentication.user.id,
+          author_id: audit_author_id,
           entity: user,
           target: AuditEvent::GLOBAL_TARGET,
           details: {}

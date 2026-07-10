@@ -3,7 +3,14 @@
 class User < ApplicationRecord
   include NamespaceParent
 
+  USER_TYPES = {
+    regular: 0,
+    ghost: 1,
+  }.freeze
+
   has_secure_password
+
+  enum :user_type, USER_TYPES
 
   validates :username, length: { maximum: 50 },
                        presence: true,
@@ -30,6 +37,10 @@ class User < ApplicationRecord
   has_many :user_identities, inverse_of: :user
 
   has_one_attached :avatar
+
+  def self.ghost
+    find_by!(user_type: :ghost)
+  end
 
   def mfa_enabled?
     totp_secret != nil

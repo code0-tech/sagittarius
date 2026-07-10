@@ -50,6 +50,16 @@ module Users
                                                          details: user_session.errors)
           end
 
+          unless Ability.allowed?(Sagittarius::Authentication.new(:session, user_session), :create_user_session)
+            logger.warn(
+              message: 'User was not allowed to create user session',
+              user_id: user.id,
+              username: user.username
+            )
+            t.rollback_and_return! ServiceResponse.error(message: 'Not allowed to create user session',
+                                                         error_code: :invalid_login_data)
+          end
+
           AuditService.audit(
             :user_logged_in,
             author_id: user.id,
