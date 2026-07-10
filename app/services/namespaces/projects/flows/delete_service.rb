@@ -29,7 +29,7 @@ module Namespaces
               )
             end
 
-            UpdateRuntimesForProjectJob.perform_later(flow.project.id)
+            DeleteFlowForProjectJob.perform_later(flow.project.id, flow.id)
 
             AuditService.audit(
               :flow_deleted,

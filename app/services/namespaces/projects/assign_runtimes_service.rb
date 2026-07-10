@@ -22,9 +22,12 @@ module Namespaces
           old_assignments_for_audit_event = namespace_project.runtime_assignments.map do |assignment|
             { id: assignment.runtime.id }
           end
+          primary_runtime = primary_runtime_after_assignment
+
+          validate_primary_runtime_after_assignment(primary_runtime, t)
 
           namespace_project.runtimes = runtimes
-          namespace_project.primary_runtime = primary_runtime_after_assignment
+          namespace_project.primary_runtime = primary_runtime
 
           unless namespace_project.save
             t.rollback_and_return! ServiceResponse.error(
@@ -58,6 +61,20 @@ module Namespaces
         return namespace_project.primary_runtime if runtimes.include?(namespace_project.primary_runtime)
 
         runtimes.first
+      end
+
+      def validate_primary_runtime_after_assignment(primary_runtime, t)
+        return if primary_runtime.blank?
+        return if namespace_project.primary_runtime.blank?
+        return if primary_runtime == namespace_project.primary_runtime
+
+        response = Runtimes::CheckRuntimeCompatibilityService.new(primary_runtime, namespace_project).execute
+        return if response.success?
+
+        t.rollback_and_return! ServiceResponse.error(
+          message: 'Runtime not compatible with primary runtime',
+          error_code: :runtime_not_compatible
+        )
       end
     end
   end

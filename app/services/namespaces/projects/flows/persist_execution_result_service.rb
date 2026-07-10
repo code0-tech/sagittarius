@@ -6,14 +6,15 @@ module Namespaces
       class PersistExecutionResultService
         include Code0::ZeroTrack::Loggable
 
-        attr_reader :grpc_result
+        attr_reader :grpc_result, :runtime_id
 
-        def initialize(grpc_result)
+        def initialize(grpc_result, runtime_id)
           @grpc_result = grpc_result
+          @runtime_id = runtime_id
         end
 
         def execute
-          flow = Flow.find_by(id: grpc_result.flow_id)
+          flow = flow_for
           return ServiceResponse.error(message: 'Flow not found', error_code: :flow_not_found) if flow.nil?
 
           execution_result = build_execution_result(flow)
@@ -55,7 +56,7 @@ module Namespaces
               position: index,
               started_at: node_result.started_at,
               finished_at: node_result.finished_at,
-              node_function: node_function_for(node_result),
+              node_function: node_function_for(node_result, result.flow),
               function_definition: function_definition_for(node_result, result.flow)
             )
 
@@ -73,16 +74,28 @@ module Namespaces
           end
         end
 
-        def node_function_for(node_result)
+        def flow_for
+          Flow
+            .joins(project: :runtime_assignments)
+            .find_by(
+              id: grpc_result.flow_id,
+              namespace_project_runtime_assignments: { runtime_id: runtime_id }
+            )
+        end
+
+        def node_function_for(node_result, flow)
           return unless node_result.id == :node_id
 
-          NodeFunction.find_by(id: node_result.node_id)
+          flow.node_functions.find_by(id: node_result.node_id)
         end
 
         def function_definition_for(node_result, flow)
           return unless node_result.id == :function_identifier
 
-          FunctionDefinition.find_by(runtime: flow.project.primary_runtime, identifier: node_result.function_identifier)
+          FunctionDefinition.find_by(
+            runtime: flow.project.primary_runtime,
+            identifier: node_result.function_identifier
+          )
         end
 
         def assign_result(record, grpc_record)

@@ -16,7 +16,7 @@ Represents a flow type
 | `displayMessages` | [`[Translation!]`](../object/translation.md) | Display message of the function |
 | `documentations` | [`[Translation!]`](../object/translation.md) | Documentations of the flow type |
 | `editable` | [`Boolean!`](../scalar/boolean.md) | Editable status of the flow type |
-| `flowTypeSettings` | [`[FlowTypeSetting!]!`](../object/flowtypesetting.md) | Flow type settings of the flow type |
+| `flowTypeSettings` | [`FlowTypeSettingConnection!`](../object/flowtypesettingconnection.md) | Flow type settings of the flow type |
 | `id` | [`FlowTypeID!`](../scalar/flowtypeid.md) | Global ID of this FlowType |
 | `identifier` | [`String!`](../scalar/string.md) | Identifier of the flow type |
 | `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this flow type |

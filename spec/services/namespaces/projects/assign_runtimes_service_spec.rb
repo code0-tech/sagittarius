@@ -171,6 +171,38 @@ RSpec.describe Namespaces::Projects::AssignRuntimesService do
           { namespace_project_id: project.id }
         )
       end
+
+      context 'when the new primary runtime is not compatible with the current primary runtime' do
+        before do
+          project.update!(primary_runtime: runtime)
+          create(:data_type, runtime: runtime)
+        end
+
+        it { is_expected.not_to be_success }
+        it { expect(service_response.payload[:error_code]).to eq(:runtime_not_compatible) }
+
+        it do
+          expect { service_response }.not_to change { project.reload.primary_runtime }
+        end
+
+        it do
+          expect { service_response }.not_to change {
+            project.reload.runtimes.order(:id).pluck(:id)
+          }
+        end
+
+        it do
+          expect { service_response }.not_to create_audit_event
+        end
+
+        it 'does not queue job to update runtimes' do
+          allow(UpdateRuntimeCompatibilityJob).to receive(:perform_later)
+
+          service_response
+
+          expect(UpdateRuntimeCompatibilityJob).not_to have_received(:perform_later)
+        end
+      end
     end
   end
 end

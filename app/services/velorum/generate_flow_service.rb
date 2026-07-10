@@ -34,6 +34,7 @@ module Velorum
       return flow_project_mismatch_response if flow.present? && flow.project != project
       return missing_permission_response if authorize? && !allowed?
       return no_primary_runtime_response if runtime.nil?
+      return no_definitions_response unless definitions?
 
       response = flow.present? ? client.flow(flow_request) : client.prompt(prompt_request)
       logger.debug(
@@ -123,6 +124,10 @@ module Velorum
       project.primary_runtime
     end
 
+    def definitions?
+      runtime.function_definitions.any? && runtime.flow_types.any?
+    end
+
     def client
       @client ||= Sagittarius::Velorum::Client.new
     end
@@ -152,6 +157,13 @@ module Velorum
 
     def no_primary_runtime_response
       ServiceResponse.error(message: 'Project has no primary runtime', error_code: :no_primary_runtime)
+    end
+
+    def no_definitions_response
+      ServiceResponse.error(
+        message: 'The primary runtime must provide functions and flow types',
+        error_code: :no_definitions
+      )
     end
 
     def flow_generation_failed_response(error)

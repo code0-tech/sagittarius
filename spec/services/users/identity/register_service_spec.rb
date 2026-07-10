@@ -15,6 +15,10 @@ RSpec.describe Users::Identity::RegisterService do
     allow(provider).to receive(:load_identity).and_return identity
   end
 
+  before do
+    stub_application_settings(user_registration_enabled: true)
+  end
+
   context 'when user is valid' do
     let(:provider_id) do
       :google

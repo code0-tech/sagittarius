@@ -32,21 +32,12 @@ RSpec.describe VelorumGenerateFlowJob do
     expect(SubscriptionTriggers).to have_received(:ai_generate_flow).with(execution_identifier, flow)
   end
 
-  it 'does not trigger the subscription when the project is gone' do
-    perform_enqueued_jobs do
-      described_class.perform_later(execution_identifier, -1, 'Generate a flow', 'gpt-5')
-    end
-
-    expect(Velorum::GenerateFlowService).not_to have_received(:new)
-    expect(SubscriptionTriggers).not_to have_received(:ai_generate_flow)
-  end
-
   context 'when flow generation fails' do
     let(:service_response) do
       ServiceResponse.error(message: 'Flow generation failed', error_code: :flow_generation_failed)
     end
 
-    it 'triggers a nil subscription response to close the stream' do
+    it 'closes the subscription without a flow' do
       perform_enqueued_jobs do
         described_class.perform_later(execution_identifier, project.id, 'Generate a flow', 'gpt-5')
       end

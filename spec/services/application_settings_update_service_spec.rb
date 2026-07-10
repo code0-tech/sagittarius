@@ -41,6 +41,10 @@ RSpec.describe ApplicationSettingsUpdateService do
     let(:current_user) { create(:user, :admin) }
     let(:params) { { user_registration_enabled: false } }
 
+    before do
+      ApplicationSetting.user_registration_enabled.update!(value: true)
+    end
+
     it { is_expected.to be_success }
     it { expect(service_response.payload).to include(user_registration_enabled: false) }
 

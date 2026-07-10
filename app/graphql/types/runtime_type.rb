@@ -33,7 +33,8 @@ module Types
     def status
       last_heartbeat = object.last_heartbeat
 
-      if last_heartbeat && last_heartbeat >= 10.minutes.ago
+      max_heartbeat_interval = ApplicationSetting.current[:runtime_max_heartbeat_interval_minutes]
+      if last_heartbeat && last_heartbeat >= max_heartbeat_interval.minutes.ago
         :connected
       else
         :disconnected

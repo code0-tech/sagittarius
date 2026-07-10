@@ -168,7 +168,7 @@ CREATE TABLE data_types (
     type text NOT NULL,
     definition_source text,
     runtime_module_id bigint NOT NULL,
-    CONSTRAINT check_01ca31b7b9 CHECK ((char_length(type) <= 8192)),
+    CONSTRAINT check_01ca31b7b9 CHECK ((char_length(type) <= 65536)),
     CONSTRAINT check_3a7198812e CHECK ((char_length(identifier) <= 50)),
     CONSTRAINT check_a133157a46 CHECK ((char_length(definition_source) <= 50))
 );
@@ -363,6 +363,7 @@ CREATE TABLE flows (
     validation_status integer DEFAULT 0 NOT NULL,
     disabled_reason integer,
     signature text DEFAULT ''::text NOT NULL,
+    validation_diagnostics jsonb DEFAULT '[]'::jsonb NOT NULL,
     CONSTRAINT check_8c731c24ec CHECK ((char_length(signature) <= 500))
 );
 
@@ -1163,6 +1164,7 @@ CREATE TABLE users (
     totp_secret text,
     email_verified_at timestamp with time zone,
     readme text,
+    blocked_at timestamp with time zone,
     CONSTRAINT check_11461c37fb CHECK ((char_length(readme) <= 5000)),
     CONSTRAINT check_3bedaaa612 CHECK ((char_length(email) <= 255)),
     CONSTRAINT check_56606ce552 CHECK ((char_length(username) <= 50)),
@@ -1798,7 +1800,7 @@ ALTER TABLE ONLY runtime_function_definition_data_type_links
     ADD CONSTRAINT fk_rails_5a52fd74a0 FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY namespace_role_project_assignments
-    ADD CONSTRAINT fk_rails_623f8a5b72 FOREIGN KEY (role_id) REFERENCES namespace_roles(id);
+    ADD CONSTRAINT fk_rails_623f8a5b72 FOREIGN KEY (role_id) REFERENCES namespace_roles(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_function_definition_data_type_links
     ADD CONSTRAINT fk_rails_64dd235e33 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
@@ -1813,7 +1815,7 @@ ALTER TABLE ONLY flow_types
     ADD CONSTRAINT fk_rails_687d671458 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_role_project_assignments
-    ADD CONSTRAINT fk_rails_69066bda8f FOREIGN KEY (project_id) REFERENCES namespace_projects(id);
+    ADD CONSTRAINT fk_rails_69066bda8f FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY flow_types
     ADD CONSTRAINT fk_rails_69115ada7f FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
@@ -1915,7 +1917,7 @@ ALTER TABLE ONLY module_configuration_definition_data_type_links
     ADD CONSTRAINT fk_rails_e893387710 FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY runtimes
-    ADD CONSTRAINT fk_rails_eeb42116cc FOREIGN KEY (namespace_id) REFERENCES namespaces(id);
+    ADD CONSTRAINT fk_rails_eeb42116cc FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY flow_data_type_links
     ADD CONSTRAINT fk_rails_f4202724d3 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;

@@ -11,6 +11,7 @@ RSpec.describe Users::RegisterService do
 
   context 'when user limit of license is reached' do
     before do
+      stub_application_settings(user_registration_enabled: true)
       create(:license, restrictions: { user_count: 0 })
     end
 

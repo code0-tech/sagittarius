@@ -9,8 +9,10 @@ Represents the available error responses
 | `CANNOT_DELETE_LAST_ADMINISTRATOR` | The last instance administrator cannot be deleted |
 | `CANNOT_DELETE_LAST_ADMIN_ROLE` | This action would remove the last administrative role |
 | `CANNOT_DELETE_USER_WITH_ACTIVE_SUBSCRIPTION` | A user with an active subscription cannot delete itself |
+| `CANNOT_MODERATE_USER` | Only administrators can modify moderation status of users |
 | `CANNOT_MODIFY_ADMIN` | Only administrators can modify admin status of users |
 | `CANNOT_MODIFY_OWN_ADMIN` | Users cannot modify their own admin status |
+| `CANNOT_MODIFY_OWN_BLOCKED_STATUS` | Users cannot modify their own blocked status |
 | `CANNOT_REMOVE_LAST_ADMINISTRATOR` | This action would remove the last administrator |
 | `CANNOT_REMOVE_LAST_ADMIN_ABILITY` | This action would remove the last administrative ability |
 | `CYCLIC_DATA_TYPE_REFERENCE` | A data type dependency cycle was detected |
@@ -82,6 +84,7 @@ Represents the available error responses
 | `NAMESPACE_ROLE_NOT_FOUND` | The namespace role with the given identifier was not found |
 | `NODE_NOT_FOUND` | The node with this id does not exist |
 | `NO_DATA_TYPE_FOR_IDENTIFIER` | No data type could be found for the given identifier |
+| `NO_DEFINITIONS` | No definitions are available to generate a flow |
 | `NO_FREE_LICENSE_SEATS` | There are no free license seats to complete this operation |
 | `NO_PRIMARY_RUNTIME` | The project does not have a primary runtime |
 | `ORGANIZATION_NOT_FOUND` | The organization with the given identifier was not found |
@@ -100,6 +103,7 @@ Represents the available error responses
 | `TOTP_SECRET_ALREADY_SET` | This user already has TOTP set up |
 | `UNMODIFIABLE_FIELD` | The user is not permitted to modify this field |
 | `UNSUPPORTED_AUTHENTICATION` | The current authentication is not supported for this operation |
+| `USER_BLOCKED` | The user is blocked from accessing the application |
 | `USER_NOT_FOUND` | The user with the given identifier was not found |
 | `USER_SESSION_NOT_FOUND` | The user session with the given identifier was not found |
 | `WRONG_TOTP` | Invalid TOTP code provided |

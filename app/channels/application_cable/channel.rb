@@ -23,7 +23,8 @@ module ApplicationCable
     def create_authentication(token_type, token)
       case token_type
       when 'Session'
-        Sagittarius::Authentication.new(:session, UserSession.find_by(token: token, active: true))
+        Sagittarius::Authentication.new(:session, UserSession.joins(:user).find_by(token: token, active: true,
+                                                                                   users: { blocked_at: nil }))
       else
         Sagittarius::Authentication.new(:invalid, nil)
       end

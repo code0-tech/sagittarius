@@ -9,7 +9,23 @@ RSpec.describe 'execution results Query' do
   let(:project) { create(:namespace_project, namespace: namespace) }
   let(:runtime) { create(:runtime, namespace: namespace) }
   let(:flow_type) { create(:flow_type, runtime: runtime) }
-  let(:flow) { create(:flow, project: project, flow_type: flow_type) }
+  let(:validation_node_function) { create(:node_function) }
+  let(:flow) do
+    create(
+      :flow,
+      project: project,
+      flow_type: flow_type,
+      validation_diagnostics: [
+        {
+          'message' => 'Last validation failed',
+          'code' => 1001,
+          'severity' => 'error',
+          'node_id' => validation_node_function.id,
+          'parameter_index' => 0,
+        }
+      ]
+    )
+  end
   let(:node_function) { create(:node_function, flow: flow) }
   let(:execution_result) do
     create(:execution_result,
@@ -56,6 +72,13 @@ RSpec.describe 'execution results Query' do
         namespace(id: "#{namespace.to_global_id}") {
           project(id: $projectId) {
             flow(id: $flowId) {
+              validationDiagnostics {
+                message
+                code
+                severity
+                nodeId
+                parameterIndex
+              }
               executionResult(executionIdentifier: $executionIdentifier) {
                 id
               }
@@ -114,6 +137,18 @@ RSpec.describe 'execution results Query' do
   end
 
   it 'returns execution results and their nested results' do
+    expect(graphql_data_at(:namespace, :project, :flow, :validation_diagnostics)).to eq(
+      [
+        {
+          'message' => 'Last validation failed',
+          'code' => 1001,
+          'severity' => 'error',
+          'nodeId' => validation_node_function.to_global_id.to_s,
+          'parameterIndex' => 0,
+        }
+      ]
+    )
+
     expect(graphql_data_at(:namespace, :project, :flow, :execution_result)).to include(
       'id' => execution_result.to_global_id.to_s
     )

@@ -46,13 +46,15 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
   context 'with fixed validation results' do
     before do
       flow.update!(starting_node: node_function)
-      allow(UpdateRuntimesForProjectJob).to receive(:perform_later)
+      allow(UpdateFlowForProjectJob).to receive(:perform_later)
 
-      result = Triangulum::Validation::Result.new(valid?: valid, return_type: nil, diagnostics: [])
+      result = Triangulum::Validation::Result.new(valid?: valid, return_type: nil, diagnostics: diagnostics)
       allow(Triangulum::Validation).to receive(:new).and_return(
         instance_double(Triangulum::Validation, validate: result)
       )
     end
+
+    let(:diagnostics) { [] }
 
     context 'when validation passes' do
       let(:valid) { true }
@@ -63,15 +65,39 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
         expect(flow.reload.validation_status).to eq('valid')
       end
 
-      it 'enqueues UpdateRuntimesForProjectJob' do
+      it 'clears validation diagnostics' do
         service.execute
 
-        expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
+        expect(flow.reload.validation_diagnostics).to eq([])
+      end
+
+      it 'enqueues UpdateFlowForProjectJob' do
+        service.execute
+
+        expect(UpdateFlowForProjectJob).to have_received(:perform_later).with(flow.id)
       end
     end
 
     context 'when validation fails' do
       let(:valid) { false }
+      let(:diagnostics) do
+        [
+          Triangulum::Validation::Diagnostic.new(
+            message: 'First validation failure',
+            code: 1001,
+            severity: 'error',
+            node_id: 123,
+            parameter_index: 0
+          ),
+          Triangulum::Validation::Diagnostic.new(
+            message: 'Second validation failure',
+            code: 1002,
+            severity: 'warning',
+            node_id: nil,
+            parameter_index: nil
+          )
+        ]
+      end
 
       it 'sets validation status to invalid' do
         service.execute
@@ -79,10 +105,41 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
         expect(flow.reload.validation_status).to eq('invalid')
       end
 
-      it 'enqueues UpdateRuntimesForProjectJob' do
+      it 'stores validation diagnostics' do
         service.execute
 
-        expect(UpdateRuntimesForProjectJob).to have_received(:perform_later).with(namespace_project.id)
+        expect(flow.reload.validation_diagnostics).to eq(
+          [
+            {
+              'message' => 'First validation failure',
+              'code' => 1001,
+              'severity' => 'error',
+              'node_id' => 123,
+              'parameter_index' => 0,
+            },
+            {
+              'message' => 'Second validation failure',
+              'code' => 1002,
+              'severity' => 'warning',
+              'node_id' => nil,
+              'parameter_index' => nil,
+            }
+          ]
+        )
+      end
+
+      it 'does not enqueue a runtime update for a newly created invalid flow' do
+        service.execute
+
+        expect(UpdateFlowForProjectJob).not_to have_received(:perform_later)
+      end
+
+      it 'does not enqueue a deletion when a previously valid flow becomes invalid' do
+        flow.update!(validation_status: :valid)
+
+        service.execute
+
+        expect(UpdateFlowForProjectJob).not_to have_received(:perform_later)
       end
     end
   end

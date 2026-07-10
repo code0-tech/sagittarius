@@ -22,6 +22,7 @@ Represents a flow
 | `type` | [`FlowType!`](../object/flowtype.md) | The flow type of the flow |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Flow was last updated |
 | `userAbilities` | [`FlowUserAbilities!`](../object/flowuserabilities.md) | Abilities for the current user on this Flow |
+| `validationDiagnostics` | [`[FlowValidationDiagnostic!]!`](../object/flowvalidationdiagnostic.md) | The latest validation diagnostics of the flow |
 | `validationStatus` | [`FlowValidationStatus!`](../enum/flowvalidationstatus.md) | The validation status of the flow |
 
 ## Fields with arguments

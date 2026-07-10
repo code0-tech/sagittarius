@@ -7,11 +7,28 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
 
   grpc_stream :update
 
+  def self.update_flow(flow)
+    response = Tucana::Sagittarius::FlowResponse.new(updated_flow: flow.to_grpc)
+    send_to_project_runtimes(flow.project, response)
+  end
+
+  def self.delete_flow(project, flow_id)
+    response = Tucana::Sagittarius::FlowResponse.new(deleted_flow_id: flow_id)
+    send_to_project_runtimes(project, response)
+  end
+
+  def self.send_to_project_runtimes(project, response)
+    project.runtime_assignments.compatible.find_each do |assignment|
+      send_update(response, assignment.runtime_id)
+    end
+  end
+
   def self.update_runtime(runtime)
     assignments = runtime.project_assignments.compatible.includes(
       :namespace_project,
       module_configurations: { module_configuration_definition: :runtime_module }
     )
+    runtime_modules = runtime.runtime_modules.includes(:module_configuration_definitions)
 
     flows = []
     assignments.each do |assignment|
@@ -29,7 +46,7 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
       runtime.id
     )
 
-    grouped_module_configurations(assignments).each do |module_configuration|
+    grouped_module_configurations(assignments, runtime_modules).each do |module_configuration|
       send_update(
         Tucana::Sagittarius::FlowResponse.new(
           module_configurations: module_configuration
@@ -48,14 +65,18 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
     update_runtime(runtime)
   end
 
-  def self.grouped_module_configurations(assignments)
+  def self.grouped_module_configurations(assignments, runtime_modules)
     grouped_entries = assignments.flat_map do |assignment|
-      assignment.module_configurations.map do |configuration|
-        [
-          configuration.module_configuration_definition.runtime_module.identifier,
-          assignment,
-          configuration
-        ]
+      saved_configurations = assignment.module_configurations.index_by(&:module_configuration_definition_id)
+
+      runtime_modules.flat_map do |runtime_module|
+        runtime_module.module_configuration_definitions.map do |definition|
+          [
+            runtime_module.identifier,
+            assignment,
+            saved_configurations[definition.id] || definition
+          ]
+        end
       end
     end.group_by(&:first)
 
@@ -81,8 +102,20 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
 
   def self.grpc_module_configurations(entries)
     entries.map(&:last)
-           .sort_by { |configuration| configuration.module_configuration_definition.identifier }
-           .map(&:to_grpc)
+           .sort_by { |configuration| module_configuration_identifier(configuration) }
+           .map { |configuration| module_configuration_to_grpc(configuration) }
+  end
+
+  def self.module_configuration_identifier(configuration)
+    return configuration.identifier if configuration.is_a?(ModuleConfigurationDefinition)
+
+    configuration.module_configuration_definition.identifier
+  end
+
+  def self.module_configuration_to_grpc(configuration)
+    return configuration.to_default_grpc if configuration.is_a?(ModuleConfigurationDefinition)
+
+    configuration.to_grpc
   end
 
   def self.encoders = { update: ->(grpc_object) { Tucana::Sagittarius::FlowResponse.encode(grpc_object) } }

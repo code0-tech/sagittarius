@@ -20,6 +20,8 @@ module Users
       return deletion_error if deletion_error
 
       transactional do |t|
+        namespace = user.namespace
+
         user.destroy
 
         if user.persisted?
@@ -27,6 +29,16 @@ module Users
             message: 'Failed to delete user',
             error_code: :invalid_user,
             details: user.errors
+          )
+        end
+
+        namespace&.delete
+
+        if namespace.present? && namespace.persisted?
+          t.rollback_and_return! ServiceResponse.error(
+            message: 'Failed to delete user namespace',
+            error_code: :invalid_user,
+            details: namespace.errors
           )
         end
 

@@ -10,6 +10,7 @@ Represents a user
 |------|------|-------------|
 | `admin` | [`Boolean`](../scalar/boolean.md) | Global admin status of the user |
 | `avatarPath` | [`String`](../scalar/string.md) | The avatar if present of the user |
+| `blocked` | [`Boolean`](../scalar/boolean.md) | Whether the user is blocked from accessing the application |
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this User was created |
 | `deletionRestriction` | [`UserDeletionRestriction`](../enum/userdeletionrestriction.md) | The reason why this user cannot be deleted |
 | `email` | [`String`](../scalar/string.md) | Email of the user |

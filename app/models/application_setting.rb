@@ -18,10 +18,12 @@ class ApplicationSetting < ApplicationRecord
     terms_and_conditions_url: 5,
     privacy_url: 6,
     legal_notice_url: 7,
+    runtime_max_heartbeat_interval_minutes: 8,
   }.with_indifferent_access
 
   BOOLEAN_OPTIONS = %i[user_registration_enabled organization_creation_restricted admin_status_visible].freeze
   URL_OPTIONS = %i[terms_and_conditions_url privacy_url legal_notice_url].freeze
+  NUMBER_OPTIONS = %i[runtime_max_heartbeat_interval_minutes].freeze
 
   enum :setting, SETTINGS
 
@@ -44,6 +46,10 @@ class ApplicationSetting < ApplicationRecord
               format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
               allow_nil: true,
               if: :"#{option}?"
+  end
+
+  NUMBER_OPTIONS.each do |option|
+    validates :value, numericality: true, if: :"#{option}?"
   end
 
   def validate_value

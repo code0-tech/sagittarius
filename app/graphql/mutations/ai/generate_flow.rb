@@ -29,6 +29,8 @@ module Mutations
 
       def resolve(project_id:, prompt:, model_identifier:, flow_id: nil)
         return error_response(:invalid_setting, 'AI is disabled') unless ai_enabled?
+        return error_response(:missing_parameter, 'Prompt cannot be empty') if prompt.blank?
+        return error_response(:missing_parameter, 'Model identifier cannot be empty') if model_identifier.blank?
 
         project = SagittariusSchema.object_from_id(project_id)
         return error_response(:project_not_found, 'Invalid project id') if project.nil?
@@ -41,6 +43,9 @@ module Mutations
         return error_response(:no_primary_runtime, 'Project has no primary runtime') if project.primary_runtime.nil?
 
         return error_response(:missing_permission, 'Missing permission') unless allowed?(project, flow)
+        unless definitions_available?(project.primary_runtime)
+          return error_response(:no_definitions, 'The primary runtime must provide functions and flow types')
+        end
 
         execution_identifier = SecureRandom.uuid
         VelorumGenerateFlowJob.perform_later(execution_identifier, project.id, prompt, model_identifier, flow&.id)
@@ -61,6 +66,10 @@ module Mutations
         subject = flow || project
 
         Ability.allowed?(current_authentication, ability, subject)
+      end
+
+      def definitions_available?(runtime)
+        runtime.function_definitions.exists? && runtime.flow_types.exists?
       end
 
       def error_response(error_code, message)

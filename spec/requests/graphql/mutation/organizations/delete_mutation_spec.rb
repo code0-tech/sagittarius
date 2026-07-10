@@ -53,8 +53,8 @@ RSpec.describe 'organizationsDelete Mutation' do
         entity_id: organization.id,
         entity_type: 'Organization',
         details: {},
-        target_id: organization.namespace.id,
-        target_type: 'Namespace'
+        target_id: 0,
+        target_type: 'global'
       )
     end
   end
