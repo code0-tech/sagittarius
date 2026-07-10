@@ -56,6 +56,18 @@ RSpec.describe Users::Identity::LoginService do
         expect(service_response.payload[:error_code]).to eq(:user_blocked)
       end
     end
+
+    context 'when user is ghost' do
+      before do
+        current_user.update!(user_type: :ghost)
+      end
+
+      it do
+        is_expected.not_to create_audit_event
+        expect(service_response).to be_error
+        expect(service_response.payload[:error_code]).to eq(:invalid_login_data)
+      end
+    end
   end
 
   context 'when user identity validation fails' do

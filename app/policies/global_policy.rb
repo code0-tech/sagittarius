@@ -3,6 +3,7 @@
 class GlobalPolicy < BasePolicy
   condition(:organization_creation_restricted) { ApplicationSetting.current[:organization_creation_restricted] }
   condition(:admin) { user&.admin }
+  condition(:user_is_regular) { user&.regular? }
 
   rule { ~anonymous }.enable :create_organization
   rule { organization_creation_restricted & ~admin }.prevent :create_organization
@@ -14,6 +15,8 @@ class GlobalPolicy < BasePolicy
     enable :read_metadata
     enable :read_velorum_config
   end
+
+  rule { user_is_regular }.enable :create_user_session
 
   rule { admin }.policy do
     enable :read_application_setting

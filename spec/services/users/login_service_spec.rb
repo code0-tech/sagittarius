@@ -67,6 +67,20 @@ RSpec.describe Users::LoginService do
       end
     end
 
+    context 'when user is ghost' do
+      let(:params) { { username: username, password: password } }
+
+      before do
+        current_user.update!(user_type: :ghost)
+      end
+
+      it 'returns an error response' do
+        expect(service_response).to be_error
+        expect(service_response.payload[:error_code]).to eq(:invalid_login_data)
+        is_expected.not_to create_audit_event
+      end
+    end
+
     context 'when using mfa' do
       context 'when mfa is not activated' do
         let(:params) do
