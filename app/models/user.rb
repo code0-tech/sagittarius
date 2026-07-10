@@ -39,6 +39,10 @@ class User < ApplicationRecord
     admin
   end
 
+  def blocked?
+    blocked_at.present?
+  end
+
   def validate_mfa!(mfa)
     mfa_passed = false
     mfa_type = mfa&.[](:type)

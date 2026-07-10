@@ -19,6 +19,11 @@ module Users
         return ServiceResponse.error(message: 'Invalid login data', error_code: :invalid_login_data)
       end
 
+      if user.blocked?
+        logger.info(message: 'Blocked user tried to login', user_id: user.id, username: user.username)
+        return ServiceResponse.error(message: 'User is blocked', error_code: :user_blocked)
+      end
+
       transactional do |t|
         if mfa.present? && !user.mfa_enabled?
           t.rollback_and_return! ServiceResponse.error(message: 'Tried to login via MFA even if mfa is disabled',

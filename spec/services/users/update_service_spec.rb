@@ -119,6 +119,74 @@ RSpec.describe Users::UpdateService do
       end
     end
 
+    context 'when user tries to update blocked status' do
+      subject(:service_response) { described_class.new(create_authentication(current_user), user, mfa, params).execute }
+
+      let(:params) do
+        { blocked: true }
+      end
+      let(:user) { create(:user) }
+
+      context 'when user is admin' do
+        let(:current_user) { create(:user, :admin) }
+
+        it { is_expected.to be_success }
+
+        it 'updates user' do
+          expect { service_response }.to change { user.reload.blocked? }.from(false).to(true)
+        end
+
+        it do
+          is_expected.to create_audit_event(
+            :user_updated,
+            author_id: current_user.id,
+            entity_type: 'User',
+            details: { blocked: true },
+            target_type: 'User'
+          )
+        end
+
+        context 'when unblocking user' do
+          let(:params) do
+            { blocked: false }
+          end
+          let(:user) { create(:user, :blocked) }
+
+          it 'updates user' do
+            expect { service_response }.to change { user.reload.blocked? }.from(true).to(false)
+          end
+        end
+
+        context 'when user is trying to block itself' do
+          let(:user) { current_user }
+
+          it { is_expected.not_to be_success }
+
+          it 'does not update user' do
+            expect { service_response }.not_to change { user.reload.blocked? }
+          end
+
+          it do
+            is_expected.not_to create_audit_event
+          end
+        end
+      end
+
+      context 'when user is not admin' do
+        let(:current_user) { create(:user) }
+
+        it { is_expected.not_to be_success }
+
+        it 'does not update user' do
+          expect { service_response }.not_to change { user.reload.blocked? }
+        end
+
+        it do
+          is_expected.not_to create_audit_event
+        end
+      end
+    end
+
     context 'when updating mfa required fields' do
       let(:params) do
         { email: generate(:email) }

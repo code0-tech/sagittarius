@@ -158,6 +158,15 @@ RSpec.describe 'Graphql' do
         expect(graphql_data_at(:echo, :message)).to eq(echo_message)
       end
     end
+
+    context 'when user is blocked' do
+      let(:user_session) { create(:user_session, user: create(:user, :blocked)) }
+
+      it 'returns unauthorized' do
+        expect(response).to have_http_status(:unauthorized)
+        expect(response.body).to be_empty
+      end
+    end
   end
 
   context 'with invalid authorization' do

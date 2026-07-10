@@ -36,6 +36,12 @@ module Users
 
         user = user_identity.user
 
+        if user.blocked?
+          logger.info(message: 'Blocked user tried to login via identity', user_id: user.id, username: user.username,
+                      provider_id: user_identity.provider_id)
+          return ServiceResponse.error(message: 'User is blocked', error_code: :user_blocked)
+        end
+
         transactional do |t|
           user_session = UserSession.create(user: user)
           unless user_session.persisted?
