@@ -4,7 +4,7 @@ module NamespaceParent
   extend ActiveSupport::Concern
 
   included do
-    has_one :namespace, as: :parent, dependent: :destroy
+    has_one :namespace, as: :parent
   end
 
   def ensure_namespace
