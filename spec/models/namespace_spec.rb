@@ -42,4 +42,20 @@ RSpec.describe Namespace do
       expect { namespace.member?(user) }.to match_query_count(0)
     end
   end
+
+  describe 'personal namespace administrator via ensure_namespace' do
+    let(:user) { create(:user) }
+
+    it 'adds the owner as an administrator member' do
+      namespace = user.ensure_namespace
+
+      owner_member = namespace.namespace_members.find_by(user: user)
+      administrator_role = namespace.roles
+                                    .joins(:abilities)
+                                    .find_by(namespace_role_abilities: { ability: :namespace_administrator })
+
+      expect(owner_member).to be_present
+      expect(owner_member.roles).to include(administrator_role)
+    end
+  end
 end

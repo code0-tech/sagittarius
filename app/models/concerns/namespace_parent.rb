@@ -11,7 +11,10 @@ module NamespaceParent
     return namespace if namespace.present?
 
     ns = build_namespace
-    ns.save if persisted?
+    if persisted?
+      ns.save
+      ns.ensure_personal_namespace_administrator! if ns.user_type?
+    end
     ns
   end
 end
