@@ -2,4 +2,12 @@
 
 class NamespaceRolePolicy < BasePolicy
   delegate { subject.namespace }
+
+  condition(:personal_namespace_owner_administrator_role) do
+    subject.namespace.personal_namespace_owner_administrator_role?(subject)
+  end
+
+  rule { personal_namespace_owner_administrator_role }.prevent :delete_namespace_role
+  rule { personal_namespace_owner_administrator_role }.prevent :assign_role_abilities
+  rule { personal_namespace_owner_administrator_role }.prevent :assign_role_projects
 end

@@ -16,5 +16,13 @@ RSpec.describe NamespaceMemberPolicy do
 
       it { is_expected.to be_allowed(:delete_member) }
     end
+
+    context 'when member is the personal namespace owner' do
+      let(:namespace) { current_user.ensure_namespace }
+      let(:namespace_member) { namespace.namespace_members.find_by(user: current_user) }
+
+      it { is_expected.not_to be_allowed(:delete_member) }
+      it { is_expected.not_to be_allowed(:assign_member_roles) }
+    end
   end
 end

@@ -20,4 +20,11 @@ RSpec.describe NamespaceProjectPolicy do
 
     it { is_expected.to be_allowed(:read_namespace_project) }
   end
+
+  context 'when project belongs to the personal namespace' do
+    let(:namespace) { current_user.ensure_namespace }
+    let(:namespace_project) { create(:namespace_project, namespace: namespace) }
+
+    it { is_expected.to be_allowed(:read_namespace_project) }
+  end
 end
