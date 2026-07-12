@@ -55,7 +55,7 @@ class Flow < ApplicationRecord
       flow_id: id,
       project_id: project.id,
       project_slug: project.slug,
-      type: flow_type.identifier,
+      type: flow_type.runtime_identifier,
       data_types: [], # TODO: when data types are creatable
       disable_reason: disabled_reason,
       settings: flow_settings.map(&:to_grpc),
