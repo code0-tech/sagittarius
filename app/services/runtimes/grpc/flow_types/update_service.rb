@@ -25,19 +25,7 @@ module Runtimes
                     .update_all(removed_at: Time.zone.now)
             # rubocop:enable Rails/SkipsModelValidations
             flow_types.each do |flow_type|
-              db_flow_type = update_flowtype(flow_type, t)
-              next if db_flow_type.persisted?
-
-              logger.error(
-                message: 'Failed to update flow type',
-                runtime_id: current_runtime.id,
-                flow_type_identifier: flow_type.identifier,
-                errors: db_flow_type.errors.full_messages
-              )
-
-              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update flow type',
-                                                           error_code: :invalid_flow_type,
-                                                           details: db_flow_type.errors)
+              update_flowtype(flow_type, t)
             end
 
             enqueue_runtime_compatibility_update
@@ -73,7 +61,20 @@ module Runtimes
           db_object.runtime_flow_type = find_runtime_flow_type(flow_type, t)
           update_settings(flow_type.settings, db_object.flow_type_settings, t)
           link_data_types(db_object, flow_type.linked_data_type_identifiers, t)
-          db_object.save
+
+          unless db_object.save
+            logger.error(
+              message: 'Failed to update flow type',
+              module_identifier: runtime_module.identifier,
+              flow_type_identifier: flow_type.identifier,
+              errors: db_object.errors.full_messages
+            )
+
+            t.rollback_and_return! ServiceResponse.error(message: 'Failed to update flow type',
+                                                         error_code: :invalid_flow_type,
+                                                         details: db_object.errors)
+          end
+
           db_object
         end
 

@@ -22,18 +22,7 @@ module Runtimes
             mark_existing_function_definitions_as_removed
 
             function_definitions.each do |function_definition|
-              db_function_definition = update_function_definition(function_definition, t)
-              next if db_function_definition.persisted?
-
-              logger.error(message: 'Failed to update function definition',
-                           runtime_id: current_runtime.id,
-                           module_identifier: runtime_module.identifier,
-                           definition_identifier: function_definition.runtime_name,
-                           errors: db_function_definition.errors.full_messages)
-
-              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update function definition',
-                                                           error_code: :invalid_function_definition,
-                                                           details: db_function_definition.errors)
+              update_function_definition(function_definition, t)
             end
 
             enqueue_runtime_compatibility_update
@@ -80,9 +69,19 @@ module Runtimes
           db_object.display_messages = update_translations(function_definition.display_message,
                                                            db_object.display_messages)
           db_object.aliases = update_translations(function_definition.alias, db_object.aliases)
-          db_object.save
 
-          update_parameter_definitions(db_object, function_definition.parameter_definitions, t) if db_object.persisted?
+          unless db_object.save
+            logger.error(message: 'Failed to update function definition',
+                         module_identifier: runtime_module.identifier,
+                         definition_identifier: function_definition.runtime_name,
+                         errors: db_object.errors.full_messages)
+
+            t.rollback_and_return! ServiceResponse.error(message: 'Failed to update function definition',
+                                                         error_code: :invalid_function_definition,
+                                                         details: db_object.errors)
+          end
+
+          update_parameter_definitions(db_object, function_definition.parameter_definitions, t)
 
           db_object
         end

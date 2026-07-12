@@ -26,18 +26,7 @@ module Runtimes
             # rubocop:enable Rails/SkipsModelValidations
 
             runtime_flow_types.each do |runtime_flow_type|
-              db_runtime_flow_type = update_runtime_flowtype(runtime_flow_type, t)
-              next if db_runtime_flow_type.persisted?
-
-              logger.error(message: 'Failed to update runtime flow type',
-                           runtime_id: current_runtime.id,
-                           module_identifier: runtime_module.identifier,
-                           runtime_flow_type_identifier: runtime_flow_type.identifier,
-                           errors: db_runtime_flow_type.errors.full_messages)
-
-              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update runtime flow type',
-                                                           error_code: :invalid_flow_type,
-                                                           details: db_runtime_flow_type.errors)
+              update_runtime_flowtype(runtime_flow_type, t)
             end
 
             enqueue_runtime_compatibility_update
@@ -76,7 +65,20 @@ module Runtimes
           db_object.version = runtime_flow_type.version
           db_object.definition_source = runtime_flow_type.definition_source
           db_object.display_icon = runtime_flow_type.display_icon
-          db_object.save
+
+          unless db_object.save
+            logger.error(message: 'Failed to update runtime flow type',
+                         module_identifier: runtime_module.identifier,
+                         runtime_flow_type_identifier: runtime_flow_type.identifier,
+                         errors: db_object.errors.full_messages)
+
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Could not save runtime flow type',
+              error_code: :invalid_flow_type,
+              details: db_object.errors
+            )
+          end
+
           if db_object.persisted?
             update_settings(runtime_flow_type.runtime_settings, db_object.runtime_flow_type_settings, t)
             link_data_types(db_object, runtime_flow_type.linked_data_type_identifiers, t)

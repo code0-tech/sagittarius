@@ -26,17 +26,7 @@ module Runtimes
                                             runtime_module: runtime_module).update_all(removed_at: Time.zone.now)
             # rubocop:enable Rails/SkipsModelValidations
             runtime_function_definitions.each do |runtime_function_definition|
-              response = update_runtime_function_definition(runtime_function_definition, t)
-              next if response.persisted?
-
-              logger.error(message: 'Failed to update runtime function definition',
-                           runtime_id: current_runtime.id,
-                           definition_identifier: runtime_function_definition.runtime_name,
-                           errors: response.errors.full_messages)
-
-              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update runtime function definition',
-                                                           error_code: :invalid_runtime_function_definition,
-                                                           details: response.errors)
+              update_runtime_function_definition(runtime_function_definition, t)
             end
 
             enqueue_runtime_compatibility_update
@@ -79,7 +69,18 @@ module Runtimes
                                                            db_object.display_messages)
           db_object.aliases = update_translations(runtime_function_definition.alias, db_object.aliases)
 
-          db_object.save
+          unless db_object.save
+            logger.error(message: 'Failed to update runtime function definition',
+                         module_identifier: runtime_module.identifier,
+                         definition_identifier: runtime_function_definition.runtime_name,
+                         errors: db_object.errors.full_messages)
+
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Could not save runtime function definition',
+              error_code: :invalid_runtime_function_definition,
+              details: db_object.errors
+            )
+          end
 
           db_object.parameters = update_parameters(db_object, runtime_function_definition.runtime_parameter_definitions,
                                                    db_object.parameters, t)
