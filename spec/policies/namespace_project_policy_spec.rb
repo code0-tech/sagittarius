@@ -25,6 +25,6 @@ RSpec.describe NamespaceProjectPolicy do
     let(:namespace) { current_user.ensure_namespace }
     let(:namespace_project) { create(:namespace_project, namespace: namespace) }
 
-    it { is_expected.to be_allowed(:read_namespace_project) }
+    it { is_expected.to be_allowed(:update_namespace_project) }
   end
 end

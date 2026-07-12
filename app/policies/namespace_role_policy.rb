@@ -7,7 +7,9 @@ class NamespaceRolePolicy < BasePolicy
     subject.namespace.personal_namespace_owner_administrator_role?(subject)
   end
 
-  rule { personal_namespace_owner_administrator_role }.prevent :delete_namespace_role
-  rule { personal_namespace_owner_administrator_role }.prevent :assign_role_abilities
-  rule { personal_namespace_owner_administrator_role }.prevent :assign_role_projects
+  rule { personal_namespace_owner_administrator_role }.policy do
+    prevent :delete_namespace_role
+    prevent :assign_role_abilities
+    prevent :assign_role_projects
+  end
 end

@@ -8,6 +8,8 @@ class NamespaceMemberPolicy < BasePolicy
 
   rule { member_is_self }.enable :delete_member
 
-  rule { personal_namespace_owner_member }.prevent :delete_member
-  rule { personal_namespace_owner_member }.prevent :assign_member_roles
+  rule { personal_namespace_owner_member }.policy do
+    prevent :delete_member
+    prevent :assign_member_roles
+  end
 end
