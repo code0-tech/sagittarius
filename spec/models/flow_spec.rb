@@ -43,10 +43,14 @@ RSpec.describe Flow do
   end
 
   describe '#to_grpc' do
+    let(:runtime_flow_type) { create(:runtime_flow_type, identifier: 'RUNTIME_HTTP') }
+    let(:flow_type) do
+      create(:flow_type, runtime_flow_type: runtime_flow_type, identifier: 'HTTP')
+    end
     let(:flow) do
       create(
         :flow,
-        flow_type: create(:flow_type, identifier: 'HTTP'),
+        flow_type: flow_type,
         signature: '(input: REST_ADAPTER_INPUT): HTTP_RESPONSE',
         disabled_reason: 0,
         flow_settings: [
@@ -99,7 +103,7 @@ RSpec.describe Flow do
           flow_id: flow.id,
           project_id: flow.project.id,
           project_slug: flow.project.slug,
-          type: flow.flow_type.identifier,
+          type: runtime_flow_type.identifier,
           signature: flow.signature,
           node_functions: [
             {
