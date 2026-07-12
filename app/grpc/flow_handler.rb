@@ -30,21 +30,23 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
     )
     runtime_modules = runtime.runtime_modules.includes(:module_configuration_definitions)
 
-    flows = []
-    assignments.each do |assignment|
-      assignment.namespace_project.flows.validation_status_valid.each do |flow|
-        flows << flow.to_grpc
-      end
-    end
-
     send_update(
       Tucana::Sagittarius::FlowResponse.new(
         flows: Tucana::Shared::Flows.new(
-          flows: flows
+          flows: []
         )
       ),
       runtime.id
     )
+
+    assignments.each do |assignment|
+      assignment.namespace_project.flows.validation_status_valid.each do |flow|
+        send_update(
+          Tucana::Sagittarius::FlowResponse.new(updated_flow: flow.to_grpc),
+          runtime.id
+        )
+      end
+    end
 
     grouped_module_configurations(assignments, runtime_modules).each do |module_configuration|
       send_update(
