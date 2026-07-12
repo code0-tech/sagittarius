@@ -21,18 +21,7 @@ module Runtimes
         def execute
           transactional do |t|
             configuration_definitions.each do |configuration_definition|
-              db_configuration = update_configuration(configuration_definition, t)
-              next if db_configuration.persisted?
-
-              logger.error(message: 'Failed to update module configuration definition',
-                           runtime_id: current_runtime.id,
-                           module_identifier: runtime_module.identifier,
-                           configuration_identifier: configuration_definition.identifier,
-                           errors: db_configuration.errors.full_messages)
-
-              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update module configuration definition',
-                                                           error_code: :invalid_module_configuration_definition,
-                                                           details: db_configuration.errors)
+              update_configuration(configuration_definition, t)
             end
 
             enqueue_runtime_compatibility_update
@@ -64,7 +53,18 @@ module Runtimes
           db_object.hidden = configuration.hidden
           db_object.names = update_translations(configuration.name, db_object.names)
           db_object.descriptions = update_translations(configuration.description, db_object.descriptions)
-          db_object.save
+
+          unless db_object.save
+            logger.error(message: 'Failed to update module configuration definition',
+                         module_identifier: runtime_module.identifier,
+                         configuration_identifier: configuration.identifier,
+                         errors: db_object.errors.full_messages)
+
+            t.rollback_and_return! ServiceResponse.error(message: 'Failed to update module configuration definition',
+                                                         error_code: :invalid_module_configuration_definition,
+                                                         details: db_object.errors)
+          end
+
           link_data_types(db_object, configuration.linked_data_type_identifiers, t) if db_object.persisted?
           db_object
         end

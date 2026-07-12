@@ -31,19 +31,8 @@ module Runtimes
             data_type_links_to_update = []
 
             sorted_data_types_response.payload.each do |data_type|
-              db_data_type = update_datatype(data_type)
-              if db_data_type.persisted?
-                data_type_links_to_update << [db_data_type, data_type.linked_data_type_identifiers]
-                next
-              end
-
-              logger.error(message: 'Failed to update data type',
-                           runtime_id: current_runtime.id,
-                           data_type_identifier: data_type.identifier,
-                           errors: db_data_type.errors.full_messages)
-
-              t.rollback_and_return! ServiceResponse.error(message: 'Failed to update data type',
-                                                           error_code: :invalid_data_type, details: db_data_type.errors)
+              db_data_type = update_datatype(data_type, t)
+              data_type_links_to_update << [db_data_type, data_type.linked_data_type_identifiers]
             end
 
             data_type_links_to_update.each do |db_data_type, linked_data_type_identifiers|
@@ -137,7 +126,7 @@ module Runtimes
           UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
         end
 
-        def update_datatype(data_type)
+        def update_datatype(data_type, t)
           db_object = DataType.find_or_initialize_by(runtime: current_runtime, identifier: data_type.identifier)
           db_object.removed_at = nil
           db_object.type = data_type.type
@@ -149,7 +138,20 @@ module Runtimes
           db_object.version = data_type.version
           db_object.definition_source = data_type.definition_source
           db_object.runtime_module = runtime_module_resolver.call(data_type)
-          db_object.save
+
+          unless db_object.save
+            logger.error(message: 'Failed to update data type',
+                         module_identifier: db_object.runtime_module&.identifier,
+                         data_type_identifier: data_type.identifier,
+                         errors: db_object.errors.full_messages)
+
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Failed to update data type',
+              error_code: :invalid_data_type,
+              details: db_object.errors
+            )
+          end
+
           db_object
         end
 
