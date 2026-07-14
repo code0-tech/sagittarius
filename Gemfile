@@ -95,3 +95,10 @@ gem 'json-schema', '~> 6.0'
 gem 'triangulum', '0.26.2'
 
 gem 'benchmark'
+
+# OpenTelemetry
+gem 'opentelemetry-exporter-otlp', '~> 0.34.0' # we need this to get traces
+gem 'opentelemetry-exporter-otlp-logs', '~> 0.5.1' # we need this to get logs
+gem 'opentelemetry-exporter-otlp-metrics', '~> 0.10.0' # we need this to get metrics
+gem 'opentelemetry-instrumentation-all', '~> 0.94.0' # we need this for logs and traces
+gem 'opentelemetry-instrumentation-logger', '~> 0.4.0' # we need this to get logs

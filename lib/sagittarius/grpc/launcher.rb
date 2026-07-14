@@ -10,6 +10,7 @@ module Sagittarius
       def create_server
         # grpc handles interceptors in opposite order. Reversing so we can list them in top-to-bottom order
         @server = GRPC::RpcServer.new(interceptors: [
+          Sagittarius::Middleware::Grpc::OpenTelemetry.new,
           Sagittarius::Middleware::Grpc::Context.new,
           Sagittarius::Middleware::Grpc::Logger.new,
           Sagittarius::Middleware::Grpc::Authentication.new

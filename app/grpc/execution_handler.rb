@@ -38,7 +38,7 @@ class ExecutionHandler < Tucana::Sagittarius::ExecutionService::Service
     rescue StandardError => e
       logger.error(message: 'Error reading execution stream', error: e.message,
                    backtrace: e.backtrace)
-      outbound_queue << :end if outbound_queue
+      outbound_queue << GrpcStreamHandler::StreamItem.new(data: :end, otel_context: nil) if outbound_queue
     ensure
       logger.info(message: 'Execution runtime request stream closed')
     end

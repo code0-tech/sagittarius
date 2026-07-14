@@ -44,7 +44,7 @@ RSpec.describe ExecutionHandler do
         queues = GrpcStreamHandler.yielders.dig(described_class, :test, runtime.id)
         expect(queues.size).to eq(1)
 
-        queues.each { |queue| queue << :end }
+        queues.each { |queue| queue << GrpcStreamHandler::StreamItem.new(data: :end, otel_context: nil) }
       end
     end
 
@@ -60,7 +60,7 @@ RSpec.describe ExecutionHandler do
 
         expect(Timeout.timeout(1) { first_enumerator.to_a }).to eq([])
 
-        GrpcStreamHandler.yielders.dig(described_class, :test, runtime.id).each { |queue| queue << :end }
+        GrpcStreamHandler.yielders.dig(described_class, :test, runtime.id).each { |queue| queue << GrpcStreamHandler::StreamItem.new(data: :end, otel_context: nil) }
       end
     end
   end
