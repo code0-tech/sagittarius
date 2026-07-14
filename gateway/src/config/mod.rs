@@ -24,8 +24,9 @@ pub struct Backend {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Grpc {
-    port: u16,
-    host: String,
+    pub port: u16,
+    pub host: String,
+    pub with_health_service: bool,
 }
 
 impl Default for Grpc {
@@ -33,6 +34,7 @@ impl Default for Grpc {
         Self {
             port: 50051,
             host: String::from("127.0.0.1"),
+            with_health_service: false,
         }
     }
 }

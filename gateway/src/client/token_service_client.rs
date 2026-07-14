@@ -24,7 +24,7 @@ impl SagittariusRailsTokenServiceClient {
         })
     }
 
-    async fn update(
+    async fn verify(
         &mut self,
         request: TokenVerifyRequest,
     ) -> Result<tonic::Response<TokenVerifyResponse>, tonic::Status> {
@@ -32,7 +32,7 @@ impl SagittariusRailsTokenServiceClient {
     }
 
     pub async fn validate_token(&mut self, token: String) -> RuntimeVerificationStatus {
-        let response = self.update(TokenVerifyRequest { token }).await;
+        let response = self.verify(TokenVerifyRequest { token }).await;
 
         let status_response = match response {
             Ok(res) => res,

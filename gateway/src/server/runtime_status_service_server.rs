@@ -11,6 +11,14 @@ pub struct SagittariusRuntimeStatusService {
     client: Arc<Mutex<SagittariusRailsRuntimeStatusServiceClient>>,
 }
 
+impl SagittariusRuntimeStatusService {
+    pub fn new(client: SagittariusRailsRuntimeStatusServiceClient) -> Self {
+        Self {
+            client: Arc::new(Mutex::new(client)),
+        }
+    }
+}
+
 #[tonic::async_trait]
 impl RuntimeStatusService for SagittariusRuntimeStatusService {
     async fn update(
