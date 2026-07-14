@@ -11,8 +11,15 @@ const CONFIG_FILE: &str = "gateway";
 #[serde(default)]
 #[derive(Default)]
 pub struct Config {
+    pub auth: Auth,
     pub backend: Backend,
     pub grpc: Grpc,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
+pub struct Auth {
+    pub jwt_secret: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -35,6 +42,14 @@ impl Default for Grpc {
             port: 50051,
             host: String::from("127.0.0.1"),
             with_health_service: false,
+        }
+    }
+}
+
+impl Default for Auth {
+    fn default() -> Self {
+        Self {
+            jwt_secret: String::from("jwt-secret"),
         }
     }
 }
