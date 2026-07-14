@@ -9,6 +9,7 @@ pub enum RuntimeVerificationStatus {
     Unverified,
 }
 
+#[derive(Clone)]
 pub struct SagittariusRailsTokenServiceClient {
     inner: TokenServiceClient<Channel>,
 }
@@ -25,13 +26,13 @@ impl SagittariusRailsTokenServiceClient {
     }
 
     async fn verify(
-        &mut self,
+        &self,
         request: TokenVerifyRequest,
     ) -> Result<tonic::Response<TokenVerifyResponse>, tonic::Status> {
-        self.inner.verify(request).await
+        self.inner.clone().verify(request).await
     }
 
-    pub async fn validate_token(&mut self, token: String) -> RuntimeVerificationStatus {
+    pub async fn validate_token(&self, token: String) -> RuntimeVerificationStatus {
         let response = self.verify(TokenVerifyRequest { token }).await;
 
         let status_response = match response {

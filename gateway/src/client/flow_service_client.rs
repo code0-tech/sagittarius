@@ -1,4 +1,5 @@
 use tonic::codegen::StdError;
+use tonic::metadata::MetadataValue;
 use tonic::transport::{Channel, Endpoint};
 use tucana::sagittarius_rails::flow_service_client::FlowServiceClient;
 use tucana::sagittarius_rails::{FlowLogonRequest, FlowResponse};
@@ -24,6 +25,19 @@ impl SagittariusRailsFlowServiceClient {
         request: FlowLogonRequest,
     ) -> Result<tonic::Response<FlowResponse>, tonic::Status> {
         log::debug!("Proxying a execution flow logon request.");
+        self.inner.clone().update(request).await
+    }
+
+    pub async fn update_with_authentication(
+        &self,
+        request: FlowLogonRequest,
+        authentication: MetadataValue<tonic::metadata::Ascii>,
+    ) -> Result<tonic::Response<FlowResponse>, tonic::Status> {
+        log::debug!("Proxying a execution flow logon request.");
+        let mut request = tonic::Request::new(request);
+        request
+            .metadata_mut()
+            .insert("authentication", authentication);
         self.inner.clone().update(request).await
     }
 }

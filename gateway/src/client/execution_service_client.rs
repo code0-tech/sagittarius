@@ -1,4 +1,5 @@
 use tonic::codegen::StdError;
+use tonic::metadata::MetadataValue;
 use tonic::transport::{Channel, Endpoint};
 use tucana::sagittarius_rails::execution_service_client::ExecutionServiceClient;
 use tucana::sagittarius_rails::{ExecutionRequest, ExecutionResponse};
@@ -24,6 +25,19 @@ impl SagittariusRailsExecutionServiceClient {
         request: ExecutionRequest,
     ) -> Result<tonic::Response<ExecutionResponse>, tonic::Status> {
         log::debug!("Proxying a execution response.");
+        self.inner.clone().update(request).await
+    }
+
+    pub async fn update_with_authentication(
+        &self,
+        request: ExecutionRequest,
+        authentication: MetadataValue<tonic::metadata::Ascii>,
+    ) -> Result<tonic::Response<ExecutionResponse>, tonic::Status> {
+        log::debug!("Proxying a execution response.");
+        let mut request = tonic::Request::new(request);
+        request
+            .metadata_mut()
+            .insert("authentication", authentication);
         self.inner.clone().update(request).await
     }
 }

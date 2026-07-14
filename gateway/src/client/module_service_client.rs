@@ -1,4 +1,5 @@
 use tonic::codegen::StdError;
+use tonic::metadata::MetadataValue;
 use tonic::transport::{Channel, Endpoint};
 use tucana::sagittarius_rails::module_service_client::ModuleServiceClient;
 use tucana::sagittarius_rails::{ModuleUpdateRequest, ModuleUpdateResponse};
@@ -24,6 +25,19 @@ impl SagittariusRailsModuleServiceClient {
         request: ModuleUpdateRequest,
     ) -> Result<tonic::Response<ModuleUpdateResponse>, tonic::Status> {
         log::debug!("Proxying a module update request.");
+        self.inner.clone().update(request).await
+    }
+
+    pub async fn update_with_authentication(
+        &self,
+        request: ModuleUpdateRequest,
+        authentication: MetadataValue<tonic::metadata::Ascii>,
+    ) -> Result<tonic::Response<ModuleUpdateResponse>, tonic::Status> {
+        log::debug!("Proxying a module update request.");
+        let mut request = tonic::Request::new(request);
+        request
+            .metadata_mut()
+            .insert("authentication", authentication);
         self.inner.clone().update(request).await
     }
 }
