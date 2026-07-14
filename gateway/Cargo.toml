@@ -7,10 +7,10 @@ edition.workspace = true
 anyhow = { workspace = true }
 async-trait = { workspace = true }
 config = { workspace = true }
-jsonwebtoken = "10.4.0"
+jsonwebtoken = { workspace = true }
 log = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
-tonic-health = "0.14.6"
+tonic-health = { workspace = true }
 tucana = { workspace = true }
