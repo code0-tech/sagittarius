@@ -45,7 +45,6 @@ impl Default for Backend {
     }
 }
 
-
 impl Config {
     pub fn new() -> Self {
         Self::try_new()

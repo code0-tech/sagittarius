@@ -3,6 +3,7 @@ use tonic::transport::{Channel, Endpoint};
 use tucana::sagittarius_rails::module_service_client::ModuleServiceClient;
 use tucana::sagittarius_rails::{ModuleUpdateRequest, ModuleUpdateResponse};
 
+#[derive(Clone)]
 pub struct SagittariusRailsModuleServiceClient {
     inner: ModuleServiceClient<Channel>,
 }
@@ -19,10 +20,10 @@ impl SagittariusRailsModuleServiceClient {
     }
 
     pub async fn update(
-        &mut self,
+        &self,
         request: ModuleUpdateRequest,
     ) -> Result<tonic::Response<ModuleUpdateResponse>, tonic::Status> {
         log::debug!("Proxying a module update request.");
-        self.inner.update(request).await
+        self.inner.clone().update(request).await
     }
 }
