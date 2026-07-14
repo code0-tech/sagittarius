@@ -1,6 +1,10 @@
 backend:
   url: "grpc://127.0.0.1:50051"
 
+auth:
+  jwt_secret: "jwt-secret"
+
 grpc:
   port: 50051
   host: "127.0.0.1"
+  with_healt_serivce: false
