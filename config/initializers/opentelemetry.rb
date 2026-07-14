@@ -32,6 +32,10 @@ begin
     endpoint: otel_config[:traces_endpoint]
   )
 
+  # we configure the exporter ourselves
+  ENV['OTEL_LOGS_EXPORTER'] = 'none'
+  ENV['OTEL_METRICS_EXPORTER'] = 'none'
+
   OpenTelemetry::SDK.configure do |c|
     c.resource = otel_resource
     c.add_span_processor(

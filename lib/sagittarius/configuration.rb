@@ -10,7 +10,7 @@ module Sagittarius
       memoize(:config) do
         configured_files = ENV.fetch(CONFIG_FILES_ENV, nil)
         config_files(configured_files).reduce(defaults) do |config, config_file|
-          file_config = YAML.safe_load_file(config_file).deep_symbolize_keys
+          file_config = YAML.safe_load_file(config_file, fallback: {}).deep_symbolize_keys
           config.deep_merge(file_config)
         end
       rescue Errno::ENOENT
