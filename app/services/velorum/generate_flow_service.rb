@@ -54,6 +54,11 @@ module Velorum
         }
       )
     rescue GenerationFlowSerializer::UnresolvedDefinitionError, GRPC::BadStatus => e
+      logger.error(
+        message: 'Failed to generate flow with velorum',
+        grpc_code: e.respond_to?(:code) ? e.code : nil,
+        grpc_details: e.respond_to?(:details) ? e.details : e.message
+      )
       flow_generation_failed_response(e)
     end
 
