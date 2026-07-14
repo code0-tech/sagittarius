@@ -1,3 +1,18 @@
+environment: development
+
+# Default tracing filter. RUST_LOG takes precedence when it is set.
+log_level: debug
+
+# OTLP export for logs, traces, and metrics.
+# Gateway currently registers no metric instruments; the metrics endpoint is
+# present so exporter configuration can be enabled without another config change.
+opentelemetry:
+  enabled: false
+  service_name: gateway
+  logs_endpoint:
+  metrics_endpoint:
+  traces_endpoint:
+
 backend:
   url: "grpc://127.0.0.1:50051"
 
@@ -7,4 +22,4 @@ auth:
 grpc:
   port: 50051
   host: "127.0.0.1"
-  with_healt_serivce: false
+  with_health_service: false

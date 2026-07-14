@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 
-use std::path::Path;
+use std::{fmt, path::Path};
 
+use code0_flow::flow_telemetry::OpenTelemetry;
 use config::{Config as ConfigLoader, ConfigError, File};
 use serde::{Deserialize, Serialize};
 
@@ -9,8 +10,12 @@ const CONFIG_FILE: &str = "gateway";
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
-#[derive(Default)]
 pub struct Config {
+    pub environment: String,
+    pub log_level: String,
+    #[serde(alias = "telemetry")]
+    #[serde(default = "default_opentelemetry")]
+    pub opentelemetry: OpenTelemetry,
     pub auth: Auth,
     pub backend: Backend,
     pub grpc: Grpc,
@@ -34,6 +39,26 @@ pub struct Grpc {
     pub port: u16,
     pub host: String,
     pub with_health_service: bool,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            environment: "development".into(),
+            log_level: "debug".into(),
+            opentelemetry: default_opentelemetry(),
+            auth: Auth::default(),
+            backend: Backend::default(),
+            grpc: Grpc::default(),
+        }
+    }
+}
+
+fn default_opentelemetry() -> OpenTelemetry {
+    OpenTelemetry {
+        service_name: env!("CARGO_PKG_NAME").into(),
+        ..OpenTelemetry::default()
+    }
 }
 
 impl Default for Grpc {
@@ -65,7 +90,7 @@ impl Default for Backend {
 impl Config {
     pub fn new() -> Self {
         Self::try_new()
-            .unwrap_or_else(|error| panic!("failed to load Aquila configuration: {error}"))
+            .unwrap_or_else(|error| panic!("failed to load Gateway configuration: {error}"))
     }
 
     pub fn try_new() -> Result<Self, ConfigError> {
@@ -87,4 +112,53 @@ impl Config {
 
         builder.build()?.try_deserialize()
     }
+}
+
+impl fmt::Display for Config {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(formatter, "Gateway configuration")?;
+        writeln!(formatter, "  Environment: {}", self.environment)?;
+        writeln!(formatter, "  Log level:   {}", self.log_level)?;
+        writeln!(formatter, "  OpenTelemetry")?;
+        writeln!(formatter, "    Enabled:   {}", self.opentelemetry.enabled)?;
+        writeln!(
+            formatter,
+            "    Service:   {}",
+            self.opentelemetry.service_name
+        )?;
+        writeln!(
+            formatter,
+            "    Logs:      {}",
+            display_optional_url(&self.opentelemetry.logs_endpoint)
+        )?;
+        writeln!(
+            formatter,
+            "    Metrics:   {}",
+            display_optional_url(&self.opentelemetry.metrics_endpoint)
+        )?;
+        writeln!(
+            formatter,
+            "    Traces:    {}",
+            display_optional_url(&self.opentelemetry.traces_endpoint)
+        )?;
+        writeln!(formatter, "  Backend")?;
+        writeln!(formatter, "    URL:       {}", self.backend.url)?;
+        writeln!(formatter, "  gRPC")?;
+        writeln!(
+            formatter,
+            "    Address:   {}:{}",
+            self.grpc.host, self.grpc.port
+        )?;
+        write!(
+            formatter,
+            "    Health service: {}",
+            self.grpc.with_health_service
+        )
+    }
+}
+
+fn display_optional_url(url: &Option<String>) -> &str {
+    url.as_deref()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or("<disabled>")
 }

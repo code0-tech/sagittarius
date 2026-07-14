@@ -7,6 +7,7 @@ edition.workspace = true
 anyhow = { workspace = true }
 async-trait = { workspace = true }
 config = { workspace = true }
+code0-flow = { workspace = true }
 jsonwebtoken = { workspace = true }
 log = { workspace = true }
 serde = { workspace = true }

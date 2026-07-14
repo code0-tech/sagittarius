@@ -1,3 +1,4 @@
+use code0_flow::flow_telemetry::{self as telemetry, TelemetrySettings};
 use tonic::transport::{Channel, Server};
 use tucana::sagittarius_gateway::execution_service_server::ExecutionServiceServer;
 use tucana::sagittarius_gateway::flow_service_server::FlowServiceServer;
@@ -24,7 +25,33 @@ mod server;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let config = Config::new();
+    let telemetry = telemetry::Telemetry::initialize(
+        &config.opentelemetry,
+        TelemetrySettings {
+            environment: &config.environment,
+            default_log_level: &config.log_level,
+            service_version: env!("CARGO_PKG_VERSION"),
+            instrumentation_name: env!("CARGO_PKG_NAME"),
+            initialize_metrics: None,
+        },
+    )
+    .unwrap_or_else(|error| panic!("failed to initialize telemetry: {error}"));
+    install_panic_logging();
 
+    log::info!("Starting Sagittarius gateway");
+    log::debug!("{config}");
+
+    let result = run(config).await;
+    if let Err(error) = &result {
+        log::error!("Sagittarius gateway failed: {error:?}");
+        telemetry::errors::record("gateway", "run", error.as_ref(), "service=gateway");
+    }
+    telemetry.shutdown();
+
+    result
+}
+
+async fn run(config: Config) -> anyhow::Result<()> {
     let url = config.backend.url.clone();
     let channel = Channel::from_shared(url)?;
 
@@ -66,7 +93,34 @@ async fn main() -> anyhow::Result<()> {
         server_builder = server_builder.add_service(health_service);
     }
 
+    log::info!("Sagittarius gateway listening on {}", address);
     server_builder.serve(address).await?;
+    log::info!("Sagittarius gateway stopped");
 
     Ok(())
+}
+
+fn install_panic_logging() {
+    std::panic::set_hook(Box::new(move |panic_info| {
+        let message = if let Some(message) = panic_info.payload().downcast_ref::<&str>() {
+            *message
+        } else if let Some(message) = panic_info.payload().downcast_ref::<String>() {
+            message.as_str()
+        } else {
+            "<non-string panic payload>"
+        };
+
+        let location = panic_info
+            .location()
+            .map(|location| {
+                format!(
+                    "{}:{}:{}",
+                    location.file(),
+                    location.line(),
+                    location.column()
+                )
+            })
+            .unwrap_or_else(|| "unknown".into());
+        telemetry::errors::panic(message, &location);
+    }));
 }
