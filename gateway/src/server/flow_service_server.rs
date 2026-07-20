@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::auth::{JwtVerifier, authentication_metadata, authentication_token};
+use crate::auth::{JwtClient, JwtVerifier, authentication_token};
 use crate::client::flow_service_client::SagittariusRailsFlowServiceClient;
 use crate::client::token_service_client::{
     RuntimeVerificationStatus, SagittariusRailsTokenServiceClient,
@@ -29,6 +29,7 @@ const FLOW_QUEUE_CAPACITY: usize = 1024;
 pub struct SagittariusFlowService {
     client: SagittariusRailsFlowServiceClient,
     token_client: SagittariusRailsTokenServiceClient,
+    jwt_client: JwtClient,
     jwt_verifier: JwtVerifier,
     streams: Arc<Mutex<HashMap<i64, FlowResponseSender>>>,
 }
@@ -42,11 +43,13 @@ impl SagittariusFlowService {
     pub fn new(
         client: SagittariusRailsFlowServiceClient,
         token_client: SagittariusRailsTokenServiceClient,
+        jwt_client: JwtClient,
         jwt_verifier: JwtVerifier,
     ) -> Self {
         Self {
             client,
             token_client,
+            jwt_client,
             jwt_verifier,
             streams: Arc::new(Mutex::new(HashMap::new())),
         }
@@ -57,9 +60,9 @@ impl SagittariusFlowService {
         streams: Arc<Mutex<HashMap<i64, FlowResponseSender>>>,
         client: SagittariusRailsFlowServiceClient,
         outgoing_stream: FlowResponseSender,
-        authentication: MetadataValue<tonic::metadata::Ascii>,
+        authorization: MetadataValue<tonic::metadata::Ascii>,
     ) {
-        if Self::send_initial_flow_state(client, &outgoing_stream, authentication)
+        if Self::send_initial_flow_state(client, &outgoing_stream, authorization)
             .await
             .is_err()
         {
@@ -75,12 +78,9 @@ impl SagittariusFlowService {
     async fn send_initial_flow_state(
         client: SagittariusRailsFlowServiceClient,
         outgoing_stream: &FlowResponseSender,
-        authentication: MetadataValue<tonic::metadata::Ascii>,
+        authorization: MetadataValue<tonic::metadata::Ascii>,
     ) -> Result<(), ()> {
-        let rails_response = match client
-            .update_with_authentication(RailsFlowLogonRequest {}, authentication)
-            .await
-        {
+        let rails_response = match client.update(RailsFlowLogonRequest {}, authorization).await {
             Ok(response) => response.into_inner(),
             Err(err) => {
                 log::error!("Failed to fetch initial flow state from Rails: {}", err);
@@ -195,8 +195,8 @@ impl FlowService for SagittariusFlowService {
         request: tonic::Request<FlowLogonRequest>,
     ) -> Result<tonic::Response<Self::UpdateStream>, tonic::Status> {
         let metadata = request.metadata();
-        let authentication = authentication_metadata(metadata)?;
         let runtime_id = Self::verify_stream_runtime(&self.token_client, metadata).await?;
+        let authorization = self.jwt_client.authorization_for_runtime(runtime_id)?;
         let (response_tx, response_rx) = mpsc::channel(FLOW_QUEUE_CAPACITY);
 
         Self::register_stream(&self.streams, runtime_id, response_tx.clone()).await?;
@@ -208,7 +208,7 @@ impl FlowService for SagittariusFlowService {
             Arc::clone(&self.streams),
             self.client.clone(),
             response_tx,
-            authentication,
+            authorization,
         ));
 
         Ok(Response::new(Box::pin(ReceiverStream::new(response_rx))))

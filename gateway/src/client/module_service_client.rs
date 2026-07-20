@@ -23,21 +23,13 @@ impl SagittariusRailsModuleServiceClient {
     pub async fn update(
         &self,
         request: ModuleUpdateRequest,
-    ) -> Result<tonic::Response<ModuleUpdateResponse>, tonic::Status> {
-        log::debug!("Proxying a module update request.");
-        self.inner.clone().update(request).await
-    }
-
-    pub async fn update_with_authentication(
-        &self,
-        request: ModuleUpdateRequest,
-        authentication: MetadataValue<tonic::metadata::Ascii>,
+        authorization: MetadataValue<tonic::metadata::Ascii>,
     ) -> Result<tonic::Response<ModuleUpdateResponse>, tonic::Status> {
         log::debug!("Proxying a module update request.");
         let mut request = tonic::Request::new(request);
         request
             .metadata_mut()
-            .insert("authentication", authentication);
+            .insert("authorization", authorization);
         self.inner.clone().update(request).await
     }
 }

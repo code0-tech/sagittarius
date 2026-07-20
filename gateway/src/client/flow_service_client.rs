@@ -23,21 +23,13 @@ impl SagittariusRailsFlowServiceClient {
     pub async fn update(
         &self,
         request: FlowLogonRequest,
-    ) -> Result<tonic::Response<FlowResponse>, tonic::Status> {
-        log::debug!("Proxying a execution flow logon request.");
-        self.inner.clone().update(request).await
-    }
-
-    pub async fn update_with_authentication(
-        &self,
-        request: FlowLogonRequest,
-        authentication: MetadataValue<tonic::metadata::Ascii>,
+        authorization: MetadataValue<tonic::metadata::Ascii>,
     ) -> Result<tonic::Response<FlowResponse>, tonic::Status> {
         log::debug!("Proxying a execution flow logon request.");
         let mut request = tonic::Request::new(request);
         request
             .metadata_mut()
-            .insert("authentication", authentication);
+            .insert("authorization", authorization);
         self.inner.clone().update(request).await
     }
 }

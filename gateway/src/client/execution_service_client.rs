@@ -23,21 +23,13 @@ impl SagittariusRailsExecutionServiceClient {
     pub async fn update(
         &self,
         request: ExecutionRequest,
-    ) -> Result<tonic::Response<ExecutionResponse>, tonic::Status> {
-        log::debug!("Proxying a execution response.");
-        self.inner.clone().update(request).await
-    }
-
-    pub async fn update_with_authentication(
-        &self,
-        request: ExecutionRequest,
-        authentication: MetadataValue<tonic::metadata::Ascii>,
+        authorization: MetadataValue<tonic::metadata::Ascii>,
     ) -> Result<tonic::Response<ExecutionResponse>, tonic::Status> {
         log::debug!("Proxying a execution response.");
         let mut request = tonic::Request::new(request);
         request
             .metadata_mut()
-            .insert("authentication", authentication);
+            .insert("authorization", authorization);
         self.inner.clone().update(request).await
     }
 }

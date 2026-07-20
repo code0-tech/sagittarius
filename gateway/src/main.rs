@@ -5,7 +5,7 @@ use tucana::sagittarius_gateway::flow_service_server::FlowServiceServer;
 use tucana::sagittarius_gateway::module_service_server::ModuleServiceServer;
 use tucana::sagittarius_gateway::runtime_status_service_server::RuntimeStatusServiceServer;
 
-use crate::auth::JwtVerifier;
+use crate::auth::{JwtClient, JwtVerifier};
 use crate::client::execution_service_client::SagittariusRailsExecutionServiceClient;
 use crate::client::flow_service_client::SagittariusRailsFlowServiceClient;
 use crate::client::module_service_client::SagittariusRailsModuleServiceClient;
@@ -62,6 +62,10 @@ async fn run(config: Config) -> anyhow::Result<()> {
     let rails_status_client =
         SagittariusRailsRuntimeStatusServiceClient::connect(channel.clone()).await?;
     let rails_token_client = SagittariusRailsTokenServiceClient::connect(channel.clone()).await?;
+    let jwt_client = JwtClient::new_hs256(
+        config.auth.jwt_secret.as_bytes(),
+        config.auth.jwt_ttl_seconds,
+    );
     let jwt_verifier = JwtVerifier::new_hs256(config.auth.jwt_secret.as_bytes());
 
     let address = match format!("{}:{}", config.grpc.host, config.grpc.port).parse() {
@@ -72,16 +76,23 @@ async fn run(config: Config) -> anyhow::Result<()> {
     let rails_execution_server = SagittariusExecutionService::new(
         rails_execution_client,
         rails_token_client.clone(),
+        jwt_client.clone(),
         jwt_verifier.clone(),
     );
     let rails_flow_server = SagittariusFlowService::new(
         rails_flow_client,
         rails_token_client.clone(),
+        jwt_client.clone(),
         jwt_verifier.clone(),
     );
-    let rails_module_server =
-        SagittariusModuleService::new(rails_module_client, rails_token_client, jwt_verifier);
-    let rails_status_server = SagittariusRuntimeStatusService::new(rails_status_client);
+    let rails_module_server = SagittariusModuleService::new(
+        rails_module_client,
+        rails_token_client.clone(),
+        jwt_client.clone(),
+        jwt_verifier,
+    );
+    let rails_status_server =
+        SagittariusRuntimeStatusService::new(rails_status_client, rails_token_client, jwt_client);
     let mut server_builder = Server::builder()
         .add_service(ExecutionServiceServer::new(rails_execution_server))
         .add_service(FlowServiceServer::new(rails_flow_server))

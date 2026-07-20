@@ -1,4 +1,5 @@
 use tonic::codegen::StdError;
+use tonic::metadata::MetadataValue;
 use tonic::transport::{Channel, Endpoint};
 use tucana::sagittarius_rails::token_service_client::TokenServiceClient;
 use tucana::sagittarius_rails::token_verify_response::Data;
@@ -27,13 +28,22 @@ impl SagittariusRailsTokenServiceClient {
 
     async fn verify(
         &self,
-        request: TokenVerifyRequest,
+        token: String,
     ) -> Result<tonic::Response<TokenVerifyResponse>, tonic::Status> {
+        let authorization: MetadataValue<tonic::metadata::Ascii> = token
+            .parse()
+            .map_err(|_| tonic::Status::unauthenticated("invalid Aquila authentication token"))?;
+        let mut request = tonic::Request::new(TokenVerifyRequest {
+            token: token.clone(),
+        });
+        request
+            .metadata_mut()
+            .insert("authorization", authorization);
         self.inner.clone().verify(request).await
     }
 
     pub async fn validate_token(&self, token: String) -> RuntimeVerificationStatus {
-        let response = self.verify(TokenVerifyRequest { token }).await;
+        let response = self.verify(token).await;
 
         let status_response = match response {
             Ok(res) => res,

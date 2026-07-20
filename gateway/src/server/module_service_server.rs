@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::auth::{JwtVerifier, authentication_metadata, authentication_token};
+use crate::auth::{JwtClient, JwtVerifier, authentication_token};
 use crate::client::module_service_client::SagittariusRailsModuleServiceClient;
 use crate::client::token_service_client::{
     RuntimeVerificationStatus, SagittariusRailsTokenServiceClient,
@@ -29,6 +29,7 @@ const MODULE_CONFIGURATION_QUEUE_CAPACITY: usize = 1024;
 pub struct SagittariusModuleService {
     client: SagittariusRailsModuleServiceClient,
     token_client: SagittariusRailsTokenServiceClient,
+    jwt_client: JwtClient,
     jwt_verifier: JwtVerifier,
     streams: Arc<Mutex<HashMap<i64, ModuleConfigurationSender>>>,
 }
@@ -43,11 +44,13 @@ impl SagittariusModuleService {
     pub fn new(
         client: SagittariusRailsModuleServiceClient,
         token_client: SagittariusRailsTokenServiceClient,
+        jwt_client: JwtClient,
         jwt_verifier: JwtVerifier,
     ) -> Self {
         Self {
             client,
             token_client,
+            jwt_client,
             jwt_verifier,
             streams: Arc::new(Mutex::new(HashMap::new())),
         }
@@ -170,11 +173,13 @@ impl ModuleService for SagittariusModuleService {
         &self,
         request: tonic::Request<ModuleUpdateRequest>,
     ) -> Result<tonic::Response<ModuleUpdateResponse>, tonic::Status> {
-        let authentication = authentication_metadata(request.metadata())?;
+        let runtime_id =
+            Self::verify_stream_runtime(&self.token_client, request.metadata()).await?;
+        let authorization = self.jwt_client.authorization_for_runtime(runtime_id)?;
         let rails_request = Self::to_rails_update_request(request.into_inner());
         let rails_response = self
             .client
-            .update_with_authentication(rails_request, authentication)
+            .update(rails_request, authorization)
             .await?
             .into_inner();
 

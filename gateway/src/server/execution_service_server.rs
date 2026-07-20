@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::auth::{JwtVerifier, authentication_metadata, authentication_token};
+use crate::auth::{JwtClient, JwtVerifier, authentication_token};
 use crate::client::execution_service_client::SagittariusRailsExecutionServiceClient;
 use crate::client::token_service_client::{
     RuntimeVerificationStatus, SagittariusRailsTokenServiceClient,
@@ -11,7 +11,7 @@ use std::sync::Arc;
 use tokio::sync::{Mutex, mpsc};
 use tonic::codegen::tokio_stream::Stream;
 use tonic::codegen::tokio_stream::wrappers::ReceiverStream;
-use tonic::metadata::{MetadataMap, MetadataValue};
+use tonic::metadata::MetadataMap;
 use tonic::{Extensions, Response, Status};
 use tucana::sagittarius_gateway::execution_logon_request::Data;
 use tucana::sagittarius_gateway::execution_service_server::ExecutionService;
@@ -26,6 +26,7 @@ const EXECUTION_QUEUE_CAPACITY: usize = 1024;
 pub struct SagittariusExecutionService {
     client: SagittariusRailsExecutionServiceClient,
     token_client: SagittariusRailsTokenServiceClient,
+    jwt_client: JwtClient,
     jwt_verifier: JwtVerifier,
     streams: Arc<Mutex<HashMap<i64, ExecutionResponseSender>>>,
 }
@@ -39,11 +40,13 @@ impl SagittariusExecutionService {
     pub fn new(
         client: SagittariusRailsExecutionServiceClient,
         token_client: SagittariusRailsTokenServiceClient,
+        jwt_client: JwtClient,
         jwt_verifier: JwtVerifier,
     ) -> Self {
         Self {
             client,
             token_client,
+            jwt_client,
             jwt_verifier,
             streams: Arc::new(Mutex::new(HashMap::new())),
         }
@@ -53,14 +56,17 @@ impl SagittariusExecutionService {
         runtime_id: i64,
         streams: Arc<Mutex<HashMap<i64, ExecutionResponseSender>>>,
         client: SagittariusRailsExecutionServiceClient,
+        jwt_client: JwtClient,
         mut incoming_stream: tonic::Streaming<ExecutionLogonRequest>,
-        authentication: MetadataValue<tonic::metadata::Ascii>,
     ) {
         loop {
             match incoming_stream.message().await {
-                Ok(Some(message)) => {
-                    Self::handle_aquila_message(client.clone(), message, authentication.clone())
-                }
+                Ok(Some(message)) => Self::handle_aquila_message(
+                    client.clone(),
+                    jwt_client.clone(),
+                    runtime_id,
+                    message,
+                ),
                 Ok(None) => break,
                 Err(err) => {
                     log::error!("Failed to receive execution update from Aquila: {}", err);
@@ -75,22 +81,27 @@ impl SagittariusExecutionService {
 
     fn handle_aquila_message(
         client: SagittariusRailsExecutionServiceClient,
+        jwt_client: JwtClient,
+        runtime_id: i64,
         message: ExecutionLogonRequest,
-        authentication: MetadataValue<tonic::metadata::Ascii>,
     ) {
         match message.data {
             Some(Data::Response(response)) => {
                 // Rails is a separate unary RPC. It is spawned from here so slow
                 // Rails calls do not hold up Aquila's stream reader.
                 tokio::spawn(async move {
+                    let authorization = match jwt_client.authorization_for_runtime(runtime_id) {
+                        Ok(authorization) => authorization,
+                        Err(err) => {
+                            log::error!("Failed to authenticate execution response: {}", err);
+                            return;
+                        }
+                    };
                     let rails_request = ExecutionRequest {
                         response: Some(response),
                     };
 
-                    if let Err(err) = client
-                        .update_with_authentication(rails_request, authentication)
-                        .await
-                    {
+                    if let Err(err) = client.update(rails_request, authorization).await {
                         log::error!("Failed to proxy execution response to Rails: {}", err);
                     }
                 });
@@ -183,7 +194,6 @@ impl ExecutionService for SagittariusExecutionService {
         request: tonic::Request<tonic::Streaming<ExecutionLogonRequest>>,
     ) -> Result<tonic::Response<Self::UpdateStream>, tonic::Status> {
         let (metadata, _, incoming_stream) = request.into_parts();
-        let authentication = authentication_metadata(&metadata)?;
         let runtime_id = Self::verify_stream_runtime(&self.token_client, &metadata).await?;
         let (response_tx, response_rx) = mpsc::channel(EXECUTION_QUEUE_CAPACITY);
 
@@ -198,8 +208,8 @@ impl ExecutionService for SagittariusExecutionService {
             runtime_id,
             Arc::clone(&self.streams),
             self.client.clone(),
+            self.jwt_client.clone(),
             incoming_stream,
-            authentication,
         ));
 
         Ok(Response::new(Box::pin(ReceiverStream::new(response_rx))))
