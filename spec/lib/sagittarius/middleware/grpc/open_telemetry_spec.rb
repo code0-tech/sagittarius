@@ -128,32 +128,29 @@ RSpec.describe Sagittarius::Middleware::Grpc::OpenTelemetry do
     end
   end
 
-  describe 'span links' do
+  describe 'parent context propagation' do
     context 'when valid trace context is present' do
       let(:metadata) do
         { 'traceparent' => '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01' }
       end
 
-      it 'passes a link to the remote span context' do
+      it 'sets the remote span as parent' do
         # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
         interceptor.request_response(request: request, call: call, method: method) {}
         # rubocop:enable Lint/EmptyBlock
 
-        expect(span.links.size).to eq(1)
-
-        link = span.links.first
-        expect(link.span_context.hex_trace_id).to eq('0af7651916cd43dd8448eb211c80319c')
-        expect(link.span_context.hex_span_id).to eq('b7ad6b7169203331')
+        expect(span.hex_trace_id).to eq('0af7651916cd43dd8448eb211c80319c')
+        expect(span.hex_parent_span_id).to eq('b7ad6b7169203331')
       end
     end
 
     context 'when no trace context is present' do
-      it 'passes no links' do
+      it 'creates a new root span' do
         # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
         interceptor.request_response(request: request, call: call, method: method) {}
         # rubocop:enable Lint/EmptyBlock
 
-        expect(span.links).to be_nil.or be_empty
+        expect(span.hex_parent_span_id).to eq('0000000000000000')
       end
     end
   end
