@@ -18,6 +18,7 @@ backend:
 
 auth:
   jwt_secret: "jwt-secret"
+  jwt_ttl_seconds: 300
 
 grpc:
   port: 50051

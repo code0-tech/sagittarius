@@ -25,6 +25,7 @@ pub struct Config {
 #[serde(default)]
 pub struct Auth {
     pub jwt_secret: String,
+    pub jwt_ttl_seconds: u64,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -75,6 +76,7 @@ impl Default for Auth {
     fn default() -> Self {
         Self {
             jwt_secret: String::from("jwt-secret"),
+            jwt_ttl_seconds: 300,
         }
     }
 }
