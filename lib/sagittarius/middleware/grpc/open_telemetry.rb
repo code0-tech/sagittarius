@@ -27,19 +27,21 @@ module Sagittarius
           method_name = found_method&.to_s || '(unknown)'
           rpc_method = "#{service_name}/#{method_name}"
 
-          links = extract_remote_span_links(call)
+          parent_context = extract_parent_context(call)
           attributes = build_attributes(rpc_method)
 
-          self.class.tracer.in_span(rpc_method, links: links, kind: :server, attributes: attributes) do |span|
-            result = block.call
-            record_success(span)
-            result
-          rescue ::GRPC::BadStatus => e
-            record_grpc_error(span, e)
-            raise
-          rescue StandardError => e
-            record_exception(span, e)
-            raise
+          ::OpenTelemetry::Context.with_current(parent_context) do
+            self.class.tracer.in_span(rpc_method, kind: :server, attributes: attributes) do |span|
+              result = block.call
+              record_success(span)
+              result
+            rescue ::GRPC::BadStatus => e
+              record_grpc_error(span, e)
+              raise
+            rescue StandardError => e
+              record_exception(span, e)
+              raise
+            end
           end
         end
 
@@ -74,15 +76,10 @@ module Sagittarius
           span.record_exception(error)
         end
 
-        def extract_remote_span_links(call)
-          extracted_context = ::OpenTelemetry.propagation.extract(call.metadata)
-          remote_span_context = ::OpenTelemetry::Trace.current_span(extracted_context).context
-
-          return [] unless remote_span_context.valid?
-
-          [::OpenTelemetry::Trace::Link.new(remote_span_context)]
+        def extract_parent_context(call)
+          ::OpenTelemetry.propagation.extract(call.metadata)
         rescue StandardError
-          []
+          ::OpenTelemetry::Context.current
         end
       end
     end
