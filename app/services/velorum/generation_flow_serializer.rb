@@ -286,7 +286,7 @@ module Velorum
     def ordered_parameter_definitions(function_definition)
       function_definition
         .parameter_definitions
-        .sort_by { |definition| definition.runtime_parameter_definition&.id || definition.id }
+        .sort_by { |definition| definition.runtime_parameter_definition.id }
     end
 
     def flow_type_setting_for(flow_type, setting, index)

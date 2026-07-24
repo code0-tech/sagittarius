@@ -20,4 +20,37 @@ RSpec.describe FunctionDefinition do
     it { is_expected.to have_many(:aliases).class_name('Translation') }
     it { is_expected.to have_many(:display_messages).class_name('Translation') }
   end
+
+  describe '#ordered_parameter_definitions' do
+    let(:runtime_function_definition) { create(:runtime_function_definition) }
+    let(:function_definition) do
+      create(:function_definition, runtime_function_definition: runtime_function_definition)
+    end
+
+    it 'orders parameter definitions by runtime parameter definition order' do
+      first_runtime_parameter = create(
+        :runtime_parameter_definition,
+        runtime_function_definition: runtime_function_definition,
+        runtime_name: 'first'
+      )
+      second_runtime_parameter = create(
+        :runtime_parameter_definition,
+        runtime_function_definition: runtime_function_definition,
+        runtime_name: 'second'
+      )
+
+      second_parameter = create(
+        :parameter_definition,
+        function_definition: function_definition,
+        runtime_parameter_definition: second_runtime_parameter
+      )
+      first_parameter = create(
+        :parameter_definition,
+        function_definition: function_definition,
+        runtime_parameter_definition: first_runtime_parameter
+      )
+
+      expect(function_definition.ordered_parameter_definitions).to eq([first_parameter, second_parameter])
+    end
+  end
 end

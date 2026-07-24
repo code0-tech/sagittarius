@@ -169,10 +169,11 @@ module Namespaces
 
         def update_node_parameters(t, current_node, current_node_input, all_nodes)
           db_parameters = current_node.node_parameters.first(current_node_input.parameters.count)
+          parameter_definitions = current_node.function_definition.ordered_parameter_definitions
           current_node_input.parameters.each_with_index do |parameter, index|
             db_parameters[index] ||= current_node.node_parameters.build
 
-            parameter_definition = current_node.function_definition.parameter_definitions[index]
+            parameter_definition = parameter_definitions[index]
             if parameter_definition.nil?
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Invalid parameter index',
