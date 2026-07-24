@@ -92,7 +92,7 @@ gem 'image_processing', '>= 1.2'
 
 gem 'json-schema', '~> 6.0'
 
-gem 'triangulum', '0.26.2'
+gem 'triangulum', '0.27.1'
 
 gem 'benchmark'
 
