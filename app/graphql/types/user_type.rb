@@ -47,6 +47,14 @@ module Types
           description: 'Identities of this user',
           method: :user_identities
 
+    field :organization_pins, [Types::UserOrganizationPinType],
+          null: false,
+          description: 'Pinned organizations of this user with explicit priority'
+
+    field :pinned_organizations, [Types::OrganizationType],
+          null: false,
+          description: 'Pinned organizations of this user ordered by pin priority'
+
     field :mfa_status, Types::MfaStatusType,
           null: true,
           description: 'Multi-factor authentication status of this user'
@@ -76,6 +84,10 @@ module Types
         totp_enabled: object.totp_secret.present?,
         backup_codes_count: object.backup_codes.size,
       }
+    end
+
+    def organization_pins
+      object.user_organization_pins.order(priority: :asc)
     end
   end
 end
