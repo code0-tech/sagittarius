@@ -11,9 +11,15 @@ class ModuleHandler < Tucana::Sagittarius::ModuleService::Service
 
     logger.debug("ModuleHandler#update response: #{response.inspect}")
     unless response.success?
+      details = if response.payload[:details].is_a?(ActiveModel::Errors)
+                  { error_code: response.payload[:error_code], details: response.payload[:details].full_messages }
+                else
+                  response.payload
+                end
+
       logger.warn(message: 'Failed to update modules',
                   error: response.message,
-                  details: response.payload)
+                  details: details)
     end
 
     response.to_grpc_response(Tucana::Sagittarius::ModuleUpdateResponse)

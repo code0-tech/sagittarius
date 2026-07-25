@@ -133,6 +133,10 @@ module Runtimes
 
               next if db_module_definitions[index].save
 
+              logger.error(message: 'Failed to update runtime module definition',
+                           module_identifier: grpc_module.identifier,
+                           errors: db_module_definitions[index].errors.full_messages)
+
               t.rollback_and_return! ServiceResponse.error(
                 message: 'Failed to update runtime module definition',
                 error_code: :invalid_runtime_module_definition,
