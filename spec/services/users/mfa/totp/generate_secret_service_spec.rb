@@ -21,13 +21,31 @@ RSpec.describe Users::Mfa::Totp::GenerateSecretService do
     end
 
     context 'when totp secret is not set' do
+      include ActiveSupport::Testing::TimeHelpers
+
       let(:current_user) { create(:user) }
 
       it { is_expected.to be_success }
 
-      it 'is valid totp secret' do
-        totp = ROTP::TOTP.new(service_response.payload.split('--').first)
-        expect(totp.secret.length).to eq(48)
+      it 'returns a valid totp secret' do
+        secret = service_response.payload[:secret]
+        totp = ROTP::TOTP.new(secret)
+        expect(totp.now).to be_present
+      end
+
+      it 'returns a matching secret' do
+        signed_secret = Rails.application.message_verifier(:totp_secret).verified(
+          service_response.payload[:signed_secret]
+        )
+        expect(signed_secret).to eq(service_response.payload[:secret])
+      end
+
+      it 'returns a signed secret that expires' do
+        signed_secret = service_response.payload[:signed_secret]
+
+        travel_to 31.minutes.from_now do
+          expect(Rails.application.message_verifier(:totp_secret).verified(signed_secret)).to be_nil
+        end
       end
     end
   end

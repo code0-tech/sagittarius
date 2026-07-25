@@ -28,17 +28,37 @@ RSpec.describe Users::Mfa::Totp::ValidateSecretService do
   context 'when user and secret is valid but totp is not' do
     let(:current_user) { create(:user) }
     let(:secret) { ROTP::Base32.random }
-    let(:signed_secret) { Rails.application.message_verifier(:totp_secret).generate(secret) }
+    let(:signed_secret) { Rails.application.message_verifier(:totp_secret).generate(secret, expires_in: 30.minutes) }
     let(:current_totp) { '00000' }
 
     it { is_expected.not_to be_success }
     it { is_expected.not_to create_audit_event }
   end
 
+  context 'when signed secret has expired' do
+    include ActiveSupport::Testing::TimeHelpers
+
+    # rubocop:disable RSpec/LetSetup -- referenced in the subject
+    let!(:current_user) { create(:user) }
+    let!(:secret) { ROTP::Base32.random }
+    let!(:signed_secret) do
+      Rails.application.message_verifier(:totp_secret).generate(secret, expires_in: 30.minutes)
+    end
+    let!(:current_totp) { ROTP::TOTP.new(secret).now }
+    # rubocop:enable RSpec/LetSetup
+
+    it 'returns invalid_totp_secret error' do
+      travel_to 31.minutes.from_now do
+        expect(service_response).not_to be_success
+        expect(service_response.payload[:error_code]).to eq(:invalid_totp_secret)
+      end
+    end
+  end
+
   context 'when user is valid and secret is valid and totp is valid' do
     let(:current_user) { create(:user) }
     let(:secret) { ROTP::Base32.random }
-    let(:signed_secret) { Rails.application.message_verifier(:totp_secret).generate(secret) }
+    let(:signed_secret) { Rails.application.message_verifier(:totp_secret).generate(secret, expires_in: 30.minutes) }
     let(:current_totp) { ROTP::TOTP.new(secret).now }
 
     it { is_expected.to be_success }

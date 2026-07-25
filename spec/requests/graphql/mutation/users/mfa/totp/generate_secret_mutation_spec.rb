@@ -13,6 +13,7 @@ RSpec.describe 'usersMfaTotpGenerateSecret Mutation' do
         usersMfaTotpGenerateSecret(input: {}) {
           #{error_query}
           secret
+          signedSecret
         }
       }
     QUERY
@@ -25,7 +26,13 @@ RSpec.describe 'usersMfaTotpGenerateSecret Mutation' do
 
     it 'generates secret' do
       mutate!
-      expect(graphql_data_at(:users_mfa_totp_generate_secret, :secret)).to be_present
+      secret = graphql_data_at(:users_mfa_totp_generate_secret, :secret)
+      signed_secret = graphql_data_at(:users_mfa_totp_generate_secret, :signed_secret)
+
+      expect(secret).to be_present
+
+      signed_totp = Rails.application.message_verifier(:totp_secret).verified(signed_secret)
+      expect(signed_totp).to eq(secret)
     end
   end
 end

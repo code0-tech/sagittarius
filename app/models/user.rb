@@ -24,6 +24,9 @@ class User < ApplicationRecord
 
   validates :firstname, length: { maximum: 50 }
   validates :lastname, length: { maximum: 50 }
+
+  encrypts :totp_secret
+
   validates :totp_secret, length: { maximum: 32 }
 
   has_many :backup_codes, inverse_of: :user
