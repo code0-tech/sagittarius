@@ -9,6 +9,7 @@ RSpec.describe SagittariusSchema.types['RuntimeModuleDefinition'] do
       host
       port
       endpoint
+      protocol
       createdAt
       updatedAt
     ]

@@ -12,6 +12,8 @@ RSpec.describe RuntimeModuleDefinition do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:host) }
     it { is_expected.to validate_presence_of(:endpoint) }
+    it { is_expected.to validate_presence_of(:protocol) }
+    it { is_expected.to validate_length_of(:protocol).is_at_most(255) }
 
     it {
       is_expected.to validate_numericality_of(:port)
