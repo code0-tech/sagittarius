@@ -129,6 +129,7 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
                 host: 'localhost',
                 port: 8080,
                 endpoint: '/execute',
+                protocol: 'https',
               },
             }
           ],
@@ -193,7 +194,8 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
       expect(module_definition).to have_attributes(
         host: 'localhost',
         port: 8080,
-        endpoint: '/execute'
+        endpoint: '/execute',
+        protocol: 'https'
       )
     end
 

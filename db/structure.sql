@@ -931,8 +931,10 @@ CREATE TABLE runtime_module_definitions (
     endpoint text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
+    protocol text NOT NULL,
     CONSTRAINT check_5328b69b6f CHECK ((char_length(host) <= 253)),
-    CONSTRAINT check_5a8231f609 CHECK ((char_length(endpoint) <= 2048))
+    CONSTRAINT check_5a8231f609 CHECK ((char_length(endpoint) <= 2048)),
+    CONSTRAINT check_cdbfabb698 CHECK ((char_length(protocol) <= 255))
 );
 
 CREATE SEQUENCE runtime_module_definitions_id_seq

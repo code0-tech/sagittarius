@@ -13,4 +13,5 @@ A runtime module definition endpoint
 | `host` | [`String!`](../scalar/string.md) | Host of the module definition endpoint |
 | `id` | [`RuntimeModuleDefinitionID!`](../scalar/runtimemoduledefinitionid.md) | Global ID of this RuntimeModuleDefinition |
 | `port` | [`BigInt!`](../scalar/bigint.md) | Port of the module definition endpoint |
+| `protocol` | [`String!`](../scalar/string.md) | Protocol of the module definition endpoint |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeModuleDefinition was last updated |

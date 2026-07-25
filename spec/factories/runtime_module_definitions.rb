@@ -6,5 +6,6 @@ FactoryBot.define do
     host { 'localhost' }
     port { 3000 }
     endpoint { '/runtime' }
+    protocol { 'https' }
   end
 end

@@ -126,7 +126,8 @@ module Runtimes
               db_module_definitions[index].assign_attributes(
                 host: endpoint.host,
                 port: endpoint.port,
-                endpoint: endpoint.endpoint
+                endpoint: endpoint.endpoint,
+                protocol: endpoint.protocol
               )
 
               next if db_module_definitions[index].save
