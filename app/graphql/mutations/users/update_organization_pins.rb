@@ -1,0 +1,28 @@
+# frozen_string_literal: true
+
+module Mutations
+  module Users
+    class UpdateOrganizationPins < BaseMutation
+      description 'Update pinned organizations for a user.'
+
+      field :user, Types::UserType, null: true, description: 'The updated user.'
+
+      argument :organization_ids,
+               [Types::GlobalIdType[::Organization]],
+               required: true,
+               description: 'Ordered list of organization IDs to pin for the user.'
+
+      def resolve(organization_ids:)
+        organizations = organization_ids.map { |id| SagittariusSchema.object_from_id(id) }
+        if organizations.any?(&:nil?)
+          return { user: nil, errors: [create_error(:organization_not_found, 'Invalid organization with provided id')] }
+        end
+
+        ::Users::UpdateOrganizationPinsService.new(
+          current_authentication,
+          organizations.map(&:id)
+        ).execute.to_mutation_response(success_key: :user)
+      end
+    end
+  end
+end
