@@ -26,8 +26,13 @@ RSpec.describe Users::Mfa::Totp::GenerateSecretService do
       it { is_expected.to be_success }
 
       it 'is valid totp secret' do
-        totp = ROTP::TOTP.new(service_response.payload.split('--').first)
+        totp = ROTP::TOTP.new(service_response.payload[:signed_secret].split('--').first)
         expect(totp.secret.length).to eq(48)
+      end
+
+      it 'returns a matching secret' do
+        signed_totp = Rails.application.message_verifier(:totp_secret).verify(service_response.payload[:signed_secret])
+        expect(signed_totp).to eq(service_response.payload[:secret])
       end
     end
   end

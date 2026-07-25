@@ -7,11 +7,19 @@ module Mutations
         class GenerateSecret < BaseMutation
           description 'Generates an encrypted totp secret'
 
-          field :secret, String, null: true, description: 'The created and signed secret'
+          field :secret, String, null: true, description: 'The created secret'
+          field :signed_secret, String, null: true, description: 'The created and signed secret'
 
           def resolve
-            ::Users::Mfa::Totp::GenerateSecretService.new(current_authentication).execute
-                                                     .to_mutation_response(success_key: :secret)
+            response = ::Users::Mfa::Totp::GenerateSecretService.new(current_authentication).execute
+
+            return response.to_mutation_response unless response.success?
+
+            {
+              secret: response.payload[:secret],
+              signed_secret: response.payload[:signed_secret],
+              errors: [],
+            }
           end
         end
       end

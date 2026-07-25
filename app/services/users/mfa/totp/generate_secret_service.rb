@@ -22,8 +22,12 @@ module Users
           totp_secret = ROTP::Base32.random
 
           ServiceResponse.success(message: 'TOTP secret generated',
-                                  payload: Rails.application.message_verifier(:totp_secret)
-                                                .generate(totp_secret))
+                                  payload: {
+                                    signed_secret: Rails.application
+                                                        .message_verifier(:totp_secret)
+                                                        .generate(totp_secret),
+                                    secret: totp_secret,
+                                  })
         end
       end
     end
