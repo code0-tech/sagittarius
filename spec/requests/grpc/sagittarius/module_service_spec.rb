@@ -19,6 +19,7 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
           author: 'Code0',
           icon: 'taurus-icon',
           version: '1.2.3',
+          definition_source: 'taurus',
           definition_data_types: [
             {
               identifier: 'TEXT',
@@ -147,7 +148,8 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
         documentation: 'Module documentation',
         author: 'Code0',
         icon: 'taurus-icon',
-        version: '1.2.3'
+        version: '1.2.3',
+        definition_source: 'taurus'
       )
       expect(runtime_module.names.first.content).to eq('Taurus')
       expect(runtime_module.descriptions.first.content).to eq('Core module')
@@ -156,22 +158,27 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
       text_list = DataType.find_by!(runtime: runtime, identifier: 'TEXT_LIST')
       expect(text.runtime_module).to eq(runtime_module)
       expect(text_list.runtime_module).to eq(runtime_module)
+      expect(text).to have_attributes(definition_source: 'taurus')
+      expect(text_list).to have_attributes(definition_source: 'taurus')
       expect(text_list.referenced_data_types).to contain_exactly(text)
 
       runtime_flow_type = RuntimeFlowType.find_by!(runtime: runtime, identifier: 'RUNTIME_FORM')
       expect(runtime_flow_type.runtime_module).to eq(runtime_module)
+      expect(runtime_flow_type.definition_source).to eq('taurus')
       expect(runtime_flow_type.runtime_flow_type_settings.first.identifier).to eq('title')
       expect(runtime_flow_type.runtime_flow_type_settings.first).to have_attributes(optional: true, hidden: true)
       expect(runtime_flow_type.referenced_data_types).to contain_exactly(text, text_list)
 
       flow_type = FlowType.find_by!(runtime: runtime, identifier: 'FORM')
       expect(flow_type.runtime_module).to eq(runtime_module)
+      expect(flow_type.definition_source).to eq('taurus')
       expect(flow_type.runtime_flow_type).to eq(runtime_flow_type)
       expect(flow_type.flow_type_settings.first).to have_attributes(optional: true, hidden: true)
       expect(flow_type.referenced_data_types).to contain_exactly(text, text_list)
 
       runtime_function = RuntimeFunctionDefinition.find_by!(runtime: runtime, runtime_name: 'std::text::split')
       expect(runtime_function.runtime_module).to eq(runtime_module)
+      expect(runtime_function.definition_source).to eq('taurus')
       expect(runtime_function.design).to eq('runtime-design')
       expect(runtime_function.referenced_data_types).to contain_exactly(text, text_list)
       expect(runtime_function.parameters.first.runtime_name).to eq('text')

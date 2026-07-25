@@ -10,5 +10,6 @@ FactoryBot.define do
     author { '' }
     icon { nil }
     version { '0.0.0' }
+    definition_source { 'taurus' }
   end
 end

@@ -20,4 +20,24 @@ RSpec.describe SubFlow do
       expect(sub_flow.errors[:base]).to include('Exactly one of starting_node or function_definition must be present')
     end
   end
+
+  describe '#to_grpc' do
+    it 'serializes a function reference with its definition source' do
+      runtime_function_definition = create(:runtime_function_definition, definition_source: 'taurus')
+      function_definition = create(
+        :function_definition,
+        runtime: runtime_function_definition.runtime,
+        runtime_function_definition: runtime_function_definition
+      )
+      sub_flow = create(:sub_flow, starting_node: nil, function_definition: function_definition)
+
+      grpc_sub_flow = sub_flow.to_grpc
+
+      expect(grpc_sub_flow.function).to have_attributes(
+        function_identifier: function_definition.identifier,
+        definition_source: 'taurus'
+      )
+      expect(grpc_sub_flow.function.has_definition_source?).to be(true)
+    end
+  end
 end

@@ -25,6 +25,7 @@ RSpec.describe RuntimeModule do
     it { is_expected.to validate_length_of(:documentation).is_at_most(200) }
     it { is_expected.to validate_length_of(:author).is_at_most(200) }
     it { is_expected.to validate_length_of(:icon).is_at_most(100) }
+    it { is_expected.to validate_length_of(:definition_source).is_at_most(50) }
 
     describe '#validate_version' do
       it 'adds an error if version is blank' do

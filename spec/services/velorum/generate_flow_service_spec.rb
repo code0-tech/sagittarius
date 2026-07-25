@@ -36,7 +36,9 @@ RSpec.describe Velorum::GenerateFlowService do
       parameter_definitions: [parameter_definition]
     )
   end
-  let(:runtime_function_definition) { instance_double(RuntimeFunctionDefinition, runtime_name: 'sum') }
+  let(:runtime_function_definition) do
+    instance_double(RuntimeFunctionDefinition, runtime_name: 'sum', definition_source: 'taurus')
+  end
   let(:parameter_definition) do
     instance_double(ParameterDefinition, runtime_parameter_definition: runtime_parameter_definition)
   end

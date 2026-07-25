@@ -956,8 +956,10 @@ CREATE TABLE runtime_modules (
     version text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
+    definition_source text,
     CONSTRAINT check_1a843f8ec6 CHECK ((char_length(identifier) <= 50)),
     CONSTRAINT check_3f8395fc6a CHECK ((char_length(icon) <= 100)),
+    CONSTRAINT check_436ae79860 CHECK ((char_length(definition_source) <= 50)),
     CONSTRAINT check_59e12f7f02 CHECK ((char_length(author) <= 200)),
     CONSTRAINT check_d169c23c07 CHECK ((char_length(documentation) <= 200))
 );

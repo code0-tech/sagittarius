@@ -22,6 +22,7 @@ class RuntimeModule < ApplicationRecord
   validates :documentation, length: { maximum: 200 }, exclusion: { in: [nil] }
   validates :author, length: { maximum: 200 }, exclusion: { in: [nil] }
   validates :icon, length: { maximum: 100 }
+  validates :definition_source, length: { maximum: 50 }
 
   validate :validate_version
 
