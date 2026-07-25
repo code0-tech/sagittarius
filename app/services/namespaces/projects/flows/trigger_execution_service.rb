@@ -18,7 +18,7 @@ module Namespaces
             return ServiceResponse.error(message: 'Missing permission', error_code: :missing_permission)
           end
 
-          execution_identifier = "SGT-TE-#{current_authentication.user.id}-#{flow.id}-#{SecureRandom.hex}"
+          execution_identifier = SecureRandom.uuid
 
           execution_request = Tucana::Sagittarius::TestExecutionRequest.new(
             flow_id: flow.id,
