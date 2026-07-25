@@ -12,6 +12,8 @@ RSpec.describe Types::ApplicationType do
       legalNoticeUrl
       licenses
       currentLicense
+      identityProviders
+      identityProviderLoginUrl
       user_abilities
     ]
   end
