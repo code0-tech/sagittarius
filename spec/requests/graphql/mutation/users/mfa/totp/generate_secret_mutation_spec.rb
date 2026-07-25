@@ -31,7 +31,7 @@ RSpec.describe 'usersMfaTotpGenerateSecret Mutation' do
 
       expect(secret).to be_present
 
-      signed_totp = Rails.application.message_verifier(:totp_secret).verify(signed_secret)
+      signed_totp = Rails.application.message_verifier(:totp_secret).verified(signed_secret)
       expect(signed_totp).to eq(secret)
     end
   end

@@ -33,7 +33,7 @@ RSpec.describe 'usersMfaTotpValidateSecret Mutation' do
   context 'when user is valid' do
     let(:current_user) { create(:user) }
     let(:secret) { ROTP::Base32.random }
-    let(:signed_secret) { Rails.application.message_verifier(:totp_secret).generate(secret) }
+    let(:signed_secret) { Rails.application.message_verifier(:totp_secret).generate(secret, expires_in: 30.minutes) }
     let(:current_totp) { ROTP::TOTP.new(secret).now }
 
     it 'validates secret and enables totp' do

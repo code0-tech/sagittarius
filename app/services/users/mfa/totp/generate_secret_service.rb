@@ -25,7 +25,7 @@ module Users
                                   payload: {
                                     signed_secret: Rails.application
                                                         .message_verifier(:totp_secret)
-                                                        .generate(totp_secret),
+                                                        .generate(totp_secret, expires_in: 30.minutes),
                                     secret: totp_secret,
                                   })
         end
