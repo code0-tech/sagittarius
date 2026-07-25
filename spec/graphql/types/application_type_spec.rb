@@ -10,6 +10,8 @@ RSpec.describe SagittariusSchema.types['Application'] do
       privacyUrl
       termsAndConditionsUrl
       legalNoticeUrl
+      identityProviders
+      identityProviderLoginUrl
       user_abilities
     ]
   end
