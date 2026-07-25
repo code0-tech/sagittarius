@@ -75,7 +75,12 @@ module Velorum
         runtime_name = if definition.respond_to?(:runtime_function_definition)
                          definition.runtime_function_definition&.runtime_name
                        end
+        definition_source = definition.runtime_function_definition&.definition_source
         function_definitions_by_runtime_id[runtime_name] ||= definition if runtime_name.present?
+        if definition_source.present?
+          function_definitions_by_runtime_id[[definition.identifier, definition_source]] ||= definition
+          function_definitions_by_runtime_id[[runtime_name, definition_source]] ||= definition if runtime_name.present?
+        end
       end
     end
 
@@ -176,11 +181,15 @@ module Velorum
     end
 
     def sub_flow_to_h(sub_flow)
-      function_definition = function_definition_for_identifier(sub_flow.function_identifier)
-      if runtime.present? && sub_flow.function_identifier.present? && function_definition.nil?
+      sub_flow_function = sub_flow.function if sub_flow.execution_reference == :function
+      function_identifier = sub_flow_function&.function_identifier
+      definition_source = sub_flow_function.definition_source if sub_flow_function&.has_definition_source?
+      function_definition = function_definition_for_identifier(function_identifier, definition_source)
+      if runtime.present? && function_identifier.present? && function_definition.nil?
         raise_unresolved_definition(
           'Generated sub-flow function definition is unknown',
-          function_identifier: sub_flow.function_identifier
+          function_identifier: function_identifier,
+          definition_source: definition_source
         )
       end
 
@@ -251,7 +260,11 @@ module Velorum
       function_definition_for_identifier(node.runtime_function_id)
     end
 
-    def function_definition_for_identifier(identifier)
+    def function_definition_for_identifier(identifier, definition_source = nil)
+      return if identifier.blank?
+
+      return function_definitions_by_runtime_id[[identifier, definition_source]] if definition_source.present?
+
       function_definitions_by_runtime_id[identifier]
     end
 

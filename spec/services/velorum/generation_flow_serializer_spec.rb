@@ -150,8 +150,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     )
   end
 
-  it 'maps gRPC reference variants and sub-flow values to flow-shaped objects',
-     skip: 'Temporarily disabled until the Tucana 0.0.76 SubFlow schema is supported' do
+  it 'maps gRPC reference variants and sub-flow values to flow-shaped objects' do
     flow = Tucana::Shared::GenerationFlow.new(
       node_functions: [
         Tucana::Shared::NodeFunction.new(
@@ -184,7 +183,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
               runtime_parameter_id: 'sub-flow',
               value: Tucana::Shared::NodeValue.new(
                 sub_flow: Tucana::Shared::SubFlow.new(
-                  function_identifier: 'helper',
+                  function: Tucana::Shared::SubFlow::SubFlowFunction.new(function_identifier: 'helper'),
                   signature: '(): undefined'
                 )
               )
@@ -223,9 +222,13 @@ RSpec.describe Velorum::GenerationFlowSerializer do
     )
   end
 
-  it 'resolves generated sub-flow function identifiers to function definitions',
-     skip: 'Temporarily disabled until the Tucana 0.0.76 SubFlow schema is supported' do
-    runtime_function_definition = create(:runtime_function_definition, runtime: runtime, runtime_name: 'helper')
+  it 'resolves generated sub-flow functions by identifier and definition source' do
+    runtime_function_definition = create(
+      :runtime_function_definition,
+      runtime: runtime,
+      runtime_name: 'helper',
+      definition_source: 'taurus'
+    )
     function_definition = create(
       :function_definition,
       runtime: runtime,
@@ -250,7 +253,12 @@ RSpec.describe Velorum::GenerationFlowSerializer do
           parameters: [
             Tucana::Shared::NodeParameter.new(
               value: Tucana::Shared::NodeValue.new(
-                sub_flow: Tucana::Shared::SubFlow.new(function_identifier: 'helper')
+                sub_flow: Tucana::Shared::SubFlow.new(
+                  function: Tucana::Shared::SubFlow::SubFlowFunction.new(
+                    function_identifier: 'helper',
+                    definition_source: 'taurus'
+                  )
+                )
               )
             )
           ]

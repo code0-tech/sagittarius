@@ -14,12 +14,20 @@ class SubFlow < ApplicationRecord
   end
 
   def to_grpc
-    Tucana::Shared::SubFlow.new(
+    grpc_sub_flow = Tucana::Shared::SubFlow.new(
       starting_node_id: starting_node_id,
-      function_identifier: function_identifier,
       signature: signature,
       settings: sub_flow_settings.map(&:to_grpc)
     )
+    if function_definition.present?
+      function_args = { function_identifier: function_identifier }
+      definition_source = function_definition.runtime_function_definition.definition_source
+      function_args[:definition_source] = definition_source if definition_source.present?
+
+      grpc_sub_flow.function = Tucana::Shared::SubFlow::SubFlowFunction.new(**function_args)
+    end
+
+    grpc_sub_flow
   end
 
   private
