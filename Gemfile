@@ -68,7 +68,7 @@ gem 'graphql', '~> 2.1'
 
 gem 'seed-fu', '~> 2.3'
 
-gem 'lograge', '~> 0.14.0'
+gem 'lograge', '~> 0.15.0'
 
 gem 'declarative_policy', '~> 2.0'
 
