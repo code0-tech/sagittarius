@@ -5,6 +5,7 @@ module Types
     description 'Represents the MFA status of a user'
 
     authorize :read_mfa_status
+    declarative_policy_subject { |obj| obj[:user] }
 
     field :enabled, Boolean, null: false,
                              description: 'Indicates whether MFA is enabled for the user.'

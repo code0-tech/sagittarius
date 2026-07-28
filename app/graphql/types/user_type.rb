@@ -75,6 +75,7 @@ module Types
         enabled: object.mfa_enabled?,
         totp_enabled: object.totp_secret.present?,
         backup_codes_count: object.backup_codes.size,
+        user: object,
       }
     end
   end
