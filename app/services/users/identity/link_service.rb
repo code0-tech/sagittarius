@@ -4,6 +4,7 @@ module Users
   module Identity
     class LinkService < BaseService
       include Sagittarius::Database::Transactional
+      include Code0::ZeroTrack::Loggable
 
       attr_reader :current_authentication, :current_user, :provider_id, :args
 
@@ -19,10 +20,13 @@ module Users
         begin
           identity = identity_provider.load_identity(provider_id, args)
         rescue Code0::Identities::Error => e
-          return ServiceResponse.error(payload: e, message: 'An error occurred while loading external identity')
+          logger.warn(message: 'Failed to load external identity', provider_id: provider_id, error: e.message,
+                      backtrace: e.backtrace)
+          return ServiceResponse.error(error_code: :loading_identity_failed,
+                                       message: 'An error occurred while loading external identity')
         end
         if identity.nil?
-          return ServiceResponse.error(payload: :invalid_external_identity, message: 'External identity is nil')
+          return ServiceResponse.error(error_code: :invalid_external_identity, message: 'External identity is nil')
         end
 
         transactional do |t|

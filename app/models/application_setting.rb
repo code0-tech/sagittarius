@@ -65,17 +65,14 @@ class ApplicationSetting < ApplicationRecord
         next errors.add(:value, :id_type_or_config_missing)
       end
 
-      if provider[:type] == 'saml'
-        allowed_keys = %i[provider_name attribute_statements settings response_settings metadata_url]
-        errors.add(:value, :invalid_saml_configuration_keys) unless (provider[:config].keys - allowed_keys).empty?
-      else
-        required_keys = %i[client_id client_secret redirect_uri user_details_url authorization_url]
-        allowed_keys = %i[provider_name attribute_statements] + required_keys
+      provider_instance = Code0::Identities::IdentityProvider.for_type(provider[:type]).new(provider[:config].compact)
 
-        required_keys -= %i[user_details_url authorization_url] unless provider[:type] == 'oidc'
-
-        errors.add(:value, :invalid_oidc_configuration_keys) unless (provider[:config].keys - allowed_keys).empty?
-        errors.add(:value, :missing_oidc_configuration_keys) unless (required_keys - provider[:config].keys).empty?
+      begin
+        provider_instance.validate_config!
+      rescue Code0::Identities::MissingConfigurationError
+        errors.add(:value, :missing_identity_provider_config)
+      rescue Code0::Identities::InvalidConfigurationError
+        errors.add(:value, :invalid_identity_provider_config)
       end
     end
   end

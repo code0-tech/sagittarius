@@ -17,4 +17,5 @@ Input for identity provider configuration. Contains fields for both OIDC and SAM
 | `redirectUri` | [`String`](../scalar/string.md) | The redirect URI for the OIDC identity provider |
 | `responseSettings` | [`JSON`](../scalar/json.md) | The SAML response settings for the identity provider |
 | `settings` | [`JSON`](../scalar/json.md) | The SAML settings for the identity provider |
+| `tokenUrl` | [`String`](../scalar/string.md) | The token URL for the OIDC identity provider |
 | `userDetailsUrl` | [`String`](../scalar/string.md) | The user details URL for the OIDC identity provider |
