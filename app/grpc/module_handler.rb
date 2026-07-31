@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ModuleHandler < Tucana::Sagittarius::ModuleService::Service
+class ModuleHandler < Tucana::Sagittarius::Rails::ModuleService::Service
   include GrpcHandler
   include Code0::ZeroTrack::Loggable
 
@@ -22,6 +22,6 @@ class ModuleHandler < Tucana::Sagittarius::ModuleService::Service
                   details: details)
     end
 
-    response.to_grpc_response(Tucana::Sagittarius::ModuleUpdateResponse)
+    response.to_grpc_response(Tucana::Sagittarius::Rails::ModuleUpdateResponse)
   end
 end

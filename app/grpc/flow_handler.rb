@@ -1,25 +1,29 @@
 # frozen_string_literal: true
 
-class FlowHandler < Tucana::Sagittarius::FlowService::Service
+class FlowHandler < Tucana::Sagittarius::Rails::FlowService::Service
   include Code0::ZeroTrack::Loggable
   include GrpcHandler
-  include GrpcStreamHandler
 
-  grpc_stream :update
+  # Called by the gateway when Aquila (re)connects. Returns the runtime's full valid-flow state.
+  def update(_request, _call)
+    current_runtime = Runtime.find(Code0::ZeroTrack::Context.current[:runtime][:id])
+
+    Tucana::Sagittarius::Rails::FlowResponse.new(flows: flows_for(current_runtime))
+  end
 
   def self.update_flow(flow)
-    response = Tucana::Sagittarius::FlowResponse.new(updated_flow: flow.to_grpc)
-    send_to_project_runtimes(flow.project, response)
+    response = Tucana::Sagittarius::Gateway::FlowResponse.new(updated_flow: flow.to_grpc)
+    push_to_project_runtimes(flow.project, response)
   end
 
   def self.delete_flow(project, flow_id)
-    response = Tucana::Sagittarius::FlowResponse.new(deleted_flow_id: flow_id)
-    send_to_project_runtimes(project, response)
+    response = Tucana::Sagittarius::Gateway::FlowResponse.new(deleted_flow_id: flow_id)
+    push_to_project_runtimes(project, response)
   end
 
-  def self.send_to_project_runtimes(project, response)
+  def self.push_to_project_runtimes(project, response)
     project.runtime_assignments.compatible.find_each do |assignment|
-      send_update(response, assignment.runtime_id)
+      gateway_client.push_flow(assignment.runtime_id, response)
     end
   end
 
@@ -30,41 +34,36 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
     )
     runtime_modules = runtime.runtime_modules.includes(:module_configuration_definitions)
 
-    send_update(
-      Tucana::Sagittarius::FlowResponse.new(
+    gateway_client.push_flow(
+      runtime.id,
+      Tucana::Sagittarius::Gateway::FlowResponse.new(
         flows: Tucana::Shared::Flows.new(
           flows: []
         )
-      ),
-      runtime.id
+      )
     )
 
     assignments.each do |assignment|
       assignment.namespace_project.flows.validation_status_valid.each do |flow|
-        send_update(
-          Tucana::Sagittarius::FlowResponse.new(updated_flow: flow.to_grpc),
-          runtime.id
+        gateway_client.push_flow(
+          runtime.id,
+          Tucana::Sagittarius::Gateway::FlowResponse.new(updated_flow: flow.to_grpc)
         )
       end
     end
 
     grouped_module_configurations(assignments, runtime_modules).each do |module_configuration|
-      send_update(
-        Tucana::Sagittarius::FlowResponse.new(
+      gateway_client.push_module_configuration(
+        runtime.id,
+        Tucana::Sagittarius::Gateway::ModuleConfigurationResponse.new(
           module_configurations: module_configuration
-        ),
-        runtime.id
+        )
       )
     end
   end
 
-  def self.update_started(runtime_id)
-    runtime = Runtime.find_by(id: runtime_id)
-    return if runtime.nil?
-
-    logger.info(message: 'Runtime connected', runtime_id: runtime.id)
-
-    update_runtime(runtime)
+  def self.gateway_client
+    @gateway_client ||= Sagittarius::Gateway::Client.new
   end
 
   def self.grouped_module_configurations(assignments, runtime_modules)
@@ -120,7 +119,13 @@ class FlowHandler < Tucana::Sagittarius::FlowService::Service
     configuration.to_grpc
   end
 
-  def self.encoders = { update: ->(grpc_object) { Tucana::Sagittarius::FlowResponse.encode(grpc_object) } }
+  def flows_for(runtime)
+    assignments = runtime.project_assignments.compatible.includes(:namespace_project)
 
-  def self.decoders = { update: ->(string) { Tucana::Sagittarius::FlowResponse.decode(string) } }
+    flows = assignments.flat_map do |assignment|
+      assignment.namespace_project.flows.validation_status_valid.map(&:to_grpc)
+    end
+
+    Tucana::Shared::Flows.new(flows: flows)
+  end
 end
