@@ -46,7 +46,7 @@ RSpec.describe Namespaces::Projects::Flows::TriggerExecutionService do
 
       expect(ExecutionHandler).to have_received(:send_execution_request) do |runtime_id, request|
         expect(runtime_id).to eq(runtime.id)
-        expect(request).to be_a(Tucana::Sagittarius::TestExecutionRequest)
+        expect(request).to be_a(Tucana::Sagittarius::Gateway::TestExecutionRequest)
         expect(request.flow_id).to eq(flow.id)
         expect(request.execution_identifier).to eq(service_response.payload)
         expect(request.body.to_ruby(true)).to eq(input)

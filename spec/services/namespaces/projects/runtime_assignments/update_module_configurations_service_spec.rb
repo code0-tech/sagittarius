@@ -29,6 +29,12 @@ RSpec.describe Namespaces::Projects::RuntimeAssignments::UpdateModuleConfigurati
     ]
   end
 
+  before do
+    allow(FlowHandler).to receive(:gateway_client).and_return(
+      instance_double(Sagittarius::Gateway::Client, push_flow: nil, push_module_configuration: nil)
+    )
+  end
+
   context 'when user does not have permission' do
     it { is_expected.not_to be_success }
     it { expect(service_response.payload[:error_code]).to eq(:missing_permission) }
