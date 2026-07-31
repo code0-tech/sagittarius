@@ -7,7 +7,7 @@ module Users
         identity_provider = Code0::Identities::IdentityProvider.new
         enabled_providers = ApplicationSetting.current[:identity_providers]
         enabled_providers.each do |provider|
-          provider.deep_symbolize_keys!
+          provider.to_h.deep_symbolize_keys!
           identity_provider.add_named_provider(provider[:id], provider[:type], -> { provider[:config] })
         end
         identity_provider

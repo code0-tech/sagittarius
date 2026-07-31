@@ -8,7 +8,7 @@ module Types
                                                       description: 'Configuration details of the identity provider.'
 
     def config
-      object.config.merge(type: object.type)
+      object[:config].merge(type: object[:type])
     end
   end
 end
