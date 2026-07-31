@@ -15,6 +15,10 @@ rails:
   grpc:
     threads: 3
     host: '0.0.0.0:50051'
+  gateway:
+    host: 'localhost:50060'
+    jwt_secret:
+    jwt_ttl_seconds: 300
   db:
     host: localhost
     port: 5433
