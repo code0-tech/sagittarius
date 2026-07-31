@@ -596,7 +596,7 @@ GEM
       logger
     thor (1.5.0)
     timeout (0.6.1)
-    triangulum (0.27.1)
+    triangulum (0.28.0)
       base64 (~> 0.3)
       json (~> 2.19)
       open3 (~> 0.2)
@@ -662,7 +662,7 @@ DEPENDENCIES
   simplecov (~> 0.22.0)
   simplecov-cobertura (~> 3.0)
   test-prof (~> 1.0)
-  triangulum (= 0.27.1)
+  triangulum (= 0.28.0)
   tucana (= 0.0.77)
   tzinfo-data
 
