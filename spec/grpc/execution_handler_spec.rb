@@ -1,66 +1,77 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'timeout'
 
 RSpec.describe ExecutionHandler do
-  after do
-    GrpcStreamHandler.yielders = {}
-  end
-
   describe '.send_execution_request' do
-    it 'wraps and sends a test execution request to the runtime stream' do
-      request = Tucana::Sagittarius::TestExecutionRequest.new(
+    it 'pushes a test execution request to the gateway for the runtime' do
+      request = Tucana::Sagittarius::Gateway::TestExecutionRequest.new(
         flow_id: 1,
         execution_identifier: 'execution-identifier',
         body: Tucana::Shared::Value.from_ruby('input')
       )
-
-      allow(described_class).to receive(:send_test)
+      gateway_client = instance_double(Sagittarius::Gateway::Client, push_execution: nil)
+      allow(described_class).to receive(:gateway_client).and_return(gateway_client)
 
       described_class.send_execution_request(123, request)
 
-      expect(described_class).to have_received(:send_test) do |response, runtime_id|
-        expect(runtime_id).to eq(123)
-        expect(response).to be_a(Tucana::Sagittarius::ExecutionLogonResponse)
-        expect(response.request).to eq(request)
-      end
+      expect(gateway_client).to have_received(:push_execution).with(123, request)
     end
   end
 
-  describe '#test' do
-    it 'keeps the outbound stream open when the inbound stream ends' do
-      runtime = create(:runtime)
-      request = Tucana::Sagittarius::ExecutionLogonRequest.new(logon: Tucana::Sagittarius::Logon.new)
-      call = Object.new
+  describe '#update' do
+    let(:runtime) { create(:runtime) }
+    let(:project) { create(:namespace_project, primary_runtime: runtime) }
+    let(:flow) { create(:flow, project: project) }
+    let(:started_at) { 1_780_430_000_000_000 }
+    let(:finished_at) { 1_780_430_002_000_000 }
 
-      allow(ActiveRecord::Base.connection_pool).to receive(:with_connection).and_yield
-
-      Code0::ZeroTrack::Context.with_context(runtime: { id: runtime.id, namespace_id: nil }) do
-        described_class.new.test([request], call)
-
-        sleep 0.1
-
-        queues = GrpcStreamHandler.yielders.dig(described_class, :test, runtime.id)
-        expect(queues.size).to eq(1)
-
-        queues.each { |queue| queue << GrpcStreamHandler::StreamItem.new(data: :end, otel_context: nil) }
-      end
+    let(:execution_result) do
+      Tucana::Shared::ExecutionResult.new(
+        execution_identifier: 'execution-identifier',
+        flow_id: flow.id,
+        started_at: started_at,
+        finished_at: finished_at,
+        input: Tucana::Shared::Value.from_ruby('input' => 'value'),
+        success: Tucana::Shared::Value.from_ruby('result' => true)
+      )
     end
 
-    it 'closes the previous runtime stream when the runtime reconnects' do
-      runtime = create(:runtime)
-      call = Object.new
+    let(:request) { Tucana::Sagittarius::Rails::ExecutionRequest.new(response: execution_result) }
 
-      allow(ActiveRecord::Base.connection_pool).to receive(:with_connection).and_yield
+    before do
+      create(:namespace_project_runtime_assignment, runtime: runtime, namespace_project: project)
+      allow(SubscriptionTriggers).to receive(:execution_result)
+    end
 
-      Code0::ZeroTrack::Context.with_context(runtime: { id: runtime.id, namespace_id: nil }) do
-        first_enumerator = described_class.new.test([], call)
-        described_class.new.test([], call)
+    it 'persists the execution result and returns a successful response' do
+      response = Code0::ZeroTrack::Context.with_context(runtime: { id: runtime.id, namespace_id: nil }) do
+        described_class.new.update(request, nil)
+      end
 
-        expect(Timeout.timeout(1) { first_enumerator.to_a }).to eq([])
+      expect(response).to be_a(Tucana::Sagittarius::Rails::ExecutionResponse)
+      expect(response.success).to be(true)
+      expect(ExecutionResult.last.execution_identifier).to eq('execution-identifier')
+    end
 
-        GrpcStreamHandler.yielders.dig(described_class, :test, runtime.id).each { |queue| queue << GrpcStreamHandler::StreamItem.new(data: :end, otel_context: nil) }
+    context 'when the flow cannot be found' do
+      let(:request) do
+        Tucana::Sagittarius::Rails::ExecutionRequest.new(
+          response: Tucana::Shared::ExecutionResult.new(
+            execution_identifier: 'execution-identifier',
+            flow_id: flow.id + 1_000_000,
+            started_at: started_at,
+            finished_at: finished_at
+          )
+        )
+      end
+
+      it 'returns an unsuccessful response' do
+        response = Code0::ZeroTrack::Context.with_context(runtime: { id: runtime.id, namespace_id: nil }) do
+          described_class.new.update(request, nil)
+        end
+
+        expect(response.success).to be(false)
       end
     end
   end

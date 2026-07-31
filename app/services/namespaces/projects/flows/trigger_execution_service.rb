@@ -20,7 +20,7 @@ module Namespaces
 
           execution_identifier = SecureRandom.uuid
 
-          execution_request = Tucana::Sagittarius::TestExecutionRequest.new(
+          execution_request = Tucana::Sagittarius::Gateway::TestExecutionRequest.new(
             flow_id: flow.id,
             execution_identifier: execution_identifier,
             body: Tucana::Shared::Value.from_ruby(input)

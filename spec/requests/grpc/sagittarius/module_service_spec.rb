@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
+RSpec.describe 'sagittarius_rails.ModuleService', :need_grpc_server do
   include GrpcHelpers
 
-  let(:stub) { create_stub Tucana::Sagittarius::ModuleService }
+  let(:stub) { create_stub Tucana::Sagittarius::Rails::ModuleService }
   let(:runtime) { create(:runtime) }
 
   describe 'Update' do
@@ -138,7 +138,7 @@ RSpec.describe 'sagittarius.ModuleService', :need_grpc_server do
       ]
     end
 
-    let(:message) { Tucana::Sagittarius::ModuleUpdateRequest.new(modules: modules) }
+    let(:message) { Tucana::Sagittarius::Rails::ModuleUpdateRequest.new(modules: modules) }
 
     it 'creates the module and its nested definitions' do
       expect(stub.update(message, authorization(runtime)).success).to be(true)

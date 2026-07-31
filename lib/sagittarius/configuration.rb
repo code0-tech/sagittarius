@@ -43,6 +43,11 @@ module Sagittarius
             threads: 3,
             host: '0.0.0.0:50051',
           },
+          gateway: {
+            host: 'localhost:50060',
+            jwt_secret: nil,
+            jwt_ttl_seconds: 300,
+          },
           log_level: 'info',
           mailer: {
             from: 'Code0 <testmail@code0.tech>',

@@ -32,13 +32,8 @@ module Sagittarius
         @server.run_till_terminated_or_interrupted([])
       end
 
-      def run_stream_listener!
-        GrpcStreamHandler.listen!
-      end
-
       def start
         create_server
-        @stream_thread = Thread.new { run_stream_listener! }
         @server_thread = Thread.new { run_server! }
       end
 
@@ -46,10 +41,6 @@ module Sagittarius
         @server.stop
         @server_thread.join
         @server_thread.terminate
-
-        GrpcStreamHandler.stop_listen!
-        @stream_thread.join
-        @stream_thread.terminate
       end
     end
   end

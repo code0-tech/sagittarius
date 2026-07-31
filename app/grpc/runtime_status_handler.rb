@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RuntimeStatusHandler < Tucana::Sagittarius::RuntimeStatusService::Service
+class RuntimeStatusHandler < Tucana::Sagittarius::Rails::RuntimeStatusService::Service
   include Code0::ZeroTrack::Loggable
   include GrpcHandler
 
@@ -17,6 +17,6 @@ class RuntimeStatusHandler < Tucana::Sagittarius::RuntimeStatusService::Service
 
     logger.debug("RuntimeFunctionHandler#update response: #{response.inspect}")
 
-    response.to_grpc_response(Tucana::Sagittarius::RuntimeStatusUpdateResponse)
+    response.to_grpc_response(Tucana::Sagittarius::Rails::RuntimeStatusUpdateResponse)
   end
 end
