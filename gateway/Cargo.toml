@@ -1,0 +1,17 @@
+[package]
+name = "gateway"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+config = { workspace = true }
+code0-flow = { workspace = true }
+jsonwebtoken = { workspace = true }
+log = { workspace = true }
+serde = { workspace = true }
+tokio = { workspace = true }
+tonic = { workspace = true }
+tonic-health = { workspace = true }
+tucana = { workspace = true }
