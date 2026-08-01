@@ -27,7 +27,7 @@ module Users
           return ServiceResponse.error(error_code: :invalid_external_identity, message: 'External identity is nil')
         end
 
-        user_identity = UserIdentity.find_by(provider_id: identity.provider.to_s, identifier: identity.identifier)
+        user_identity = UserIdentity.find_by(provider_id: provider_id.to_s, identifier: identity.identifier)
 
         if user_identity.nil?
           return ServiceResponse.error(error_code: :external_identity_does_not_exist,
