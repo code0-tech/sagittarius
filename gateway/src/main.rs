@@ -14,6 +14,7 @@ use crate::client::token_service_client::SagittariusRailsTokenServiceClient;
 use crate::config::Config;
 use crate::server::execution_service_server::SagittariusExecutionService;
 use crate::server::flow_service_server::SagittariusFlowService;
+use crate::server::health_service::GatewayHealthService;
 use crate::server::module_service_server::SagittariusModuleService;
 use crate::server::runtime_status_service_server::SagittariusRuntimeStatusService;
 
@@ -100,8 +101,9 @@ async fn run(config: Config) -> anyhow::Result<()> {
         .add_service(RuntimeStatusServiceServer::new(rails_status_server));
 
     if config.grpc.with_health_service {
-        let (_health_reporter, health_service) = tonic_health::server::health_reporter();
-        server_builder = server_builder.add_service(health_service);
+        server_builder = server_builder.add_service(
+            tonic_health::pb::health_server::HealthServer::new(GatewayHealthService),
+        );
     }
 
     log::info!("Sagittarius gateway listening on {}", address);

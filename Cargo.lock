@@ -576,6 +576,7 @@ dependencies = [
  "log",
  "serde",
  "tokio",
+ "tokio-stream",
  "tonic",
  "tonic-health",
  "tucana",

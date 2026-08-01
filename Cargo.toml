@@ -15,6 +15,7 @@ jsonwebtoken = { version = "10.4.0", features = ["rust_crypto"] }
 log = "0.4.33"
 serde = { version = "1.0.228", features = ["derive"] }
 tokio = { version = "1.52.3", features = ["macros", "rt-multi-thread", "sync"] }
+tokio-stream = "0.1.18"
 tonic = "0.14.6"
 tonic-health = "0.14.6"
 tucana = { version = "0.0.77", features = ["sagittarius_gateway", "sagittarius_rails"] }

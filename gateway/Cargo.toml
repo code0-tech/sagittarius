@@ -12,6 +12,7 @@ jsonwebtoken = { workspace = true }
 log = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true }
+tokio-stream = { workspace = true }
 tonic = { workspace = true }
 tonic-health = { workspace = true }
 tucana = { workspace = true }
