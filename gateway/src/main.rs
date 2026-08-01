@@ -22,6 +22,7 @@ mod auth;
 mod client;
 mod config;
 mod server;
+mod version;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -31,7 +32,7 @@ async fn main() -> anyhow::Result<()> {
         TelemetrySettings {
             environment: &config.environment,
             default_log_level: &config.log_level,
-            service_version: env!("CARGO_PKG_VERSION"),
+            service_version: crate::version::runtime_version(),
             instrumentation_name: env!("CARGO_PKG_NAME"),
             initialize_metrics: None,
         },
