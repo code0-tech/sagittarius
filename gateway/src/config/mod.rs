@@ -6,7 +6,8 @@ use code0_flow::flow_telemetry::OpenTelemetry;
 use config::{Config as ConfigLoader, ConfigError, File};
 use serde::{Deserialize, Serialize};
 
-const CONFIG_FILE: &str = "gateway";
+const CONFIG_FILE_ENV_VAR: &str = "GATEWAY_CONFIG_PATH";
+const DEFAULT_CONFIG_PATH: &str = "gateway.yml";
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
@@ -96,21 +97,17 @@ impl Config {
     }
 
     pub fn try_new() -> Result<Self, ConfigError> {
-        Self::try_from_optional_path(None)
+        match std::env::var(CONFIG_FILE_ENV_VAR) {
+            Ok(path) => Self::try_from_path(path, true),
+            Err(_) => Self::try_from_path(DEFAULT_CONFIG_PATH, false),
+        }
     }
 
-    pub fn try_from_path(path: impl AsRef<Path>) -> Result<Self, ConfigError> {
-        Self::try_from_optional_path(Some(path.as_ref()))
-    }
-
-    fn try_from_optional_path(path: Option<&Path>) -> Result<Self, ConfigError> {
+    pub fn try_from_path(path: impl AsRef<Path>, required: bool) -> Result<Self, ConfigError> {
         let mut builder =
             ConfigLoader::builder().add_source(ConfigLoader::try_from(&Self::default())?);
 
-        builder = match path {
-            Some(path) => builder.add_source(File::from(path).required(true)),
-            None => builder.add_source(File::with_name(CONFIG_FILE).required(false)),
-        };
+        builder = builder.add_source(File::from(path.as_ref()).required(required));
 
         builder.build()?.try_deserialize()
     }
