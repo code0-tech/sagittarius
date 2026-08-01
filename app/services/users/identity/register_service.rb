@@ -10,7 +10,7 @@ module Users
 
       def initialize(provider_id, args)
         super()
-        @provider_id = provider_id.to_sym
+        @provider_id = provider_id
         @args = args
       end
 
