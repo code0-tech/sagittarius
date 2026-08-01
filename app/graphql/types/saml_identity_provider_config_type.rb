@@ -13,19 +13,23 @@ module Types
           description: 'The name of the SAML identity provider'
 
     field :attribute_statements, GraphQL::Types::JSON,
-          null: false,
+          null: true,
           description: 'List of attribute statements for the SAML identity provider'
 
     field :settings, GraphQL::Types::JSON,
-          null: false,
+          null: true,
           description: 'The SAML settings for the identity provider'
 
     field :response_settings, GraphQL::Types::JSON,
-          null: false,
+          null: true,
           description: 'The SAML response settings for the identity provider'
 
     field :metadata_url, String,
           null: true,
           description: 'The metadata url to fetch the metadatas (replacement for settings)'
+
+    def provider_name
+      object[:provider_name] || object[:type].downcase
+    end
   end
 end

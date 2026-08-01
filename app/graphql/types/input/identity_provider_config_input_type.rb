@@ -11,6 +11,8 @@ module Types
       argument :client_id, String, required: false, description: 'The client ID for the OIDC identity provider'
       argument :client_secret, String, required: false, description: 'The client secret for the OIDC identity provider'
       argument :redirect_uri, String, required: false, description: 'The redirect URI for the OIDC identity provider'
+      argument :token_url, String, required: false,
+                                   description: 'The token URL for the OIDC identity provider'
       argument :user_details_url, String, required: false,
                                           description: 'The user details URL for the OIDC identity provider'
 

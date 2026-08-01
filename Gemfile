@@ -81,7 +81,7 @@ gem 'rotp'
 gem 'grpc', '~> 1.67'
 gem 'tucana', '0.0.77'
 
-gem 'code0-identities', '~> 0.0.3'
+gem 'code0-identities', '~> 0.0.6'
 
 gem 'pry', '~> 0.16.0'
 gem 'pry-byebug', '~> 3.10'
@@ -92,7 +92,7 @@ gem 'image_processing', '>= 1.2'
 
 gem 'json-schema', '~> 6.0'
 
-gem 'triangulum', '0.28.0'
+gem 'triangulum', '0.29.0'
 
 gem 'benchmark'
 

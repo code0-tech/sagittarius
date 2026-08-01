@@ -114,7 +114,7 @@ RSpec.describe ApplicationSetting do
                                         }
                                       ])
         expect(setting).not_to be_valid
-        expect(setting.errors.added?(:value, :invalid_saml_configuration_keys)).to be true
+        expect(setting.errors.added?(:value, :invalid_identity_provider_config)).to be true
       end
 
       it 'is invalid with missing keys in oidc config' do
@@ -126,7 +126,7 @@ RSpec.describe ApplicationSetting do
                                         }
                                       ])
         expect(setting).not_to be_valid
-        expect(setting.errors.added?(:value, :missing_oidc_configuration_keys)).to be true
+        expect(setting.errors.added?(:value, :missing_identity_provider_config)).to be true
       end
 
       it 'expects valid OIDC configuration' do
@@ -140,6 +140,7 @@ RSpec.describe ApplicationSetting do
                                             redirect_uri: 'https://example.com/callback',
                                             user_details_url: 'https://example.com/userinfo',
                                             authorization_url: 'https://example.com/auth',
+                                            token_url: 'https://example.com/token',
                                           },
                                         }
                                       ])
@@ -175,7 +176,7 @@ RSpec.describe ApplicationSetting do
                                         }
                                       ])
         expect(setting).not_to be_valid
-        expect(setting.errors.added?(:value, :missing_oidc_configuration_keys)).to be true
+        expect(setting.errors.added?(:value, :missing_identity_provider_config)).to be true
       end
     end
 
