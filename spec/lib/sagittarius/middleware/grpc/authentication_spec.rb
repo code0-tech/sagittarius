@@ -33,214 +33,165 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
 
   let(:interceptor) { described_class.new }
 
+  let(:gateway_jwt_secret) { Sagittarius::Configuration.config[:rails][:gateway][:jwt_secret] }
+  let(:gateway_jwt_ttl_seconds) { Sagittarius::Configuration.config[:rails][:gateway][:jwt_ttl_seconds] }
+
+  def jwt_for(runtime)
+    Sagittarius::Grpc::GatewayJwt.encode(runtime.id, secret: gateway_jwt_secret, ttl_seconds: gateway_jwt_ttl_seconds)
+  end
+
   around do |example|
     Code0::ZeroTrack::Context.with_context { example.run }
   end
 
-  describe '#request_response' do
+  describe '#execute' do
     context 'when no authentication is passed' do
       # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
+      it 'raises Unauthenticated' do
         expect do
-          interceptor.request_response(request: request, call: call, method: method) {}
+          interceptor.execute(request: request, call: call, method: method) {}
         end.to raise_error(GRPC::Unauthenticated)
       end
       # rubocop:enable Lint/EmptyBlock
-
-      context 'when anonymous service is called' do
-        let(:service_class) { Grpc::Health::V1::Health::Service }
-        let(:method) { service_class.new.method(:check) }
-
-        it do
-          expect { |b| interceptor.request_response(request: request, call: call, method: method, &b) }.to yield_control
-        end
-      end
     end
 
-    context 'when invalid authentication is passed' do
-      let(:metadata) do
-        { 'authorization' => 'token' }
-      end
+    context 'when an invalid JWT is passed' do
+      let(:metadata) { { 'authorization' => 'Bearer not-a-real-jwt' } }
 
       # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
+      it 'raises Unauthenticated' do
         expect do
-          interceptor.request_response(request: request, call: call, method: method) {}
+          interceptor.execute(request: request, call: call, method: method) {}
         end.to raise_error(GRPC::Unauthenticated)
       end
       # rubocop:enable Lint/EmptyBlock
-
-      context 'when anonymous service is called' do
-        let(:service_class) { Grpc::Health::V1::Health::Service }
-        let(:method) { service_class.new.method(:check) }
-
-        # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-        it do
-          expect do
-            interceptor.request_response(request: request, call: call, method: method) {}
-          end.to raise_error(GRPC::Unauthenticated)
-        end
-        # rubocop:enable Lint/EmptyBlock
-      end
     end
 
-    context 'when valid authentication is passed' do
-      let(:runtime) { create(:runtime) }
+    context 'when the JWT subject does not match an existing runtime' do
       let(:metadata) do
         {
-          'authorization' => runtime.token,
+          'authorization' => Sagittarius::Grpc::GatewayJwt.encode(
+            0, secret: gateway_jwt_secret, ttl_seconds: gateway_jwt_ttl_seconds
+          ),
         }
       end
 
       # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        interceptor.request_response(request: request, call: call, method: method) {}
+      it 'raises Unauthenticated' do
+        expect do
+          interceptor.execute(request: request, call: call, method: method) {}
+        end.to raise_error(GRPC::Unauthenticated)
+      end
+      # rubocop:enable Lint/EmptyBlock
+    end
+
+    context 'when a valid gateway JWT is passed' do
+      let(:runtime) { create(:runtime) }
+      let(:metadata) { { 'authorization' => jwt_for(runtime) } }
+
+      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      it 'yields and pushes the runtime onto the context' do
+        interceptor.execute(request: request, call: call, method: method) {}
 
         expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
                                                                                       namespace_id: nil })
       end
       # rubocop:enable Lint/EmptyBlock
+    end
 
-      context 'when anonymous service is called' do
-        let(:service_class) { Grpc::Health::V1::Health::Service }
-        let(:method) { service_class.new.method(:check) }
+    context 'when an anonymous service is called' do
+      let(:service_class) { Grpc::Health::V1::Health::Service }
+      let(:method) { service_class.new.method(:check) }
 
-        it do
-          expect { |b| interceptor.request_response(request: request, call: call, method: method, &b) }.to yield_control
+      it 'yields without requiring authentication' do
+        expect { |b| interceptor.execute(request: request, call: call, method: method, &b) }.to yield_control
+      end
+
+      context 'when an unrelated authorization header is present' do
+        let(:metadata) { { 'authorization' => 'Bearer not-a-real-jwt' } }
+
+        it 'still yields' do
+          expect { |b| interceptor.execute(request: request, call: call, method: method, &b) }.to yield_control
         end
       end
     end
+
+    context 'when TokenService is called' do
+      let(:service_class) do
+        Class.new do
+          include GRPC::GenericService
+
+          self.marshal_class_method = :encode
+          self.unmarshal_class_method = :decode
+          self.service_name = 'sagittarius_rails.TokenService'
+
+          rpc :Verify, Google::Protobuf::Value, Google::Protobuf::Value
+        end
+      end
+      let(:method) { Class.new(service_class) { def verify(_msg, _call); end }.new.method(:verify) }
+
+      it 'yields without requiring a gateway JWT, even with a raw Aquila token present' do
+        runtime = create(:runtime)
+        metadata['authorization'] = "Bearer #{runtime.token}"
+
+        expect { |b| interceptor.execute(request: request, call: call, method: method, &b) }.to yield_control
+      end
+    end
+  end
+
+  describe '#request_response' do
+    let(:runtime) { create(:runtime) }
+    let(:metadata) { { 'authorization' => jwt_for(runtime) } }
+
+    # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+    it 'delegates to #execute' do
+      interceptor.request_response(request: request, call: call, method: method) {}
+
+      expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
+                                                                                    namespace_id: nil })
+    end
+    # rubocop:enable Lint/EmptyBlock
   end
 
   describe '#server_streamer' do
-    context 'when no authentication is passed' do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        expect do
-          interceptor.server_streamer(request: request, call: call, method: method) {}
-        end.to raise_error(GRPC::Unauthenticated)
-      end
-      # rubocop:enable Lint/EmptyBlock
+    let(:runtime) { create(:runtime) }
+    let(:metadata) { { 'authorization' => jwt_for(runtime) } }
+
+    # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+    it 'delegates to #execute' do
+      interceptor.server_streamer(request: request, call: call, method: method) {}
+
+      expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
+                                                                                    namespace_id: nil })
     end
-
-    context 'when invalid authentication is passed' do
-      let(:metadata) do
-        { 'authorization' => 'token' }
-      end
-
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        expect do
-          interceptor.server_streamer(request: request, call: call, method: method) {}
-        end.to raise_error(GRPC::Unauthenticated)
-      end
-      # rubocop:enable Lint/EmptyBlock
-    end
-
-    context 'when valid authentication is passed' do
-      let(:runtime) { create(:runtime) }
-      let(:metadata) do
-        {
-          'authorization' => runtime.token,
-        }
-      end
-
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        interceptor.server_streamer(request: request, call: call, method: method) {}
-
-        expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
-                                                                                      namespace_id: nil })
-      end
-      # rubocop:enable Lint/EmptyBlock
-    end
+    # rubocop:enable Lint/EmptyBlock
   end
 
   describe '#client_streamer' do
-    context 'when no authentication is passed' do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        expect do
-          interceptor.client_streamer(call: call, method: method) {}
-        end.to raise_error(GRPC::Unauthenticated)
-      end
-      # rubocop:enable Lint/EmptyBlock
+    let(:runtime) { create(:runtime) }
+    let(:metadata) { { 'authorization' => jwt_for(runtime) } }
+
+    # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+    it 'delegates to #execute' do
+      interceptor.client_streamer(call: call, method: method) {}
+
+      expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
+                                                                                    namespace_id: nil })
     end
-
-    context 'when invalid authentication is passed' do
-      let(:metadata) do
-        { 'authorization' => 'token' }
-      end
-
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        expect do
-          interceptor.client_streamer(call: call, method: method) {}
-        end.to raise_error(GRPC::Unauthenticated)
-      end
-      # rubocop:enable Lint/EmptyBlock
-    end
-
-    context 'when valid authentication is passed' do
-      let(:runtime) { create(:runtime) }
-      let(:metadata) do
-        {
-          'authorization' => runtime.token,
-        }
-      end
-
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        interceptor.client_streamer(call: call, method: method) {}
-
-        expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
-                                                                                      namespace_id: nil })
-      end
-      # rubocop:enable Lint/EmptyBlock
-    end
+    # rubocop:enable Lint/EmptyBlock
   end
 
   describe '#bidi_streamer' do
-    context 'when no authentication is passed' do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        expect do
-          interceptor.bidi_streamer(request: request, call: call, method: method) {}
-        end.to raise_error(GRPC::Unauthenticated)
-      end
-      # rubocop:enable Lint/EmptyBlock
+    let(:runtime) { create(:runtime) }
+    let(:metadata) { { 'authorization' => jwt_for(runtime) } }
+
+    # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+    it 'delegates to #execute' do
+      interceptor.bidi_streamer(request: request, call: call, method: method) {}
+
+      expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
+                                                                                    namespace_id: nil })
     end
-
-    context 'when invalid authentication is passed' do
-      let(:metadata) do
-        { 'authorization' => 'token' }
-      end
-
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        expect do
-          interceptor.bidi_streamer(request: request, call: call, method: method) {}
-        end.to raise_error(GRPC::Unauthenticated)
-      end
-      # rubocop:enable Lint/EmptyBlock
-    end
-
-    context 'when valid authentication is passed' do
-      let(:runtime) { create(:runtime) }
-      let(:metadata) do
-        {
-          'authorization' => runtime.token,
-        }
-      end
-
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
-      it do
-        interceptor.bidi_streamer(request: request, call: call, method: method) {}
-
-        expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
-                                                                                      namespace_id: nil })
-      end
-      # rubocop:enable Lint/EmptyBlock
-    end
+    # rubocop:enable Lint/EmptyBlock
   end
 end

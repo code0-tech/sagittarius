@@ -1,0 +1,101 @@
+name: "Rust CI/CD Pipeline"
+
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
+
+env:
+  RUST_BACKTRACE: 1
+
+jobs:
+  format:
+    name: "[RUST] Format Check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v7
+
+      - name: "Install Rust toolchain"
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: "Check formatting"
+        run: cargo fmt --all -- --check
+
+  lint:
+    name: "[RUST] Lint Check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v7
+
+      - name: "Install Rust toolchain"
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: "Cache cargo registry"
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-lint-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: "Run clippy"
+        run: cargo clippy --all-targets --all-features
+
+  build:
+    name: "[RUST] Build"
+    needs: [lint, format]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v7
+
+      - name: "Install Rust toolchain"
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: "Cache cargo registry"
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: "Build workspace"
+        run: cargo build --verbose --all-features
+
+  test:
+    name: "[RUST] Test"
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v7
+
+      - name: "Install Rust toolchain"
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: "Cache cargo registry"
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-report-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: "Test workspace"
+        run: cargo test

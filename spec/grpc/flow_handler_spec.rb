@@ -59,6 +59,7 @@ RSpec.describe FlowHandler do
   describe 'project runtime updates' do
     let(:flow) { create(:flow, validation_status: :valid) }
     let(:runtime) { create(:runtime, namespace: flow.project.namespace) }
+    let(:gateway_client) { instance_double(Sagittarius::Gateway::Client, push_flow: nil) }
 
     before do
       create(
@@ -67,15 +68,16 @@ RSpec.describe FlowHandler do
         runtime: runtime,
         compatible: true
       )
-      allow(described_class).to receive(:send_update)
+      allow(described_class).to receive(:gateway_client).and_return(gateway_client)
     end
 
     describe '.update_flow' do
-      it 'sends the updated_flow response to compatible project runtimes' do
+      it 'pushes the updated_flow response to compatible project runtimes' do
         described_class.update_flow(flow)
 
-        expect(described_class).to have_received(:send_update) do |response, runtime_id|
+        expect(gateway_client).to have_received(:push_flow) do |runtime_id, response|
           expect(runtime_id).to eq(runtime.id)
+          expect(response).to be_a(Tucana::Sagittarius::Gateway::FlowResponse)
           expect(response.data).to eq(:updated_flow)
           expect(response.updated_flow).to eq(flow.to_grpc)
         end
@@ -83,15 +85,38 @@ RSpec.describe FlowHandler do
     end
 
     describe '.delete_flow' do
-      it 'sends the deleted_flow_id response to compatible project runtimes' do
+      it 'pushes the deleted_flow_id response to compatible project runtimes' do
         described_class.delete_flow(flow.project, flow.id)
 
-        expect(described_class).to have_received(:send_update) do |response, runtime_id|
+        expect(gateway_client).to have_received(:push_flow) do |runtime_id, response|
           expect(runtime_id).to eq(runtime.id)
           expect(response.data).to eq(:deleted_flow_id)
           expect(response.deleted_flow_id).to eq(flow.id)
         end
       end
+    end
+  end
+
+  describe '#update' do
+    let(:flow) { create(:flow, validation_status: :valid) }
+    let(:runtime) { create(:runtime, namespace: flow.project.namespace) }
+
+    before do
+      create(
+        :namespace_project_runtime_assignment,
+        namespace_project: flow.project,
+        runtime: runtime,
+        compatible: true
+      )
+    end
+
+    it "returns the current runtime's full valid-flow state" do
+      response = Code0::ZeroTrack::Context.with_context(runtime: { id: runtime.id, namespace_id: nil }) do
+        described_class.new.update(Tucana::Sagittarius::Rails::FlowLogonRequest.new, nil)
+      end
+
+      expect(response.data).to eq(:flows)
+      expect(response.flows.flows).to contain_exactly(flow.to_grpc)
     end
   end
 end

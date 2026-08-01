@@ -2,11 +2,11 @@
 
 require 'rails_helper'
 
-RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server,
+RSpec.describe 'sagittarius_rails.RuntimeStatusService', :need_grpc_server,
                skip: 'This needs to be redone in issue: #1018 (new runtime status)' do
   include GrpcHelpers
 
-  let(:stub) { create_stub Tucana::Sagittarius::RuntimeStatusService }
+  let(:stub) { create_stub Tucana::Sagittarius::Rails::RuntimeStatusService }
 
   describe 'Update' do
     let(:runtime) { create(:runtime) }
@@ -24,7 +24,7 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server,
     end
 
     let(:message) do
-      Tucana::Sagittarius::RuntimeStatusUpdateRequest.new(adapter_runtime_status: to_update_status)
+      Tucana::Sagittarius::Rails::RuntimeStatusUpdateRequest.new(adapter_runtime_status: to_update_status)
     end
 
     it 'creates a correct status' do
@@ -64,7 +64,7 @@ RSpec.describe 'sagittarius.RuntimeStatusService', :need_grpc_server,
       end
 
       let(:message) do
-        Tucana::Sagittarius::RuntimeStatusUpdateRequest.new(execution_runtime_status: to_update_status)
+        Tucana::Sagittarius::Rails::RuntimeStatusUpdateRequest.new(execution_runtime_status: to_update_status)
       end
 
       it 'creates a correct status' do
