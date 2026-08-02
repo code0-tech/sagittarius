@@ -11,7 +11,7 @@ class RuntimeParameterDefinition < ApplicationRecord
 
   has_many :parameter_definitions, inverse_of: :runtime_parameter_definition
 
-  validates :runtime_name, length: { minimum: 3, maximum: 50 }, presence: true,
+  validates :runtime_name, length: { maximum: 50 }, presence: true,
                            uniqueness: { case_sensitive: false, scope: :runtime_function_definition_id }
   validates :optional, inclusion: { in: [true, false] }
   validates :hidden, inclusion: { in: [true, false] }
