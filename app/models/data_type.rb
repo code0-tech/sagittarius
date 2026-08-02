@@ -17,6 +17,8 @@ class DataType < ApplicationRecord
   has_translation :display_messages, purpose: :display_message
   has_translation :aliases, purpose: :alias
 
+  validates :identifier, presence: true, length: { maximum: 200 },
+                         uniqueness: { case_sensitive: false, scope: :runtime_id }
   validates :type, presence: true, length: { maximum: 65_536 }
   validates :definition_source, length: { maximum: 50 }
 

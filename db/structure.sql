@@ -169,7 +169,7 @@ CREATE TABLE data_types (
     definition_source text,
     runtime_module_id bigint NOT NULL,
     CONSTRAINT check_01ca31b7b9 CHECK ((char_length(type) <= 65536)),
-    CONSTRAINT check_3a7198812e CHECK ((char_length(identifier) <= 50)),
+    CONSTRAINT check_3a7198812e CHECK ((char_length(identifier) <= 200)),
     CONSTRAINT check_a133157a46 CHECK ((char_length(definition_source) <= 50))
 );
 
