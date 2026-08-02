@@ -9,6 +9,14 @@
     {
       "matchDepNames": ["ruby", "redis", "postgres"],
       "dependencyDashboardApproval": true
+    },
+    {
+      "matchManagers": [
+        "cargo"
+      ],
+      "extends": [
+        ":assignee(raphael-goetz)"
+      ]
     }
   ]
 }
