@@ -9,6 +9,17 @@ include:
     ref: build-branch
     file: ci-template.gitlab-ci.yml
 
+.rust:
+  image: rust:1.96
+  cache:
+    key: cargo-${CI_COMMIT_REF_SLUG}
+    paths:
+      - .cargo/registry
+      - .cargo/git
+      - target
+  variables:
+    CARGO_HOME: ${CI_PROJECT_DIR}/.cargo
+
 .bundle:
   image: ruby:3.4.7
   before_script:
@@ -49,6 +60,40 @@ graphql_docs:
     - bundle exec rake graphql:compile_docs
     - git add docs
     - git diff --exit-code --staged
+
+rust:fmt:
+  extends:
+    - .rust
+  stage: lint
+  before_script:
+    - rustup component add rustfmt
+  script:
+    - cargo fmt --all -- --check
+
+rust:clippy:
+  extends:
+    - .rust
+  stage: lint
+  before_script:
+    - rustup component add clippy
+  script:
+    - cargo clippy --all-targets --all-features
+
+rust:build:
+  extends:
+    - .rust
+  stage: build
+  script:
+    - cargo build --verbose --all-features
+
+rust:test:
+  extends:
+    - .rust
+  stage: test
+  needs:
+    - rust:build
+  script:
+    - cargo test
 
 rspec:
   extends:
