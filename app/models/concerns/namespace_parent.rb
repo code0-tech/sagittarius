@@ -9,12 +9,11 @@ module NamespaceParent
 
   def ensure_namespace
     return namespace if namespace.present?
+    return build_namespace unless persisted?
 
-    ns = build_namespace
-    if persisted?
-      ns.save
-      ns.ensure_personal_namespace_administrator! if ns.user_type?
-    end
+    ns = Namespace.create_or_find_by(parent: self)
+    association(:namespace).target = ns
+    ns.ensure_personal_namespace_administrator! if ns.user_type?
     ns
   end
 end
