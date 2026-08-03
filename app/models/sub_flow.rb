@@ -24,7 +24,7 @@ class SubFlow < ApplicationRecord
       definition_source = function_definition.runtime_function_definition.definition_source
       function_args[:definition_source] = definition_source if definition_source.present?
 
-      grpc_sub_flow.function = Tucana::Shared::SubFlow::SubFlowFunction.new(**function_args)
+      grpc_sub_flow.function = Tucana::Shared::SubFlowFunction.new(**function_args)
     end
 
     grpc_sub_flow

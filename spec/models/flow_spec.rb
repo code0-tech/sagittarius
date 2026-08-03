@@ -105,6 +105,8 @@ RSpec.describe Flow do
           project_slug: flow.project.slug,
           type: runtime_flow_type.identifier,
           signature: flow.signature,
+          name: flow.name,
+          definition_source: runtime_flow_type.definition_source,
           node_functions: [
             {
               database_id: starting_node.id,

@@ -183,7 +183,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
               runtime_parameter_id: 'sub-flow',
               value: Tucana::Shared::NodeValue.new(
                 sub_flow: Tucana::Shared::SubFlow.new(
-                  function: Tucana::Shared::SubFlow::SubFlowFunction.new(function_identifier: 'helper'),
+                  function: Tucana::Shared::SubFlowFunction.new(function_identifier: 'helper'),
                   signature: '(): undefined'
                 )
               )
@@ -254,7 +254,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
             Tucana::Shared::NodeParameter.new(
               value: Tucana::Shared::NodeValue.new(
                 sub_flow: Tucana::Shared::SubFlow.new(
-                  function: Tucana::Shared::SubFlow::SubFlowFunction.new(
+                  function: Tucana::Shared::SubFlowFunction.new(
                     function_identifier: 'helper',
                     definition_source: 'taurus'
                   )
