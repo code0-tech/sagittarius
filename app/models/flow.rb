@@ -61,7 +61,9 @@ class Flow < ApplicationRecord
       settings: flow_settings.map(&:to_grpc),
       starting_node_id: starting_node&.id,
       node_functions: node_functions.map(&:to_grpc),
-      signature: signature
+      signature: signature,
+      name: name,
+      definition_source: flow_type.runtime_flow_type&.definition_source
     )
   end
 
