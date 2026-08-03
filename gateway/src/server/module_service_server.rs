@@ -127,7 +127,7 @@ impl SagittariusModuleService {
     fn to_rails_update_request(request: ModuleUpdateRequest) -> RailsModuleUpdateRequest {
         RailsModuleUpdateRequest {
             modules: request.modules,
-            available_defintition_soruces: Vec::new(),
+            available_definition_sources: request.available_definition_sources,
         }
     }
 
