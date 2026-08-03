@@ -26,15 +26,14 @@ module Runtimes
             )
           end
 
-          db_status = runtime.runtime_status || runtime.build_runtime_status
-          db_status.last_heartbeat = heartbeat
-          db_status.status = status_info.status.downcase
-
-          unless db_status.save
+          runtime_status = runtime.runtime_status
+          begin
+            runtime_status.record_status!(status: :running, heartbeat: heartbeat)
+          rescue ActiveRecord::RecordInvalid
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to save runtime status',
               error_code: :invalid_runtime_status,
-              details: db_status.errors
+              details: runtime_status.errors
             )
           end
 
@@ -46,11 +45,10 @@ module Runtimes
             )
           end
 
-          module_status = module_record.runtime_module_status || module_record.build_runtime_module_status
-          module_status.last_heartbeat = heartbeat
-          module_status.status = status_info.status.downcase
-
-          unless module_status.save
+          module_status = module_record.runtime_module_status
+          begin
+            module_status.record_status!(status: status_info.status.downcase, heartbeat: heartbeat)
+          rescue ActiveRecord::RecordInvalid
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to save runtime module status',
               error_code: :invalid_runtime_module_status,

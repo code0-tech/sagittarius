@@ -3,9 +3,9 @@
 FactoryBot.define do
   factory :runtime_status do
     status { :stopped }
-    last_heartbeat { Time.zone.today }
-    status_type { :adapter }
-    identifier { SecureRandom.uuid }
+    last_heartbeat { nil }
     runtime
+
+    initialize_with { runtime.runtime_status }
   end
 end

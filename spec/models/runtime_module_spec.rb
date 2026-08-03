@@ -7,6 +7,7 @@ RSpec.describe RuntimeModule do
 
   describe 'associations' do
     it { is_expected.to belong_to(:runtime).inverse_of(:runtime_modules) }
+    it { is_expected.to have_one(:runtime_module_status).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:data_types).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:runtime_flow_types).inverse_of(:runtime_module) }
     it { is_expected.to have_many(:flow_types).inverse_of(:runtime_module) }

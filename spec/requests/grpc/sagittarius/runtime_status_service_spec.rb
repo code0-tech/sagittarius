@@ -2,78 +2,71 @@
 
 require 'rails_helper'
 
-RSpec.describe 'sagittarius_rails.RuntimeStatusService', :need_grpc_server,
-               skip: 'This needs to be redone in issue: #1018 (new runtime status)' do
+RSpec.describe 'sagittarius_rails.RuntimeStatusService', :need_grpc_server do
   include GrpcHelpers
 
   let(:stub) { create_stub Tucana::Sagittarius::Rails::RuntimeStatusService }
+  let(:runtime) { create(:runtime) }
+  let!(:runtime_module) { create(:runtime_module, runtime: runtime, identifier: 'taurus') }
 
   describe 'Update' do
-    let(:runtime) { create(:runtime) }
-    let(:to_update_status) do
-      Tucana::Shared::AdapterRuntimeStatus.new(
-        status: Tucana::Shared::AdapterRuntimeStatus::Status::RUNNING,
-        timestamp: Time.now.to_i,
-        identifier: 'adapter_status_1',
-        configurations: [
-          Tucana::Shared::AdapterStatusConfiguration.new(
-            endpoint: 'http://localhost:3000'
-          )
-        ]
+    let(:heartbeat_time) { Time.zone.now }
+    let(:status_info) do
+      Tucana::Shared::ModuleStatus.new(
+        identifier: 'taurus',
+        timestamp: heartbeat_time.to_i,
+        status: Tucana::Shared::ModuleStatus::StatusVariant::RUNNING
       )
     end
 
-    let(:message) do
-      Tucana::Sagittarius::Rails::RuntimeStatusUpdateRequest.new(adapter_runtime_status: to_update_status)
-    end
+    let(:message) { Tucana::Sagittarius::Rails::RuntimeStatusUpdateRequest.new(status: status_info) }
 
-    it 'creates a correct status' do
+    it 'updates the runtime heartbeat and marks the runtime status as running' do
       expect(stub.update(message, authorization(runtime)).success).to be(true)
-      db_status = RuntimeStatus.last
-      expect(db_status.runtime).to eq(runtime)
-      expect(db_status.identifier).to eq('adapter_status_1')
-      expect(db_status.status_type).to eq('adapter')
-      expect(db_status.status).to eq('running')
-      expect(db_status.runtime_status_configurations.count).to eq(1)
-      expect(db_status.runtime_status_configurations.first.endpoint).to eq('http://localhost:3000')
+
+      expect(runtime.reload.last_heartbeat.to_i).to eq(heartbeat_time.to_i)
+      expect(runtime.runtime_status).to have_attributes(status: 'running')
+      expect(runtime.runtime_status.last_heartbeat.to_i).to eq(heartbeat_time.to_i)
     end
 
-    context 'when old configuration exists before' do
-      before do
-        create(:runtime_status_configuration, endpoint: 'http://old-endpoint.com',
-                                              runtime_status: create(:runtime_status,
-                                                                     runtime: runtime,
-                                                                     identifier: 'adapter_status_1'))
-      end
+    it 'updates the specific module status from the reported value' do
+      expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-      it 'updates the existing configuration' do
-        expect(stub.update(message, authorization(runtime)).success).to be(true)
-        expect(RuntimeStatusConfiguration.count).to eq(1)
-        config = RuntimeStatusConfiguration.last
-        expect(config.endpoint).to eq('http://localhost:3000')
-      end
+      expect(runtime_module.reload.runtime_module_status).to have_attributes(status: 'running')
+      expect(runtime_module.runtime_module_status.last_heartbeat.to_i).to eq(heartbeat_time.to_i)
     end
 
-    context 'when execution runtime status' do
-      let(:to_update_status) do
-        Tucana::Shared::ExecutionRuntimeStatus.new(
-          status: Tucana::Shared::ExecutionRuntimeStatus::Status::RUNNING,
-          timestamp: Time.now.to_i,
-          identifier: 'execution_status_1'
+    context 'when the module status is not_responding' do
+      let(:status_info) do
+        Tucana::Shared::ModuleStatus.new(
+          identifier: 'taurus',
+          timestamp: heartbeat_time.to_i,
+          status: Tucana::Shared::ModuleStatus::StatusVariant::NOT_RESPONDING
         )
       end
 
-      let(:message) do
-        Tucana::Sagittarius::Rails::RuntimeStatusUpdateRequest.new(execution_runtime_status: to_update_status)
+      it 'still marks the runtime itself as running, since it received a heartbeat' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+        expect(runtime.runtime_status).to have_attributes(status: 'running')
+        expect(runtime_module.reload.runtime_module_status).to have_attributes(status: 'not_responding')
+      end
+    end
+
+    context 'when the runtime module cannot be found' do
+      let(:status_info) do
+        Tucana::Shared::ModuleStatus.new(
+          identifier: 'unknown-module',
+          timestamp: heartbeat_time.to_i,
+          status: Tucana::Shared::ModuleStatus::StatusVariant::RUNNING
+        )
       end
 
-      it 'creates a correct status' do
-        expect(stub.update(message, authorization(runtime)).success).to be(true)
-        db_status = RuntimeStatus.last
-        expect(db_status.runtime).to eq(runtime)
-        expect(db_status.identifier).to eq('execution_status_1')
-        expect(db_status.status_type).to eq('execution')
-        expect(db_status.status).to eq('running')
+      it 'returns an error' do
+        response = stub.update(message, authorization(runtime))
+
+        expect(response.success).to be(false)
+        expect(response.error.message).to eq('Runtime module not found')
       end
     end
   end
