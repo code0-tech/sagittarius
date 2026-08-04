@@ -6,7 +6,7 @@ class RuntimeStatusHandler < Tucana::Sagittarius::Rails::RuntimeStatusService::S
 
   def update(request, _call)
     current_runtime = Runtime.find(Code0::ZeroTrack::Context.current[:runtime][:id])
-    status_info = request.status
+    status_info = request.module_status || request.runtime_status
     return Tucana::Sagittarius::Rails::RuntimeStatusUpdateResponse.new(success: false) if status_info.nil?
 
     response = Runtimes::Grpc::RuntimeStatusUpdateService.new(

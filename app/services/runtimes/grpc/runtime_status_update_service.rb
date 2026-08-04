@@ -14,6 +14,17 @@ module Runtimes
       end
 
       def execute
+        case status_info
+        when Tucana::Shared::RuntimeStatus
+          update_runtime_status
+        when Tucana::Shared::ModuleStatus
+          update_module_status
+        end
+      end
+
+      private
+
+      def update_runtime_status
         transactional do |t|
           heartbeat = Time.zone.at(status_info.timestamp.to_i)
           runtime.last_heartbeat = heartbeat
@@ -37,6 +48,14 @@ module Runtimes
             )
           end
 
+          return ServiceResponse.success(message: 'Updated runtime status')
+        end
+      end
+
+      def update_module_status
+        transactional do |t|
+          heartbeat = Time.zone.at(status_info.timestamp.to_i)
+
           module_record = runtime.runtime_modules.find_by(identifier: status_info.identifier)
           if module_record.nil?
             t.rollback_and_return! ServiceResponse.error(
@@ -56,7 +75,7 @@ module Runtimes
             )
           end
 
-          return ServiceResponse.success(message: 'Updated runtime status')
+          return ServiceResponse.success(message: 'Updated runtime module status')
         end
       end
     end

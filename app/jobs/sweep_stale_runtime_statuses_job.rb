@@ -7,7 +7,6 @@ class SweepStaleRuntimeStatusesJob < ApplicationJob
     sweep_stale_runtimes(threshold)
     sweep_stale_modules(threshold)
     roll_open_outages
-    purge_expired_daily_uptimes
   end
 
   private
@@ -37,12 +36,5 @@ class SweepStaleRuntimeStatusesJob < ApplicationJob
   def roll_open_outages
     RuntimeStatus.where.not(current_outage_started_at: nil).find_each(&:roll_outage_to_today!)
     RuntimeModuleStatus.where.not(current_outage_started_at: nil).find_each(&:roll_outage_to_today!)
-  end
-
-  def purge_expired_daily_uptimes
-    cutoff = TracksOutages::UPTIME_HISTORY_DAYS.days.ago.to_date
-
-    RuntimeStatusDailyUptime.where(date: ...cutoff).delete_all
-    RuntimeModuleStatusDailyUptime.where(date: ...cutoff).delete_all
   end
 end

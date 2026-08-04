@@ -68,5 +68,12 @@ RSpec.describe RuntimeStatus do
     it 'returns 14 entries defaulting to 100.0 with no recorded outages' do
       expect(runtime_status.uptime_percentages).to eq([100.0] * 14)
     end
+
+    it 'ignores rows older than 14 days without requiring them to be deleted' do
+      create(:runtime_status_daily_uptime, runtime_status: runtime_status, date: 20.days.ago.to_date,
+                                           outage_seconds: 3600, uptime_percentage: 0.0)
+
+      expect(runtime_status.uptime_percentages).to eq([100.0] * 14)
+    end
   end
 end

@@ -43,17 +43,6 @@ RSpec.describe SweepStaleRuntimeStatusesJob do
     expect(runtime_module.runtime_module_status.reload).to have_attributes(status: 'not_responding')
   end
 
-  it 'purges daily uptime rows older than 14 days' do
-    runtime_status = create(:runtime_status)
-    old_row = create(:runtime_status_daily_uptime, runtime_status: runtime_status, date: 20.days.ago.to_date)
-    recent_row = create(:runtime_status_daily_uptime, runtime_status: runtime_status, date: 2.days.ago.to_date)
-
-    perform_enqueued_jobs { described_class.perform_later }
-
-    expect(RuntimeStatusDailyUptime.exists?(old_row.id)).to be(false)
-    expect(RuntimeStatusDailyUptime.exists?(recent_row.id)).to be(true)
-  end
-
   it 'rolls an ongoing outage that started on a previous day into that day and re-anchors at today' do
     runtime_status = create(:runtime_status)
 
