@@ -5,7 +5,7 @@ class RuntimeModuleStatus < ApplicationRecord
 
   belongs_to :runtime_module, inverse_of: :runtime_module_status
   has_many :daily_uptimes, class_name: 'RuntimeModuleStatusDailyUptime', inverse_of: :runtime_module_status,
-                           dependent: :destroy
+                           dependent: :delete_all
 
   STATUS_TYPES = {
     not_responding: 0,

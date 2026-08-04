@@ -4,7 +4,8 @@ class RuntimeStatus < ApplicationRecord
   include TracksOutages
 
   belongs_to :runtime, inverse_of: :runtime_status
-  has_many :daily_uptimes, class_name: 'RuntimeStatusDailyUptime', inverse_of: :runtime_status, dependent: :destroy
+  has_many :daily_uptimes, class_name: 'RuntimeStatusDailyUptime', inverse_of: :runtime_status,
+                           dependent: :delete_all
 
   STATUS_TYPES = {
     not_responding: 0,
