@@ -10,5 +10,9 @@ FactoryBot.define do
     finished_at { (1.minute.ago.to_r * 1_000_000).to_i }
     success { { 'node' => 'ok' } }
     error { nil }
+
+    after :build do |execution_node_result|
+      execution_node_result.created_at = execution_node_result.execution_result.created_at
+    end
   end
 end

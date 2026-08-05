@@ -36,6 +36,13 @@ rescue ActiveRecord::PendingMigrationError => e
   ActiveSupport::ActionableError.dispatch(e, 'Run pending migrations')
 end
 
+# bin/rails db:migrate:reset && bin/rspec will fail without this because some
+# models have the non-existing table cached which in turn fails on verified
+# doubles because the attributes don't exist on the class.
+ActiveRecord::Base.descendants.each(&:reset_column_information)
+
+Code0::ZeroTrack::Database::Partitioning::PartitionManager.sync_all_partitions!
+
 SeedFu.quiet = true
 SeedFu.seed(SeedFu.fixture_paths, /01_application_settings/)
 
