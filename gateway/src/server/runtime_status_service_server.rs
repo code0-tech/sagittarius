@@ -74,19 +74,14 @@ impl RuntimeStatusService for SagittariusRuntimeStatusService {
 fn convert_status_update_request(
     request: tonic::Request<RuntimeStatusUpdateRequest>,
 ) -> tucana::sagittarius_rails::RuntimeStatusUpdateRequest {
+    use tucana::sagittarius_gateway::runtime_status_update_request::Status as GatewayStatus;
+    use tucana::sagittarius_rails::runtime_status_update_request::Status as RailsStatus;
+
     let status_request = request.into_inner();
 
     let status = status_request.status.map(|status| match status {
-        tucana::sagittarius_gateway::runtime_status_update_request::Status::ModuleStatus(
-            module_status,
-        ) => tucana::sagittarius_rails::runtime_status_update_request::Status::ModuleStatus(
-            module_status,
-        ),
-        tucana::sagittarius_gateway::runtime_status_update_request::Status::RuntimeStatus(
-            runtime_status,
-        ) => tucana::sagittarius_rails::runtime_status_update_request::Status::RuntimeStatus(
-            runtime_status,
-        ),
+        GatewayStatus::ModuleStatus(module_status) => RailsStatus::ModuleStatus(module_status),
+        GatewayStatus::RuntimeStatus(runtime_status) => RailsStatus::RuntimeStatus(runtime_status),
     });
 
     tucana::sagittarius_rails::RuntimeStatusUpdateRequest { status }

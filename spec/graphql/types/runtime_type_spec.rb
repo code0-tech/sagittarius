@@ -11,7 +11,6 @@ RSpec.describe SagittariusSchema.types['Runtime'] do
       modules
       description
       projects
-      statuses
       status
       token
       userAbilities

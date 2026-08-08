@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class RuntimeStatus < ApplicationRecord
+class RuntimeModuleStatus < ApplicationRecord
   include TracksOutages
 
-  belongs_to :runtime, inverse_of: :runtime_status
-  has_many :daily_uptimes, class_name: 'RuntimeStatusDailyUptime', inverse_of: :runtime_status,
+  belongs_to :runtime_module, inverse_of: :runtime_module_status
+  has_many :daily_uptimes, class_name: 'RuntimeModuleStatusDailyUptime', inverse_of: :runtime_module_status,
                            dependent: :delete_all
 
   STATUS_TYPES = {
@@ -16,5 +16,5 @@ class RuntimeStatus < ApplicationRecord
 
   enum :status, STATUS_TYPES, default: :stopped
 
-  validates :runtime_id, uniqueness: true
+  validates :runtime_module_id, uniqueness: true
 end

@@ -5,6 +5,8 @@ class RuntimeModule < ApplicationRecord
 
   belongs_to :runtime, inverse_of: :runtime_modules
 
+  has_one :runtime_module_status, inverse_of: :runtime_module, dependent: :delete
+
   has_many :data_types, inverse_of: :runtime_module
   has_many :runtime_flow_types, inverse_of: :runtime_module
   has_many :flow_types, inverse_of: :runtime_module
@@ -36,5 +38,12 @@ class RuntimeModule < ApplicationRecord
 
   def parsed_version
     Gem::Version.new(version)
+  end
+
+  # Always returns a status, lazily creating a default one so consumers never see a nil status.
+  def runtime_module_status
+    super || RuntimeModuleStatus.create!(runtime_module: self)
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+    association(:runtime_module_status).reload
   end
 end

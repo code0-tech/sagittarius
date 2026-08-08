@@ -13,6 +13,7 @@ RSpec.describe SagittariusSchema.types['RuntimeModule'] do
       author
       icon
       version
+      status
       definitions
       runtime
       dataTypes

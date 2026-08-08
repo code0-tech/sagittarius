@@ -34,6 +34,8 @@ module Types
           null: false,
           description: 'Runtime function definitions of the runtime module'
     # rubocop:enable GraphQL/ExtractType
+    field :status, Types::RuntimeModuleStatusType, null: false, description: 'The status of the runtime module',
+                                                   method: :runtime_module_status
     field :version, String, null: false, description: 'Version of the runtime module'
 
     id_field RuntimeModule

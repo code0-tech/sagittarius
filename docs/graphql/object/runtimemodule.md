@@ -24,5 +24,6 @@ Represents a runtime module
 | `runtime` | [`Runtime!`](../object/runtime.md) | Runtime of the runtime module |
 | `runtimeFlowTypes` | [`RuntimeFlowTypeConnection!`](../object/runtimeflowtypeconnection.md) | Runtime flow types of the runtime module |
 | `runtimeFunctionDefinitions` | [`RuntimeFunctionDefinitionConnection!`](../object/runtimefunctiondefinitionconnection.md) | Runtime function definitions of the runtime module |
+| `status` | [`RuntimeModuleStatus!`](../object/runtimemodulestatus.md) | The status of the runtime module |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeModule was last updated |
 | `version` | [`String!`](../scalar/string.md) | Version of the runtime module |

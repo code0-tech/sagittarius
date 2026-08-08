@@ -7,7 +7,7 @@ class Runtime < ApplicationRecord
 
   token_attr :token, prefix: 's_rt_', length: 48
 
-  has_many :runtime_statuses, inverse_of: :runtime
+  has_one :runtime_status, inverse_of: :runtime, dependent: :delete
 
   has_many :project_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :runtime
   has_many :projects, class_name: 'NamespaceProject', through: :project_assignments, source: :namespace_project,
@@ -33,6 +33,13 @@ class Runtime < ApplicationRecord
   validates :description, length: { maximum: 500 }, exclusion: { in: [nil] }
 
   before_validation :strip_whitespace
+
+  # Always returns a status, lazily creating a default one so consumers never see a nil status.
+  def runtime_status
+    super || RuntimeStatus.create!(runtime: self)
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+    association(:runtime_status).reload
+  end
 
   private
 
