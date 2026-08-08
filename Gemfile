@@ -50,8 +50,8 @@ group :development, :test do
 
   gem 'database_cleaner-active_record', '~> 2.1'
 
-  gem 'simplecov', '~> 0.22.0', require: false
-  gem 'simplecov-cobertura', '~> 3.0', require: false
+  gem 'simplecov', '~> 1.0.0', require: false
+  gem 'simplecov-cobertura', '~> 4.0', require: false
 end
 
 group :development do
