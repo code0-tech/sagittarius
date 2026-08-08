@@ -63,7 +63,7 @@ class NodeFunction < ApplicationRecord
       )
       .where(fd[:id].eq(function_definition_id))
       .where(np[:node_function_id].eq(id))
-      .order(rpd[:id].asc)
+      .order(rpd[:id].asc, pd[:id].asc, np[:id].asc)
       .select(np[Arel.star])
   end
 end

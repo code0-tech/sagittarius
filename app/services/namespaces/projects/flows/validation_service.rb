@@ -13,7 +13,8 @@ module Namespaces
         def execute
           function_definitions = FunctionDefinition
                                  .by_node_function(flow.node_functions)
-                                 .preload(:runtime_function_definition)
+                                 .preload(:runtime_function_definition,
+                                          parameter_definitions: :runtime_parameter_definition)
           data_types = DataType.where(runtime: flow.project.primary_runtime)
 
           result = Triangulum::Validation.new(

@@ -103,4 +103,14 @@ RSpec.describe RuntimeFunctionDefinition do
       )
     end
   end
+
+  describe '#ordered_parameters' do
+    it 'orders parameters by persisted order' do
+      first_parameter = create(:runtime_parameter_definition, runtime_function_definition: function)
+      second_parameter = create(:runtime_parameter_definition, runtime_function_definition: function)
+
+      expect(function.parameters.to_a).to include(first_parameter, second_parameter)
+      expect(function.ordered_parameters).to eq([first_parameter, second_parameter])
+    end
+  end
 end
