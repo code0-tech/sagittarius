@@ -3,20 +3,24 @@
 module TracksOutages
   extend ActiveSupport::Concern
 
+  include Sagittarius::Database::Transactional
+
   UPTIME_HISTORY_DAYS = 14
 
   # Updates the status/heartbeat and opens or closes an outage window as needed.
   def record_status!(status:, heartbeat: nil, at: Time.zone.now)
-    self.status = status
-    self.last_heartbeat = heartbeat if heartbeat
+    transactional do
+      self.status = status
+      self.last_heartbeat = heartbeat if heartbeat
 
-    if running?
-      close_outage!(at) if current_outage_started_at.present?
-    elsif current_outage_started_at.blank?
-      open_outage!(at)
+      if running?
+        close_outage!(at) if current_outage_started_at.present?
+      elsif current_outage_started_at.blank?
+        open_outage!(at)
+      end
+
+      save!
     end
-
-    save!
   end
 
   # Finalizes the portion of an ongoing outage that happened on a previous day into that
@@ -25,9 +29,11 @@ module TracksOutages
     return if current_outage_started_at.blank?
     return if current_outage_started_at.to_date == at.to_date
 
-    midnight = at.beginning_of_day
-    accumulate_outage!(current_outage_started_at, midnight)
-    update!(current_outage_started_at: midnight)
+    transactional do
+      midnight = at.beginning_of_day
+      accumulate_outage!(current_outage_started_at, midnight)
+      update!(current_outage_started_at: midnight)
+    end
   end
 
   # Returns an array of UPTIME_HISTORY_DAYS uptime percentages, index 0 = today.
@@ -52,12 +58,12 @@ module TracksOutages
   private
 
   def open_outage!(at)
-    update!(current_outage_started_at: at)
+    self.current_outage_started_at = at
   end
 
   def close_outage!(at)
     accumulate_outage!(current_outage_started_at, at)
-    update!(current_outage_started_at: nil)
+    self.current_outage_started_at = nil
   end
 
   def accumulate_outage!(from, to)
@@ -75,7 +81,7 @@ module TracksOutages
   def add_outage_seconds(date, seconds)
     return if seconds <= 0
 
-    daily = daily_uptimes.find_or_create_by!(date: date)
+    daily = daily_uptimes.find_or_initialize_by(date: date)
     daily.outage_seconds += seconds
     daily.uptime_percentage = compute_uptime_percentage(date, daily.outage_seconds)
     daily.save!
