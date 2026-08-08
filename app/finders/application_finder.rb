@@ -23,8 +23,8 @@ class ApplicationFinder
   def apply_single(relation)
     return relation unless params[:single]
 
-    return relation.first unless params[:single_use_last]
+    return relation.last if params[:single] == :last
 
-    relation.last
+    relation.first
   end
 end

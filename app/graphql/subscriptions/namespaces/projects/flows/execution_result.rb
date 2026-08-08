@@ -18,7 +18,7 @@ module Subscriptions
                 description: 'The execution result of the relevant execution'
 
           def subscribe(execution_identifier:)
-            result = ::ExecutionResult.find_by(execution_identifier: execution_identifier)
+            result = ::ExecutionResult.find_by(execution_identifier: execution_identifier, created_at: 1.hour.ago..)
 
             if result.present?
               unsubscribe({ execution_result: result })

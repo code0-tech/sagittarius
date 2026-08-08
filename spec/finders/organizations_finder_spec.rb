@@ -54,8 +54,8 @@ RSpec.describe OrganizationsFinder do
 
     it { is_expected.to eq(first_organization) }
 
-    context 'when using single_use_last' do
-      let(:params) { { single: true, single_use_last: true } }
+    context 'when using single: :last' do
+      let(:params) { { single: :last } }
 
       it { is_expected.to eq(second_organization) }
     end
