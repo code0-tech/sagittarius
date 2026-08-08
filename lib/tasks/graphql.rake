@@ -11,6 +11,7 @@ namespace :graphql do
     load_context: ->(_) { { visibility_profile: :types } },
     idl_outfile: 'tmp/schema.graphql',
     json_outfile: 'tmp/schema.json',
+    include_specified_by_url: true,
     namespace: 'types'
   )
 

@@ -44,4 +44,6 @@ opentelemetry:
   metrics_endpoint:
   traces_endpoint:
 
+cron_jobs: {}
+
 application_setting_overrides: {}

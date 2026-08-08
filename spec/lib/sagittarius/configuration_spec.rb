@@ -84,6 +84,15 @@ RSpec.describe Sagittarius::Configuration do
   end
 
   describe '.defaults' do
+    before do
+      # we don't want to require every cron job in the example config
+      allow(described_class).to receive(:cron_jobs).and_return({})
+    end
+
+    after do
+      described_class.clear_memoize(:config)
+    end
+
     it 'matches the example config' do
       example_config = YAML.safe_load_file(
         Rails.root.join('config/sagittarius.example.yml'),

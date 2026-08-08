@@ -5,5 +5,9 @@ FactoryBot.define do
     execution_node_result
     sequence(:position)
     value { { 'parameter' => 'ok' } }
+
+    after :build do |execution_parameter_result|
+      execution_parameter_result.created_at = execution_parameter_result.execution_node_result.created_at
+    end
   end
 end

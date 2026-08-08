@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AuditEvent < ApplicationRecord
+  include Code0::ZeroTrack::Database::Partitioning::PartitionedTable
+
   ACTION_TYPES = {
     user_registered: 1,
     user_logged_in: 2,
@@ -47,6 +49,11 @@ class AuditEvent < ApplicationRecord
   # rubocop:disable Lint/StructNewOverride
   GLOBAL_TARGET = Struct.new(:id, :class).new(0, Struct.new(:name).new('global'))
   # rubocop:enable Lint/StructNewOverride
+
+  partition_by :created_at, strategy: :monthly
+
+  self.table_name = 'p_audit_events'
+  self.primary_key = %i[id created_at]
 
   enum :action_type, ACTION_TYPES, prefix: :action
 

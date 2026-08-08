@@ -5,7 +5,10 @@ require 'database_cleaner/active_record'
 RSpec.configure do |config|
   config.around do |example|
     strategy = if example.metadata[:disable_transaction]
-                 DatabaseCleaner::ActiveRecord::Truncation.new(except: ['application_settings'])
+                 DatabaseCleaner::ActiveRecord::Truncation.new(
+                   except: ['application_settings'],
+                   truncate_option: :cascade
+                 )
                else
                  :transaction
                end

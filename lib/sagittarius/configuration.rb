@@ -84,7 +84,18 @@ module Sagittarius
           metrics_endpoint: nil,
           traces_endpoint: nil,
         },
+        cron_jobs: cron_jobs,
         application_setting_overrides: {},
+      }
+    end
+
+    def self.cron_jobs
+      {
+        partition_manager_sync_job: {
+          cron: '0 * * * *',
+          class: 'PartitionManagerSyncJob',
+          set: { queue: 'cron' },
+        },
       }
     end
   end

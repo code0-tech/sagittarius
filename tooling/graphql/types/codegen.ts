@@ -9,7 +9,8 @@ type Schema = {
       types: Array<{
         kind: string;
         name: string;
-        fields: Array<{ type: Type }>
+        fields: Array<{ type: Type }>;
+        specifiedByURL?: string;
       }>;
     };
   };
@@ -52,7 +53,13 @@ const scalars = {
 
 
 globalIds.forEach(type => {
-  const typeConfig = `\`gid://sagittarius/${type.name.replace(/ID$/, '')}/\${number}\``
+  const modelName = type.name.replace(/ID$/, '');
+  const prefix = `gid://sagittarius/${modelName}/`;
+  const specifiedBy = type.specifiedByURL ?? '';
+  const keySuffix = specifiedBy.startsWith(prefix) ? specifiedBy.slice(prefix.length) : '';
+  const idType = keySuffix.split('/').map(part => part === 'id' ? '${number}' : '${string}').join('/')
+
+  const typeConfig = `\`gid://sagittarius/${modelName}/${idType}\``;
 
   scalars[type.name] = {
     input: typeConfig,

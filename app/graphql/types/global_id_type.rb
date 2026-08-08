@@ -33,6 +33,10 @@ module Types
         graphql_name model_name_to_graphql_name(model_name)
         description "A unique identifier for all #{model_name} entities of the application"
 
+        pk = model_class.primary_key
+        id_pattern = pk.is_a?(Array) ? pk.join('/') : pk
+        specified_by_url "gid://sagittarius/#{model_name}/#{id_pattern}"
+
         define_singleton_method(:to_s) { graphql_name }
         define_singleton_method(:inspect) { graphql_name }
 

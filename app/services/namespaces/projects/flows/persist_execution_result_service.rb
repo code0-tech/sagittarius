@@ -37,39 +37,44 @@ module Namespaces
         private
 
         def build_execution_result(flow)
+          created_at = Time.zone.now
+
           result = flow.execution_results.build(
             execution_identifier: grpc_result.execution_identifier,
             input: grpc_result.input&.to_ruby(true),
             started_at: grpc_result.started_at,
-            finished_at: grpc_result.finished_at
+            finished_at: grpc_result.finished_at,
+            created_at: created_at
           )
 
           assign_result(result, grpc_result)
-          build_node_results(result)
+          build_node_results(result, created_at)
 
           result
         end
 
-        def build_node_results(result)
+        def build_node_results(result, created_at)
           grpc_result.node_execution_results.each_with_index do |node_result, index|
             node_record = result.node_results.build(
               position: index,
               started_at: node_result.started_at,
               finished_at: node_result.finished_at,
               node_function: node_function_for(node_result, result.flow),
-              function_definition: function_definition_for(node_result, result.flow)
+              function_definition: function_definition_for(node_result, result.flow),
+              created_at: created_at
             )
 
             assign_result(node_record, node_result)
-            build_parameter_results(node_record, node_result)
+            build_parameter_results(node_record, node_result, created_at)
           end
         end
 
-        def build_parameter_results(node_record, node_result)
+        def build_parameter_results(node_record, node_result, created_at)
           node_result.parameter_results.each_with_index do |parameter_result, index|
             node_record.parameter_results.build(
               position: index,
-              value: parameter_result.value&.to_ruby(true)
+              value: parameter_result.value&.to_ruby(true),
+              created_at: created_at
             )
           end
         end
