@@ -76,7 +76,18 @@ fn convert_status_update_request(
 ) -> tucana::sagittarius_rails::RuntimeStatusUpdateRequest {
     let status_request = request.into_inner();
 
-    tucana::sagittarius_rails::RuntimeStatusUpdateRequest {
-        status: status_request.status,
-    }
+    let status = status_request.status.map(|status| match status {
+        tucana::sagittarius_gateway::runtime_status_update_request::Status::ModuleStatus(
+            module_status,
+        ) => tucana::sagittarius_rails::runtime_status_update_request::Status::ModuleStatus(
+            module_status,
+        ),
+        tucana::sagittarius_gateway::runtime_status_update_request::Status::RuntimeStatus(
+            runtime_status,
+        ) => tucana::sagittarius_rails::runtime_status_update_request::Status::RuntimeStatus(
+            runtime_status,
+        ),
+    });
+
+    tucana::sagittarius_rails::RuntimeStatusUpdateRequest { status }
 }
