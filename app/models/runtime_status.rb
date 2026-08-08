@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class RuntimeStatus < ApplicationRecord
-  belongs_to :runtime, inverse_of: :runtime_statuses
-  has_many :runtime_status_configurations, inverse_of: :runtime_status
+  include TracksOutages
+
+  belongs_to :runtime, inverse_of: :runtime_status
+  has_many :daily_uptimes, class_name: 'RuntimeStatusDailyUptime', inverse_of: :runtime_status
 
   STATUS_TYPES = {
     not_responding: 0,
@@ -11,27 +13,7 @@ class RuntimeStatus < ApplicationRecord
     stopped: 3,
   }.with_indifferent_access
 
-  enum :status, STATUS_TYPES, default: :stopped
+  enum :status, STATUS_TYPES, default: :not_responding
 
-  STATUS_TYPE_TYPES = {
-    adapter: 0,
-    execution: 1,
-  }.with_indifferent_access
-
-  enum :status_type, STATUS_TYPE_TYPES
-
-  validates :identifier, presence: true,
-                         allow_blank: false,
-                         uniqueness: { case_sensitive: false, scope: :runtime_id }
-
-  validate :runtime_status_configurations_only_for_adapter
-
-  private
-
-  def runtime_status_configurations_only_for_adapter
-    return if adapter?
-    return if runtime_status_configurations.empty?
-
-    errors.add(:runtime_status_configurations, :only_allowed_for_adapters)
-  end
+  validates :runtime_id, uniqueness: true
 end

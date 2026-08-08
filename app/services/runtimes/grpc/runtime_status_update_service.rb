@@ -14,29 +14,38 @@ module Runtimes
       end
 
       def execute
+        case status_info
+        when Tucana::Shared::RuntimeStatus
+          update_runtime_status
+        when Tucana::Shared::ModuleStatus
+          update_module_status
+        end
+      end
+
+      private
+
+      def update_runtime_status
         transactional do |t|
           heartbeat = Time.zone.at(status_info.timestamp.to_i)
-          runtime.last_heartbeat = heartbeat
 
-          unless runtime.save
-            t.rollback_and_return ServiceResponse.error(
-              message: 'Failed to update runtime heartbeat',
-              error_code: :invalid_runtime,
-              details: runtime.errors
-            )
-          end
-
-          db_status = runtime.runtime_status || runtime.build_runtime_status
-          db_status.last_heartbeat = heartbeat
-          db_status.status = status_info.status.downcase
-
-          unless db_status.save
+          runtime_status = runtime.runtime_status
+          begin
+            runtime_status.record_status!(status: :running, heartbeat: heartbeat)
+          rescue ActiveRecord::RecordInvalid
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to save runtime status',
               error_code: :invalid_runtime_status,
-              details: db_status.errors
+              details: runtime_status.errors
             )
           end
+
+          return ServiceResponse.success(message: 'Updated runtime status')
+        end
+      end
+
+      def update_module_status
+        transactional do |t|
+          heartbeat = Time.zone.at(status_info.timestamp.to_i)
 
           module_record = runtime.runtime_modules.find_by(identifier: status_info.identifier)
           if module_record.nil?
@@ -46,11 +55,10 @@ module Runtimes
             )
           end
 
-          module_status = module_record.runtime_module_status || module_record.build_runtime_module_status
-          module_status.last_heartbeat = heartbeat
-          module_status.status = status_info.status.downcase
-
-          unless module_status.save
+          module_status = module_record.runtime_module_status
+          begin
+            module_status.record_status!(status: status_info.status.downcase, heartbeat: heartbeat)
+          rescue ActiveRecord::RecordInvalid
             t.rollback_and_return! ServiceResponse.error(
               message: 'Failed to save runtime module status',
               error_code: :invalid_runtime_module_status,
@@ -58,7 +66,7 @@ module Runtimes
             )
           end
 
-          return ServiceResponse.success(message: 'Updated runtime status')
+          return ServiceResponse.success(message: 'Updated runtime module status')
         end
       end
     end
