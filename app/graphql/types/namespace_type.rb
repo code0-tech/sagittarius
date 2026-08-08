@@ -24,7 +24,7 @@ module Types
     field :runtimes, Types::RuntimeType.connection_type, null: false, description: 'Runtime of the namespace'
 
     lookahead_field :members, base_scope: ->(object) { object.namespace_members },
-                              conditional_lookaheads: { user: :user, namespace: :namespace }
+                              preload_type: Types::NamespaceMemberType
 
     expose_abilities %i[
       invite_member
