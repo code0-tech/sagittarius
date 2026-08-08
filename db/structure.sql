@@ -756,6 +756,46 @@ CREATE SEQUENCE p_execution_results_id_seq
 
 ALTER SEQUENCE p_execution_results_id_seq OWNED BY p_execution_results.id;
 
+CREATE TABLE p_runtime_module_status_daily_uptimes (
+    id bigint NOT NULL,
+    runtime_module_status_id bigint CONSTRAINT p_runtime_module_status_daily_runtime_module_status_id_not_null NOT NULL,
+    date date NOT NULL,
+    outage_seconds integer DEFAULT 0 NOT NULL,
+    uptime_percentage numeric(5,2) DEFAULT 100.0 CONSTRAINT p_runtime_module_status_daily_uptime_uptime_percentage_not_null NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+)
+PARTITION BY RANGE (date);
+
+CREATE SEQUENCE p_runtime_module_status_daily_uptimes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE p_runtime_module_status_daily_uptimes_id_seq OWNED BY p_runtime_module_status_daily_uptimes.id;
+
+CREATE TABLE p_runtime_status_daily_uptimes (
+    id bigint NOT NULL,
+    runtime_status_id bigint NOT NULL,
+    date date NOT NULL,
+    outage_seconds integer DEFAULT 0 NOT NULL,
+    uptime_percentage numeric(5,2) DEFAULT 100.0 NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+)
+PARTITION BY RANGE (date);
+
+CREATE SEQUENCE p_runtime_status_daily_uptimes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE p_runtime_status_daily_uptimes_id_seq OWNED BY p_runtime_status_daily_uptimes.id;
+
 CREATE TABLE parameter_definitions (
     id bigint NOT NULL,
     runtime_parameter_definition_id bigint NOT NULL,
@@ -996,25 +1036,6 @@ CREATE SEQUENCE runtime_module_definitions_id_seq
 
 ALTER SEQUENCE runtime_module_definitions_id_seq OWNED BY runtime_module_definitions.id;
 
-CREATE TABLE runtime_module_status_daily_uptimes (
-    id bigint NOT NULL,
-    runtime_module_status_id bigint CONSTRAINT runtime_module_status_daily_u_runtime_module_status_id_not_null NOT NULL,
-    date date NOT NULL,
-    outage_seconds integer DEFAULT 0 NOT NULL,
-    uptime_percentage numeric(5,2) DEFAULT 100.0 NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE runtime_module_status_daily_uptimes_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE runtime_module_status_daily_uptimes_id_seq OWNED BY runtime_module_status_daily_uptimes.id;
-
 CREATE TABLE runtime_module_statuses (
     id bigint NOT NULL,
     runtime_module_id bigint NOT NULL,
@@ -1083,25 +1104,6 @@ CREATE SEQUENCE runtime_parameter_definitions_id_seq
 
 ALTER SEQUENCE runtime_parameter_definitions_id_seq OWNED BY runtime_parameter_definitions.id;
 
-CREATE TABLE runtime_status_daily_uptimes (
-    id bigint NOT NULL,
-    runtime_status_id bigint NOT NULL,
-    date date NOT NULL,
-    outage_seconds integer DEFAULT 0 NOT NULL,
-    uptime_percentage numeric(5,2) DEFAULT 100.0 NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-CREATE SEQUENCE runtime_status_daily_uptimes_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE runtime_status_daily_uptimes_id_seq OWNED BY runtime_status_daily_uptimes.id;
-
 CREATE TABLE runtime_statuses (
     id bigint NOT NULL,
     runtime_id bigint NOT NULL,
@@ -1129,7 +1131,6 @@ CREATE TABLE runtimes (
     namespace_id bigint,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    last_heartbeat timestamp with time zone,
     CONSTRAINT check_090cd49d30 CHECK ((char_length(name) <= 50)),
     CONSTRAINT check_f3c2ba8db3 CHECK ((char_length(description) <= 500))
 );
@@ -1343,6 +1344,10 @@ ALTER TABLE ONLY p_execution_parameter_results ALTER COLUMN id SET DEFAULT nextv
 
 ALTER TABLE ONLY p_execution_results ALTER COLUMN id SET DEFAULT nextval('p_execution_results_id_seq'::regclass);
 
+ALTER TABLE ONLY p_runtime_module_status_daily_uptimes ALTER COLUMN id SET DEFAULT nextval('p_runtime_module_status_daily_uptimes_id_seq'::regclass);
+
+ALTER TABLE ONLY p_runtime_status_daily_uptimes ALTER COLUMN id SET DEFAULT nextval('p_runtime_status_daily_uptimes_id_seq'::regclass);
+
 ALTER TABLE ONLY parameter_definitions ALTER COLUMN id SET DEFAULT nextval('parameter_definitions_id_seq'::regclass);
 
 ALTER TABLE ONLY reference_paths ALTER COLUMN id SET DEFAULT nextval('reference_paths_id_seq'::regclass);
@@ -1361,15 +1366,11 @@ ALTER TABLE ONLY runtime_function_definitions ALTER COLUMN id SET DEFAULT nextva
 
 ALTER TABLE ONLY runtime_module_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_module_definitions_id_seq'::regclass);
 
-ALTER TABLE ONLY runtime_module_status_daily_uptimes ALTER COLUMN id SET DEFAULT nextval('runtime_module_status_daily_uptimes_id_seq'::regclass);
-
 ALTER TABLE ONLY runtime_module_statuses ALTER COLUMN id SET DEFAULT nextval('runtime_module_statuses_id_seq'::regclass);
 
 ALTER TABLE ONLY runtime_modules ALTER COLUMN id SET DEFAULT nextval('runtime_modules_id_seq'::regclass);
 
 ALTER TABLE ONLY runtime_parameter_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_parameter_definitions_id_seq'::regclass);
-
-ALTER TABLE ONLY runtime_status_daily_uptimes ALTER COLUMN id SET DEFAULT nextval('runtime_status_daily_uptimes_id_seq'::regclass);
 
 ALTER TABLE ONLY runtime_statuses ALTER COLUMN id SET DEFAULT nextval('runtime_statuses_id_seq'::regclass);
 
@@ -1507,6 +1508,12 @@ ALTER TABLE ONLY p_execution_parameter_results
 ALTER TABLE ONLY p_execution_results
     ADD CONSTRAINT p_execution_results_pkey PRIMARY KEY (id, created_at);
 
+ALTER TABLE ONLY p_runtime_module_status_daily_uptimes
+    ADD CONSTRAINT p_runtime_module_status_daily_uptimes_pkey PRIMARY KEY (id, date);
+
+ALTER TABLE ONLY p_runtime_status_daily_uptimes
+    ADD CONSTRAINT p_runtime_status_daily_uptimes_pkey PRIMARY KEY (id, date);
+
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT parameter_definitions_pkey PRIMARY KEY (id);
 
@@ -1534,9 +1541,6 @@ ALTER TABLE ONLY runtime_function_definitions
 ALTER TABLE ONLY runtime_module_definitions
     ADD CONSTRAINT runtime_module_definitions_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY runtime_module_status_daily_uptimes
-    ADD CONSTRAINT runtime_module_status_daily_uptimes_pkey PRIMARY KEY (id);
-
 ALTER TABLE ONLY runtime_module_statuses
     ADD CONSTRAINT runtime_module_statuses_pkey PRIMARY KEY (id);
 
@@ -1545,9 +1549,6 @@ ALTER TABLE ONLY runtime_modules
 
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT runtime_parameter_definitions_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY runtime_status_daily_uptimes
-    ADD CONSTRAINT runtime_status_daily_uptimes_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY runtime_statuses
     ADD CONSTRAINT runtime_statuses_pkey PRIMARY KEY (id);
@@ -1616,6 +1617,10 @@ CREATE UNIQUE INDEX idx_p_exec_param_results_on_node_result_id_and_position ON O
 
 CREATE INDEX idx_p_execution_results_on_identifier ON ONLY p_execution_results USING btree (execution_identifier);
 
+CREATE UNIQUE INDEX idx_p_runtime_module_status_daily_uptimes_on_status_id_date ON ONLY p_runtime_module_status_daily_uptimes USING btree (runtime_module_status_id, date);
+
+CREATE UNIQUE INDEX idx_p_runtime_status_daily_uptimes_on_status_id_date ON ONLY p_runtime_status_daily_uptimes USING btree (runtime_status_id, date);
+
 CREATE UNIQUE INDEX idx_rfd_on_runtime_module_id_runtime_name ON runtime_function_definitions USING btree (runtime_module_id, runtime_name);
 
 CREATE UNIQUE INDEX idx_rft_links_on_rft_id_data_type_id ON runtime_flow_type_data_type_links USING btree (runtime_flow_type_id, referenced_data_type_id);
@@ -1624,11 +1629,7 @@ CREATE UNIQUE INDEX idx_rft_on_runtime_module_id_identifier ON runtime_flow_type
 
 CREATE UNIQUE INDEX idx_rft_settings_on_rft_id_identifier ON runtime_flow_type_settings USING btree (runtime_flow_type_id, identifier);
 
-CREATE UNIQUE INDEX idx_runtime_module_status_daily_uptimes_on_status_id_date ON runtime_module_status_daily_uptimes USING btree (runtime_module_status_id, date);
-
 CREATE UNIQUE INDEX idx_runtime_modules_on_runtime_id_identifier ON runtime_modules USING btree (runtime_id, identifier);
-
-CREATE UNIQUE INDEX idx_runtime_status_daily_uptimes_on_status_id_date ON runtime_status_daily_uptimes USING btree (runtime_status_id, date);
 
 CREATE INDEX index_active_storage_attachments_on_blob_id ON active_storage_attachments USING btree (blob_id);
 
@@ -1828,11 +1829,11 @@ ALTER TABLE ONLY runtime_parameter_definitions
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT fk_rails_2b9456e278 FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY runtime_status_daily_uptimes
-    ADD CONSTRAINT fk_rails_2c7a10f384 FOREIGN KEY (runtime_status_id) REFERENCES runtime_statuses(id) ON DELETE CASCADE;
-
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_2ed7c53167 FOREIGN KEY (parameter_definition_id) REFERENCES parameter_definitions(id) ON DELETE RESTRICT;
+
+ALTER TABLE p_runtime_status_daily_uptimes
+    ADD CONSTRAINT fk_rails_31e87d50f7 FOREIGN KEY (runtime_status_id) REFERENCES runtime_statuses(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_32ab48790a FOREIGN KEY (node_parameter_id) REFERENCES node_parameters(id) ON DELETE CASCADE;
@@ -1879,9 +1880,6 @@ ALTER TABLE ONLY flow_type_data_type_links
 ALTER TABLE ONLY runtime_modules
     ADD CONSTRAINT fk_rails_4ad6cfc2c6 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY runtime_module_status_daily_uptimes
-    ADD CONSTRAINT fk_rails_4c1431049b FOREIGN KEY (runtime_module_status_id) REFERENCES runtime_module_statuses(id) ON DELETE CASCADE;
-
 ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT fk_rails_5161ff47e6 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
@@ -1917,6 +1915,9 @@ ALTER TABLE ONLY runtime_function_definition_data_type_links
 
 ALTER TABLE ONLY flow_data_type_links
     ADD CONSTRAINT fk_rails_657ea5202b FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
+
+ALTER TABLE p_runtime_module_status_daily_uptimes
+    ADD CONSTRAINT fk_rails_6607b796b1 FOREIGN KEY (runtime_module_status_id) REFERENCES runtime_module_statuses(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_identities
     ADD CONSTRAINT fk_rails_684b0e1ce0 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;

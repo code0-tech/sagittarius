@@ -96,6 +96,11 @@ module Sagittarius
           class: 'PartitionManagerSyncJob',
           set: { queue: 'cron' },
         },
+        sweep_stale_runtime_statuses: {
+          cron: '* * * * *',
+          class: 'SweepStaleRuntimeStatusesJob',
+          set: { queue: 'cron' },
+        },
       }
     end
   end

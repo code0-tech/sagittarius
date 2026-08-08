@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :runtime_status do
-    status { :stopped }
+    status { :not_responding }
     last_heartbeat { nil }
     runtime
 

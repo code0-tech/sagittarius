@@ -70,14 +70,6 @@ module Sagittarius
     # Configure active job to use good_job
     config.active_job.queue_adapter = :good_job
 
-    config.good_job.enable_cron = true
-    config.good_job.cron = {
-      sweep_stale_runtime_statuses: {
-        cron: '* * * * *',
-        class: 'SweepStaleRuntimeStatusesJob',
-      },
-    }
-
     configuration = Sagittarius::Configuration.config
     encryption_config = configuration[:rails][:db][:encryption]
 

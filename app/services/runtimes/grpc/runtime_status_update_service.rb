@@ -27,15 +27,6 @@ module Runtimes
       def update_runtime_status
         transactional do |t|
           heartbeat = Time.zone.at(status_info.timestamp.to_i)
-          runtime.last_heartbeat = heartbeat
-
-          unless runtime.save
-            t.rollback_and_return ServiceResponse.error(
-              message: 'Failed to update runtime heartbeat',
-              error_code: :invalid_runtime,
-              details: runtime.errors
-            )
-          end
 
           runtime_status = runtime.runtime_status
           begin

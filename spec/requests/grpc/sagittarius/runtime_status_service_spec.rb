@@ -18,7 +18,6 @@ RSpec.describe 'sagittarius_rails.RuntimeStatusService', :need_grpc_server do
       it 'updates the runtime heartbeat and marks the runtime status as running' do
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-        expect(runtime.reload.last_heartbeat.to_i).to eq(heartbeat_time.to_i)
         expect(runtime.runtime_status).to have_attributes(status: 'running')
         expect(runtime.runtime_status.last_heartbeat.to_i).to eq(heartbeat_time.to_i)
       end
@@ -26,7 +25,7 @@ RSpec.describe 'sagittarius_rails.RuntimeStatusService', :need_grpc_server do
       it 'does not touch any module status' do
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-        expect(runtime_module.reload.runtime_module_status).to have_attributes(status: 'stopped')
+        expect(runtime_module.reload.runtime_module_status).to have_attributes(status: 'not_responding')
       end
     end
 
@@ -51,7 +50,7 @@ RSpec.describe 'sagittarius_rails.RuntimeStatusService', :need_grpc_server do
       it 'does not touch the runtime status' do
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
-        expect(runtime.runtime_status).to have_attributes(status: 'stopped')
+        expect(runtime.runtime_status).to have_attributes(status: 'not_responding')
       end
 
       context 'when the module status is not_responding' do

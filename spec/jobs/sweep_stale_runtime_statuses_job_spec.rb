@@ -46,16 +46,19 @@ RSpec.describe SweepStaleRuntimeStatusesJob do
   it 'rolls an ongoing outage that started on a previous day into that day and re-anchors at today' do
     runtime_status = create(:runtime_status)
 
-    travel_to Time.zone.local(2026, 1, 1, 10, 0, 0) do
+    outage_start = Time.zone.yesterday.to_datetime.change(hour: 10)
+    outage_end = Time.zone.now.change(hour: 3)
+
+    travel_to outage_start do
       runtime_status.record_status!(status: :not_responding)
     end
 
-    travel_to Time.zone.local(2026, 1, 2, 3, 0, 0) do
+    travel_to outage_end do
       perform_enqueued_jobs { described_class.perform_later }
     end
 
-    expect(runtime_status.reload.current_outage_started_at).to eq(Time.zone.local(2026, 1, 2).beginning_of_day)
-    day_one = runtime_status.daily_uptimes.find_by(date: Date.new(2026, 1, 1))
+    expect(runtime_status.reload.current_outage_started_at).to eq(outage_end.beginning_of_day)
+    day_one = runtime_status.daily_uptimes.find_by(date: outage_start.to_date)
     expect(day_one.outage_seconds).to eq(14.hours.to_i)
   end
 end

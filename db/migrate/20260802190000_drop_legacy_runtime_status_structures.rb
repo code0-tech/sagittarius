@@ -19,5 +19,7 @@ class DropLegacyRuntimeStatusStructures < Code0::ZeroTrack::Database::Migration[
 
       t.timestamps_with_timezone
     end
+
+    remove_column :runtimes, :last_heartbeat, :datetime_with_timezone
   end
 end
