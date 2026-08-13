@@ -86,7 +86,7 @@ gem 'code0-identities', '~> 0.0.6'
 gem 'pry', '~> 0.16.0'
 gem 'pry-byebug', '~> 3.10'
 
-gem 'code0-zero_track', '0.0.8'
+gem 'code0-zero_track', '0.0.9'
 
 gem 'image_processing', '>= 1.2'
 
