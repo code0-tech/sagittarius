@@ -757,7 +757,6 @@ CREATE SEQUENCE p_execution_results_id_seq
 ALTER SEQUENCE p_execution_results_id_seq OWNED BY p_execution_results.id;
 
 CREATE TABLE p_runtime_module_status_daily_uptimes (
-    id bigint NOT NULL,
     runtime_module_status_id bigint CONSTRAINT p_runtime_module_status_daily_runtime_module_status_id_not_null NOT NULL,
     date date NOT NULL,
     outage_seconds integer DEFAULT 0 NOT NULL,
@@ -767,17 +766,7 @@ CREATE TABLE p_runtime_module_status_daily_uptimes (
 )
 PARTITION BY RANGE (date);
 
-CREATE SEQUENCE p_runtime_module_status_daily_uptimes_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE p_runtime_module_status_daily_uptimes_id_seq OWNED BY p_runtime_module_status_daily_uptimes.id;
-
 CREATE TABLE p_runtime_status_daily_uptimes (
-    id bigint NOT NULL,
     runtime_status_id bigint NOT NULL,
     date date NOT NULL,
     outage_seconds integer DEFAULT 0 NOT NULL,
@@ -786,15 +775,6 @@ CREATE TABLE p_runtime_status_daily_uptimes (
     updated_at timestamp with time zone NOT NULL
 )
 PARTITION BY RANGE (date);
-
-CREATE SEQUENCE p_runtime_status_daily_uptimes_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE p_runtime_status_daily_uptimes_id_seq OWNED BY p_runtime_status_daily_uptimes.id;
 
 CREATE TABLE parameter_definitions (
     id bigint NOT NULL,
@@ -1344,10 +1324,6 @@ ALTER TABLE ONLY p_execution_parameter_results ALTER COLUMN id SET DEFAULT nextv
 
 ALTER TABLE ONLY p_execution_results ALTER COLUMN id SET DEFAULT nextval('p_execution_results_id_seq'::regclass);
 
-ALTER TABLE ONLY p_runtime_module_status_daily_uptimes ALTER COLUMN id SET DEFAULT nextval('p_runtime_module_status_daily_uptimes_id_seq'::regclass);
-
-ALTER TABLE ONLY p_runtime_status_daily_uptimes ALTER COLUMN id SET DEFAULT nextval('p_runtime_status_daily_uptimes_id_seq'::regclass);
-
 ALTER TABLE ONLY parameter_definitions ALTER COLUMN id SET DEFAULT nextval('parameter_definitions_id_seq'::regclass);
 
 ALTER TABLE ONLY reference_paths ALTER COLUMN id SET DEFAULT nextval('reference_paths_id_seq'::regclass);
@@ -1509,10 +1485,10 @@ ALTER TABLE ONLY p_execution_results
     ADD CONSTRAINT p_execution_results_pkey PRIMARY KEY (id, created_at);
 
 ALTER TABLE ONLY p_runtime_module_status_daily_uptimes
-    ADD CONSTRAINT p_runtime_module_status_daily_uptimes_pkey PRIMARY KEY (id, date);
+    ADD CONSTRAINT p_runtime_module_status_daily_uptimes_pkey PRIMARY KEY (runtime_module_status_id, date);
 
 ALTER TABLE ONLY p_runtime_status_daily_uptimes
-    ADD CONSTRAINT p_runtime_status_daily_uptimes_pkey PRIMARY KEY (id, date);
+    ADD CONSTRAINT p_runtime_status_daily_uptimes_pkey PRIMARY KEY (runtime_status_id, date);
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT parameter_definitions_pkey PRIMARY KEY (id);
@@ -1616,10 +1592,6 @@ CREATE UNIQUE INDEX idx_p_exec_node_results_on_execution_id_and_position ON ONLY
 CREATE UNIQUE INDEX idx_p_exec_param_results_on_node_result_id_and_position ON ONLY p_execution_parameter_results USING btree (created_at, execution_node_result_id, "position");
 
 CREATE INDEX idx_p_execution_results_on_identifier ON ONLY p_execution_results USING btree (execution_identifier);
-
-CREATE UNIQUE INDEX idx_p_runtime_module_status_daily_uptimes_on_status_id_date ON ONLY p_runtime_module_status_daily_uptimes USING btree (runtime_module_status_id, date);
-
-CREATE UNIQUE INDEX idx_p_runtime_status_daily_uptimes_on_status_id_date ON ONLY p_runtime_status_daily_uptimes USING btree (runtime_status_id, date);
 
 CREATE UNIQUE INDEX idx_rfd_on_runtime_module_id_runtime_name ON runtime_function_definitions USING btree (runtime_module_id, runtime_name);
 
