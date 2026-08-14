@@ -183,52 +183,7 @@ module Namespaces
             db_parameters[index].parameter_definition = parameter_definition
             db_parameters[index].cast = parameter.try(:cast)
 
-            db_parameters[index].literal_value = parameter.value.literal_value
-
-            if parameter.value.try(:sub_flow_value).present?
-              update_sub_flow(t, db_parameters[index], parameter.value.sub_flow_value, all_nodes)
-            else
-              db_parameters[index].sub_flow&.destroy
-              db_parameters[index].sub_flow = nil
-            end
-
-            if parameter.value.reference_value.present?
-              if parameter.value.reference_value.node_function_id.present?
-                referenced_node = all_nodes.find do |n|
-                  n[:input].id == parameter.value.reference_value.node_function_id
-                end
-
-                if referenced_node.nil?
-                  t.rollback_and_return! ServiceResponse.error(
-                    message: 'Referenced node function not found',
-                    error_code: :referenced_value_not_found
-                  )
-                end
-              else
-                referenced_node = { node: nil }
-              end
-
-              db_parameters[index].reference_value ||= ReferenceValue.new
-              reference_value = db_parameters[index].reference_value
-
-              reference_paths_input = parameter.value.reference_value.reference_path
-              reference_paths = reference_value.reference_paths.first(reference_paths_input.length)
-              reference_paths_input.each_with_index do |path, i|
-                reference_paths[i] ||= reference_value.reference_paths.build
-                reference_paths[i].assign_attributes(path: path.path, array_index: path.array_index)
-              end
-
-              reference_value.assign_attributes(
-                node_function: referenced_node[:node],
-                reference_paths: reference_paths,
-                parameter_index: parameter.value.reference_value.parameter_index,
-                input_index: parameter.value.reference_value.input_index,
-                input_type_identifier: parameter.value.reference_value.input_type_identifier
-              )
-            else
-              db_parameters[index].reference_value&.destroy
-              db_parameters[index].reference_value = nil
-            end
+            assign_node_value(t, db_parameters[index], parameter.value, all_nodes)
 
             next if db_parameters[index].valid?
 
@@ -240,6 +195,73 @@ module Namespaces
           end
 
           current_node.node_parameters = db_parameters
+        end
+
+        def assign_node_value(t, owner, value_input, all_nodes)
+          owner.literal_value = value_input.literal_value&.value
+          update_inline_reference_values(t, owner, value_input.literal_value&.references, all_nodes)
+
+          if value_input.try(:sub_flow_value).present?
+            update_sub_flow(t, owner, value_input.sub_flow_value, all_nodes)
+          else
+            owner.sub_flow&.destroy
+            owner.sub_flow = nil
+          end
+
+          if value_input.reference_value.present?
+            assign_reference_value(t, owner, value_input.reference_value, all_nodes)
+          else
+            owner.reference_value&.destroy
+            owner.reference_value = nil
+          end
+        end
+
+        def update_inline_reference_values(t, owner, inline_inputs, all_nodes)
+          inline_inputs = Array(inline_inputs)
+          db_inline_values = owner.inline_reference_values.first(inline_inputs.length)
+
+          inline_inputs.each_with_index do |inline_input, index|
+            db_inline_values[index] ||= owner.inline_reference_values.build
+            db_inline_values[index].signature = inline_input.signature
+
+            assign_node_value(t, db_inline_values[index], inline_input.value, all_nodes)
+          end
+
+          (owner.inline_reference_values - db_inline_values).each(&:destroy)
+          owner.inline_reference_values = db_inline_values
+        end
+
+        def assign_reference_value(t, owner, reference_value_input, all_nodes)
+          if reference_value_input.node_function_id.present?
+            referenced_node = all_nodes.find { |n| n[:input].id == reference_value_input.node_function_id }
+
+            if referenced_node.nil?
+              t.rollback_and_return! ServiceResponse.error(
+                message: 'Referenced node function not found',
+                error_code: :referenced_value_not_found
+              )
+            end
+          else
+            referenced_node = { node: nil }
+          end
+
+          owner.reference_value ||= ReferenceValue.new
+          reference_value = owner.reference_value
+
+          reference_paths_input = reference_value_input.reference_path
+          reference_paths = reference_value.reference_paths.first(reference_paths_input.length)
+          reference_paths_input.each_with_index do |path, i|
+            reference_paths[i] ||= reference_value.reference_paths.build
+            reference_paths[i].assign_attributes(path: path.path, array_index: path.array_index)
+          end
+
+          reference_value.assign_attributes(
+            node_function: referenced_node[:node],
+            reference_paths: reference_paths,
+            parameter_index: reference_value_input.parameter_index,
+            input_index: reference_value_input.input_index,
+            input_type_identifier: reference_value_input.input_type_identifier
+          )
         end
 
         def create_audit_event

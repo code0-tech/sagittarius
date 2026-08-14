@@ -97,7 +97,7 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
             parameters: [
               {
                 value: {
-                  literalValue: 100,
+                  literalValue: { value: 100 },
                 },
               }
             ],

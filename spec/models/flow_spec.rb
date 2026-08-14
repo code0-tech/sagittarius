@@ -117,7 +117,9 @@ RSpec.describe Flow do
                   runtime_parameter_id: parameter_definition.runtime_parameter_definition.runtime_name,
                   value: {
                     literal_value: {
-                      string_value: starting_node.node_parameters.first.literal_value,
+                      value: {
+                        string_value: starting_node.node_parameters.first.literal_value,
+                      },
                     },
                   },
                 }

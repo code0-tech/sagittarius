@@ -5,7 +5,7 @@ module Types
     class NodeParameterValueInputType < Types::BaseInputObject
       description 'Input type for parameter value'
 
-      argument :literal_value, GraphQL::Types::JSON,
+      argument :literal_value, Types::Input::LiteralValueInputType,
                required: false, description: 'The literal value of the parameter'
       argument :reference_value, Types::Input::ReferenceValueInputType,
                required: false, description: 'The reference value of the parameter'

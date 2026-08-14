@@ -130,7 +130,7 @@ module Velorum
       if value.literal_value
         {
           generated_value_type: :literal_value,
-          value: value.literal_value.to_ruby(true),
+          value: value.literal_value.value&.to_ruby(true),
         }
       elsif value.reference_value
         reference_value_to_h(value.reference_value, id)

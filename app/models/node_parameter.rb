@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 class NodeParameter < ApplicationRecord
+  include NodeValueOwner
+
   belongs_to :parameter_definition, inverse_of: :node_parameters
   belongs_to :node_function, class_name: 'NodeFunction', inverse_of: :node_parameters
 
-  has_one :reference_value, autosave: true
-  has_one :sub_flow, autosave: true
-
-  validate :only_one_value_present
+  has_many :inline_reference_values, autosave: true, dependent: :destroy, inverse_of: :node_parameter
 
   def to_grpc
     param = Tucana::Shared::NodeParameter.new(
@@ -16,25 +15,19 @@ class NodeParameter < ApplicationRecord
       cast: cast
     )
 
-    param.value = Tucana::Shared::NodeValue.new(literal_value: Tucana::Shared::Value.from_ruby({}))
+    param.value = Tucana::Shared::NodeValue.new(literal_value: Tucana::Shared::LiteralValue.new)
 
     if reference_value.present?
       param.value.reference_value = reference_value.to_grpc
     elsif sub_flow.present?
       param.value.sub_flow = sub_flow.to_grpc
     else
-      param.value.literal_value = Tucana::Shared::Value.from_ruby(literal_value)
+      param.value.literal_value = Tucana::Shared::LiteralValue.new(
+        value: Tucana::Shared::Value.from_ruby(literal_value),
+        references: inline_reference_values.map(&:to_grpc)
+      )
     end
 
     param
-  end
-
-  private
-
-  def only_one_value_present
-    values = [!literal_value.nil?, reference_value.present?, sub_flow.present?]
-    return if values.count(true) <= 1
-
-    errors.add(:value, 'Only one of literal_value, reference_value, or sub_flow must be present')
   end
 end

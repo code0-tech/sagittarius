@@ -6,11 +6,14 @@ module Types
 
     field :value, GraphQL::Types::JSON,
           null: true,
-          description: 'The literal value itself as JSON.'
+          description: 'The literal value itself as JSON.', method: :literal_value
 
-    # can't use method: :itself on the field because that turns {} into null
-    def value
-      object
+    field :references, [Types::InlineReferenceValueType],
+          null: false,
+          description: 'Inline references addressable via `${signature}` inside `value`.'
+
+    def references
+      object.try(:inline_reference_values) || []
     end
   end
 end
