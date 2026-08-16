@@ -86,13 +86,13 @@ gem 'code0-identities', '~> 0.0.6'
 gem 'pry', '~> 0.16.0'
 gem 'pry-byebug', '~> 3.10'
 
-gem 'code0-zero_track', '0.0.8'
+gem 'code0-zero_track', '0.0.9'
 
 gem 'image_processing', '>= 1.2'
 
 gem 'json-schema', '~> 6.0'
 
-gem 'triangulum', '0.30.2'
+gem 'triangulum', '0.31.0'
 
 gem 'benchmark'
 
@@ -100,5 +100,5 @@ gem 'benchmark'
 gem 'opentelemetry-exporter-otlp', '~> 0.34.0' # we need this to get traces
 gem 'opentelemetry-exporter-otlp-logs', '~> 0.5.1' # we need this to get logs
 gem 'opentelemetry-exporter-otlp-metrics', '~> 0.10.0' # we need this to get metrics
-gem 'opentelemetry-instrumentation-all', '~> 0.94.0' # we need this for logs and traces
+gem 'opentelemetry-instrumentation-all', '~> 0.95.0' # we need this for logs and traces
 gem 'opentelemetry-instrumentation-logger', '~> 0.4.0' # we need this to get logs
