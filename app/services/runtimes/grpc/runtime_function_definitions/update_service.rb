@@ -94,7 +94,7 @@ module Runtimes
           db_parameters.update_all(removed_at: Time.zone.now)
           # rubocop:enable Rails/SkipsModelValidations
 
-          parameters.each do |real_param|
+          parameters.each_with_index do |real_param, index|
             db_param = db_parameters.find { |current_param| current_param.runtime_name == real_param.runtime_name }
             if db_param.nil?
               db_param = RuntimeParameterDefinition.new
@@ -103,6 +103,7 @@ module Runtimes
             db_param.runtime_function_definition = runtime_function_definition
             db_param.runtime_name = real_param.runtime_name
             db_param.removed_at = nil
+            db_param.position = index
 
             db_param.names = update_translations(real_param.name, db_param.names)
             db_param.descriptions = update_translations(real_param.description, db_param.descriptions)

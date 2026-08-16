@@ -297,15 +297,24 @@ module Velorum
     end
 
     def ordered_parameter_definitions(function_definition)
-      function_definition
-        .parameter_definitions
-        .sort_by { |definition| definition.runtime_parameter_definition&.id || definition.id }
+      definitions = function_definition.parameter_definitions
+      if definitions.respond_to?(:ordered)
+        definitions.ordered
+      else
+        definitions.sort_by { |d| d.runtime_parameter_definition&.position || 0 }
+      end
     end
 
     def flow_type_setting_for(flow_type, setting, index)
       return if flow_type.nil?
 
-      flow_type_settings_by_flow_type[flow_type] ||= flow_type.flow_type_settings.sort_by(&:id)
+      flow_type_settings_by_flow_type[flow_type] ||= flow_type.flow_type_settings.then do |settings|
+        if settings.respond_to?(:ordered)
+          settings.ordered
+        else
+          settings.sort_by { |s| s.runtime_flow_type_setting&.position || 0 }
+        end
+      end
       flow_type_settings = flow_type_settings_by_flow_type[flow_type]
 
       return flow_type_settings[index] if index_identifier?(setting.flow_setting_id, 'setting')

@@ -58,7 +58,7 @@ class Flow < ApplicationRecord
       type: flow_type.runtime_identifier,
       data_types: [], # TODO: when data types are creatable
       disable_reason: disabled_reason,
-      settings: flow_settings.map(&:to_grpc),
+      settings: ordered_settings.map(&:to_grpc),
       starting_node_id: starting_node&.id,
       node_functions: node_functions.map(&:to_grpc),
       signature: signature,
@@ -72,8 +72,31 @@ class Flow < ApplicationRecord
       name: name,
       type: flow_type.identifier,
       starting_node_id: starting_node&.id&.to_s,
-      settings: flow_settings.map(&:to_grpc),
+      settings: ordered_settings.map(&:to_grpc),
       node_functions: node_functions.map(&:to_grpc)
     )
+  end
+
+  def ordered_settings
+    ft = FlowType.arel_table
+    fts = FlowTypeSetting.arel_table
+    rfts = RuntimeFlowTypeSetting.arel_table
+    fs = FlowSetting.arel_table
+
+    FlowSetting
+      .from(ft)
+      .joins(
+        ft
+          .join(fts, Arel::Nodes::InnerJoin)
+          .on(ft[:id].eq(fts[:flow_type_id]))
+          .join(rfts, Arel::Nodes::InnerJoin)
+          .on(fts[:runtime_flow_type_setting_id].eq(rfts[:id]))
+          .join(fs, Arel::Nodes::InnerJoin)
+          .on(fs[:flow_setting_id].eq(fts[:identifier]).and(fs[:flow_id].eq(id)))
+          .join_sources
+      )
+      .where(ft[:id].eq(flow_type_id))
+      .order(rfts[:position].asc)
+      .select(fs[Arel.star])
   end
 end

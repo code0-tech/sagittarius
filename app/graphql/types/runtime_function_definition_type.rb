@@ -69,6 +69,10 @@ module Types
     id_field RuntimeFunctionDefinition
     timestamps
 
+    def runtime_parameter_definitions
+      object.parameters.ordered
+    end
+
     def linked_data_types
       DataTypesFinder.new({ runtime_function_definition: object, expand_recursively: true }).execute
     end

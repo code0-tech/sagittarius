@@ -16,6 +16,8 @@ class ParameterDefinition < ApplicationRecord
   validates :optional, inclusion: { in: [true, false] }
   validates :hidden, inclusion: { in: [true, false] }
 
+  scope :ordered, -> { joins(:runtime_parameter_definition).order('runtime_parameter_definitions.position') }
+
   validate :function_definition_matches_definition
 
   def function_definition_matches_definition

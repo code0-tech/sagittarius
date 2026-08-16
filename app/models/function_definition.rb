@@ -27,7 +27,7 @@ class FunctionDefinition < ApplicationRecord
   def to_grpc
     Tucana::Shared::FunctionDefinition.new(
       runtime_name: identifier,
-      parameter_definitions: parameter_definitions.map(&:to_grpc),
+      parameter_definitions: parameter_definitions.ordered.map(&:to_grpc),
       signature: runtime_function_definition.signature,
       throws_error: runtime_function_definition.throws_error,
       name: names.map(&:to_grpc),

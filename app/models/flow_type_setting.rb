@@ -4,6 +4,7 @@ class FlowTypeSetting < ApplicationRecord
   include HasTranslation
 
   belongs_to :flow_type, inverse_of: :flow_type_settings
+  belongs_to :runtime_flow_type_setting, inverse_of: :flow_type_settings
 
   UNIQUENESS_SCOPE = {
     unknown: 0,
@@ -22,11 +23,20 @@ class FlowTypeSetting < ApplicationRecord
   validates :optional, inclusion: { in: [true, false] }
   validates :hidden, inclusion: { in: [true, false] }
 
+  validate :flow_type_matches_setting
+
   has_translation :names, purpose: :name
   has_translation :descriptions, purpose: :description
 
-  scope :active, -> { where(removed_at: nil) }
-  scope :removed, -> { where.not(removed_at: nil) }
+  scope :ordered, -> { joins(:runtime_flow_type_setting).order('runtime_flow_type_settings.position') }
+
+  def flow_type_matches_setting
+    setting_runtime_flow_type_id = runtime_flow_type_setting&.runtime_flow_type_id
+    flow_type_runtime_flow_type_id = flow_type&.runtime_flow_type_id
+    return if setting_runtime_flow_type_id == flow_type_runtime_flow_type_id
+
+    errors.add(:flow_type, :runtime_flow_type_mismatch)
+  end
 
   def to_grpc
     args = {

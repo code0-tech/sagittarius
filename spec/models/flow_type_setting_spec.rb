@@ -7,6 +7,7 @@ RSpec.describe FlowTypeSetting do
 
   describe 'associations' do
     it { is_expected.to belong_to(:flow_type).inverse_of(:flow_type_settings) }
+    it { is_expected.to belong_to(:runtime_flow_type_setting).inverse_of(:flow_type_settings) }
     it { is_expected.to have_many(:names).class_name('Translation') }
     it { is_expected.to have_many(:descriptions).class_name('Translation') }
   end
@@ -18,20 +19,27 @@ RSpec.describe FlowTypeSetting do
     it { is_expected.not_to allow_value(:unknown, 'unknown', 0).for(:unique) }
     it { is_expected.to allow_values(true, false).for(:optional) }
     it { is_expected.to allow_values(true, false).for(:hidden) }
-  end
 
-  describe 'scopes' do
-    let!(:active_setting) { create(:flow_type_setting, removed_at: nil) }
-    let!(:removed_setting) { create(:flow_type_setting, removed_at: Time.zone.now) }
+    describe '#flow_type_matches_setting' do
+      let(:runtime_flow_type) { create(:runtime_flow_type) }
+      let(:other_runtime_flow_type) { create(:runtime_flow_type) }
+      let(:flow_type) { create(:flow_type, runtime_flow_type: runtime_flow_type) }
+      let(:runtime_flow_type_setting) { create(:runtime_flow_type_setting, runtime_flow_type: runtime_flow_type) }
+      let(:other_runtime_flow_type_setting) do
+        create(:runtime_flow_type_setting, runtime_flow_type: other_runtime_flow_type)
+      end
 
-    it 'returns active settings' do
-      expect(described_class.active).to include(active_setting)
-      expect(described_class.active).not_to include(removed_setting)
-    end
+      it 'is valid when runtime_flow_type_setting belongs to the same runtime_flow_type' do
+        setting = build(:flow_type_setting, flow_type: flow_type, runtime_flow_type_setting: runtime_flow_type_setting)
+        expect(setting).to be_valid
+      end
 
-    it 'returns removed settings' do
-      expect(described_class.removed).to include(removed_setting)
-      expect(described_class.removed).not_to include(active_setting)
+      it 'is invalid when runtime_flow_type_setting belongs to a different runtime_flow_type' do
+        setting = build(:flow_type_setting, flow_type: flow_type,
+                                            runtime_flow_type_setting: other_runtime_flow_type_setting)
+        expect(setting).not_to be_valid
+        expect(setting.errors.added?(:flow_type, :runtime_flow_type_mismatch)).to be(true)
+      end
     end
   end
 

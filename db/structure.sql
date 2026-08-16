@@ -223,9 +223,9 @@ CREATE TABLE flow_type_settings (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     "unique" integer DEFAULT 0 NOT NULL,
-    removed_at timestamp with time zone,
     optional boolean DEFAULT false NOT NULL,
-    hidden boolean DEFAULT false NOT NULL
+    hidden boolean DEFAULT false NOT NULL,
+    runtime_flow_type_setting_id bigint
 );
 
 CREATE SEQUENCE flow_type_settings_id_seq
@@ -906,7 +906,8 @@ CREATE TABLE runtime_flow_type_settings (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     optional boolean DEFAULT false NOT NULL,
-    hidden boolean DEFAULT false NOT NULL
+    hidden boolean DEFAULT false NOT NULL,
+    "position" integer DEFAULT 0 NOT NULL
 );
 
 CREATE SEQUENCE runtime_flow_type_settings_id_seq
@@ -1072,6 +1073,7 @@ CREATE TABLE runtime_parameter_definitions (
     default_value jsonb,
     optional boolean DEFAULT false NOT NULL,
     hidden boolean DEFAULT false NOT NULL,
+    "position" integer DEFAULT 0 NOT NULL,
     CONSTRAINT check_c1156ce358 CHECK ((char_length(runtime_name) <= 50))
 );
 
@@ -1623,6 +1625,8 @@ CREATE INDEX index_flow_settings_on_flow_id ON flow_settings USING btree (flow_i
 
 CREATE UNIQUE INDEX index_flow_type_settings_on_flow_type_id_and_identifier ON flow_type_settings USING btree (flow_type_id, identifier);
 
+CREATE INDEX index_flow_type_settings_on_runtime_flow_type_setting_id ON flow_type_settings USING btree (runtime_flow_type_setting_id);
+
 CREATE INDEX index_flow_types_on_runtime_flow_type_id ON flow_types USING btree (runtime_flow_type_id);
 
 CREATE UNIQUE INDEX index_flow_types_on_runtime_id_and_identifier ON flow_types USING btree (runtime_id, identifier);
@@ -1977,6 +1981,9 @@ ALTER TABLE ONLY active_storage_attachments
 
 ALTER TABLE ONLY namespace_project_runtime_assignments
     ADD CONSTRAINT fk_rails_c640af2146 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY flow_type_settings
+    ADD CONSTRAINT fk_rails_ceeab8157d FOREIGN KEY (runtime_flow_type_setting_id) REFERENCES runtime_flow_type_settings(id) ON DELETE RESTRICT;
 
 ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT fk_rails_d2d9392ab1 FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;

@@ -39,6 +39,10 @@ module Types
     id_field RuntimeFlowType
     timestamps
 
+    def runtime_flow_type_settings
+      object.runtime_flow_type_settings.ordered
+    end
+
     def linked_data_types
       DataTypesFinder.new({ runtime_flow_type: object, expand_recursively: true }).execute
     end

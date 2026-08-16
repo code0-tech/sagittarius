@@ -42,7 +42,7 @@ RSpec.describe Velorum::GenerateFlowService do
   let(:parameter_definition) do
     instance_double(ParameterDefinition, runtime_parameter_definition: runtime_parameter_definition)
   end
-  let(:runtime_parameter_definition) { instance_double(RuntimeParameterDefinition, id: 1) }
+  let(:runtime_parameter_definition) { instance_double(RuntimeParameterDefinition, id: 1, position: 0) }
   let(:data_type) { instance_double(DataType, to_grpc: grpc_data_type) }
   let(:flow_type) do
     instance_double(
@@ -52,7 +52,10 @@ RSpec.describe Velorum::GenerateFlowService do
       flow_type_settings: [flow_type_setting]
     )
   end
-  let(:flow_type_setting) { instance_double(FlowTypeSetting, id: 1, identifier: 'region') }
+  let(:runtime_flow_type_setting) { instance_double(RuntimeFlowTypeSetting, position: 0) }
+  let(:flow_type_setting) do
+    instance_double(FlowTypeSetting, id: 1, identifier: 'region', runtime_flow_type_setting: runtime_flow_type_setting)
+  end
   let(:grpc_function_definition) { Tucana::Shared::FunctionDefinition.new(runtime_name: 'sum') }
   let(:grpc_data_type) { Tucana::Shared::DefinitionDataType.new(identifier: 'number') }
   let(:grpc_flow_type) { Tucana::Shared::FlowType.new(identifier: 'default') }

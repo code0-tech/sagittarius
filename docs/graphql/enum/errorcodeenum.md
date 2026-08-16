@@ -52,6 +52,7 @@ Represents the available error responses
 | `INVALID_PASSWORD_REPEAT` | The provided password repeat does not match the password |
 | `INVALID_REFERENCE_VALUE` | The reference value is invalid |
 | `INVALID_RUNTIME` | The runtime is invalid because of active model errors |
+| `INVALID_RUNTIME_FLOW_TYPE_SETTING` | The runtime flow type setting is invalid |
 | `INVALID_RUNTIME_FUNCTION_DEFINITION` | The runtime function definition is invalid |
 | `INVALID_RUNTIME_MODULE` | The runtime module is invalid |
 | `INVALID_RUNTIME_MODULE_DEFINITION` | The runtime module definition is invalid |

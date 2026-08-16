@@ -32,7 +32,7 @@ module Runtimes
 
             logger.info(message: 'Updated flow types for runtime', runtime_id: current_runtime.id)
 
-            ServiceResponse.success(message: 'Updated data types', payload: flow_types)
+            ServiceResponse.success(message: 'Updated flow types', payload: flow_types)
           end
         end
 
@@ -45,6 +45,8 @@ module Runtimes
         end
 
         def update_flowtype(flow_type, t)
+          runtime_flow_type = find_runtime_flow_type(flow_type, t)
+
           db_object = FlowType.find_or_initialize_by(runtime: current_runtime, identifier: flow_type.identifier)
           db_object.removed_at = nil
           db_object.signature = flow_type.signature
@@ -58,9 +60,7 @@ module Runtimes
           db_object.definition_source = flow_type.definition_source
           db_object.display_icon = flow_type.display_icon
           db_object.runtime_module = runtime_module
-          db_object.runtime_flow_type = find_runtime_flow_type(flow_type, t)
-          update_settings(flow_type.settings, db_object.flow_type_settings, t)
-          link_data_types(db_object, flow_type.linked_data_type_identifiers, t)
+          db_object.runtime_flow_type = runtime_flow_type
 
           unless db_object.save
             logger.error(
@@ -74,6 +74,9 @@ module Runtimes
                                                          error_code: :invalid_flow_type,
                                                          details: db_object.errors)
           end
+
+          update_settings(db_object, flow_type.settings, t)
+          link_data_types(db_object, flow_type.linked_data_type_identifiers, t)
 
           db_object
         end
@@ -92,20 +95,9 @@ module Runtimes
           )
         end
 
-        def update_settings(flow_type_settings, db_setting_relation, t)
-          # rubocop:disable Rails/SkipsModelValidations -- when marking settings as removed, we don't care about validations
-          db_setting_relation.update_all(removed_at: Time.zone.now)
-          # rubocop:enable Rails/SkipsModelValidations
-
-          flow_type_settings.each do |setting|
-            db_setting = db_setting_relation.find_or_initialize_by(identifier: setting.identifier)
-            db_setting.unique = setting.unique&.to_s&.downcase
-            db_setting.default_value = setting.default_value&.to_ruby
-            db_setting.optional = setting.optional
-            db_setting.hidden = setting.hidden
-            db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
-            db_setting.names = update_translations(setting.name, db_setting.names)
-            db_setting.removed_at = nil
+        def update_settings(flow_type, settings, t)
+          settings.each do |setting|
+            db_setting = update_setting(flow_type, setting, t)
             next if db_setting.save
 
             t.rollback_and_return! ServiceResponse.error(
@@ -114,6 +106,38 @@ module Runtimes
               details: db_setting.errors
             )
           end
+        end
+
+        def update_setting(flow_type, setting, t)
+          runtime_flow_type_setting = find_runtime_flow_type_setting(flow_type, setting, t)
+          db_setting = runtime_flow_type_setting.flow_type_settings.find_or_initialize_by(
+            flow_type: flow_type
+          )
+          db_setting.identifier = setting.identifier
+          db_setting.unique = setting.unique&.to_s&.downcase
+          db_setting.default_value = setting.default_value&.to_ruby
+          db_setting.optional = setting.optional
+          db_setting.hidden = setting.hidden
+          db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
+          db_setting.names = update_translations(setting.name, db_setting.names)
+          db_setting
+        end
+
+        def find_runtime_flow_type_setting(flow_type, setting, t)
+          runtime_flow_type_setting = flow_type.runtime_flow_type.runtime_flow_type_settings.find_by(
+            identifier: setting.identifier
+          )
+          return runtime_flow_type_setting if runtime_flow_type_setting.present?
+
+          logger.error(message: 'Could not find runtime flow type setting',
+                       runtime_id: current_runtime.id,
+                       flow_type_id: flow_type.id,
+                       identifier: setting.identifier)
+
+          t.rollback_and_return! ServiceResponse.error(
+            message: "Could not find runtime flow type setting #{setting.identifier}",
+            error_code: :invalid_runtime_flow_type_setting
+          )
         end
       end
     end
