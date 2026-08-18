@@ -9,6 +9,8 @@ RSpec.describe ReferenceValue do
 
   describe 'associations' do
     it { is_expected.to belong_to(:node_function).optional }
+    it { is_expected.to belong_to(:node_parameter).inverse_of(:reference_value).optional }
+    it { is_expected.to belong_to(:inline_reference_value).inverse_of(:reference_value).optional }
     it { is_expected.to have_many(:reference_paths) }
   end
 
@@ -32,6 +34,17 @@ RSpec.describe ReferenceValue do
 
       it do
         is_expected.to be_valid
+      end
+    end
+
+    describe 'validate_owner' do
+      it 'requires exactly one owner' do
+        reference_value.node_parameter = nil
+        reference_value.inline_reference_value = nil
+
+        expect(reference_value).not_to be_valid
+        expect(reference_value.errors[:base])
+          .to include('Exactly one of node_parameter or inline_reference_value must be present')
       end
     end
   end

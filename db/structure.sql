@@ -390,6 +390,27 @@ CREATE TABLE good_jobs (
     lock_type integer
 );
 
+CREATE TABLE inline_reference_values (
+    id bigint NOT NULL,
+    node_parameter_id bigint,
+    parent_inline_reference_value_id bigint,
+    signature text NOT NULL,
+    literal_value jsonb,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT check_0d28d5496a CHECK ((num_nonnulls(node_parameter_id, parent_inline_reference_value_id) = 1)),
+    CONSTRAINT check_d4a03a969a CHECK ((char_length(signature) <= 500))
+);
+
+CREATE SEQUENCE inline_reference_values_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE inline_reference_values_id_seq OWNED BY inline_reference_values.id;
+
 CREATE TABLE licenses (
     id bigint CONSTRAINT organization_licenses_id_not_null NOT NULL,
     data text CONSTRAINT organization_licenses_data_not_null NOT NULL,
@@ -866,7 +887,9 @@ CREATE TABLE reference_values (
     parameter_index integer,
     input_index integer,
     input_type_identifier text,
-    node_parameter_id bigint NOT NULL,
+    node_parameter_id bigint,
+    inline_reference_value_id bigint,
+    CONSTRAINT check_18132d63ea CHECK ((num_nonnulls(node_parameter_id, inline_reference_value_id) = 1)),
     CONSTRAINT check_a2e3734389 CHECK ((num_nonnulls(parameter_index, input_index) = ANY (ARRAY[0, 2])))
 );
 
@@ -1150,14 +1173,16 @@ ALTER SEQUENCE sub_flow_settings_id_seq OWNED BY sub_flow_settings.id;
 
 CREATE TABLE sub_flows (
     id bigint NOT NULL,
-    node_parameter_id bigint NOT NULL,
+    node_parameter_id bigint,
     starting_node_id bigint,
     function_definition_id bigint,
     signature text NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
+    inline_reference_value_id bigint,
     CONSTRAINT check_53a99b1dd3 CHECK ((num_nonnulls(starting_node_id, function_definition_id) = 1)),
-    CONSTRAINT check_943d01babb CHECK ((char_length(signature) <= 500))
+    CONSTRAINT check_943d01babb CHECK ((char_length(signature) <= 500)),
+    CONSTRAINT check_e3ee180b07 CHECK ((num_nonnulls(node_parameter_id, inline_reference_value_id) = 1))
 );
 
 CREATE SEQUENCE sub_flows_id_seq
@@ -1285,6 +1310,8 @@ ALTER TABLE ONLY flow_types ALTER COLUMN id SET DEFAULT nextval('flow_types_id_s
 ALTER TABLE ONLY flows ALTER COLUMN id SET DEFAULT nextval('flows_id_seq'::regclass);
 
 ALTER TABLE ONLY function_definitions ALTER COLUMN id SET DEFAULT nextval('function_definitions_id_seq'::regclass);
+
+ALTER TABLE ONLY inline_reference_values ALTER COLUMN id SET DEFAULT nextval('inline_reference_values_id_seq'::regclass);
 
 ALTER TABLE ONLY licenses ALTER COLUMN id SET DEFAULT nextval('licenses_id_seq'::regclass);
 
@@ -1426,6 +1453,9 @@ ALTER TABLE ONLY good_job_settings
 
 ALTER TABLE ONLY good_jobs
     ADD CONSTRAINT good_jobs_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY inline_reference_values
+    ADD CONSTRAINT inline_reference_values_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY licenses
     ADD CONSTRAINT licenses_pkey PRIMARY KEY (id);
@@ -1577,6 +1607,8 @@ CREATE UNIQUE INDEX idx_on_flow_type_id_referenced_data_type_id_70312c9382 ON fl
 
 CREATE UNIQUE INDEX idx_on_namespace_role_id_ability_a092da8841 ON namespace_role_abilities USING btree (namespace_role_id, ability);
 
+CREATE INDEX idx_on_parent_inline_reference_value_id_54dc335844 ON inline_reference_values USING btree (parent_inline_reference_value_id);
+
 CREATE UNIQUE INDEX idx_on_role_id_project_id_5d4b5917dc ON namespace_role_project_assignments USING btree (role_id, project_id);
 
 CREATE UNIQUE INDEX idx_on_runtime_function_definition_id_referenced_da_a6da962633 ON runtime_function_definition_data_type_links USING btree (runtime_function_definition_id, referenced_data_type_id);
@@ -1691,6 +1723,8 @@ CREATE INDEX index_good_jobs_on_scheduled_at_and_queue_name ON good_jobs USING b
 
 CREATE INDEX index_good_jobs_on_unfinished_or_errored ON good_jobs USING btree (id) WHERE ((finished_at IS NULL) OR (error IS NOT NULL));
 
+CREATE INDEX index_inline_reference_values_on_node_parameter_id ON inline_reference_values USING btree (node_parameter_id);
+
 CREATE INDEX index_licenses_on_namespace_id ON licenses USING btree (namespace_id);
 
 CREATE INDEX index_namespace_member_roles_on_member_id ON namespace_member_roles USING btree (member_id);
@@ -1737,6 +1771,8 @@ CREATE INDEX index_parameter_definitions_on_runtime_parameter_definition_id ON p
 
 CREATE INDEX index_reference_paths_on_reference_value_id ON reference_paths USING btree (reference_value_id);
 
+CREATE INDEX index_reference_values_on_inline_reference_value_id ON reference_values USING btree (inline_reference_value_id);
+
 CREATE INDEX index_reference_values_on_node_function_id ON reference_values USING btree (node_function_id);
 
 CREATE INDEX index_reference_values_on_node_parameter_id ON reference_values USING btree (node_parameter_id);
@@ -1756,6 +1792,8 @@ CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
 CREATE INDEX index_sub_flow_settings_on_sub_flow_id ON sub_flow_settings USING btree (sub_flow_id);
 
 CREATE INDEX index_sub_flows_on_function_definition_id ON sub_flows USING btree (function_definition_id);
+
+CREATE UNIQUE INDEX index_sub_flows_on_inline_reference_value_id ON sub_flows USING btree (inline_reference_value_id);
 
 CREATE UNIQUE INDEX index_sub_flows_on_node_parameter_id ON sub_flows USING btree (node_parameter_id);
 
@@ -1794,6 +1832,9 @@ ALTER TABLE ONLY runtime_module_statuses
 
 ALTER TABLE ONLY namespace_roles
     ADD CONSTRAINT fk_rails_205092c9cb FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY inline_reference_values
+    ADD CONSTRAINT fk_rails_242c3f297c FOREIGN KEY (parent_inline_reference_value_id) REFERENCES inline_reference_values(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT fk_rails_260318ad67 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
@@ -1915,6 +1956,9 @@ ALTER TABLE ONLY data_types
 ALTER TABLE ONLY data_type_rules
     ADD CONSTRAINT fk_rails_7759633ff8 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY inline_reference_values
+    ADD CONSTRAINT fk_rails_78d76b86a9 FOREIGN KEY (node_parameter_id) REFERENCES node_parameters(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY namespace_projects
     ADD CONSTRAINT fk_rails_79012c5895 FOREIGN KEY (primary_runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
 
@@ -1966,8 +2010,14 @@ ALTER TABLE ONLY flows
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT fk_rails_ac308a3f72 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY reference_values
+    ADD CONSTRAINT fk_rails_af0ece4310 FOREIGN KEY (inline_reference_value_id) REFERENCES inline_reference_values(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY runtime_flow_type_data_type_links
     ADD CONSTRAINT fk_rails_b300bcf944 FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY sub_flows
+    ADD CONSTRAINT fk_rails_bc5ce475f9 FOREIGN KEY (inline_reference_value_id) REFERENCES inline_reference_values(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_project_runtime_assignments
     ADD CONSTRAINT fk_rails_c019e5b233 FOREIGN KEY (namespace_project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;

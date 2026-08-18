@@ -51,7 +51,9 @@ RSpec.describe Velorum::GenerationFlowSerializer do
           parameters: [
             Tucana::Shared::NodeParameter.new(
               runtime_parameter_id: 'left',
-              value: Tucana::Shared::NodeValue.new(literal_value: Tucana::Shared::Value.from_ruby(1))
+              value: Tucana::Shared::NodeValue.new(
+                literal_value: Tucana::Shared::LiteralValue.new(value: Tucana::Shared::Value.from_ruby(1))
+              )
             )
           ]
         )

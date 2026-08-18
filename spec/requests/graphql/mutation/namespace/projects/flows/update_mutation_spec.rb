@@ -28,6 +28,15 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
                       __typename
                       ...on LiteralValue {
                         value
+                        references {
+                          signature
+                          value {
+                            __typename
+                            ...on LiteralValue {
+                              value
+                            }
+                          }
+                        }
                       }
                       ...on SubFlowValue {
                         functionDefinition {
@@ -107,7 +116,17 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
             parameters: [
               {
                 value: {
-                  literalValue: 100,
+                  literalValue: {
+                    value: 100,
+                    references: [
+                      {
+                        signature: 'x',
+                        value: {
+                          literalValue: { value: 1 },
+                        },
+                      }
+                    ],
+                  },
                 },
               }
             ],
@@ -221,7 +240,13 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       expect(parameter_values).to include(
         a_hash_including(
           '__typename' => 'LiteralValue',
-          'value' => 100
+          'value' => 100,
+          'references' => [
+            a_hash_including(
+              'signature' => 'x',
+              'value' => a_hash_including('__typename' => 'LiteralValue', 'value' => 1)
+            )
+          ]
         )
       )
       expect(parameter_values).to include(
@@ -447,7 +472,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
               parameters: [
                 {
                   value: {
-                    literalValue: 99,
+                    literalValue: { value: 99 },
                   },
                 }
               ],
@@ -503,7 +528,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
               parameters: [
                 {
                   value: {
-                    literalValue: 42,
+                    literalValue: { value: 42 },
                   },
                 }
               ],
@@ -515,7 +540,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
               parameters: [
                 {
                   value: {
-                    literalValue: 99,
+                    literalValue: { value: 99 },
                   },
                 }
               ],
