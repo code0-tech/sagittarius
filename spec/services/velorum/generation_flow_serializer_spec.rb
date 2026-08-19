@@ -84,10 +84,60 @@ RSpec.describe Velorum::GenerationFlowSerializer do
               value: {
                 generated_value_type: :literal_value,
                 value: 1,
+                references: [],
               }
             )
           ]
         )
+      ]
+    )
+  end
+
+  it 'serializes inline references nested inside a generated literal value' do
+    flow = Tucana::Shared::GenerationFlow.new(
+      name: 'Generated flow',
+      type: 'default',
+      node_functions: [
+        Tucana::Shared::NodeFunction.new(
+          runtime_function_id: 'output',
+          parameters: [
+            Tucana::Shared::NodeParameter.new(
+              runtime_parameter_id: 'value',
+              value: Tucana::Shared::NodeValue.new(
+                literal_value: Tucana::Shared::LiteralValue.new(
+                  value: Tucana::Shared::Value.from_ruby('Hello ${name}'),
+                  references: [
+                    Tucana::Shared::InlineReferenceValue.new(
+                      signature: 'name',
+                      value: Tucana::Shared::NodeValue.new(
+                        literal_value: Tucana::Shared::LiteralValue.new(
+                          value: Tucana::Shared::Value.from_ruby('World')
+                        )
+                      )
+                    )
+                  ]
+                )
+              )
+            )
+          ]
+        )
+      ]
+    )
+
+    serialized = described_class.new(flow).to_h
+
+    expect(serialized.dig(:nodes, 0, :parameters, 0, :value)).to include(
+      generated_value_type: :literal_value,
+      value: 'Hello ${name}',
+      references: [
+        {
+          signature: 'name',
+          value: {
+            generated_value_type: :literal_value,
+            value: 'World',
+            references: [],
+          },
+        }
       ]
     )
   end

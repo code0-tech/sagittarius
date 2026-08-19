@@ -131,6 +131,7 @@ module Velorum
         {
           generated_value_type: :literal_value,
           value: value.literal_value.value&.to_ruby(true),
+          references: value.literal_value.references.map { |reference| inline_reference_value_to_h(reference, id) },
         }
       elsif value.reference_value
         reference_value_to_h(value.reference_value, id)
@@ -169,6 +170,13 @@ module Velorum
         node_id: node_reference_id(input_type.node_id),
         parameter_index: blank_zero(input_type.parameter_index),
         input_index: blank_zero(input_type.input_index),
+      }
+    end
+
+    def inline_reference_value_to_h(reference, id)
+      {
+        signature: reference.signature,
+        value: node_value_to_h(reference.value, id),
       }
     end
 
