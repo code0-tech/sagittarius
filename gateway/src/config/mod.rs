@@ -6,6 +6,8 @@ use code0_flow::flow_telemetry::OpenTelemetry;
 use config::{Config as ConfigLoader, ConfigError, File};
 use serde::{Deserialize, Serialize};
 
+use crate::client::retry::RetryPolicy;
+
 const CONFIG_FILE_ENV_VAR: &str = "GATEWAY_CONFIG_PATH";
 const DEFAULT_CONFIG_PATH: &str = "gateway.yml";
 
@@ -33,6 +35,7 @@ pub struct Auth {
 #[serde(default)]
 pub struct Backend {
     pub url: String,
+    pub retry: RetryPolicy,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -86,6 +89,7 @@ impl Default for Backend {
     fn default() -> Self {
         Self {
             url: String::from("http://localhost:50051"),
+            retry: RetryPolicy::default(),
         }
     }
 }
@@ -142,6 +146,13 @@ impl fmt::Display for Config {
         )?;
         writeln!(formatter, "  Backend")?;
         writeln!(formatter, "    URL:       {}", self.backend.url)?;
+        writeln!(
+            formatter,
+            "    Retry:     {} attempts, {}ms initial backoff, x{} multiplier",
+            self.backend.retry.max_attempts,
+            self.backend.retry.initial_backoff_ms,
+            self.backend.retry.backoff_multiplier
+        )?;
         writeln!(formatter, "  gRPC")?;
         writeln!(
             formatter,

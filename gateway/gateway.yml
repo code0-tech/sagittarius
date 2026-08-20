@@ -16,6 +16,13 @@ opentelemetry:
 backend:
   url: "grpc://127.0.0.1:50051"
 
+  # Retry policy for calls to Rails. Only transient errors (Unavailable,
+  # DeadlineExceeded, Aborted, ResourceExhausted) are retried.
+  retry:
+    max_attempts: 3
+    initial_backoff_ms: 100
+    backoff_multiplier: 2.0
+
 auth:
   jwt_secret: "jwt-secret"
   jwt_ttl_seconds: 300
