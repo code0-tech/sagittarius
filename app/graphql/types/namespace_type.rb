@@ -2,6 +2,8 @@
 
 module Types
   class NamespaceType < Types::BaseObject
+    include Types::Concerns::HasUsageField
+
     description 'Represents a Namespace'
 
     authorize :read_namespace
@@ -32,6 +34,8 @@ module Types
       create_namespace_project
       create_runtime
     ]
+
+    usage_field description: 'Execution usage of this namespace, bucketed by day, week or month'
 
     id_field Namespace
     timestamps

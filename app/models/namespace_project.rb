@@ -13,6 +13,7 @@ class NamespaceProject < ApplicationRecord
                             inverse_of: :assigned_projects,
                             source: :role
   has_many :flows, class_name: 'Flow', inverse_of: :project
+  has_many :usage_daily_aggregates, class_name: 'NamespaceProjectUsageDailyAggregate', inverse_of: :project
 
   validates :slug, presence: true,
                    length: { minimum: 3, maximum: 50 },

@@ -2,6 +2,8 @@
 
 module Types
   class FlowType < Types::BaseObject
+    include Types::Concerns::HasUsageField
+
     description 'Represents a flow'
 
     authorize :read_flow
@@ -64,6 +66,8 @@ module Types
     expose_abilities %i[
       delete_flow
     ]
+
+    usage_field description: 'Execution usage of this flow, bucketed by day, week or month'
 
     id_field Flow
     timestamps
