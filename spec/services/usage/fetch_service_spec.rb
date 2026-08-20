@@ -7,6 +7,7 @@ RSpec.describe Usage::FetchService do
   let(:relation) { FlowUsageDailyAggregate.where(flow_id: flow.id) }
 
   def seed_day(date, execution_count:, total_execution_time_us:)
+    # rubocop:disable Rails/SkipsModelValidations -- seeding pre-aggregated rows directly, not exercising validations
     FlowUsageDailyAggregate.insert!(
       {
         flow_id: flow.id,
@@ -17,6 +18,7 @@ RSpec.describe Usage::FetchService do
         updated_at: Time.current,
       }
     )
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   describe '#execute' do

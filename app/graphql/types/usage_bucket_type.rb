@@ -4,6 +4,8 @@ module Types
   class UsageBucketType < Types::BaseObject
     description 'Aggregated execution usage for a single day, week or month bucket'
 
+    # rubocop:disable GraphQL/ExtractType -- period_start/period_end are the bucket's own
+    # range, not a nested concept worth a separate type
     field :execution_count, Types::BigIntType, null: false,
                                                description: 'Number of executions in this bucket'
     field :period_end, GraphQL::Types::ISO8601Date, null: false,
@@ -12,5 +14,6 @@ module Types
                                                       description: 'Start date of this usage bucket (inclusive)'
     field :total_execution_time, Float, null: false,
                                         description: 'Total execution time in this bucket, in seconds'
+    # rubocop:enable GraphQL/ExtractType
   end
 end

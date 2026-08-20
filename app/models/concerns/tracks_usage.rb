@@ -10,7 +10,7 @@ module TracksUsage
     def record_execution!(execution_time_us:, date: Time.zone.today, **owner)
       now = Time.current
 
-      upsert_all(
+      upsert_all( # rubocop:disable Rails/SkipsModelValidations -- atomic accumulate-on-conflict upsert is the point
         [owner.merge(date: date, execution_count: 1, total_execution_time_us: execution_time_us,
                      created_at: now, updated_at: now)],
         unique_by: owner.keys + [:date],
