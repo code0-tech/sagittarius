@@ -3,11 +3,11 @@
 module Namespaces
   module Projects
     module Flows
-      # Rolls a persisted execution result up into the flow/project/namespace/application
-      # daily usage counters. Runs after PersistExecutionResultService so a failure here
-      # never blocks persisting the execution result itself: any error is rescued and
-      # logged instead of propagating, and the four counters are updated inside a single
-      # transaction so a mid-sequence failure can't leave them out of sync.
+      # Rolls a persisted execution result up into its flow's daily usage row. Runs after
+      # PersistExecutionResultService so a failure here never blocks persisting the
+      # execution result itself: any error is rescued and logged instead of propagating.
+      # project_id/namespace_id are stored denormalized on the same row so project/
+      # namespace/application-level usage can be read straight off this one table.
       class RecordExecutionUsageService
         include Code0::ZeroTrack::Loggable
 
@@ -20,20 +20,13 @@ module Namespaces
         def execute
           date = execution_result.created_at.to_date
           duration_us = [execution_result.finished_at - execution_result.started_at, 0].max
-          project = execution_result.flow.project
+          flow = execution_result.flow
+          project = flow.project
 
-          ApplicationRecord.transaction do
-            FlowUsageDailyAggregate.record_execution!(
-              flow_id: execution_result.flow_id, date: date, execution_time_us: duration_us
-            )
-            NamespaceProjectUsageDailyAggregate.record_execution!(
-              project_id: project.id, date: date, execution_time_us: duration_us
-            )
-            NamespaceUsageDailyAggregate.record_execution!(
-              namespace_id: project.namespace_id, date: date, execution_time_us: duration_us
-            )
-            ApplicationUsageDailyAggregate.record_execution!(date: date, execution_time_us: duration_us)
-          end
+          UsageDailyAggregate.record_execution!(
+            flow_id: flow.id, project_id: project.id, namespace_id: project.namespace_id,
+            date: date, execution_time_us: duration_us, unique_by: %i[flow_id date]
+          )
 
           ServiceResponse.success(message: 'Execution usage recorded')
         rescue StandardError => e

@@ -45,7 +45,7 @@ module Types
     ], subject_resolver: -> { :global }
 
     usage_field description: 'Instance-wide execution usage, bucketed by day, week or month. Only visible to admins.',
-                relation: ->(_object) { ApplicationUsageDailyAggregate.all },
+                relation: ->(_object) { UsageDailyAggregate.all },
                 authorized: ->(_object) { Ability.allowed?(current_authentication, :read_application_usage, :global) },
                 null: true
 

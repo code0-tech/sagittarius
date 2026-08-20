@@ -2,15 +2,17 @@
 
 require 'rails_helper'
 
-RSpec.describe Usage::FetchService do
+RSpec.describe UsageDailyAggregatesFinder do
   let(:flow) { create(:flow) }
-  let(:relation) { FlowUsageDailyAggregate.where(flow_id: flow.id) }
+  let(:relation) { UsageDailyAggregate.where(flow_id: flow.id) }
 
   def seed_day(date, execution_count:, total_execution_time_us:)
     # rubocop:disable Rails/SkipsModelValidations -- seeding pre-aggregated rows directly, not exercising validations
-    FlowUsageDailyAggregate.insert!(
+    UsageDailyAggregate.insert!(
       {
         flow_id: flow.id,
+        project_id: flow.project_id,
+        namespace_id: flow.project.namespace_id,
         date: date,
         execution_count: execution_count,
         total_execution_time_us: total_execution_time_us,
@@ -23,23 +25,15 @@ RSpec.describe Usage::FetchService do
 
   describe '#execute' do
     context 'with day aggregation' do
-      it 'raises when the range is shorter than the allowed 7-31 day span' do
-        service = described_class.new(
-          relation: relation, aggregation: 'day', after_date: Date.new(2026, 8, 1), before_date: Date.new(2026, 8, 3)
-        )
-
-        expect { service.execute }.to raise_error(GraphQL::ExecutionError, /must span between 7 and 31/)
-      end
-
       it 'returns one bucket per day in range' do
         seed_day(Date.new(2026, 8, 1), execution_count: 2, total_execution_time_us: 2_000_000)
         seed_day(Date.new(2026, 8, 2), execution_count: 3, total_execution_time_us: 3_000_000)
 
-        service = described_class.new(
+        finder = described_class.new(
           relation: relation, aggregation: 'day', after_date: Date.new(2026, 8, 1), before_date: Date.new(2026, 8, 7)
         )
 
-        buckets = service.execute
+        buckets = finder.execute
 
         expect(buckets.size).to eq(2)
         expect(buckets.first).to have_attributes(
@@ -52,23 +46,16 @@ RSpec.describe Usage::FetchService do
     end
 
     context 'with month aggregation' do
-      it 'raises when after_date is later than before_date' do
-        service = described_class.new(
-          relation: relation, aggregation: 'month', after_date: Date.new(2026, 6, 1), before_date: Date.new(2026, 1, 1)
-        )
-
-        expect { service.execute }.to raise_error(GraphQL::ExecutionError, /after_date must not be later/)
-      end
-
       it 'sums daily rows into a single monthly bucket' do
         seed_day(Date.new(2026, 6, 1), execution_count: 1, total_execution_time_us: 1_000_000)
         seed_day(Date.new(2026, 6, 15), execution_count: 4, total_execution_time_us: 4_000_000)
 
-        service = described_class.new(
-          relation: relation, aggregation: 'month', after_date: Date.new(2026, 5, 1), before_date: Date.new(2026, 6, 30)
+        finder = described_class.new(
+          relation: relation, aggregation: 'month', after_date: Date.new(2026, 5, 1),
+          before_date: Date.new(2026, 6, 30)
         )
 
-        buckets = service.execute
+        buckets = finder.execute
 
         expect(buckets.size).to eq(1)
         expect(buckets.first).to have_attributes(

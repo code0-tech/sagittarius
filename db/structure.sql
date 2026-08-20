@@ -684,15 +684,6 @@ CREATE SEQUENCE organizations_id_seq
 
 ALTER SEQUENCE organizations_id_seq OWNED BY organizations.id;
 
-CREATE TABLE p_application_usage_daily_aggregates (
-    date date NOT NULL,
-    execution_count bigint DEFAULT 0 NOT NULL,
-    total_execution_time_us bigint DEFAULT 0 CONSTRAINT p_application_usage_daily_aggr_total_execution_time_us_not_null NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-)
-PARTITION BY RANGE (date);
-
 CREATE TABLE p_audit_events (
     id bigint NOT NULL,
     author_id bigint NOT NULL,
@@ -786,36 +777,6 @@ CREATE SEQUENCE p_execution_results_id_seq
 
 ALTER SEQUENCE p_execution_results_id_seq OWNED BY p_execution_results.id;
 
-CREATE TABLE p_flow_usage_daily_aggregates (
-    flow_id bigint NOT NULL,
-    date date NOT NULL,
-    execution_count bigint DEFAULT 0 NOT NULL,
-    total_execution_time_us bigint DEFAULT 0 NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-)
-PARTITION BY RANGE (date);
-
-CREATE TABLE p_namespace_project_usage_daily_aggregates (
-    project_id bigint NOT NULL,
-    date date NOT NULL,
-    execution_count bigint DEFAULT 0 CONSTRAINT p_namespace_project_usage_daily_aggreg_execution_count_not_null NOT NULL,
-    total_execution_time_us bigint DEFAULT 0 CONSTRAINT p_namespace_project_usage_dail_total_execution_time_us_not_null NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-)
-PARTITION BY RANGE (date);
-
-CREATE TABLE p_namespace_usage_daily_aggregates (
-    namespace_id bigint NOT NULL,
-    date date NOT NULL,
-    execution_count bigint DEFAULT 0 NOT NULL,
-    total_execution_time_us bigint DEFAULT 0 CONSTRAINT p_namespace_usage_daily_aggreg_total_execution_time_us_not_null NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-)
-PARTITION BY RANGE (date);
-
 CREATE TABLE p_runtime_module_status_daily_uptimes (
     runtime_module_status_id bigint CONSTRAINT p_runtime_module_status_daily_runtime_module_status_id_not_null NOT NULL,
     date date NOT NULL,
@@ -831,6 +792,18 @@ CREATE TABLE p_runtime_status_daily_uptimes (
     date date NOT NULL,
     outage_seconds integer DEFAULT 0 NOT NULL,
     uptime_percentage numeric(5,2) DEFAULT 100.0 NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+)
+PARTITION BY RANGE (date);
+
+CREATE TABLE p_usage_daily_aggregates (
+    flow_id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    namespace_id bigint NOT NULL,
+    date date NOT NULL,
+    execution_count bigint DEFAULT 0 NOT NULL,
+    total_execution_time_us bigint DEFAULT 0 NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 )
@@ -1541,9 +1514,6 @@ ALTER TABLE ONLY node_parameters
 ALTER TABLE ONLY organizations
     ADD CONSTRAINT organizations_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY p_application_usage_daily_aggregates
-    ADD CONSTRAINT p_application_usage_daily_aggregates_pkey PRIMARY KEY (date);
-
 ALTER TABLE ONLY p_audit_events
     ADD CONSTRAINT p_audit_events_pkey PRIMARY KEY (id, created_at);
 
@@ -1556,20 +1526,14 @@ ALTER TABLE ONLY p_execution_parameter_results
 ALTER TABLE ONLY p_execution_results
     ADD CONSTRAINT p_execution_results_pkey PRIMARY KEY (id, created_at);
 
-ALTER TABLE ONLY p_flow_usage_daily_aggregates
-    ADD CONSTRAINT p_flow_usage_daily_aggregates_pkey PRIMARY KEY (flow_id, date);
-
-ALTER TABLE ONLY p_namespace_project_usage_daily_aggregates
-    ADD CONSTRAINT p_namespace_project_usage_daily_aggregates_pkey PRIMARY KEY (project_id, date);
-
-ALTER TABLE ONLY p_namespace_usage_daily_aggregates
-    ADD CONSTRAINT p_namespace_usage_daily_aggregates_pkey PRIMARY KEY (namespace_id, date);
-
 ALTER TABLE ONLY p_runtime_module_status_daily_uptimes
     ADD CONSTRAINT p_runtime_module_status_daily_uptimes_pkey PRIMARY KEY (runtime_module_status_id, date);
 
 ALTER TABLE ONLY p_runtime_status_daily_uptimes
     ADD CONSTRAINT p_runtime_status_daily_uptimes_pkey PRIMARY KEY (runtime_status_id, date);
+
+ALTER TABLE ONLY p_usage_daily_aggregates
+    ADD CONSTRAINT p_usage_daily_aggregates_pkey PRIMARY KEY (flow_id, date);
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT parameter_definitions_pkey PRIMARY KEY (id);
@@ -1816,6 +1780,10 @@ CREATE INDEX index_p_execution_node_results_on_function_definition_id ON ONLY p_
 
 CREATE INDEX index_p_execution_node_results_on_node_function_id ON ONLY p_execution_node_results USING btree (node_function_id);
 
+CREATE INDEX index_p_usage_daily_aggregates_on_namespace_id ON ONLY p_usage_daily_aggregates USING btree (namespace_id);
+
+CREATE INDEX index_p_usage_daily_aggregates_on_project_id ON ONLY p_usage_daily_aggregates USING btree (project_id);
+
 CREATE INDEX index_parameter_definitions_on_function_definition_id ON parameter_definitions USING btree (function_definition_id);
 
 CREATE INDEX index_parameter_definitions_on_runtime_parameter_definition_id ON parameter_definitions USING btree (runtime_parameter_definition_id);
@@ -1869,6 +1837,9 @@ CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_0d79310cfa FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
 
+ALTER TABLE p_usage_daily_aggregates
+    ADD CONSTRAINT fk_rails_112f1d5eed FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT fk_rails_118c914ed0 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
@@ -1889,6 +1860,9 @@ ALTER TABLE ONLY inline_reference_values
 
 ALTER TABLE ONLY runtime_parameter_definitions
     ADD CONSTRAINT fk_rails_260318ad67 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
+
+ALTER TABLE p_usage_daily_aggregates
+    ADD CONSTRAINT fk_rails_26e69a193f FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY function_definitions
     ADD CONSTRAINT fk_rails_2b9456e278 FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
@@ -2004,9 +1978,6 @@ ALTER TABLE ONLY namespace_role_abilities
 ALTER TABLE ONLY data_types
     ADD CONSTRAINT fk_rails_70e5bacc8c FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
 
-ALTER TABLE p_flow_usage_daily_aggregates
-    ADD CONSTRAINT fk_rails_73e82432d5 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
-
 ALTER TABLE ONLY data_type_rules
     ADD CONSTRAINT fk_rails_7759633ff8 FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
 
@@ -2015,9 +1986,6 @@ ALTER TABLE ONLY inline_reference_values
 
 ALTER TABLE ONLY namespace_projects
     ADD CONSTRAINT fk_rails_79012c5895 FOREIGN KEY (primary_runtime_id) REFERENCES runtimes(id) ON DELETE RESTRICT;
-
-ALTER TABLE p_namespace_project_usage_daily_aggregates
-    ADD CONSTRAINT fk_rails_7967df4c6b FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
 
 ALTER TABLE p_execution_node_results
     ADD CONSTRAINT fk_rails_7aca8c4942 FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE SET NULL;
@@ -2073,6 +2041,9 @@ ALTER TABLE ONLY reference_values
 ALTER TABLE ONLY runtime_flow_type_data_type_links
     ADD CONSTRAINT fk_rails_b300bcf944 FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;
 
+ALTER TABLE p_usage_daily_aggregates
+    ADD CONSTRAINT fk_rails_b529bd1a4d FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_bc5ce475f9 FOREIGN KEY (inline_reference_value_id) REFERENCES inline_reference_values(id) ON DELETE CASCADE;
 
@@ -2096,9 +2067,6 @@ ALTER TABLE ONLY flows
 
 ALTER TABLE ONLY flow_settings
     ADD CONSTRAINT fk_rails_da3b2fb3c5 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
-
-ALTER TABLE p_namespace_usage_daily_aggregates
-    ADD CONSTRAINT fk_rails_e1a53ee65f FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_e27dd4d82a FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
