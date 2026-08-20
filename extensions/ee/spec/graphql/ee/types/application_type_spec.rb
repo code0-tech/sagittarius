@@ -14,6 +14,7 @@ RSpec.describe Types::ApplicationType do
       currentLicense
       identityProviders
       identityProviderLoginUrl
+      usage
       user_abilities
     ]
   end
