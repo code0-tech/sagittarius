@@ -8,12 +8,14 @@ RSpec.describe Usage::FetchService do
 
   def seed_day(date, execution_count:, total_execution_time_us:)
     FlowUsageDailyAggregate.insert!(
-      flow_id: flow.id,
-      date: date,
-      execution_count: execution_count,
-      total_execution_time_us: total_execution_time_us,
-      created_at: Time.current,
-      updated_at: Time.current
+      {
+        flow_id: flow.id,
+        date: date,
+        execution_count: execution_count,
+        total_execution_time_us: total_execution_time_us,
+        created_at: Time.current,
+        updated_at: Time.current,
+      }
     )
   end
 

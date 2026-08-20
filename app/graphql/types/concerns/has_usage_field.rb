@@ -8,8 +8,13 @@ module Types
       class_methods do
         # relation: proc taking the resolved object and returning its usage_daily_aggregates
         # scope. Defaults to the association of the same name, which every owner type has.
-        def usage_field(description:, relation: ->(object) { object.usage_daily_aggregates })
-          field :usage, [Types::UsageBucketType], null: false, description: description do
+        # authorized: proc taking the resolved object and returning whether usage may be
+        # read; runs in the resolver instance's context (via instance_exec), so it can call
+        # instance methods like current_authentication. Defaults to always-authorized, since
+        # every current usage_field caller already gates the whole type with `authorize`.
+        def usage_field(description:, relation: ->(object) { object.usage_daily_aggregates },
+                        authorized: ->(_object) { true }, null: false)
+          field :usage, [Types::UsageBucketType], null: null, description: description do
             argument :aggregation, Types::UsageAggregationEnum, required: false, default_value: 'day',
                                                                 description: 'Granularity to bucket usage into'
             argument :after_date, GraphQL::Types::ISO8601Date, required: true,
@@ -19,6 +24,8 @@ module Types
           end
 
           define_method(:usage) do |aggregation:, after_date:, before_date:|
+            next nil unless instance_exec(object, &authorized)
+
             Usage::FetchService.new(
               relation: relation.call(object),
               aggregation: aggregation,

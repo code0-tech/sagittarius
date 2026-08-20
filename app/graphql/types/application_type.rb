@@ -2,6 +2,8 @@
 
 module Types
   class ApplicationType < Types::BaseObject
+    include Types::Concerns::HasUsageField
+
     description 'Represents the application instance'
 
     field :metadata, Types::MetadataType, null: true,
@@ -42,16 +44,10 @@ module Types
       update_application_setting
     ], subject_resolver: -> { :global }
 
-    field :usage, [Types::UsageBucketType], null: true,
-                                            description: 'Instance-wide execution usage, bucketed by ' \
-                                                          'day, week or month. Only visible to admins.' do
-      argument :aggregation, Types::UsageAggregationEnum, required: false, default_value: 'day',
-                                                          description: 'Granularity to bucket usage into'
-      argument :after_date, GraphQL::Types::ISO8601Date, required: true,
-                                                         description: 'Start of the usage range (inclusive)'
-      argument :before_date, GraphQL::Types::ISO8601Date, required: true,
-                                                          description: 'End of the usage range (inclusive)'
-    end
+    usage_field description: 'Instance-wide execution usage, bucketed by day, week or month. Only visible to admins.',
+                relation: ->(_object) { ApplicationUsageDailyAggregate.all },
+                authorized: ->(_object) { Ability.allowed?(current_authentication, :read_application_usage, :global) },
+                null: true
 
     def metadata
       {}
@@ -75,17 +71,6 @@ module Types
 
     def identity_providers
       ApplicationSetting.current[:identity_providers]
-    end
-
-    def usage(aggregation:, after_date:, before_date:)
-      return nil unless Ability.allowed?(current_authentication, :read_application_usage, :global)
-
-      Usage::FetchService.new(
-        relation: ApplicationUsageDailyAggregate.all,
-        aggregation: aggregation,
-        after_date: after_date,
-        before_date: before_date
-      ).execute
     end
 
     def identity_provider_login_url(id:)

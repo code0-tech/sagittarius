@@ -44,9 +44,14 @@ module Usage
     def span
       case aggregation
       when 'day' then (before_date - after_date).to_i + 1
-      when 'week' then (((before_date - after_date).to_i + 1) / 7.0).ceil
+      when 'week' then weeks_between(after_date, before_date) + 1
       when 'month' then months_between(after_date, before_date) + 1
       end
+    end
+
+    # Counts distinct ISO weeks (Monday-start), matching date_trunc('week', ...) bucketing.
+    def weeks_between(from, to)
+      (to.beginning_of_week - from.beginning_of_week).to_i / 7
     end
 
     def months_between(from, to)

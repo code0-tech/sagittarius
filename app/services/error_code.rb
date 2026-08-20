@@ -110,6 +110,7 @@ class ErrorCode
       outdated_definition: { description: 'The primary runtime has a newer definition than this one' },
       invalid_execution_result: { description: 'The execution result is invalid because of active model errors' },
       lock_timeout: { description: 'Could not acquire a database lock in time' },
+      execution_usage_recording_failed: { description: 'Failed to record execution usage counters' },
     }
   end
   # rubocop:enable Layout/LineLength

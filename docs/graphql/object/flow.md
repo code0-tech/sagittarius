@@ -36,3 +36,15 @@ Returns [`ExecutionResult`](../object/executionresult.md).
 | Name | Type | Description |
 |------|------|-------------|
 | `executionIdentifier` | [`String!`](../scalar/string.md) | Runtime identifier of the execution result |
+
+### usage
+
+Execution usage of this flow, bucketed by day, week or month
+
+Returns [`[UsageBucket!]!`](../object/usagebucket.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `afterDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | Start of the usage range (inclusive) |
+| `aggregation` | [`UsageAggregation`](../enum/usageaggregation.md) | Granularity to bucket usage into |
+| `beforeDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | End of the usage range (inclusive) |

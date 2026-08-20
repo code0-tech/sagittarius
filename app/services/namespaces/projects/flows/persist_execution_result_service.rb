@@ -83,6 +83,7 @@ module Namespaces
 
         def flow_for
           Flow
+            .includes(:project)
             .joins(project: :runtime_assignments)
             .find_by(
               id: grpc_result.flow_id,

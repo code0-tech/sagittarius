@@ -16,6 +16,7 @@ Represents the available error responses
 | `CYCLIC_DATA_TYPE_REFERENCE` | A data type dependency cycle was detected |
 | `DATA_TYPE_NOT_FOUND` | The data type with the given identifier was not found |
 | `EMAIL_VERIFICATION_SEND_FAILED` | Failed to send the email verification |
+| `EXECUTION_USAGE_RECORDING_FAILED` | Failed to record execution usage counters |
 | `EXTERNAL_IDENTITY_DOES_NOT_EXIST` | This external identity does not exist |
 | `FAILED_TO_INVALIDATE_OLD_BACKUP_CODES` | The old backup codes could not be deleted |
 | `FAILED_TO_RESET_PASSWORD` | Failed to reset the user password |

@@ -29,3 +29,15 @@ Returns [`String`](../scalar/string.md).
 | Name | Type | Description |
 |------|------|-------------|
 | `id` | [`String!`](../scalar/string.md) | ID of the identity provider |
+
+### usage
+
+Instance-wide execution usage, bucketed by day, week or month. Only visible to admins.
+
+Returns [`[UsageBucket!]`](../object/usagebucket.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `afterDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | Start of the usage range (inclusive) |
+| `aggregation` | [`UsageAggregation`](../enum/usageaggregation.md) | Granularity to bucket usage into |
+| `beforeDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | End of the usage range (inclusive) |

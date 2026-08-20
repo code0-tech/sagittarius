@@ -40,7 +40,7 @@ class CreateUsageDailyAggregates < Code0::ZeroTrack::Database::Migration[1.0]
 
     create_partition_by_date_table :p_application_usage_daily_aggregates,
                                    partition_column: :date,
-                                   primary_key: :date do |t|
+                                   primary_key: [:date] do |t|
       t.date :date, null: false
       t.bigint :execution_count, null: false, default: 0
       t.bigint :total_execution_time_us, null: false, default: 0
