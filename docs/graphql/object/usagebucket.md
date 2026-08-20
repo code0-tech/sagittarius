@@ -1,8 +1,8 @@
 ---
-title: RuntimeUsageBucket
+title: UsageBucket
 ---
 
-Aggregated runtime execution usage for a single day, week or month bucket
+Aggregated execution usage for a single day, week or month bucket
 
 ## Fields without arguments
 

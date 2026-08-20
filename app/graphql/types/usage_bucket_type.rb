@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Types
-  class RuntimeUsageBucketType < Types::BaseObject
-    description 'Aggregated runtime execution usage for a single day, week or month bucket'
+  class UsageBucketType < Types::BaseObject
+    description 'Aggregated execution usage for a single day, week or month bucket'
 
     # rubocop:disable GraphQL/ExtractType -- period_start/period_end are the bucket's own
     # range, not a nested concept worth a separate type

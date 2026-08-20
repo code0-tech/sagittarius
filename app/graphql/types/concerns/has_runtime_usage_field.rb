@@ -25,9 +25,9 @@ module Types
         # `authorize`.
         def runtime_usage_field(description:, relation: ->(object) { object.runtime_usage_daily_aggregates },
                                 authorized: ->(_object) { true }, null: false)
-          field :runtime_usage, [Types::RuntimeUsageBucketType], null: null, description: description do
-            argument :aggregation, Types::RuntimeUsageAggregationEnum, required: false, default_value: 'day',
-                                                                       description: 'Granularity to bucket usage into'
+          field :runtime_usage, [Types::UsageBucketType], null: null, description: description do
+            argument :aggregation, Types::UsageAggregationEnum, required: false, default_value: 'day',
+                                                                description: 'Granularity to bucket usage into'
             argument :after_date, GraphQL::Types::ISO8601Date, required: true,
                                                                description: 'Start of the usage range (inclusive)'
             argument :before_date, GraphQL::Types::ISO8601Date, required: true,

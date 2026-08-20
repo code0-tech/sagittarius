@@ -34,10 +34,10 @@ Returns [`String`](../scalar/string.md).
 
 Instance-wide execution usage, bucketed by day, week or month. Only visible to admins.
 
-Returns [`[RuntimeUsageBucket!]`](../object/runtimeusagebucket.md).
+Returns [`[UsageBucket!]`](../object/usagebucket.md).
 
 | Name | Type | Description |
 |------|------|-------------|
 | `afterDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | Start of the usage range (inclusive) |
-| `aggregation` | [`RuntimeUsageAggregation`](../enum/runtimeusageaggregation.md) | Granularity to bucket usage into |
+| `aggregation` | [`UsageAggregation`](../enum/usageaggregation.md) | Granularity to bucket usage into |
 | `beforeDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | End of the usage range (inclusive) |
