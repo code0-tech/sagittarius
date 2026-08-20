@@ -21,8 +21,9 @@ impl SagittariusRailsTokenServiceClient {
         D: TryInto<Endpoint>,
         D::Error: Into<StdError>,
     {
+        let channel = Endpoint::new(dst)?.connect_lazy();
         Ok(Self {
-            inner: TokenServiceClient::connect(dst).await?,
+            inner: TokenServiceClient::new(channel),
         })
     }
 

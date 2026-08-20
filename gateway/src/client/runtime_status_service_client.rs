@@ -14,8 +14,9 @@ impl SagittariusRailsRuntimeStatusServiceClient {
         D: TryInto<Endpoint>,
         D::Error: Into<StdError>,
     {
+        let channel = Endpoint::new(dst)?.connect_lazy();
         Ok(Self {
-            inner: RuntimeStatusServiceClient::connect(dst).await?,
+            inner: RuntimeStatusServiceClient::new(channel),
         })
     }
 

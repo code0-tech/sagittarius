@@ -15,8 +15,9 @@ impl SagittariusRailsFlowServiceClient {
         D: TryInto<Endpoint>,
         D::Error: Into<StdError>,
     {
+        let channel = Endpoint::new(dst)?.connect_lazy();
         Ok(Self {
-            inner: FlowServiceClient::connect(dst).await?,
+            inner: FlowServiceClient::new(channel),
         })
     }
 

@@ -15,8 +15,9 @@ impl SagittariusRailsModuleServiceClient {
         D: TryInto<Endpoint>,
         D::Error: Into<StdError>,
     {
+        let channel = Endpoint::new(dst)?.connect_lazy();
         Ok(Self {
-            inner: ModuleServiceClient::connect(dst).await?,
+            inner: ModuleServiceClient::new(channel),
         })
     }
 

@@ -15,8 +15,9 @@ impl SagittariusRailsExecutionServiceClient {
         D: TryInto<Endpoint>,
         D::Error: Into<StdError>,
     {
+        let channel = Endpoint::new(dst)?.connect_lazy();
         Ok(Self {
-            inner: ExecutionServiceClient::connect(dst).await?,
+            inner: ExecutionServiceClient::new(channel),
         })
     }
 
