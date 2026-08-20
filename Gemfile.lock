@@ -138,7 +138,7 @@ GEM
       fugit (>= 1.11.0)
       railties (>= 6.1.0)
       thor (>= 1.0.0)
-    google-protobuf (4.35.1)
+    google-protobuf (4.36.0)
       bigdecimal
       rake (~> 13.3)
     googleapis-common-protos-types (1.23.0)
@@ -590,7 +590,7 @@ GEM
       logger
     thor (1.5.0)
     timeout (0.6.1)
-    triangulum (0.31.1)
+    triangulum (0.32.0)
       base64 (~> 0.3)
       json (~> 2.19)
       open3 (~> 0.2)
@@ -656,7 +656,7 @@ DEPENDENCIES
   simplecov (~> 1.0.0)
   simplecov-cobertura (~> 4.0)
   test-prof (~> 1.0)
-  triangulum (= 0.31.1)
+  triangulum (= 0.32.0)
   tucana (= 0.0.82)
   tzinfo-data
 
