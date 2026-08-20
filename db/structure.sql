@@ -1016,6 +1016,23 @@ CREATE SEQUENCE runtime_function_definitions_id_seq
 
 ALTER SEQUENCE runtime_function_definitions_id_seq OWNED BY runtime_function_definitions.id;
 
+CREATE TABLE runtime_module_definition_flow_type_links (
+    id bigint NOT NULL,
+    runtime_module_definition_id bigint CONSTRAINT runtime_module_definition_f_runtime_module_definition__not_null NOT NULL,
+    flow_type_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE runtime_module_definition_flow_type_links_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE runtime_module_definition_flow_type_links_id_seq OWNED BY runtime_module_definition_flow_type_links.id;
+
 CREATE TABLE runtime_module_definitions (
     id bigint NOT NULL,
     runtime_module_id bigint NOT NULL,
@@ -1367,6 +1384,8 @@ ALTER TABLE ONLY runtime_function_definition_data_type_links ALTER COLUMN id SET
 
 ALTER TABLE ONLY runtime_function_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_function_definitions_id_seq'::regclass);
 
+ALTER TABLE ONLY runtime_module_definition_flow_type_links ALTER COLUMN id SET DEFAULT nextval('runtime_module_definition_flow_type_links_id_seq'::regclass);
+
 ALTER TABLE ONLY runtime_module_definitions ALTER COLUMN id SET DEFAULT nextval('runtime_module_definitions_id_seq'::regclass);
 
 ALTER TABLE ONLY runtime_module_statuses ALTER COLUMN id SET DEFAULT nextval('runtime_module_statuses_id_seq'::regclass);
@@ -1544,6 +1563,9 @@ ALTER TABLE ONLY runtime_function_definition_data_type_links
 ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT runtime_function_definitions_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY runtime_module_definition_flow_type_links
+    ADD CONSTRAINT runtime_module_definition_flow_type_links_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY runtime_module_definitions
     ADD CONSTRAINT runtime_module_definitions_pkey PRIMARY KEY (id);
 
@@ -1618,6 +1640,8 @@ CREATE UNIQUE INDEX idx_on_runtime_function_definition_id_runtime_name_abb3bb31b
 CREATE UNIQUE INDEX idx_on_runtime_id_namespace_project_id_bc3c86cc70 ON namespace_project_runtime_assignments USING btree (runtime_id, namespace_project_id);
 
 CREATE UNIQUE INDEX idx_on_runtime_id_runtime_name_de2ab1bfc0 ON runtime_function_definitions USING btree (runtime_id, runtime_name);
+
+CREATE UNIQUE INDEX idx_on_runtime_module_definition_id_flow_type_id_2a6aed02ba ON runtime_module_definition_flow_type_links USING btree (runtime_module_definition_id, flow_type_id);
 
 CREATE UNIQUE INDEX idx_p_exec_node_results_on_execution_id_and_position ON ONLY p_execution_node_results USING btree (created_at, execution_result_id, "position");
 
@@ -1851,6 +1875,9 @@ ALTER TABLE p_runtime_status_daily_uptimes
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_32ab48790a FOREIGN KEY (node_parameter_id) REFERENCES node_parameters(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY runtime_module_definition_flow_type_links
+    ADD CONSTRAINT fk_rails_350d620c34 FOREIGN KEY (flow_type_id) REFERENCES flow_types(id) ON DELETE RESTRICT;
+
 ALTER TABLE ONLY runtime_flow_types
     ADD CONSTRAINT fk_rails_3675f29c4e FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
 
@@ -2015,6 +2042,9 @@ ALTER TABLE ONLY reference_values
 
 ALTER TABLE ONLY runtime_flow_type_data_type_links
     ADD CONSTRAINT fk_rails_b300bcf944 FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY runtime_module_definition_flow_type_links
+    ADD CONSTRAINT fk_rails_ba8933f234 FOREIGN KEY (runtime_module_definition_id) REFERENCES runtime_module_definitions(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_bc5ce475f9 FOREIGN KEY (inline_reference_value_id) REFERENCES inline_reference_values(id) ON DELETE CASCADE;

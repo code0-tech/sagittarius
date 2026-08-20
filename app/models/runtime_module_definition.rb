@@ -3,6 +3,9 @@
 class RuntimeModuleDefinition < ApplicationRecord
   belongs_to :runtime_module, inverse_of: :runtime_module_definitions
 
+  has_many :runtime_module_definition_flow_type_links, inverse_of: :runtime_module_definition
+  has_many :flow_types, through: :runtime_module_definition_flow_type_links
+
   validates :host, presence: true, length: { maximum: 253 }
   validates :endpoint, presence: true, length: { maximum: 2048 }
   validates :protocol, presence: true, length: { maximum: 255 }

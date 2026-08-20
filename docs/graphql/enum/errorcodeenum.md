@@ -35,6 +35,7 @@ Represents the available error responses
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
 | `INVALID_FLOW_TYPE` | The flow type is invalid because of active model errors |
+| `INVALID_FLOW_TYPE_LINK` | The flow type link is invalid because of active model errors |
 | `INVALID_FUNCTION_DEFINITION` | The function definition is invalid |
 | `INVALID_FUNCTION_ID` | The function ID is invalid |
 | `INVALID_LICENSE` | The license is invalid because of active model errors |
@@ -82,6 +83,7 @@ Represents the available error responses
 | `NODE_NOT_FOUND` | The node with this id does not exist |
 | `NO_DATA_TYPE_FOR_IDENTIFIER` | No data type could be found for the given identifier |
 | `NO_DEFINITIONS` | No definitions are available to generate a flow |
+| `NO_FLOW_TYPE_FOR_IDENTIFIER` | No flow type could be found for the given identifier |
 | `NO_FREE_LICENSE_SEATS` | There are no free license seats to complete this operation |
 | `NO_PRIMARY_RUNTIME` | The project does not have a primary runtime |
 | `ORGANIZATION_NOT_FOUND` | The organization with the given identifier was not found |

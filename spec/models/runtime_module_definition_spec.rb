@@ -7,6 +7,12 @@ RSpec.describe RuntimeModuleDefinition do
 
   describe 'associations' do
     it { is_expected.to belong_to(:runtime_module).inverse_of(:runtime_module_definitions) }
+
+    it {
+      is_expected.to have_many(:runtime_module_definition_flow_type_links).inverse_of(:runtime_module_definition)
+    }
+
+    it { is_expected.to have_many(:flow_types).through(:runtime_module_definition_flow_type_links) }
   end
 
   describe 'validations' do

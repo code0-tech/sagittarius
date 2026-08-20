@@ -7,6 +7,9 @@ module Types
     authorize :read_runtime_module
 
     field :endpoint, String, null: false, description: 'Endpoint path of the module definition'
+    field :flow_types, Types::FlowTypeType.connection_type,
+          null: false,
+          description: 'Flow types this module definition applies to'
     field :host, String, null: false, description: 'Host of the module definition endpoint'
     field :port, Types::BigIntType, null: false, description: 'Port of the module definition endpoint'
     field :protocol, String, null: false, description: 'Protocol of the module definition endpoint'
