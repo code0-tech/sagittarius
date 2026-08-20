@@ -20,12 +20,14 @@ module Sagittarius
           runtime_identifier: runtime_id,
           response: flow_response
         )
-        flow_stub.push(request, metadata: authentication_metadata(runtime_id))
+        with_reconnect(:flow_stub) { flow_stub.push(request, metadata: authentication_metadata(runtime_id)) }
       end
 
       def push_execution(runtime_id, test_execution_request)
         request = Tucana::Sagittarius::Gateway::ExecutionPushRequest.new(request: test_execution_request)
-        execution_stub.push(request, metadata: authentication_metadata(runtime_id))
+        with_reconnect(:execution_stub) do
+          execution_stub.push(request, metadata: authentication_metadata(runtime_id))
+        end
       end
 
       def push_module_configuration(runtime_id, module_configuration_response)
@@ -33,12 +35,21 @@ module Sagittarius
           runtime_identifier: runtime_id,
           response: module_configuration_response
         )
-        module_stub.push(request, metadata: authentication_metadata(runtime_id))
+        with_reconnect(:module_stub) { module_stub.push(request, metadata: authentication_metadata(runtime_id)) }
       end
 
       private
 
       attr_reader :host, :jwt_secret, :jwt_ttl_seconds
+
+      # Broken connections (e.g. the gateway restarting) leave the memoized stub bound to a dead
+      # channel forever. Drop it and retry once so the next call rebuilds against a fresh channel.
+      def with_reconnect(stub_ivar)
+        yield
+      rescue GRPC::Unavailable
+        instance_variable_set(:"@#{stub_ivar}", nil)
+        yield
+      end
 
       def flow_stub
         @flow_stub ||= Tucana::Sagittarius::Gateway::FlowService::Stub.new(host, :this_channel_is_insecure)
