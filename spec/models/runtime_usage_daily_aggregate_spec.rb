@@ -4,13 +4,14 @@ require 'rails_helper'
 
 RSpec.describe RuntimeUsageDailyAggregate do
   describe 'associations' do
-    it { is_expected.to belong_to(:flow).inverse_of(:runtime_usage_daily_aggregates) }
+    it { is_expected.to belong_to(:flow).inverse_of(:runtime_usage_daily_aggregates).optional }
 
     it {
-      is_expected.to belong_to(:project).class_name('NamespaceProject').inverse_of(:runtime_usage_daily_aggregates)
+      is_expected.to belong_to(:project).class_name('NamespaceProject')
+                                        .inverse_of(:runtime_usage_daily_aggregates).optional
     }
 
-    it { is_expected.to belong_to(:namespace).inverse_of(:runtime_usage_daily_aggregates) }
+    it { is_expected.to belong_to(:namespace).inverse_of(:runtime_usage_daily_aggregates).optional }
   end
 
   describe 'validations' do

@@ -1942,9 +1942,6 @@ ALTER TABLE ONLY runtime_function_definition_data_type_links
 ALTER TABLE ONLY namespace_role_project_assignments
     ADD CONSTRAINT fk_rails_623f8a5b72 FOREIGN KEY (role_id) REFERENCES namespace_roles(id) ON DELETE CASCADE;
 
-ALTER TABLE p_runtime_usage_daily_aggregates
-    ADD CONSTRAINT fk_rails_6381c5b278 FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE SET NULL;
-
 ALTER TABLE ONLY runtime_function_definition_data_type_links
     ADD CONSTRAINT fk_rails_64dd235e33 FOREIGN KEY (runtime_function_definition_id) REFERENCES runtime_function_definitions(id) ON DELETE CASCADE;
 
@@ -2001,9 +1998,6 @@ ALTER TABLE ONLY reference_values
 
 ALTER TABLE ONLY reference_values
     ADD CONSTRAINT fk_rails_8c916f07f1 FOREIGN KEY (node_parameter_id) REFERENCES node_parameters(id) ON DELETE CASCADE;
-
-ALTER TABLE p_runtime_usage_daily_aggregates
-    ADD CONSTRAINT fk_rails_8eef22463b FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY data_type_data_type_links
     ADD CONSTRAINT fk_rails_90fbf0d8ef FOREIGN KEY (data_type_id) REFERENCES data_types(id) ON DELETE CASCADE;
@@ -2085,9 +2079,6 @@ ALTER TABLE ONLY flow_data_type_links
 
 ALTER TABLE ONLY flow_type_settings
     ADD CONSTRAINT fk_rails_f6af7d8edf FOREIGN KEY (flow_type_id) REFERENCES flow_types(id) ON DELETE CASCADE;
-
-ALTER TABLE p_runtime_usage_daily_aggregates
-    ADD CONSTRAINT fk_rails_f9d55d32a2 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY node_functions
     ADD CONSTRAINT fk_rails_fbc91a3407 FOREIGN KEY (next_node_id) REFERENCES node_functions(id) DEFERRABLE INITIALLY DEFERRED;
