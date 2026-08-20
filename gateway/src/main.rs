@@ -58,21 +58,16 @@ async fn run(config: Config) -> anyhow::Result<()> {
     let channel = Channel::from_shared(url)?;
     let retry_policy = config.backend.retry.clone();
 
-    let rails_execution_client = SagittariusRailsExecutionServiceClient::connect(
-        channel.clone(),
-        retry_policy.clone(),
-    )
-    .await?;
+    let rails_execution_client =
+        SagittariusRailsExecutionServiceClient::connect(channel.clone(), retry_policy.clone())
+            .await?;
     let rails_flow_client =
         SagittariusRailsFlowServiceClient::connect(channel.clone(), retry_policy.clone()).await?;
     let rails_module_client =
-        SagittariusRailsModuleServiceClient::connect(channel.clone(), retry_policy.clone())
+        SagittariusRailsModuleServiceClient::connect(channel.clone(), retry_policy.clone()).await?;
+    let rails_status_client =
+        SagittariusRailsRuntimeStatusServiceClient::connect(channel.clone(), retry_policy.clone())
             .await?;
-    let rails_status_client = SagittariusRailsRuntimeStatusServiceClient::connect(
-        channel.clone(),
-        retry_policy.clone(),
-    )
-    .await?;
     let rails_token_client =
         SagittariusRailsTokenServiceClient::connect(channel.clone(), retry_policy).await?;
     let jwt_client = JwtClient::new_hs256(
