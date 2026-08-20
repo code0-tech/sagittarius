@@ -1,8 +1,8 @@
 ---
-title: UsageAggregation
+title: RuntimeUsageAggregation
 ---
 
-Granularity to bucket execution usage into.
+Granularity to bucket runtime execution usage into.
 
 | Value | Description |
 |-------|-------------|

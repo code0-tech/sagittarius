@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-# Reads daily usage aggregates for a single owner (flow/project/namespace, or the whole
-# application) and buckets them into day/week/month periods. Callers are expected to have
-# already validated the aggregation/date range (see Types::Concerns::HasUsageField).
-class UsageDailyAggregatesFinder < ApplicationFinder
+# Reads daily runtime usage aggregates for a single owner (flow/project/namespace, or the
+# whole application) and buckets them into day/week/month periods. Callers are expected to
+# have already validated the aggregation/date range (see
+# Types::Concerns::HasRuntimeUsageField).
+class RuntimeUsageDailyAggregatesFinder < ApplicationFinder
   def execute
     params[:relation]
       .where(date: params[:after_date]..params[:before_date])
@@ -20,11 +21,11 @@ class UsageDailyAggregatesFinder < ApplicationFinder
   private
 
   def build_bucket(period_start, execution_count, total_execution_time_us)
-    Usage::Bucket.new(
+    RuntimeUsage::Bucket.new(
       period_start: period_start,
       period_end: period_end_for(period_start),
-      execution_count: execution_count,
-      total_execution_time: total_execution_time_us / 1_000_000.0
+      usage: execution_count,
+      value: total_execution_time_us / 1_000_000.0
     )
   end
 

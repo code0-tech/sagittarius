@@ -2,13 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe UsageDailyAggregatesFinder do
+RSpec.describe RuntimeUsageDailyAggregatesFinder do
   let(:flow) { create(:flow) }
-  let(:relation) { UsageDailyAggregate.where(flow_id: flow.id) }
+  let(:relation) { RuntimeUsageDailyAggregate.where(flow_id: flow.id) }
 
   def seed_day(date, execution_count:, total_execution_time_us:)
     # rubocop:disable Rails/SkipsModelValidations -- seeding pre-aggregated rows directly, not exercising validations
-    UsageDailyAggregate.insert!(
+    RuntimeUsageDailyAggregate.insert!(
       {
         flow_id: flow.id,
         project_id: flow.project_id,
@@ -39,8 +39,8 @@ RSpec.describe UsageDailyAggregatesFinder do
         expect(buckets.first).to have_attributes(
           period_start: Date.new(2026, 8, 1),
           period_end: Date.new(2026, 8, 1),
-          execution_count: 2,
-          total_execution_time: 2.0
+          usage: 2,
+          value: 2.0
         )
       end
     end
@@ -61,8 +61,8 @@ RSpec.describe UsageDailyAggregatesFinder do
         expect(buckets.first).to have_attributes(
           period_start: Date.new(2026, 6, 1),
           period_end: Date.new(2026, 6, 30),
-          execution_count: 5,
-          total_execution_time: 5.0
+          usage: 5,
+          value: 5.0
         )
       end
     end

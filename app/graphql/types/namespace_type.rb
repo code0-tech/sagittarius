@@ -2,7 +2,7 @@
 
 module Types
   class NamespaceType < Types::BaseObject
-    include Types::Concerns::HasUsageField
+    include Types::Concerns::HasRuntimeUsageField
 
     description 'Represents a Namespace'
 
@@ -35,7 +35,7 @@ module Types
       create_runtime
     ]
 
-    usage_field description: 'Execution usage of this namespace, bucketed by day, week or month'
+    runtime_usage_field description: 'Execution usage of this namespace, bucketed by day, week or month'
 
     id_field Namespace
     timestamps

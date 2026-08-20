@@ -18,7 +18,7 @@ RSpec.describe SagittariusSchema.types['Flow'] do
       execution_result
       execution_results
       linked_data_types
-      usage
+      runtime_usage
       user_abilities
       id
       created_at

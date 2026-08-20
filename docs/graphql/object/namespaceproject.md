@@ -34,14 +34,14 @@ Returns [`Flow`](../object/flow.md).
 |------|------|-------------|
 | `id` | [`FlowID!`](../scalar/flowid.md) | Id of the flow |
 
-### usage
+### runtimeUsage
 
 Execution usage of this project, bucketed by day, week or month
 
-Returns [`[UsageBucket!]!`](../object/usagebucket.md).
+Returns [`[RuntimeUsageBucket!]!`](../object/runtimeusagebucket.md).
 
 | Name | Type | Description |
 |------|------|-------------|
 | `afterDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | Start of the usage range (inclusive) |
-| `aggregation` | [`UsageAggregation`](../enum/usageaggregation.md) | Granularity to bucket usage into |
+| `aggregation` | [`RuntimeUsageAggregation`](../enum/runtimeusageaggregation.md) | Granularity to bucket usage into |
 | `beforeDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | End of the usage range (inclusive) |

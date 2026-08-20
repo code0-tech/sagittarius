@@ -2,15 +2,19 @@
 
 require 'rails_helper'
 
-RSpec.describe UsageDailyAggregate do
+RSpec.describe RuntimeUsageDailyAggregate do
   describe 'associations' do
-    it { is_expected.to belong_to(:flow).inverse_of(:usage_daily_aggregates) }
-    it { is_expected.to belong_to(:project).class_name('NamespaceProject').inverse_of(:usage_daily_aggregates) }
-    it { is_expected.to belong_to(:namespace).inverse_of(:usage_daily_aggregates) }
+    it { is_expected.to belong_to(:flow).inverse_of(:runtime_usage_daily_aggregates) }
+
+    it {
+      is_expected.to belong_to(:project).class_name('NamespaceProject').inverse_of(:runtime_usage_daily_aggregates)
+    }
+
+    it { is_expected.to belong_to(:namespace).inverse_of(:runtime_usage_daily_aggregates) }
   end
 
   describe 'validations' do
-    subject { create(:usage_daily_aggregate) }
+    subject { create(:runtime_usage_daily_aggregate) }
 
     it { is_expected.to validate_uniqueness_of(:date).scoped_to(:flow_id) }
   end

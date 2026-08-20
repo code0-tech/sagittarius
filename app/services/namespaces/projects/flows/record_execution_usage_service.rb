@@ -23,7 +23,7 @@ module Namespaces
           flow = execution_result.flow
           project = flow.project
 
-          UsageDailyAggregate.record_execution!(
+          RuntimeUsageDailyAggregate.record_execution!(
             flow_id: flow.id, project_id: project.id, namespace_id: project.namespace_id,
             date: date, execution_time_us: duration_us, unique_by: %i[flow_id date]
           )

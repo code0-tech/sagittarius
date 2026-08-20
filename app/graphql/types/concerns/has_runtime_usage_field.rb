@@ -2,7 +2,7 @@
 
 module Types
   module Concerns
-    module HasUsageField
+    module HasRuntimeUsageField
       extend ActiveSupport::Concern
 
       # The allowed after_date..before_date span, bounded per aggregation level, per the
@@ -15,29 +15,32 @@ module Types
       }.freeze
 
       class_methods do
-        # relation: proc taking the resolved object and returning its usage_daily_aggregates
-        # scope. Defaults to the association of the same name, which every owner type has.
+        # relation: proc taking the resolved object and returning its runtime_usage_daily_
+        # aggregates scope. Defaults to the association of the same name, which every owner
+        # type has.
         # authorized: proc taking the resolved object and returning whether usage may be
         # read; runs in the resolver instance's context (via instance_exec), so it can call
         # instance methods like current_authentication. Defaults to always-authorized, since
-        # every current usage_field caller already gates the whole type with `authorize`.
-        def usage_field(description:, relation: ->(object) { object.usage_daily_aggregates },
-                        authorized: ->(_object) { true }, null: false)
-          field :usage, [Types::UsageBucketType], null: null, description: description do
-            argument :aggregation, Types::UsageAggregationEnum, required: false, default_value: 'day',
-                                                                description: 'Granularity to bucket usage into'
+        # every current runtime_usage_field caller already gates the whole type with
+        # `authorize`.
+        def runtime_usage_field(description:, relation: ->(object) { object.runtime_usage_daily_aggregates },
+                                authorized: ->(_object) { true }, null: false)
+          field :runtime_usage, [Types::RuntimeUsageBucketType], null: null, description: description do
+            argument :aggregation, Types::RuntimeUsageAggregationEnum, required: false, default_value: 'day',
+                                                                       description: 'Granularity to bucket usage into'
             argument :after_date, GraphQL::Types::ISO8601Date, required: true,
                                                                description: 'Start of the usage range (inclusive)'
             argument :before_date, GraphQL::Types::ISO8601Date, required: true,
                                                                 description: 'End of the usage range (inclusive)'
           end
 
-          define_method(:usage) do |aggregation:, after_date:, before_date:|
+          define_method(:runtime_usage) do |aggregation:, after_date:, before_date:|
             next nil unless instance_exec(object, &authorized)
 
-            HasUsageField.validate_range!(aggregation: aggregation, after_date: after_date, before_date: before_date)
+            HasRuntimeUsageField.validate_range!(aggregation: aggregation, after_date: after_date,
+                                                 before_date: before_date)
 
-            UsageDailyAggregatesFinder.new(
+            RuntimeUsageDailyAggregatesFinder.new(
               relation: relation.call(object),
               aggregation: aggregation,
               after_date: after_date,

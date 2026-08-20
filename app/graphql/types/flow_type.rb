@@ -2,7 +2,7 @@
 
 module Types
   class FlowType < Types::BaseObject
-    include Types::Concerns::HasUsageField
+    include Types::Concerns::HasRuntimeUsageField
 
     description 'Represents a flow'
 
@@ -67,7 +67,7 @@ module Types
       delete_flow
     ]
 
-    usage_field description: 'Execution usage of this flow, bucketed by day, week or month'
+    runtime_usage_field description: 'Execution usage of this flow, bucketed by day, week or month'
 
     id_field Flow
     timestamps

@@ -2,7 +2,7 @@
 
 module Types
   class ApplicationType < Types::BaseObject
-    include Types::Concerns::HasUsageField
+    include Types::Concerns::HasRuntimeUsageField
 
     description 'Represents the application instance'
 
@@ -44,10 +44,13 @@ module Types
       update_application_setting
     ], subject_resolver: -> { :global }
 
-    usage_field description: 'Instance-wide execution usage, bucketed by day, week or month. Only visible to admins.',
-                relation: ->(_object) { UsageDailyAggregate.all },
-                authorized: ->(_object) { Ability.allowed?(current_authentication, :read_application_usage, :global) },
-                null: true
+    runtime_usage_field description: 'Instance-wide execution usage, bucketed by day, week or month. ' \
+                                     'Only visible to admins.',
+                        relation: ->(_object) { RuntimeUsageDailyAggregate.all },
+                        authorized: lambda { |_object|
+                          Ability.allowed?(current_authentication, :read_application_usage, :global)
+                        },
+                        null: true
 
     def metadata
       {}

@@ -17,7 +17,7 @@ Rails.application.configure do
     partition_manager.register_model(ExecutionParameterResult)
     partition_manager.register_model(RuntimeModuleStatusDailyUptime)
     partition_manager.register_model(RuntimeStatusDailyUptime)
-    partition_manager.register_model(UsageDailyAggregate)
+    partition_manager.register_model(RuntimeUsageDailyAggregate)
   end
 
   config.after_initialize do

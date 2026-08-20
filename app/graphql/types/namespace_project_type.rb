@@ -2,7 +2,7 @@
 
 module Types
   class NamespaceProjectType < Types::BaseObject
-    include Types::Concerns::HasUsageField
+    include Types::Concerns::HasRuntimeUsageField
 
     description 'Represents a namespace project'
 
@@ -41,7 +41,7 @@ module Types
       update_namespace_project
     ]
 
-    usage_field description: 'Execution usage of this project, bucketed by day, week or month'
+    runtime_usage_field description: 'Execution usage of this project, bucketed by day, week or month'
 
     id_field NamespaceProject
     timestamps
