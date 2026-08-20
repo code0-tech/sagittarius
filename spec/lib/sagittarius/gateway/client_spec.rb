@@ -70,6 +70,30 @@ RSpec.describe Sagittarius::Gateway::Client do
     end
   end
 
+  describe 'reconnecting after a broken channel' do
+    it 'rebuilds the stub and retries once on GRPC::Unavailable' do
+      response = Tucana::Sagittarius::Gateway::FlowResponse.new(deleted_flow_id: 1)
+      reconnected_stub = instance_double(Tucana::Sagittarius::Gateway::FlowService::Stub)
+      allow(flow_stub).to receive(:push).and_raise(GRPC::Unavailable)
+      allow(Tucana::Sagittarius::Gateway::FlowService::Stub).to receive(:new)
+        .and_return(flow_stub, reconnected_stub)
+      allow(reconnected_stub).to receive(:push)
+
+      client.push_flow(42, response)
+
+      expect(flow_stub).to have_received(:push).once
+      expect(reconnected_stub).to have_received(:push).once
+      expect(Tucana::Sagittarius::Gateway::FlowService::Stub).to have_received(:new).twice
+    end
+
+    it 'raises if the retry also fails' do
+      response = Tucana::Sagittarius::Gateway::FlowResponse.new(deleted_flow_id: 1)
+      allow(flow_stub).to receive(:push).and_raise(GRPC::Unavailable)
+
+      expect { client.push_flow(42, response) }.to raise_error(GRPC::Unavailable)
+    end
+  end
+
   describe 'when no gateway JWT secret is configured' do
     it 'raises a clear error' do
       expect do
