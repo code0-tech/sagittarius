@@ -10,6 +10,7 @@ RSpec.describe SagittariusSchema.types['RuntimeModuleDefinition'] do
       port
       endpoint
       protocol
+      flowTypes
       createdAt
       updatedAt
     ]

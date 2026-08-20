@@ -126,6 +126,7 @@ RSpec.describe 'sagittarius_rails.ModuleService', :need_grpc_server do
           ],
           definitions: [
             {
+              flow_type_identifier: ['FORM'],
               endpoint: {
                 host: 'localhost',
                 port: 8080,
@@ -204,6 +205,7 @@ RSpec.describe 'sagittarius_rails.ModuleService', :need_grpc_server do
         endpoint: '/execute',
         protocol: 'https'
       )
+      expect(module_definition.flow_types).to contain_exactly(flow_type)
     end
 
     context 'when data types reference data types from another module' do

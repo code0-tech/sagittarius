@@ -7,6 +7,7 @@ module Runtimes
         include Sagittarius::Database::Transactional
         include Code0::ZeroTrack::Loggable
         include Runtimes::Grpc::TranslationUpdateHelper
+        include Runtimes::Grpc::FlowTypeHelper
 
         DEFAULT_DEFINITION_UPDATE_SERVICES = {
           runtime_flow_types: Runtimes::Grpc::RuntimeFlowTypes::UpdateService,
@@ -32,8 +33,8 @@ module Runtimes
             next module_records unless module_records.success?
 
             update_data_types(module_records.payload, t)
-            update_module_definitions(module_records.payload, t)
             update_definition_services(module_records.payload, t)
+            update_module_definitions(module_records.payload, t)
 
             UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
 
@@ -131,17 +132,19 @@ module Runtimes
                 protocol: endpoint.protocol
               )
 
-              next if db_module_definitions[index].save
+              unless db_module_definitions[index].save
+                logger.error(message: 'Failed to update runtime module definition',
+                             module_identifier: grpc_module.identifier,
+                             errors: db_module_definitions[index].errors.full_messages)
 
-              logger.error(message: 'Failed to update runtime module definition',
-                           module_identifier: grpc_module.identifier,
-                           errors: db_module_definitions[index].errors.full_messages)
+                t.rollback_and_return! ServiceResponse.error(
+                  message: 'Failed to update runtime module definition',
+                  error_code: :invalid_runtime_module_definition,
+                  details: db_module_definitions[index].errors
+                )
+              end
 
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Failed to update runtime module definition',
-                error_code: :invalid_runtime_module_definition,
-                details: db_module_definitions[index].errors
-              )
+              link_flow_types(db_module_definitions[index], definition.flow_type_identifier, t)
             end
 
             runtime_module.runtime_module_definitions.excluding(db_module_definitions).delete_all

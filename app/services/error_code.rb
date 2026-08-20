@@ -96,6 +96,8 @@ class ErrorCode
       no_data_type_for_identifier: { description: 'No data type could be found for the given identifier' },
       cyclic_data_type_reference: { description: 'A data type dependency cycle was detected' },
       invalid_data_type_link: { description: 'The data type link is invalid because of active model errors' },
+      no_flow_type_for_identifier: { description: 'No flow type could be found for the given identifier' },
+      invalid_flow_type_link: { description: 'The flow type link is invalid because of active model errors' },
       node_not_found: { description: 'The node with this id does not exist' },
       invalid_node_parameter: { description: 'The node parameter is invalid' },
       invalid_node_function: { description: 'The node function is invalid' },
