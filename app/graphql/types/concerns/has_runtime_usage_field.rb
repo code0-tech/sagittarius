@@ -28,8 +28,8 @@ module Types
           define_method(:runtime_usage) do |aggregation:, after_date:, before_date:|
             next nil unless instance_exec(object, &authorized)
 
-            HasRuntimeUsageField.validate_range!(aggregation: aggregation, after_date: after_date,
-                                                 before_date: before_date)
+            Types::Concerns::ValidatesUsageDateRange.validate_range!(aggregation: aggregation,
+                                                                     after_date: after_date, before_date: before_date)
 
             RuntimeUsageDailyAggregatesFinder.new(
               relation: relation.call(object),
@@ -39,11 +39,6 @@ module Types
             ).execute
           end
         end
-      end
-
-      def self.validate_range!(aggregation:, after_date:, before_date:)
-        ValidatesUsageDateRange.validate_range!(aggregation: aggregation, after_date: after_date,
-                                                before_date: before_date)
       end
     end
   end
