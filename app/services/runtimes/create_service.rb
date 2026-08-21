@@ -33,21 +33,7 @@ module Runtimes
           target: namespace || AuditEvent::GLOBAL_TARGET
         )
 
-        assign_as_primary_if_only_runtime(runtime)
-
         ServiceResponse.success(payload: runtime)
-      end
-    end
-
-    private
-
-    def assign_as_primary_if_only_runtime(runtime)
-      return if namespace.nil?
-      return unless namespace.runtimes.one?
-
-      namespace.projects.where(primary_runtime_id: nil).find_each do |project|
-        project.runtimes << runtime unless project.runtimes.include?(runtime)
-        project.update!(primary_runtime: runtime)
       end
     end
   end

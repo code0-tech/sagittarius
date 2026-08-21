@@ -51,8 +51,29 @@ module Namespaces
             }
           )
 
+          assign_runtime_if_unambiguous(project)
+
           ServiceResponse.success(message: 'Created new project', payload: project)
         end
+      end
+
+      private
+
+      def assign_runtime_if_unambiguous(project)
+        runtime = runtime_to_assign
+        return if runtime.nil?
+
+        Namespaces::Projects::AssignRuntimesService.new(current_authentication, project, [runtime]).execute
+      end
+
+      def runtime_to_assign
+        global_runtimes = Runtime.where(namespace: nil)
+        namespace_runtimes = namespace.runtimes
+
+        return nil if global_runtimes.exists? && namespace_runtimes.exists?
+        return global_runtimes.first if global_runtimes.one?
+
+        namespace_runtimes.first if namespace_runtimes.one?
       end
     end
   end
