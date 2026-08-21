@@ -5,6 +5,8 @@ use tucana::sagittarius_rails::token_service_client::TokenServiceClient;
 use tucana::sagittarius_rails::token_verify_response::Data;
 use tucana::sagittarius_rails::{TokenVerifyRequest, TokenVerifyResponse};
 
+use super::retry::{RetryPolicy, retry};
+
 pub enum RuntimeVerificationStatus {
     Verified { runtime_id: i64 },
     Unverified,
@@ -13,16 +15,22 @@ pub enum RuntimeVerificationStatus {
 #[derive(Clone)]
 pub struct SagittariusRailsTokenServiceClient {
     inner: TokenServiceClient<Channel>,
+    retry_policy: RetryPolicy,
 }
 
 impl SagittariusRailsTokenServiceClient {
-    pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+    pub async fn connect<D>(
+        dst: D,
+        retry_policy: RetryPolicy,
+    ) -> Result<Self, tonic::transport::Error>
     where
         D: TryInto<Endpoint>,
         D::Error: Into<StdError>,
     {
+        let channel = Endpoint::new(dst)?.connect_lazy();
         Ok(Self {
-            inner: TokenServiceClient::connect(dst).await?,
+            inner: TokenServiceClient::new(channel),
+            retry_policy,
         })
     }
 
@@ -33,13 +41,16 @@ impl SagittariusRailsTokenServiceClient {
         let authorization: MetadataValue<tonic::metadata::Ascii> = token
             .parse()
             .map_err(|_| tonic::Status::unauthenticated("invalid Aquila authentication token"))?;
-        let mut request = tonic::Request::new(TokenVerifyRequest {
-            token: token.clone(),
-        });
-        request
-            .metadata_mut()
-            .insert("authorization", authorization);
-        self.inner.clone().verify(request).await
+        retry(&self.retry_policy, || {
+            let mut inner = self.inner.clone();
+            let mut req = tonic::Request::new(TokenVerifyRequest {
+                token: token.clone(),
+            });
+            req.metadata_mut()
+                .insert("authorization", authorization.clone());
+            async move { inner.verify(req).await }
+        })
+        .await
     }
 
     pub async fn validate_token(&self, token: String) -> RuntimeVerificationStatus {
