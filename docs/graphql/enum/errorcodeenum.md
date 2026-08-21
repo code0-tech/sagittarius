@@ -100,6 +100,7 @@ Represents the available error responses
 | `SECONDARY_LEVEL_NOT_FOUND` | **Deprecated:** Outdated concept |
 | `TERTIARY_LEVEL_EXCEEDS_PARAMETERS` | **Deprecated:** Outdated concept |
 | `TOTP_SECRET_ALREADY_SET` | This user already has TOTP set up |
+| `TOTP_SECRET_NOT_SET` | This user does not have TOTP set up |
 | `UNMODIFIABLE_FIELD` | The user is not permitted to modify this field |
 | `UNSUPPORTED_AUTHENTICATION` | The current authentication is not supported for this operation |
 | `USER_BLOCKED` | The user is blocked from accessing the application |
