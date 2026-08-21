@@ -11,18 +11,27 @@ RSpec.describe UserPolicy do
     let(:current_user) { create(:user) }
 
     it { is_expected.to be_allowed(:read_user) }
+    it { is_expected.not_to be_allowed(:update_user_organization_pin) }
   end
 
   context 'when user is nil' do
     let(:current_user) { nil }
 
     it { is_expected.not_to be_allowed(:read_user) }
+    it { is_expected.not_to be_allowed(:update_user_organization_pin) }
+  end
+
+  context 'when user is self' do
+    let(:current_user) { user }
+
+    it { is_expected.to be_allowed(:update_user_organization_pin) }
   end
 
   context 'when the current user is an admin' do
     let(:current_user) { create(:user, :admin) }
 
     it { is_expected.to be_allowed(:delete_user) }
+    it { is_expected.not_to be_allowed(:update_user_organization_pin) }
 
     context 'when the user is internal' do
       let(:user) { create(:user, :ghost) }
