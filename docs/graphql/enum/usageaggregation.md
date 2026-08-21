@@ -2,7 +2,7 @@
 title: UsageAggregation
 ---
 
-Granularity to bucket execution usage into.
+Granularity to bucket usage into.
 
 | Value | Description |
 |-------|-------------|

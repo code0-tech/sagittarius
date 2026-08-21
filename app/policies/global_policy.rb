@@ -28,6 +28,7 @@ class GlobalPolicy < BasePolicy
     enable :list_users
     enable :create_user
     enable :read_application_usage
+    enable :read_application_ai_usage
   end
 end
 

@@ -3,6 +3,7 @@
 module Types
   class ApplicationType < Types::BaseObject
     include Types::Concerns::HasRuntimeUsageField
+    include Types::Concerns::HasAiUsageField
 
     description 'Represents the application instance'
 
@@ -51,6 +52,14 @@ module Types
                           Ability.allowed?(current_authentication, :read_application_usage, :global)
                         },
                         null: true
+
+    ai_usage_field description: 'Instance-wide AI generation usage, bucketed by day, week or month. ' \
+                                'Only visible to admins.',
+                   relation: ->(_object) { AiUsageDailyAggregate.all },
+                   authorized: lambda { |_object|
+                     Ability.allowed?(current_authentication, :read_application_ai_usage, :global)
+                   },
+                   null: true
 
     def metadata
       {}

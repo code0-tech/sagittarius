@@ -17,7 +17,7 @@ RSpec.describe Velorum::GenerateFlowService do
   end
 
   let(:current_authentication) { instance_double(UserSession) }
-  let(:project) { instance_double(NamespaceProject, id: 12, primary_runtime: runtime) }
+  let(:project) { instance_double(NamespaceProject, id: 12, namespace_id: 3, primary_runtime: runtime) }
   let(:runtime) do
     instance_double(
       Runtime,
@@ -133,6 +133,13 @@ RSpec.describe Velorum::GenerateFlowService do
     )
   end
 
+  it 'records the generation usage against the project with the no-flow sentinel' do
+    service_response
+
+    aggregate = AiUsageDailyAggregate.find_by(project_id: project.id, flow_id: AiUsageDailyAggregate::NO_FLOW)
+    expect(aggregate).to have_attributes(generation_count: 1, total_usage: 42, namespace_id: project.namespace_id)
+  end
+
   it 'omits definitions while the Velorum cache marker is still valid' do
     service_response
 
@@ -157,6 +164,7 @@ RSpec.describe Velorum::GenerateFlowService do
     let(:flow) do
       instance_double(
         Flow,
+        id: 55,
         project: project,
         to_generation_grpc: Tucana::Shared::GenerationFlow.new(name: 'Existing flow')
       )
@@ -170,6 +178,13 @@ RSpec.describe Velorum::GenerateFlowService do
         expect(request).to be_a(Tucana::Velorum::FlowRequest)
         expect(request.flow.name).to eq('Existing flow')
       end
+    end
+
+    it 'records the generation usage against the flow' do
+      service_response
+
+      aggregate = AiUsageDailyAggregate.find_by(project_id: project.id, flow_id: flow.id)
+      expect(aggregate).to have_attributes(generation_count: 1, total_usage: 42, namespace_id: project.namespace_id)
     end
   end
 

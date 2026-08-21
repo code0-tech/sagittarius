@@ -20,6 +20,18 @@ Represents the application instance
 
 ## Fields with arguments
 
+### aiUsage
+
+Instance-wide AI generation usage, bucketed by day, week or month. Only visible to admins.
+
+Returns [`[UsageBucket!]`](../object/usagebucket.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `afterDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | Start of the usage range (inclusive) |
+| `aggregation` | [`UsageAggregation`](../enum/usageaggregation.md) | Granularity to bucket usage into |
+| `beforeDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | End of the usage range (inclusive) |
+
 ### identityProviderLoginUrl
 
 Login URL for a specific identity provider

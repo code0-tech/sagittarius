@@ -3,6 +3,7 @@
 module Types
   class FlowType < Types::BaseObject
     include Types::Concerns::HasRuntimeUsageField
+    include Types::Concerns::HasAiUsageField
 
     description 'Represents a flow'
 
@@ -68,6 +69,7 @@ module Types
     ]
 
     runtime_usage_field description: 'Execution usage of this flow, bucketed by day, week or month'
+    ai_usage_field description: 'AI generation usage of this flow, bucketed by day, week or month'
 
     id_field Flow
     timestamps

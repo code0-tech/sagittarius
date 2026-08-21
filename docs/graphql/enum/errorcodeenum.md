@@ -24,6 +24,7 @@ Represents the available error responses
 | `FLOW_GENERATION_FAILED` | Flow generation failed |
 | `FLOW_NOT_FOUND` | The flow with the given identifier was not found |
 | `FLOW_TYPE_NOT_FOUND` | The flow type with the given identifier was not found |
+| `GENERATION_USAGE_RECORDING_FAILED` | Failed to record AI generation usage counters |
 | `GENERIC_KEY_NOT_FOUND` | The given key was not found in the data type |
 | `IDENTITY_NOT_FOUND` | The external identity with the given identifier was not found |
 | `IDENTITY_VALIDATION_FAILED` | Failed to validate the external identity |

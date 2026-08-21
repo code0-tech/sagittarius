@@ -2,20 +2,20 @@
 
 require 'rails_helper'
 
-RSpec.describe RuntimeUsageDailyAggregatesFinder do
-  let(:flow) { create(:flow) }
-  let(:relation) { RuntimeUsageDailyAggregate.where(flow_id: flow.id) }
+RSpec.describe AiUsageDailyAggregatesFinder do
+  let(:project) { create(:namespace_project) }
+  let(:relation) { AiUsageDailyAggregate.where(project_id: project.id) }
 
-  def seed_day(date, execution_count:, total_execution_time_us:)
+  def seed_day(date, generation_count:, total_usage:)
     # rubocop:disable Rails/SkipsModelValidations -- seeding pre-aggregated rows directly, not exercising validations
-    RuntimeUsageDailyAggregate.insert!(
+    AiUsageDailyAggregate.insert!(
       {
-        flow_id: flow.id,
-        project_id: flow.project_id,
-        namespace_id: flow.project.namespace_id,
+        project_id: project.id,
+        flow_id: AiUsageDailyAggregate::NO_FLOW,
+        namespace_id: project.namespace_id,
         date: date,
-        execution_count: execution_count,
-        total_execution_time_us: total_execution_time_us,
+        generation_count: generation_count,
+        total_usage: total_usage,
         created_at: Time.current,
         updated_at: Time.current,
       }
@@ -27,8 +27,8 @@ RSpec.describe RuntimeUsageDailyAggregatesFinder do
     context 'with day aggregation' do
       it 'returns one bucket per day in range' do
         today = Time.zone.today
-        seed_day(today, execution_count: 2, total_execution_time_us: 2_000_000)
-        seed_day(today + 1.day, execution_count: 3, total_execution_time_us: 3_000_000)
+        seed_day(today, generation_count: 2, total_usage: 200)
+        seed_day(today + 1.day, generation_count: 3, total_usage: 300)
 
         finder = described_class.new(
           relation: relation, aggregation: 'day', after_date: today, before_date: today + 6.days
@@ -41,7 +41,7 @@ RSpec.describe RuntimeUsageDailyAggregatesFinder do
           period_start: today,
           period_end: today,
           usage: 2,
-          value: 2.0
+          value: 200
         )
       end
     end
@@ -53,8 +53,8 @@ RSpec.describe RuntimeUsageDailyAggregatesFinder do
         # relative to today rather than hardcoded, or this test would eventually fail once
         # the fixed dates fall outside the currently materialized partitions.
         month_start = 1.month.ago.to_date.beginning_of_month
-        seed_day(month_start, execution_count: 1, total_execution_time_us: 1_000_000)
-        seed_day(month_start + 14.days, execution_count: 4, total_execution_time_us: 4_000_000)
+        seed_day(month_start, generation_count: 1, total_usage: 100)
+        seed_day(month_start + 14.days, generation_count: 4, total_usage: 400)
 
         finder = described_class.new(
           relation: relation, aggregation: 'month', after_date: month_start - 1.month,
@@ -68,7 +68,7 @@ RSpec.describe RuntimeUsageDailyAggregatesFinder do
           period_start: month_start,
           period_end: month_start.end_of_month,
           usage: 5,
-          value: 5.0
+          value: 500
         )
       end
     end

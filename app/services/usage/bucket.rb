@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-module RuntimeUsage
+module Usage
   Bucket = Struct.new(:period_start, :period_end, :usage, :value, keyword_init: true)
 end

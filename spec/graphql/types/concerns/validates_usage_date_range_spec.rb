@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Types::Concerns::HasRuntimeUsageField do
+RSpec.describe Types::Concerns::ValidatesUsageDateRange do
   describe '.validate_range!' do
     it 'raises when the range is shorter than the allowed 7-31 day span' do
       expect do

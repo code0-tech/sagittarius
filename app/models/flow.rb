@@ -22,6 +22,7 @@ class Flow < ApplicationRecord
   has_many :node_functions, class_name: 'NodeFunction', inverse_of: :flow
   has_many :execution_results, inverse_of: :flow
   has_many :runtime_usage_daily_aggregates, class_name: 'RuntimeUsageDailyAggregate', inverse_of: :flow
+  has_many :ai_usage_daily_aggregates, class_name: 'AiUsageDailyAggregate', inverse_of: :flow
 
   has_many :flow_data_type_links, inverse_of: :flow
   has_many :referenced_data_types, through: :flow_data_type_links, source: :referenced_data_type

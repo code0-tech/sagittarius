@@ -2,7 +2,7 @@
 
 module Types
   class UsageAggregationEnum < Types::BaseEnum
-    description 'Granularity to bucket execution usage into.'
+    description 'Granularity to bucket usage into.'
 
     value 'DAY', 'Bucket usage per day.', value: 'day'
     value 'WEEK', 'Bucket usage per ISO week.', value: 'week'

@@ -27,6 +27,18 @@ Represents a flow
 
 ## Fields with arguments
 
+### aiUsage
+
+AI generation usage of this flow, bucketed by day, week or month
+
+Returns [`[UsageBucket!]!`](../object/usagebucket.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `afterDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | Start of the usage range (inclusive) |
+| `aggregation` | [`UsageAggregation`](../enum/usageaggregation.md) | Granularity to bucket usage into |
+| `beforeDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | End of the usage range (inclusive) |
+
 ### executionResult
 
 Find an execution result by runtime identifier
