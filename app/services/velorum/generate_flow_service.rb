@@ -45,6 +45,8 @@ module Velorum
 
       serialized_flow = GenerationFlowSerializer.new(response.flow, project: project).to_h
 
+      RecordGenerationUsageService.new(project: project, usage: response.usage, flow: flow).execute
+
       ServiceResponse.success(
         message: 'Generated flow',
         payload: {

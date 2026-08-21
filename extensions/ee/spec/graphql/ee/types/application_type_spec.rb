@@ -15,6 +15,7 @@ RSpec.describe Types::ApplicationType do
       identityProviders
       identityProviderLoginUrl
       runtimeUsage
+      aiUsage
       user_abilities
     ]
   end

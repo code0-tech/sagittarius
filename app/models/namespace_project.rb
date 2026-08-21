@@ -14,6 +14,7 @@ class NamespaceProject < ApplicationRecord
                             source: :role
   has_many :flows, class_name: 'Flow', inverse_of: :project
   has_many :runtime_usage_daily_aggregates, class_name: 'RuntimeUsageDailyAggregate', inverse_of: :project
+  has_many :ai_usage_daily_aggregates, class_name: 'AiUsageDailyAggregate', inverse_of: :project
 
   validates :slug, presence: true,
                    length: { minimum: 3, maximum: 50 },

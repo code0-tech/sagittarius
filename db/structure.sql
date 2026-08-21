@@ -684,6 +684,18 @@ CREATE SEQUENCE organizations_id_seq
 
 ALTER SEQUENCE organizations_id_seq OWNED BY organizations.id;
 
+CREATE TABLE p_ai_usage_daily_aggregates (
+    flow_id bigint DEFAULT 0 NOT NULL,
+    project_id bigint NOT NULL,
+    namespace_id bigint NOT NULL,
+    date date NOT NULL,
+    generation_count bigint DEFAULT 0 NOT NULL,
+    total_usage bigint DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+)
+PARTITION BY RANGE (date);
+
 CREATE TABLE p_audit_events (
     id bigint NOT NULL,
     author_id bigint NOT NULL,
@@ -1514,6 +1526,9 @@ ALTER TABLE ONLY node_parameters
 ALTER TABLE ONLY organizations
     ADD CONSTRAINT organizations_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY p_ai_usage_daily_aggregates
+    ADD CONSTRAINT p_ai_usage_daily_aggregates_pkey PRIMARY KEY (project_id, flow_id, date);
+
 ALTER TABLE ONLY p_audit_events
     ADD CONSTRAINT p_audit_events_pkey PRIMARY KEY (id, created_at);
 
@@ -1773,6 +1788,8 @@ CREATE INDEX index_node_parameters_on_node_function_id ON node_parameters USING 
 CREATE INDEX index_node_parameters_on_parameter_definition_id ON node_parameters USING btree (parameter_definition_id);
 
 CREATE UNIQUE INDEX "index_organizations_on_LOWER_name" ON organizations USING btree (lower(name));
+
+CREATE INDEX index_p_ai_usage_daily_aggregates_on_namespace_id ON ONLY p_ai_usage_daily_aggregates USING btree (namespace_id);
 
 CREATE INDEX index_p_audit_events_on_author_id ON ONLY p_audit_events USING btree (author_id);
 

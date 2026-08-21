@@ -17,6 +17,7 @@ RSpec.describe SagittariusSchema.types['Namespace'] do
       licenses
       currentLicense
       runtimeUsage
+      aiUsage
       userAbilities
     ]
   end
