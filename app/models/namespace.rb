@@ -14,6 +14,8 @@ class Namespace < ApplicationRecord
 
   has_many :runtimes, inverse_of: :namespace
 
+  has_many :runtime_usage_daily_aggregates, class_name: 'RuntimeUsageDailyAggregate', inverse_of: :namespace
+
   def organization_type?
     parent_type == Organization.name
   end

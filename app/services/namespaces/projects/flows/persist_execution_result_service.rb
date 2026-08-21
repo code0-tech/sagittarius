@@ -29,6 +29,8 @@ module Namespaces
             )
           end
 
+          RecordExecutionUsageService.new(execution_result).execute
+
           SubscriptionTriggers.execution_result(execution_result)
 
           ServiceResponse.success(message: 'Execution result persisted', payload: execution_result)
@@ -81,6 +83,7 @@ module Namespaces
 
         def flow_for
           Flow
+            .includes(:project)
             .joins(project: :runtime_assignments)
             .find_by(
               id: grpc_result.flow_id,

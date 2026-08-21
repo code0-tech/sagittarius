@@ -12,6 +12,7 @@ RSpec.describe SagittariusSchema.types['Namespace'] do
       runtimes
       project
       projects
+      runtimeUsage
       userAbilities
       createdAt
       updatedAt

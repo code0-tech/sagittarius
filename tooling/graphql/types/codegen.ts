@@ -45,6 +45,10 @@ const scalars = {
     input: 'string',
     output: 'string',
   },
+  ISO8601Date: {
+    input: 'string',
+    output: 'string',
+  },
   BigInt: {
     input: 'number',
     output: 'number',

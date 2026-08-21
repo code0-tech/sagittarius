@@ -2,6 +2,8 @@
 
 module Types
   class ApplicationType < Types::BaseObject
+    include Types::Concerns::HasRuntimeUsageField
+
     description 'Represents the application instance'
 
     field :metadata, Types::MetadataType, null: true,
@@ -41,6 +43,14 @@ module Types
       rotate_runtime_token
       update_application_setting
     ], subject_resolver: -> { :global }
+
+    runtime_usage_field description: 'Instance-wide execution usage, bucketed by day, week or month. ' \
+                                     'Only visible to admins.',
+                        relation: ->(_object) { RuntimeUsageDailyAggregate.all },
+                        authorized: lambda { |_object|
+                          Ability.allowed?(current_authentication, :read_application_usage, :global)
+                        },
+                        null: true
 
     def metadata
       {}

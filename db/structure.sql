@@ -797,6 +797,18 @@ CREATE TABLE p_runtime_status_daily_uptimes (
 )
 PARTITION BY RANGE (date);
 
+CREATE TABLE p_runtime_usage_daily_aggregates (
+    flow_id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    namespace_id bigint NOT NULL,
+    date date NOT NULL,
+    execution_count bigint DEFAULT 0 NOT NULL,
+    total_execution_time_us bigint DEFAULT 0 CONSTRAINT p_runtime_usage_daily_aggregat_total_execution_time_us_not_null NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+)
+PARTITION BY RANGE (date);
+
 CREATE TABLE parameter_definitions (
     id bigint NOT NULL,
     runtime_parameter_definition_id bigint NOT NULL,
@@ -1539,6 +1551,9 @@ ALTER TABLE ONLY p_runtime_module_status_daily_uptimes
 ALTER TABLE ONLY p_runtime_status_daily_uptimes
     ADD CONSTRAINT p_runtime_status_daily_uptimes_pkey PRIMARY KEY (runtime_status_id, date);
 
+ALTER TABLE ONLY p_runtime_usage_daily_aggregates
+    ADD CONSTRAINT p_runtime_usage_daily_aggregates_pkey PRIMARY KEY (flow_id, date);
+
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT parameter_definitions_pkey PRIMARY KEY (id);
 
@@ -1788,6 +1803,10 @@ CREATE INDEX index_p_audit_events_on_author_id ON ONLY p_audit_events USING btre
 CREATE INDEX index_p_execution_node_results_on_function_definition_id ON ONLY p_execution_node_results USING btree (function_definition_id);
 
 CREATE INDEX index_p_execution_node_results_on_node_function_id ON ONLY p_execution_node_results USING btree (node_function_id);
+
+CREATE INDEX index_p_runtime_usage_daily_aggregates_on_namespace_id ON ONLY p_runtime_usage_daily_aggregates USING btree (namespace_id);
+
+CREATE INDEX index_p_runtime_usage_daily_aggregates_on_project_id ON ONLY p_runtime_usage_daily_aggregates USING btree (project_id);
 
 CREATE INDEX index_parameter_definitions_on_function_definition_id ON parameter_definitions USING btree (function_definition_id);
 

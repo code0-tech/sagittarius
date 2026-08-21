@@ -2,6 +2,8 @@
 
 module Types
   class NamespaceProjectType < Types::BaseObject
+    include Types::Concerns::HasRuntimeUsageField
+
     description 'Represents a namespace project'
 
     authorize :read_namespace_project
@@ -38,6 +40,8 @@ module Types
       delete_namespace_project
       update_namespace_project
     ]
+
+    runtime_usage_field description: 'Execution usage of this project, bucketed by day, week or month'
 
     id_field NamespaceProject
     timestamps
