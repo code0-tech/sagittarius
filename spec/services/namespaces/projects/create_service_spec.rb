@@ -100,5 +100,96 @@ RSpec.describe Namespaces::Projects::CreateService do
         end
       end
     end
+
+    context 'when only one global runtime exists' do
+      let!(:global_runtime) { create(:runtime, namespace: nil) }
+
+      context 'when user has permission to assign runtimes' do
+        before do
+          stub_allowed_ability(
+            NamespaceProjectPolicy, :assign_project_runtimes,
+            user: current_user, subject: an_instance_of(NamespaceProject)
+          )
+        end
+
+        it 'assigns the global runtime as the primary runtime' do
+          service_response
+          expect(service_response.payload.primary_runtime).to eq(global_runtime)
+        end
+
+        it 'assigns the global runtime to the project' do
+          service_response
+          expect(service_response.payload.runtimes).to contain_exactly(global_runtime)
+        end
+      end
+
+      context 'when user does not have permission to assign runtimes' do
+        it 'does not assign a primary runtime' do
+          service_response
+          expect(service_response.payload.primary_runtime).to be_nil
+        end
+      end
+    end
+
+    context 'when multiple global runtimes exist' do
+      before do
+        create(:runtime, namespace: nil)
+        create(:runtime, namespace: nil)
+      end
+
+      it 'does not assign a primary runtime' do
+        service_response
+        expect(service_response.payload.primary_runtime).to be_nil
+      end
+    end
+
+    context 'when no global runtime exists and namespace has exactly one runtime' do
+      let!(:namespace_runtime) { create(:runtime, namespace: namespace) }
+
+      before do
+        stub_allowed_ability(
+          NamespaceProjectPolicy, :assign_project_runtimes,
+          user: current_user, subject: an_instance_of(NamespaceProject)
+        )
+      end
+
+      it 'assigns the namespace runtime as the primary runtime' do
+        service_response
+        expect(service_response.payload.primary_runtime).to eq(namespace_runtime)
+      end
+
+      it 'assigns the namespace runtime to the project' do
+        service_response
+        expect(service_response.payload.runtimes).to contain_exactly(namespace_runtime)
+      end
+    end
+
+    context 'when no global runtime exists and namespace has multiple runtimes' do
+      before do
+        create(:runtime, namespace: namespace)
+        create(:runtime, namespace: namespace)
+      end
+
+      it 'does not assign a primary runtime' do
+        service_response
+        expect(service_response.payload.primary_runtime).to be_nil
+      end
+    end
+
+    context 'when a global runtime exists and the namespace also has a runtime' do
+      before do
+        create(:runtime, namespace: nil)
+        create(:runtime, namespace: namespace)
+        stub_allowed_ability(
+          NamespaceProjectPolicy, :assign_project_runtimes,
+          user: current_user, subject: an_instance_of(NamespaceProject)
+        )
+      end
+
+      it 'does not assign a primary runtime' do
+        service_response
+        expect(service_response.payload.primary_runtime).to be_nil
+      end
+    end
   end
 end
