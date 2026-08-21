@@ -71,6 +71,65 @@ RSpec.describe Runtimes::CreateService do
     end
   end
 
+  context 'when namespace has a project without a primary runtime' do
+    let(:namespace) { create(:namespace) }
+    let(:current_user) { create(:user) }
+    let(:params) do
+      { name: generate(:runtime_name) }
+    end
+    let!(:project) { create(:namespace_project, namespace: namespace) }
+
+    before do
+      stub_allowed_ability(NamespacePolicy, :create_runtime, user: current_user, subject: namespace)
+    end
+
+    it 'assigns the created runtime as the primary runtime' do
+      service_response
+      expect(project.reload.primary_runtime).to eq(service_response.payload)
+    end
+
+    it 'assigns the created runtime to the project' do
+      service_response
+      expect(project.reload.runtimes).to contain_exactly(service_response.payload)
+    end
+  end
+
+  context 'when namespace already has a runtime' do
+    let(:namespace) { create(:namespace) }
+    let(:current_user) { create(:user) }
+    let(:params) do
+      { name: generate(:runtime_name) }
+    end
+    let!(:existing_runtime) { create(:runtime, namespace: namespace) }
+    let!(:project) { create(:namespace_project, namespace: namespace, primary_runtime: existing_runtime) }
+
+    before do
+      stub_allowed_ability(NamespacePolicy, :create_runtime, user: current_user, subject: namespace)
+    end
+
+    it 'does not change the primary runtime of existing projects' do
+      expect { service_response }.not_to(change { project.reload.primary_runtime })
+    end
+  end
+
+  context 'when project in namespace already has a primary runtime' do
+    let(:namespace) { create(:namespace) }
+    let(:current_user) { create(:user) }
+    let(:params) do
+      { name: generate(:runtime_name) }
+    end
+    let!(:other_runtime) { create(:runtime) }
+    let!(:project) { create(:namespace_project, namespace: namespace, primary_runtime: other_runtime) }
+
+    before do
+      stub_allowed_ability(NamespacePolicy, :create_runtime, user: current_user, subject: namespace)
+    end
+
+    it 'does not change the primary runtime' do
+      expect { service_response }.not_to(change { project.reload.primary_runtime })
+    end
+  end
+
   context 'when user and params are valid and user is admin' do
     let(:current_user) { create(:user, :admin) }
     let(:params) do
