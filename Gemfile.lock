@@ -581,7 +581,7 @@ GEM
       activesupport (>= 3.1)
     shoulda-matchers (8.0.1)
       activesupport (>= 7.2)
-    simplecov (1.0.3)
+    simplecov (1.1.1)
     simplecov-cobertura (4.0.0)
       rexml
       simplecov (~> 1.0)
@@ -653,7 +653,7 @@ DEPENDENCIES
   rubocop-rspec_rails (~> 2.30)
   seed-fu (~> 2.3)
   shoulda-matchers (~> 8.0)
-  simplecov (~> 1.0.0)
+  simplecov (~> 1.1.0)
   simplecov-cobertura (~> 4.0)
   test-prof (~> 1.0)
   triangulum (= 0.32.0)
