@@ -7,6 +7,7 @@ RSpec.describe RuntimeFlowTypeSetting do
 
   describe 'associations' do
     it { is_expected.to belong_to(:runtime_flow_type).inverse_of(:runtime_flow_type_settings) }
+    it { is_expected.to have_many(:flow_type_settings).inverse_of(:runtime_flow_type_setting) }
   end
 
   describe 'validations' do

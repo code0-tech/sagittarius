@@ -52,6 +52,10 @@ module Types
     id_field FunctionDefinition
     timestamps
 
+    def parameter_definitions
+      object.parameter_definitions.ordered
+    end
+
     def signature
       object.runtime_function_definition&.signature
     end

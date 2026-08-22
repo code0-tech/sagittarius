@@ -57,18 +57,21 @@ RSpec.describe FlowType do
 
   describe '#to_grpc' do
     let(:flow_type) do
-      create(
+      ft = create(
         :flow_type,
         identifier: 'HTTP',
         editable: true,
         version: '1.2.3',
         display_icon: 'network',
         definition_source: 'sagittarius',
-        signature: '(input: REST_ADAPTER_INPUT): HTTP_RESPONSE',
-        flow_type_settings: [
-          build(:flow_type_setting, identifier: 'HTTP_URL', default_value: '/status')
-        ]
+        signature: '(input: REST_ADAPTER_INPUT): HTTP_RESPONSE'
       )
+      runtime_flow_type_setting = create(:runtime_flow_type_setting,
+                                         runtime_flow_type: ft.runtime_flow_type,
+                                         identifier: 'HTTP_URL')
+      create(:flow_type_setting, flow_type: ft, identifier: 'HTTP_URL', default_value: '/status',
+                                 runtime_flow_type_setting: runtime_flow_type_setting)
+      ft
     end
 
     it 'returns a shared flow type definition' do

@@ -16,6 +16,8 @@ class RuntimeParameterDefinition < ApplicationRecord
   validates :optional, inclusion: { in: [true, false] }
   validates :hidden, inclusion: { in: [true, false] }
 
+  scope :ordered, -> { order(:position) }
+
   def to_grpc
     Tucana::Shared::RuntimeParameterDefinition.new(
       runtime_name: runtime_name,

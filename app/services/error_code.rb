@@ -84,6 +84,7 @@ class ErrorCode
       invalid_runtime_function_definition: { description: 'The runtime function definition is invalid' },
       invalid_runtime_module: { description: 'The runtime module is invalid' },
       runtime_module_not_found: { description: 'The runtime module with the given identifier was not found' },
+      invalid_runtime_flow_type_setting: { description: 'The runtime flow type setting is invalid' },
       invalid_runtime_module_status: { description: 'The runtime module status is invalid' },
       invalid_runtime_module_definition: { description: 'The runtime module definition is invalid' },
       invalid_module_configuration: { description: 'The module configuration is invalid because of active model errors' },

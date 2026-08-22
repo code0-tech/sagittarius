@@ -5,6 +5,8 @@ class RuntimeFlowTypeSetting < ApplicationRecord
 
   belongs_to :runtime_flow_type, inverse_of: :runtime_flow_type_settings
 
+  has_many :flow_type_settings, inverse_of: :runtime_flow_type_setting
+
   UNIQUENESS_SCOPE = FlowTypeSetting::UNIQUENESS_SCOPE
 
   enum :unique, UNIQUENESS_SCOPE, prefix: :unique
@@ -23,4 +25,5 @@ class RuntimeFlowTypeSetting < ApplicationRecord
 
   scope :active, -> { where(removed_at: nil) }
   scope :removed, -> { where.not(removed_at: nil) }
+  scope :ordered, -> { order(:position) }
 end

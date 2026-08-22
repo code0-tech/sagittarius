@@ -79,28 +79,36 @@ module Runtimes
             )
           end
 
-          if db_object.persisted?
-            update_settings(runtime_flow_type.runtime_settings, db_object.runtime_flow_type_settings, t)
-            link_data_types(db_object, runtime_flow_type.linked_data_type_identifiers, t)
-            db_object.save
-          end
+          db_object.runtime_flow_type_settings = update_settings(db_object,
+                                                                 runtime_flow_type.runtime_settings,
+                                                                 db_object.runtime_flow_type_settings, t)
+
+          link_data_types(db_object, runtime_flow_type.linked_data_type_identifiers, t)
           db_object
         end
 
-        def update_settings(flow_type_settings, db_setting_relation, t)
+        def update_settings(runtime_flow_type, settings, db_settings, t)
           # rubocop:disable Rails/SkipsModelValidations -- when marking settings as removed, validations are irrelevant
-          db_setting_relation.update_all(removed_at: Time.zone.now)
+          db_settings.update_all(removed_at: Time.zone.now)
           # rubocop:enable Rails/SkipsModelValidations
 
-          flow_type_settings.each do |setting|
-            db_setting = db_setting_relation.find_or_initialize_by(identifier: setting.identifier)
+          settings.each_with_index do |setting, index|
+            db_setting = db_settings.find { |current_setting| current_setting.identifier == setting.identifier }
+            if db_setting.nil?
+              db_setting = RuntimeFlowTypeSetting.new
+              db_settings << db_setting
+            end
+            db_setting.runtime_flow_type = runtime_flow_type
+            db_setting.identifier = setting.identifier
+            db_setting.removed_at = nil
+            db_setting.position = index
             db_setting.unique = setting.unique&.to_s&.downcase
             db_setting.default_value = setting.default_value&.to_ruby
             db_setting.optional = setting.optional
             db_setting.hidden = setting.hidden
-            db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
             db_setting.names = update_translations(setting.name, db_setting.names)
-            db_setting.removed_at = nil
+            db_setting.descriptions = update_translations(setting.description, db_setting.descriptions)
+
             next if db_setting.save
 
             t.rollback_and_return! ServiceResponse.error(
@@ -109,6 +117,8 @@ module Runtimes
               details: db_setting.errors
             )
           end
+
+          db_settings
         end
       end
     end

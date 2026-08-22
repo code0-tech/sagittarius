@@ -46,7 +46,7 @@ class FlowType < ApplicationRecord
   def to_grpc
     Tucana::Shared::FlowType.new(
       identifier: identifier,
-      settings: flow_type_settings.map(&:to_grpc),
+      settings: flow_type_settings.ordered.map(&:to_grpc),
       editable: editable,
       name: names.map(&:to_grpc),
       description: descriptions.map(&:to_grpc),

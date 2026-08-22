@@ -19,5 +19,9 @@ module Types
 
     id_field FlowTypeSetting
     timestamps
+
+    def removed_at
+      object.runtime_flow_type_setting&.removed_at
+    end
   end
 end

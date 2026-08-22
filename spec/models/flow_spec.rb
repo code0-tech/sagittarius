@@ -44,8 +44,15 @@ RSpec.describe Flow do
 
   describe '#to_grpc' do
     let(:runtime_flow_type) { create(:runtime_flow_type, identifier: 'RUNTIME_HTTP') }
+    let(:runtime_flow_type_setting) do
+      create(:runtime_flow_type_setting, runtime_flow_type: runtime_flow_type, identifier: 'HTTP_URL')
+    end
     let(:flow_type) do
       create(:flow_type, runtime_flow_type: runtime_flow_type, identifier: 'HTTP')
+    end
+    let(:flow_type_setting) do
+      create(:flow_type_setting, flow_type: flow_type, identifier: 'HTTP_URL',
+                                 runtime_flow_type_setting: runtime_flow_type_setting)
     end
     let(:flow) do
       create(
@@ -56,7 +63,7 @@ RSpec.describe Flow do
         flow_settings: [
           create(
             :flow_setting,
-            flow_setting_id: 'HTTP_URL',
+            flow_setting_id: flow_type_setting.identifier,
             object: { url: '/some-url' }
           )
         ]
@@ -150,12 +157,20 @@ RSpec.describe Flow do
   end
 
   describe '#to_generation_grpc' do
+    let(:flow_type) { create(:flow_type, identifier: 'HTTP') }
+    let(:runtime_flow_type_setting) do
+      create(:runtime_flow_type_setting, runtime_flow_type: flow_type.runtime_flow_type, identifier: 'HTTP_URL')
+    end
+    let(:flow_type_setting) do
+      create(:flow_type_setting, flow_type: flow_type, identifier: 'HTTP_URL',
+                                 runtime_flow_type_setting: runtime_flow_type_setting)
+    end
     let(:flow) do
       create(
         :flow,
-        flow_type: create(:flow_type, identifier: 'HTTP'),
+        flow_type: flow_type,
         flow_settings: [
-          create(:flow_setting, flow_setting_id: 'HTTP_URL', object: { url: '/some-url' })
+          create(:flow_setting, flow_setting_id: flow_type_setting.identifier, object: { url: '/some-url' })
         ]
       )
     end

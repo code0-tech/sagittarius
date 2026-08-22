@@ -45,6 +45,10 @@ module Types
     id_field ::FlowType
     timestamps
 
+    def flow_type_settings
+      object.flow_type_settings.ordered
+    end
+
     def linked_data_types
       DataTypesFinder.new({ flow_type: object, expand_recursively: true }).execute
     end
