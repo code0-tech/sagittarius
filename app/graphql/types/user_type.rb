@@ -47,6 +47,11 @@ module Types
           description: 'Identities of this user',
           method: :user_identities
 
+    field :organization_pins, [Types::UserOrganizationPinType],
+          null: false,
+          description: 'Pinned organizations of this user, ordered by priority',
+          method: :user_organization_pins
+
     field :mfa_status, Types::MfaStatusType,
           null: true,
           description: 'Multi-factor authentication status of this user'
