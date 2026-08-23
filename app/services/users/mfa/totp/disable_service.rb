@@ -6,12 +6,12 @@ module Users
       class DisableService
         include Sagittarius::Database::Transactional
 
-        attr_reader :current_authentication, :current_user, :current_totp
+        attr_reader :current_authentication, :current_user, :mfa
 
-        def initialize(current_authentication, current_totp)
+        def initialize(current_authentication, mfa)
           @current_authentication = current_authentication
           @current_user = current_authentication.user
-          @current_totp = current_totp
+          @mfa = mfa
         end
 
         def execute
@@ -21,9 +21,9 @@ module Users
 
           return ServiceResponse.error(error_code: :totp_secret_not_set) if current_user.totp_secret.nil?
 
-          totp = ROTP::TOTP.new(current_user.totp_secret)
+          mfa_passed, mfa_type = current_user.validate_mfa!(mfa)
 
-          return ServiceResponse.error(error_code: :wrong_totp) unless totp.verify(current_totp)
+          return ServiceResponse.error(error_code: :mfa_failed) unless mfa_passed
 
           transactional do
             current_user.totp_secret = nil
@@ -36,7 +36,7 @@ module Users
               :mfa_disabled,
               author_id: current_user.id,
               entity: current_user,
-              details: { type: :totp },
+              details: { type: mfa_type },
               target: current_user
             )
 

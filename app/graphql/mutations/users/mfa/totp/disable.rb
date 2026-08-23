@@ -9,14 +9,12 @@ module Mutations
 
           field :user, ::Types::UserType, null: true, description: 'The modified user'
 
-          argument :current_totp, String,
-                   required: true,
-                   description: 'The current totp at the time to verify the mfa authentication device'
+          argument :mfa, Types::Input::MfaInput, required: true, description: 'The data of the mfa validation'
 
-          def resolve(current_totp:)
+          def resolve(mfa:)
             ::Users::Mfa::Totp::DisableService.new(
               current_authentication,
-              current_totp
+              mfa
             ).execute.to_mutation_response(success_key: :user)
           end
         end

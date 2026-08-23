@@ -9,7 +9,7 @@ Disables TOTP MFA for the user
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `currentTotp` | [`String!`](../scalar/string.md) | The current totp at the time to verify the mfa authentication device |
+| `mfa` | [`MfaInput!`](../input_object/mfainput.md) | The data of the mfa validation |
 
 ## Fields
 

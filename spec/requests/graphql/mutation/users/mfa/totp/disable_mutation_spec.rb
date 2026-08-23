@@ -22,7 +22,10 @@ RSpec.describe 'usersMfaTotpDisable Mutation' do
 
   let(:input) do
     {
-      currentTotp: current_totp,
+      mfa: {
+        type: 'TOTP',
+        value: current_totp,
+      },
     }
   end
 
