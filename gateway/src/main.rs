@@ -114,10 +114,36 @@ async fn run(config: Config) -> anyhow::Result<()> {
     }
 
     log::info!("Sagittarius gateway listening on {}", address);
-    server_builder.serve(address).await?;
+    server_builder
+        .serve_with_shutdown(address, shutdown_signal())
+        .await?;
     log::info!("Sagittarius gateway stopped");
 
     Ok(())
+}
+
+/// Resolves once a Ctrl+C (SIGINT) or SIGTERM is received, so the caller can
+/// pass it to `serve_with_shutdown` for a graceful stop.
+async fn shutdown_signal() {
+    #[cfg(unix)]
+    let sigterm = async {
+        use tokio::signal::unix::{SignalKind, signal};
+
+        let mut term = signal(SignalKind::terminate()).expect("failed to install SIGTERM handler");
+        term.recv().await;
+    };
+
+    #[cfg(not(unix))]
+    let sigterm = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = tokio::signal::ctrl_c() => {
+            log::info!("Ctrl+C/Exit signal received, shutting down");
+        }
+        _ = sigterm => {
+            log::info!("SIGTERM received, shutting down");
+        }
+    }
 }
 
 fn install_panic_logging() {

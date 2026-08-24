@@ -14,7 +14,7 @@ code0-flow = { version = "0.0.44", features = ["flow_telemetry"] }
 jsonwebtoken = { version = "11.0.0", features = ["rust_crypto"] }
 log = "0.4.33"
 serde = { version = "1.0.228", features = ["derive"] }
-tokio = { version = "1.52.3", features = ["macros", "rt-multi-thread", "sync"] }
+tokio = { version = "1.52.3", features = ["macros", "rt-multi-thread", "signal", "sync"] }
 tokio-stream = "0.1.18"
 tonic = "0.14.6"
 tonic-health = "0.14.6"
