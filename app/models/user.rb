@@ -38,6 +38,7 @@ class User < ApplicationRecord
   has_many :namespaces, through: :namespace_memberships, inverse_of: :users
 
   has_many :user_identities, inverse_of: :user
+  has_many :user_custom_attributes, inverse_of: :user
 
   has_one_attached :avatar
 
@@ -73,6 +74,10 @@ class User < ApplicationRecord
       mfa_passed = totp.verify(mfa_value)
     end
     [mfa_passed, mfa_type]
+  end
+
+  def deletion_restriction
+    :last_administrator unless self.class.where.not(id: id).exists?(admin: true)
   end
 
   generates_token_for :email_verification, expires_in: 15.minutes do

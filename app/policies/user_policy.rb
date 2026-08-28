@@ -5,6 +5,7 @@ class UserPolicy < BasePolicy
   condition(:user_is_admin) { user&.admin? || false }
   condition(:subject_is_regular) { subject.regular? }
   condition(:admin_status_visible) { ApplicationSetting.current[:admin_status_visible] }
+  condition(:deletion_restriction) { subject.deletion_restriction || false }
 
   rule { ~anonymous }.enable :read_user
 
@@ -32,4 +33,6 @@ class UserPolicy < BasePolicy
     enable :read_email
     enable :read_mfa_status
   end
+
+  rule { deletion_restriction }.prevent :delete_user
 end
