@@ -151,5 +151,65 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
       expect(result).to have_attributes(valid?: true, diagnostics: [])
       expect(flow.reload.validation_status).to eq('valid')
     end
+
+    context 'with a direct mapping sub flow' do
+      let(:callback_runtime_function_definition) do
+        create(:runtime_function_definition, runtime: runtime, signature: '(arg: () => string): void')
+      end
+      let(:callback_function_definition) do
+        create(:function_definition, runtime_function_definition: callback_runtime_function_definition).tap do |fd|
+          rpd = create(
+            :runtime_parameter_definition,
+            runtime_function_definition: callback_runtime_function_definition,
+            runtime_name: 'arg'
+          )
+          create(:parameter_definition, runtime_parameter_definition: rpd, function_definition: fd)
+        end
+      end
+      let(:callback_node_function) do
+        create(:node_function, function_definition: callback_function_definition)
+      end
+      let(:sub_flow_runtime_function_definition) do
+        create(:runtime_function_definition, runtime: runtime, signature: '(): string')
+      end
+      let(:sub_flow_function_definition) do
+        create(:function_definition, runtime_function_definition: sub_flow_runtime_function_definition)
+      end
+      let(:flow) do
+        create(
+          :flow,
+          project: namespace_project,
+          flow_type: flow_type,
+          validation_status: :unvalidated,
+          starting_node: callback_node_function
+        ).tap do |f|
+          callback_node_function.update!(flow: f)
+        end
+      end
+
+      before do
+        create(
+          :node_parameter,
+          parameter_definition: callback_function_definition.parameter_definitions[0],
+          node_function: callback_node_function,
+          literal_value: nil
+        ).tap do |np|
+          create(
+            :sub_flow,
+            node_parameter: np,
+            starting_node: nil,
+            function_definition: sub_flow_function_definition,
+            signature: '(): string'
+          )
+        end
+      end
+
+      it 'includes the sub flow function definition and sets validation status to valid' do
+        result = service.execute
+
+        expect(result).to have_attributes(valid?: true, diagnostics: [])
+        expect(flow.reload.validation_status).to eq('valid')
+      end
+    end
   end
 end

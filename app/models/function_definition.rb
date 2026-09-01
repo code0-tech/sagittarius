@@ -9,6 +9,7 @@ class FunctionDefinition < ApplicationRecord
 
   has_many :node_functions, inverse_of: :function_definition
   has_many :parameter_definitions, inverse_of: :function_definition
+  has_many :sub_flows, inverse_of: :function_definition
 
   has_translation :names, purpose: :name
   has_translation :descriptions, purpose: :description
@@ -18,6 +19,9 @@ class FunctionDefinition < ApplicationRecord
   has_translation :aliases, purpose: :alias
 
   scope :by_node_function, ->(node_functions) { where(node_functions: node_functions) }
+  scope :by_sub_flow_node_parameter, lambda { |node_parameters|
+    where(id: SubFlow.where(node_parameter: node_parameters).select(:function_definition_id))
+  }
 
   validates :identifier, presence: true, uniqueness: { case_sensitive: false, scope: :runtime_id }
   validates :design, length: { maximum: 200 }
