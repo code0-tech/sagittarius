@@ -17,9 +17,8 @@ RSpec.describe Users::RegisterService do
     it_behaves_like 'sends an email' do
       let(:token) { SecureRandom.base64(10) }
       before do
-        # rubocop:disable RSpec/AnyInstance -- No other way to mock this
+        # rubocop:disable-next RSpec/AnyInstance -- No other way to mock this
         allow_any_instance_of(User).to receive(:generate_token_for).with(:email_verification).and_return(token)
-        # rubocop:enable RSpec/AnyInstance
       end
 
       let(:mailer_class) { UserMailer }
@@ -68,9 +67,8 @@ RSpec.describe Users::RegisterService do
     it_behaves_like 'sends no email' do
       let(:token) { SecureRandom.base64(10) }
       before do
-        # rubocop:disable RSpec/AnyInstance -- No other way to mock this
+        # rubocop:disable-next RSpec/AnyInstance -- No other way to mock this
         allow_any_instance_of(User).to receive(:generate_token_for).with(:email_verification).and_return(token)
-        # rubocop:enable RSpec/AnyInstance
       end
 
       let(:mailer_class) { UserMailer }

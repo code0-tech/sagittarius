@@ -29,11 +29,10 @@ module Types
     field :runtime_flow_types, Types::RuntimeFlowTypeType.connection_type,
           null: false,
           description: 'Runtime flow types of the runtime module'
-    # rubocop:disable GraphQL/ExtractType
+    # rubocop:disable-next GraphQL/ExtractType
     field :runtime_function_definitions, Types::RuntimeFunctionDefinitionType.connection_type,
           null: false,
           description: 'Runtime function definitions of the runtime module'
-    # rubocop:enable GraphQL/ExtractType
     field :status, Types::RuntimeModuleStatusType, null: false, description: 'The status of the runtime module',
                                                    method: :runtime_module_status
     field :version, String, null: false, description: 'Version of the runtime module'

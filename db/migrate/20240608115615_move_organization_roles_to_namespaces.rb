@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MoveOrganizationRolesToNamespaces < Code0::ZeroTrack::Database::Migration[1.0]
-  # rubocop:disable Rails/NotNullColumn -- backwards compatibility was intentionally ignored
+  # rubocop:disable-next Rails/NotNullColumn -- backwards compatibility was intentionally ignored
   def change
     rename_table :organization_roles, :namespace_roles
 
@@ -12,5 +12,4 @@ class MoveOrganizationRolesToNamespaces < Code0::ZeroTrack::Database::Migration[
                  name: 'index_organization_roles_on_organization_id_LOWER_name', unique: true
     remove_reference :namespace_roles, :organization, null: false, foreign_key: { on_delete: :cascade }
   end
-  # rubocop:enable Rails/NotNullColumn
 end

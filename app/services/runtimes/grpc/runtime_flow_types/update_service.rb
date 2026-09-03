@@ -20,10 +20,9 @@ module Runtimes
 
         def execute
           transactional do |t|
-            # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, validations are irrelevant
+            # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, validations are irrelevant
             RuntimeFlowType.where(runtime: current_runtime, runtime_module: runtime_module)
                            .update_all(removed_at: Time.zone.now)
-            # rubocop:enable Rails/SkipsModelValidations
 
             runtime_flow_types.each do |runtime_flow_type|
               update_runtime_flowtype(runtime_flow_type, t)
@@ -88,9 +87,8 @@ module Runtimes
         end
 
         def update_settings(runtime_flow_type, settings, db_settings, t)
-          # rubocop:disable Rails/SkipsModelValidations -- when marking settings as removed, validations are irrelevant
+          # rubocop:disable-next Rails/SkipsModelValidations -- when marking settings as removed, validations are irrelevant
           db_settings.update_all(removed_at: Time.zone.now)
-          # rubocop:enable Rails/SkipsModelValidations
 
           settings.each_with_index do |setting, index|
             db_setting = db_settings.find { |current_setting| current_setting.identifier == setting.identifier }

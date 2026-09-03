@@ -7,7 +7,7 @@ RSpec.describe AiUsageDailyAggregatesFinder do
   let(:relation) { AiUsageDailyAggregate.where(project_id: project.id) }
 
   def seed_day(date, generation_count:, total_usage:)
-    # rubocop:disable Rails/SkipsModelValidations -- seeding pre-aggregated rows directly, not exercising validations
+    # rubocop:disable-next Rails/SkipsModelValidations -- seeding pre-aggregated rows directly, not exercising validations
     AiUsageDailyAggregate.insert!(
       {
         project_id: project.id,
@@ -20,7 +20,6 @@ RSpec.describe AiUsageDailyAggregatesFinder do
         updated_at: Time.current,
       }
     )
-    # rubocop:enable Rails/SkipsModelValidations
   end
 
   describe '#execute' do

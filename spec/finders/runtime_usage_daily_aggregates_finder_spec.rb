@@ -7,7 +7,7 @@ RSpec.describe RuntimeUsageDailyAggregatesFinder do
   let(:relation) { RuntimeUsageDailyAggregate.where(flow_id: flow.id) }
 
   def seed_day(date, execution_count:, total_execution_time_us:)
-    # rubocop:disable Rails/SkipsModelValidations -- seeding pre-aggregated rows directly, not exercising validations
+    # rubocop:disable-next Rails/SkipsModelValidations -- seeding pre-aggregated rows directly, not exercising validations
     RuntimeUsageDailyAggregate.insert!(
       {
         flow_id: flow.id,
@@ -20,7 +20,6 @@ RSpec.describe RuntimeUsageDailyAggregatesFinder do
         updated_at: Time.current,
       }
     )
-    # rubocop:enable Rails/SkipsModelValidations
   end
 
   describe '#execute' do

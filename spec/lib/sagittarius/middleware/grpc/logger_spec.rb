@@ -37,9 +37,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::Logger do
     end
 
     context 'when no exception occurs' do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       before { interceptor.request_response(request: request, call: call, method: method) {} }
-      # rubocop:enable Lint/EmptyBlock
 
       it do
         expect(Rails.logger).to have_received(:info).with(
@@ -108,9 +107,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::Logger do
     end
 
     context 'when no exception occurs' do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       before { interceptor.server_streamer(request: request, call: call, method: method) {} }
-      # rubocop:enable Lint/EmptyBlock
 
       it do
         expect(Rails.logger).to have_received(:info).with(
@@ -179,9 +177,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::Logger do
     end
 
     context 'when no exception occurs' do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       before { interceptor.client_streamer(call: call, method: method) {} }
-      # rubocop:enable Lint/EmptyBlock
 
       it do
         expect(Rails.logger).to have_received(:info).with(
@@ -250,9 +247,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::Logger do
     end
 
     context 'when no exception occurs' do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       before { interceptor.bidi_streamer(request: [request], call: call, method: method) {} }
-      # rubocop:enable Lint/EmptyBlock
 
       it do
         expect(Rails.logger).to have_received(:info).with(

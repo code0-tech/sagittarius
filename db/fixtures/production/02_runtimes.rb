@@ -11,10 +11,9 @@ runtime = Runtime.new(
   token: initial_runtime_token
 )
 
-# rubocop:disable Code0/ZeroTrack/Logs/RailsLogger -- we can't include a module here
+# rubocop:disable-next Code0/ZeroTrack/Logs/RailsLogger -- we can't include a module here
 if runtime.save
   Rails.logger.info(message: 'Initial runtime created')
 else
   Rails.logger.warn(message: 'Failed to create initial runtime', errors: runtime.errors.full_messages)
 end
-# rubocop:enable Code0/ZeroTrack/Logs/RailsLogger

@@ -21,10 +21,9 @@ module Runtimes
 
         def execute
           transactional do |t|
-            # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
+            # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
             RuntimeFunctionDefinition.where(runtime: current_runtime,
                                             runtime_module: runtime_module).update_all(removed_at: Time.zone.now)
-            # rubocop:enable Rails/SkipsModelValidations
             runtime_function_definitions.each do |runtime_function_definition|
               update_runtime_function_definition(runtime_function_definition, t)
             end
@@ -90,9 +89,8 @@ module Runtimes
         end
 
         def update_parameters(runtime_function_definition, parameters, db_parameters, t)
-          # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
+          # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
           db_parameters.update_all(removed_at: Time.zone.now)
-          # rubocop:enable Rails/SkipsModelValidations
 
           parameters.each_with_index do |real_param, index|
             db_param = db_parameters.find { |current_param| current_param.runtime_name == real_param.runtime_name }

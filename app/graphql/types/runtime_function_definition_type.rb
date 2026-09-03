@@ -55,9 +55,8 @@ module Types
                                                            description: 'Deprecation messages'
     field :descriptions, [Types::TranslationType], null: true,
                                                    description: 'Descriptions of the runtime function definition'
-    # rubocop:disable GraphQL/ExtractType
+    # rubocop:disable-next GraphQL/ExtractType
     field :display_messages, [Types::TranslationType], null: true, description: 'Display messages'
-    # rubocop:enable GraphQL/ExtractType
     field :documentations, [Types::TranslationType], null: true,
                                                      description: 'Documentations of the runtime function definition'
     field :names, [Types::TranslationType], null: true, description: 'Names of the runtime function definition'

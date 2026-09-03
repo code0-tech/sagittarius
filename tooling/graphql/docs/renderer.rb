@@ -6,7 +6,7 @@ require_relative 'parser'
 module Tooling
   module Graphql
     module Docs
-      class Renderer # rubocop:disable GraphQL/ObjectDescription -- this is not a graphql object
+      class Renderer
         include Tooling::Graphql::Docs::Helper
 
         attr_reader :parser

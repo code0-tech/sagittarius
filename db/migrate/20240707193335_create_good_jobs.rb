@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CreateGoodJobs < Code0::ZeroTrack::Database::Migration[1.0]
-  # rubocop:disable Layout/LineLength -- this is a migration from good_job gem
+  # rubocop:disable-next Layout/LineLength -- this is a migration from good_job gem
   def change
     # Uncomment for Postgres v12 or earlier to enable gen_random_uuid() support
     # enable_extension 'pgcrypto'
@@ -107,5 +107,4 @@ class CreateGoodJobs < Code0::ZeroTrack::Database::Migration[1.0]
     add_index :good_job_executions, %i[process_id created_at],
               name: :index_good_job_executions_on_process_id_and_created_at
   end
-  # rubocop:enable Layout/LineLength
 end

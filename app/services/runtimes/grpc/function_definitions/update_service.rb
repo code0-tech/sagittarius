@@ -38,10 +38,9 @@ module Runtimes
         protected
 
         def mark_existing_function_definitions_as_removed
-          # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, validations are irrelevant
+          # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, validations are irrelevant
           FunctionDefinition.where(runtime: current_runtime, runtime_module: runtime_module)
                             .update_all(removed_at: Time.zone.now)
-          # rubocop:enable Rails/SkipsModelValidations
         end
 
         def enqueue_runtime_compatibility_update

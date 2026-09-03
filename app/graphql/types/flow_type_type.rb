@@ -31,9 +31,8 @@ module Types
     # rubocop:enable GraphQL/ExtractType
     field :signature, String, null: false, description: 'Signature of the flow type'
 
-    # rubocop:disable GraphQL/ExtractType
+    # rubocop:disable-next GraphQL/ExtractType
     field :display_icon, String, null: true, description: 'Display icon of the flow type'
-    # rubocop:enable GraphQL/ExtractType
 
     field :definition_source, String, null: true, description: 'The source that defines this flow type'
     field :version, String, null: false, description: 'Version of the flow type'

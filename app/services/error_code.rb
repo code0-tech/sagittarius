@@ -11,7 +11,7 @@ class ErrorCode
     raise InvalidErrorCode, error_code unless error_codes.include?(error_code)
   end
 
-  # rubocop:disable Layout/LineLength -- To keep readability of the error codes
+  # rubocop:disable-next Layout/LineLength -- To keep readability of the error codes
   def self.error_codes
     {
       missing_permission: { description: 'The user is not permitted to perform this operation' },
@@ -117,7 +117,6 @@ class ErrorCode
       generation_usage_recording_failed: { description: 'Failed to record AI generation usage counters' },
     }
   end
-  # rubocop:enable Layout/LineLength
 end
 
 ErrorCode.prepend_extensions
