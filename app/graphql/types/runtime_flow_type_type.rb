@@ -29,10 +29,9 @@ module Types
     field :runtime_flow_type_settings, [Types::RuntimeFlowTypeSettingType],
           null: false,
           description: 'Runtime flow type settings of the runtime flow type'
-    # rubocop:disable GraphQL/ExtractType
+    # rubocop:disable-next GraphQL/ExtractType
     field :runtime_module, Types::RuntimeModuleType, null: false,
                                                      description: 'Runtime module of the runtime flow type'
-    # rubocop:enable GraphQL/ExtractType
     field :signature, String, null: false, description: 'Signature of the runtime flow type'
     field :version, String, null: false, description: 'Version of the runtime flow type'
 

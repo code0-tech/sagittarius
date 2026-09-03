@@ -56,11 +56,10 @@ RSpec.describe Namespaces::Licenses::CreateService do
       }
     end
 
-    # rubocop:disable RSpec/LetSetup
+    # rubocop:disable-next RSpec/LetSetup
     let!(:params) do
       { data: create(:license, **license_data).data, namespace: namespace }
     end
-    # rubocop:enable RSpec/LetSetup
 
     before do
       stub_allowed_ability(NamespacePolicy, :create_license, user: current_user, subject: namespace)

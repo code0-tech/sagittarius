@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MoveOrganizationMembersToNamespaces < Code0::ZeroTrack::Database::Migration[1.0]
-  # rubocop:disable Rails/NotNullColumn -- backwards compatibility was intentionally ignored
+  # rubocop:disable-next Rails/NotNullColumn -- backwards compatibility was intentionally ignored
   def change
     remove_index :organization_members, %i[organization_id user_id],
                  name: 'index_organization_members_on_organization_id_and_user_id', unique: true
@@ -14,5 +14,4 @@ class MoveOrganizationMembersToNamespaces < Code0::ZeroTrack::Database::Migratio
     add_reference :namespace_members, :namespace, null: false, foreign_key: { on_delete: :cascade }, index: false
     add_index :namespace_members, %i[namespace_id user_id], unique: true
   end
-  # rubocop:enable Rails/NotNullColumn
 end

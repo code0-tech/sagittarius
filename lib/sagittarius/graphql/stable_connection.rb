@@ -2,7 +2,6 @@
 
 module Sagittarius
   module Graphql
-    # rubocop:disable GraphQL/ObjectDescription -- this is a connection implementation, not a GraphQL object
     class StableConnection < GraphQL::Pagination::Connection
       def cursor_for(item)
         encode(item.id.to_s)
@@ -66,6 +65,5 @@ module Sagittarius
       end
       # rubocop:enable Naming/PredicateMethod, Naming/PredicatePrefix
     end
-    # rubocop:enable GraphQL/ObjectDescription
   end
 end

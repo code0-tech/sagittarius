@@ -37,10 +37,9 @@ module Types
     field :throws_error, Boolean,
           null: false, description: 'Indicates if the function can throw an error'
 
-    # rubocop:disable GraphQL/ExtractType
+    # rubocop:disable-next GraphQL/ExtractType
     field :display_icon, String,
           null: true, description: 'Display icon of the function'
-    # rubocop:enable GraphQL/ExtractType
 
     field :design, String,
           null: true, description: 'Design metadata of the function'

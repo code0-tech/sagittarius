@@ -40,9 +40,8 @@ RSpec.describe 'usersIdentityLogin Mutation' do
 
   def setup_identity_provider(identity)
     provider = Code0::Identities::IdentityProvider.new
-    # rubocop:disable RSpec/AnyInstance
+    # rubocop:disable-next RSpec/AnyInstance
     allow_any_instance_of(Users::Identity::LoginService).to receive(:identity_provider).and_return(provider)
-    # rubocop:enable RSpec/AnyInstance
     allow(provider).to receive(:load_identity).and_return identity
   end
 

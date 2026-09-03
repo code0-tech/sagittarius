@@ -2,6 +2,5 @@
 
 require 'digest'
 
-# rubocop:disable Lint/RedundantDirGlobSort
+# rubocop:disable-next Lint/RedundantDirGlobSort
 Dir[File.join(__dir__, 'cop', '**', '*.rb')].sort.each { |file| require file }
-# rubocop:enable Lint/RedundantDirGlobSort

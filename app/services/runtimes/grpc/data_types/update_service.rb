@@ -114,10 +114,9 @@ module Runtimes
             runtime_module_resolver.call(data_type)
           end.uniq
 
-          # rubocop:disable Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
+          # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
           DataType.where(runtime: current_runtime, runtime_module: runtime_modules)
                   .update_all(removed_at: Time.zone.now)
-          # rubocop:enable Rails/SkipsModelValidations
         end
 
         def enqueue_runtime_compatibility_update

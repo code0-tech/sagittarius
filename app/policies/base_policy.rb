@@ -15,11 +15,10 @@ class BasePolicy < DeclarativePolicy::Base
     @user # in declarative-policy this is the user, but we pass a wrapper object for more metadata
   end
 
-  # rubocop:disable Rails/Delegate -- this breaks the graphql:compile_docs task if using delegate
+  # rubocop:disable-next Rails/Delegate -- this breaks the graphql:compile_docs task if using delegate
   def user
     authentication.user
   end
-  # rubocop:enable Rails/Delegate
 
   condition(:anonymous) { authentication.nil? || authentication.type == :none }
   condition(:admin) { user&.admin? }

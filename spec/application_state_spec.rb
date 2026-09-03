@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/DescribeClass -- this test is testing global application state
+# rubocop:disable-next RSpec/DescribeClass -- this test is testing global application state
 RSpec.describe 'application state', :eager_load do
   describe 'all extension classes' do
     # rubocop:disable RSpec/NoExpectationExample -- these tests fail with exceptions
@@ -33,4 +33,3 @@ RSpec.describe 'application state', :eager_load do
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass

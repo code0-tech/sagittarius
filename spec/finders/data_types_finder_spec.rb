@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DataTypesFinder do
-  # rubocop:disable RSpec/IndexedLet -- a finder needs to set up a lot of data with the same type
+  # rubocop:disable-next RSpec/IndexedLet -- a finder needs to set up a lot of data with the same type
   describe '#execute' do
     let(:runtime) { create(:runtime) }
     let!(:data_type1) { create(:data_type, runtime: runtime) }
@@ -133,5 +133,4 @@ RSpec.describe DataTypesFinder do
       end
     end
   end
-  # rubocop:enable RSpec/IndexedLet
 end

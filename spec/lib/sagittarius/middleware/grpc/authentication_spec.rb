@@ -46,25 +46,23 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
 
   describe '#execute' do
     context 'when no authentication is passed' do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       it 'raises Unauthenticated' do
         expect do
           interceptor.execute(request: request, call: call, method: method) {}
         end.to raise_error(GRPC::Unauthenticated)
       end
-      # rubocop:enable Lint/EmptyBlock
     end
 
     context 'when an invalid JWT is passed' do
       let(:metadata) { { 'authorization' => 'Bearer not-a-real-jwt' } }
 
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       it 'raises Unauthenticated' do
         expect do
           interceptor.execute(request: request, call: call, method: method) {}
         end.to raise_error(GRPC::Unauthenticated)
       end
-      # rubocop:enable Lint/EmptyBlock
     end
 
     context 'when the JWT subject does not match an existing runtime' do
@@ -76,27 +74,25 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
         }
       end
 
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       it 'raises Unauthenticated' do
         expect do
           interceptor.execute(request: request, call: call, method: method) {}
         end.to raise_error(GRPC::Unauthenticated)
       end
-      # rubocop:enable Lint/EmptyBlock
     end
 
     context 'when a valid gateway JWT is passed' do
       let(:runtime) { create(:runtime) }
       let(:metadata) { { 'authorization' => jwt_for(runtime) } }
 
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       it 'yields and pushes the runtime onto the context' do
         interceptor.execute(request: request, call: call, method: method) {}
 
         expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
                                                                                       namespace_id: nil })
       end
-      # rubocop:enable Lint/EmptyBlock
     end
 
     context 'when an anonymous service is called' do
@@ -143,55 +139,51 @@ RSpec.describe Sagittarius::Middleware::Grpc::Authentication do
     let(:runtime) { create(:runtime) }
     let(:metadata) { { 'authorization' => jwt_for(runtime) } }
 
-    # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+    # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
     it 'delegates to #execute' do
       interceptor.request_response(request: request, call: call, method: method) {}
 
       expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
                                                                                     namespace_id: nil })
     end
-    # rubocop:enable Lint/EmptyBlock
   end
 
   describe '#server_streamer' do
     let(:runtime) { create(:runtime) }
     let(:metadata) { { 'authorization' => jwt_for(runtime) } }
 
-    # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+    # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
     it 'delegates to #execute' do
       interceptor.server_streamer(request: request, call: call, method: method) {}
 
       expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
                                                                                     namespace_id: nil })
     end
-    # rubocop:enable Lint/EmptyBlock
   end
 
   describe '#client_streamer' do
     let(:runtime) { create(:runtime) }
     let(:metadata) { { 'authorization' => jwt_for(runtime) } }
 
-    # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+    # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
     it 'delegates to #execute' do
       interceptor.client_streamer(call: call, method: method) {}
 
       expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
                                                                                     namespace_id: nil })
     end
-    # rubocop:enable Lint/EmptyBlock
   end
 
   describe '#bidi_streamer' do
     let(:runtime) { create(:runtime) }
     let(:metadata) { { 'authorization' => jwt_for(runtime) } }
 
-    # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+    # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
     it 'delegates to #execute' do
       interceptor.bidi_streamer(request: request, call: call, method: method) {}
 
       expect(Code0::ZeroTrack::Context.current.to_h).to include('meta.runtime' => { id: runtime.id,
                                                                                     namespace_id: nil })
     end
-    # rubocop:enable Lint/EmptyBlock
   end
 end

@@ -46,9 +46,8 @@ class AuditEvent < ApplicationRecord
     project_module_configurations_updated: 40,
   }.with_indifferent_access
 
-  # rubocop:disable Lint/StructNewOverride
+  # rubocop:disable-next Lint/StructNewOverride
   GLOBAL_TARGET = Struct.new(:id, :class).new(0, Struct.new(:name).new('global'))
-  # rubocop:enable Lint/StructNewOverride
 
   partition_by :created_at, strategy: :monthly
 

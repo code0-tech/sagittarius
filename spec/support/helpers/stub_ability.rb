@@ -7,18 +7,16 @@ module StubAbility
   def stub_allowed_ability(policy_class, ability, user: nil, subject: nil)
     raise InvalidAbility, "Ability #{ability} does not exist" unless NamespaceRoleAbility::ABILITIES.key?(ability)
 
-    # rubocop:disable RSpec/AnyInstance -- policy instances are per user and subject
+    # rubocop:disable-next RSpec/AnyInstance -- policy instances are per user and subject
     allow_any_instance_of(policy_class)
       .to receive(:user_has_ability?)
       .with(ability, user, subject)
       .and_return(true)
-    # rubocop:enable RSpec/AnyInstance
   end
 
   def stub_all_abilities(policy_class)
-    # rubocop:disable RSpec/AnyInstance -- policy instances are per user and subject
+    # rubocop:disable-next RSpec/AnyInstance -- policy instances are per user and subject
     allow_any_instance_of(policy_class).to receive(:user_has_ability?).and_return(false)
-    # rubocop:enable RSpec/AnyInstance
   end
 end
 

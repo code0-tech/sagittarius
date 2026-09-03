@@ -98,9 +98,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::OpenTelemetry do
 
   describe 'span name and kind' do
     before do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       interceptor.request_response(request: request, call: call, method: method) {}
-      # rubocop:enable Lint/EmptyBlock
     end
 
     it 'names the span after the service and method' do
@@ -114,9 +113,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::OpenTelemetry do
 
   describe 'span attributes' do
     before do
-      # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+      # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
       interceptor.request_response(request: request, call: call, method: method) {}
-      # rubocop:enable Lint/EmptyBlock
     end
 
     it 'sets rpc.system.name to grpc' do
@@ -135,9 +133,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::OpenTelemetry do
       end
 
       it 'sets the remote span as parent' do
-        # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+        # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
         interceptor.request_response(request: request, call: call, method: method) {}
-        # rubocop:enable Lint/EmptyBlock
 
         expect(span.hex_trace_id).to eq('0af7651916cd43dd8448eb211c80319c')
         expect(span.hex_parent_span_id).to eq('b7ad6b7169203331')
@@ -146,9 +143,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::OpenTelemetry do
 
     context 'when no trace context is present' do
       it 'creates a new root span' do
-        # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+        # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
         interceptor.request_response(request: request, call: call, method: method) {}
-        # rubocop:enable Lint/EmptyBlock
 
         expect(span.hex_parent_span_id).to eq('0000000000000000')
       end
@@ -158,9 +154,8 @@ RSpec.describe Sagittarius::Middleware::Grpc::OpenTelemetry do
   describe 'error handling' do
     context 'when the call succeeds' do
       before do
-        # rubocop:disable Lint/EmptyBlock -- the block is part of the api and needs to be given
+        # rubocop:disable-next Lint/EmptyBlock -- the block is part of the api and needs to be given
         interceptor.request_response(request: request, call: call, method: method) {}
-        # rubocop:enable Lint/EmptyBlock
       end
 
       it 'sets rpc.response.status_code to OK' do
