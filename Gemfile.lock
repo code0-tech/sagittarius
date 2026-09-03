@@ -93,7 +93,7 @@ GEM
       base64 (~> 0.3.0)
       httparty (~> 0.22)
       ruby-saml (~> 1.18)
-    code0-license (0.3.0)
+    code0-license (0.4.0)
       base64 (~> 0.3.0)
     code0-zero_track (0.0.9)
       rails (>= 8.0.1)
@@ -620,7 +620,7 @@ DEPENDENCIES
   benchmark
   bootsnap
   code0-identities (~> 0.0.6)
-  code0-license (~> 0.3.0)
+  code0-license (~> 0.4.0)
   code0-zero_track (= 0.0.9)
   database_cleaner-active_record (~> 2.1)
   debug
