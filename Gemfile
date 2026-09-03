@@ -72,7 +72,7 @@ gem 'lograge', '~> 0.15.0'
 
 gem 'declarative_policy', '~> 2.0'
 
-gem 'code0-license', '~> 0.3.0'
+gem 'code0-license', '~> 0.4.0'
 
 gem 'good_job', '~> 4.0'
 
