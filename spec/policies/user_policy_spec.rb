@@ -23,11 +23,15 @@ RSpec.describe UserPolicy do
     let(:current_user) { create(:user, :admin) }
 
     it { is_expected.to be_allowed(:delete_user) }
+    it { is_expected.to be_allowed(:update_user) }
+    it { is_expected.to be_allowed(:update_attachment_avatar) }
 
     context 'when the user is internal' do
       let(:user) { create(:user, :ghost) }
 
       it { is_expected.not_to be_allowed(:delete_user) }
+      it { is_expected.not_to be_allowed(:update_user) }
+      it { is_expected.not_to be_allowed(:update_attachment_avatar) }
     end
   end
 end
