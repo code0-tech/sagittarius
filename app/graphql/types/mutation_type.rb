@@ -51,7 +51,7 @@ module Types
     mount_mutation Mutations::Users::PasswordReset
     mount_mutation Mutations::Users::Register
     mount_mutation Mutations::Users::Update
-    mount_mutation Mutations::Users::UpdateOrganizationPins
+    mount_mutation Mutations::Users::UpdateNamespacePins
   end
 end
 

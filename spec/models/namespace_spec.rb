@@ -12,6 +12,7 @@ RSpec.describe Namespace do
     it { is_expected.to have_many(:namespace_members).inverse_of(:namespace) }
     it { is_expected.to have_many(:roles).inverse_of(:namespace) }
     it { is_expected.to have_many(:users).through(:namespace_members).inverse_of(:namespaces) }
+    it { is_expected.to have_many(:user_namespace_pins).inverse_of(:namespace) }
   end
 
   describe '#organization_type?' do

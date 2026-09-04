@@ -27,7 +27,7 @@ module Namespaces
           end
 
           check_last_administrator(t)
-          remove_organization_pin
+          remove_namespace_pin
 
           AuditService.audit(
             :namespace_member_deleted,
@@ -56,12 +56,10 @@ module Namespaces
         end
       end
 
-      def remove_organization_pin
-        return unless namespace_member.namespace.organization_type?
-
-        UserOrganizationPin.where(
+      def remove_namespace_pin
+        UserNamespacePin.where(
           user: namespace_member.user,
-          organization: namespace_member.namespace.parent
+          namespace: namespace_member.namespace
         ).delete_all
       end
     end
