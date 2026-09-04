@@ -37,6 +37,10 @@ velorum:
   jwt_secret:
   jwt_ttl_minutes: 8
 
+crater:
+  jwt_secret:
+  jwt_ttl_minutes: 5
+
 opentelemetry:
   enabled: false
   service_name: sagittarius

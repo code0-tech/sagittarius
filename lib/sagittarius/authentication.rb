@@ -12,7 +12,7 @@ module Sagittarius
       (authentication.nil? && !none?) || type == :invalid
     end
 
-    %i[none session crater_login].each do |t|
+    %i[none session crater_login crater].each do |t|
       define_method :"#{t}?" do
         type == t
       end
