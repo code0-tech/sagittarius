@@ -19,6 +19,7 @@ RSpec.describe SagittariusSchema.types['User'] do
       emailVerifiedAt
       sessions
       identities
+      namespacePins
       mfaStatus
       userAbilities
       createdAt

@@ -38,6 +38,7 @@ class User < ApplicationRecord
   has_many :namespaces, through: :namespace_memberships, inverse_of: :users
 
   has_many :user_identities, inverse_of: :user
+  has_many :user_namespace_pins, -> { order(priority: :asc) }, inverse_of: :user
 
   has_one_attached :avatar
 

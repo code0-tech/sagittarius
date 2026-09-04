@@ -10,6 +10,7 @@ RSpec.describe User do
     it { is_expected.to have_many(:authored_audit_events).class_name('AuditEvent').inverse_of(:author) }
     it { is_expected.to have_many(:namespace_memberships).class_name('NamespaceMember').inverse_of(:user) }
     it { is_expected.to have_many(:namespaces).through(:namespace_memberships).inverse_of(:users) }
+    it { is_expected.to have_many(:user_namespace_pins).inverse_of(:user) }
   end
 
   describe 'validations' do

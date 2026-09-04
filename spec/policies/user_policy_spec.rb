@@ -11,12 +11,20 @@ RSpec.describe UserPolicy do
     let(:current_user) { create(:user) }
 
     it { is_expected.to be_allowed(:read_user) }
+    it { is_expected.not_to be_allowed(:update_user_namespace_pin) }
   end
 
   context 'when user is nil' do
     let(:current_user) { nil }
 
     it { is_expected.not_to be_allowed(:read_user) }
+    it { is_expected.not_to be_allowed(:update_user_namespace_pin) }
+  end
+
+  context 'when user is self' do
+    let(:current_user) { user }
+
+    it { is_expected.to be_allowed(:update_user_namespace_pin) }
   end
 
   context 'when the current user is an admin' do
@@ -25,6 +33,8 @@ RSpec.describe UserPolicy do
     it { is_expected.to be_allowed(:delete_user) }
     it { is_expected.to be_allowed(:update_user) }
     it { is_expected.to be_allowed(:update_attachment_avatar) }
+
+    it { is_expected.not_to be_allowed(:update_user_namespace_pin) }
 
     context 'when the user is internal' do
       let(:user) { create(:user, :ghost) }
