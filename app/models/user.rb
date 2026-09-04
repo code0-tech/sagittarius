@@ -6,6 +6,7 @@ class User < ApplicationRecord
   USER_TYPES = {
     regular: 0,
     ghost: 1,
+    crater: 2,
   }.freeze
 
   has_secure_password
