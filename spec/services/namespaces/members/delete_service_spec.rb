@@ -92,8 +92,8 @@ RSpec.describe Namespaces::Members::DeleteService do
 
   context 'when user is a member' do
     let(:current_user) { create(:user) }
-    let!(:organization_pin) do
-      create(:user_organization_pin, user: namespace_member.user, organization: namespace.parent)
+    let!(:namespace_pin) do
+      create(:user_namespace_pin, user: namespace_member.user, namespace: namespace)
     end
 
     before do
@@ -104,9 +104,9 @@ RSpec.describe Namespaces::Members::DeleteService do
     it { is_expected.to be_success }
     it { expect { service_response }.to change { NamespaceMember.count }.by(-1) }
 
-    it 'removes the organization pin for the deleted member' do
+    it 'removes the namespace pin for the deleted member' do
       expect { service_response }
-        .to change { UserOrganizationPin.exists?(organization_pin.id) }
+        .to change { UserNamespacePin.exists?(namespace_pin.id) }
         .from(true).to(false)
     end
 
@@ -125,16 +125,16 @@ RSpec.describe Namespaces::Members::DeleteService do
   context 'when namespace is a user namespace' do
     let(:namespace) { create(:namespace, :user) }
     let(:current_user) { create(:user) }
-    let!(:organization_pin) { create(:user_organization_pin, user: namespace_member.user) }
+    let!(:namespace_pin) { create(:user_namespace_pin, user: namespace_member.user) }
 
     before do
       create(:namespace_member, namespace: namespace, user: current_user)
       stub_allowed_ability(NamespacePolicy, :delete_member, user: current_user, subject: namespace)
     end
 
-    it 'does not remove unrelated organization pins' do
+    it 'does not remove unrelated namespace pins' do
       expect { service_response }
-        .not_to(change { UserOrganizationPin.exists?(organization_pin.id) })
+        .not_to(change { UserNamespacePin.exists?(namespace_pin.id) })
     end
   end
 end

@@ -1,15 +1,15 @@
 ---
-title: usersUpdateOrganizationPins
+title: usersUpdateNamespacePins
 ---
 
-Updates the pinned organizations for the current user, in the given order
+Updates the pinned namespaces for the current user, in the given order
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `organizationIds` | [`[OrganizationID!]!`](../scalar/organizationid.md) | Ordered list of organization IDs to pin for the user |
+| `namespaceIds` | [`[NamespaceID!]!`](../scalar/namespaceid.md) | Ordered list of namespace IDs to pin for the user |
 
 ## Fields
 

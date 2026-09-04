@@ -1275,23 +1275,23 @@ CREATE SEQUENCE user_identities_id_seq
 
 ALTER SEQUENCE user_identities_id_seq OWNED BY user_identities.id;
 
-CREATE TABLE user_organization_pins (
+CREATE TABLE user_namespace_pins (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    organization_id bigint NOT NULL,
+    namespace_id bigint NOT NULL,
     priority integer NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
 );
 
-CREATE SEQUENCE user_organization_pins_id_seq
+CREATE SEQUENCE user_namespace_pins_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE user_organization_pins_id_seq OWNED BY user_organization_pins.id;
+ALTER SEQUENCE user_namespace_pins_id_seq OWNED BY user_namespace_pins.id;
 
 CREATE TABLE user_sessions (
     id bigint NOT NULL,
@@ -1450,7 +1450,7 @@ ALTER TABLE ONLY translations ALTER COLUMN id SET DEFAULT nextval('translations_
 
 ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_identities_id_seq'::regclass);
 
-ALTER TABLE ONLY user_organization_pins ALTER COLUMN id SET DEFAULT nextval('user_organization_pins_id_seq'::regclass);
+ALTER TABLE ONLY user_namespace_pins ALTER COLUMN id SET DEFAULT nextval('user_namespace_pins_id_seq'::regclass);
 
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
 
@@ -1651,8 +1651,8 @@ ALTER TABLE ONLY translations
 ALTER TABLE ONLY user_identities
     ADD CONSTRAINT user_identities_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY user_organization_pins
-    ADD CONSTRAINT user_organization_pins_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY user_namespace_pins
+    ADD CONSTRAINT user_namespace_pins_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT user_sessions_pkey PRIMARY KEY (id);
@@ -1894,9 +1894,9 @@ CREATE INDEX index_user_identities_on_user_id ON user_identities USING btree (us
 
 CREATE UNIQUE INDEX index_user_identities_on_user_id_and_provider_id ON user_identities USING btree (user_id, provider_id);
 
-CREATE UNIQUE INDEX index_user_organization_pins_on_user_id_and_organization_id ON user_organization_pins USING btree (user_id, organization_id);
+CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_namespace_id ON user_namespace_pins USING btree (user_id, namespace_id);
 
-CREATE UNIQUE INDEX index_user_organization_pins_on_user_id_and_priority ON user_organization_pins USING btree (user_id, priority);
+CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_priority ON user_namespace_pins USING btree (user_id, priority);
 
 CREATE UNIQUE INDEX index_user_sessions_on_token ON user_sessions USING btree (token);
 
@@ -1905,9 +1905,6 @@ CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_i
 CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(email));
 
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
-
-ALTER TABLE ONLY user_organization_pins
-    ADD CONSTRAINT fk_rails_036679312e FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_0d79310cfa FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
@@ -1966,6 +1963,9 @@ ALTER TABLE ONLY runtime_statuses
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT fk_rails_3b02763f84 FOREIGN KEY (runtime_parameter_definition_id) REFERENCES runtime_parameter_definitions(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY user_namespace_pins
+    ADD CONSTRAINT fk_rails_3d829907f9 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY module_configuration_definition_data_type_links
     ADD CONSTRAINT fk_rails_42593aae68 FOREIGN KEY (module_configuration_definition_id) REFERENCES module_configuration_definitions(id) ON DELETE CASCADE;
 
@@ -1989,6 +1989,9 @@ ALTER TABLE ONLY flow_type_data_type_links
 
 ALTER TABLE ONLY runtime_modules
     ADD CONSTRAINT fk_rails_4ad6cfc2c6 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY user_namespace_pins
+    ADD CONSTRAINT fk_rails_4c1ca63df4 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_function_definitions
     ADD CONSTRAINT fk_rails_5161ff47e6 FOREIGN KEY (runtime_id) REFERENCES runtimes(id) ON DELETE CASCADE;
@@ -2040,9 +2043,6 @@ ALTER TABLE ONLY namespace_role_project_assignments
 
 ALTER TABLE ONLY flow_types
     ADD CONSTRAINT fk_rails_69115ada7f FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY user_organization_pins
-    ADD CONSTRAINT fk_rails_6b125cdf79 FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_member_roles
     ADD CONSTRAINT fk_rails_6c0d5a04c4 FOREIGN KEY (member_id) REFERENCES namespace_members(id) ON DELETE CASCADE;
