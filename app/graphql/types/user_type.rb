@@ -47,12 +47,11 @@ module Types
           description: 'Identities of this user',
           method: :user_identities
 
-    # rubocop:disable GraphQL/ExtractType -- namespace pins are directly on the user, not a nested namespace type
+    # rubocop:disable-next GraphQL/ExtractType -- namespace pins are directly on the user, not a nested namespace type
     field :namespace_pins, [Types::UserNamespacePinType],
           null: false,
           description: 'Pinned namespaces of this user, ordered by priority',
           method: :user_namespace_pins
-    # rubocop:enable GraphQL/ExtractType
 
     field :mfa_status, Types::MfaStatusType,
           null: true,
