@@ -18,7 +18,11 @@ class UserPolicy < BasePolicy
     enable :read_mfa_status
   end
 
-  rule { ~subject_is_regular }.prevent :delete_user
+  rule { ~subject_is_regular }.policy do
+    prevent :delete_user
+    prevent :update_user
+    prevent :update_attachment_avatar
+  end
 
   rule { admin_status_visible & ~anonymous }.enable :read_admin_status
 
