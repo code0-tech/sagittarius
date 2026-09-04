@@ -1257,6 +1257,25 @@ CREATE SEQUENCE translations_id_seq
 
 ALTER SEQUENCE translations_id_seq OWNED BY translations.id;
 
+CREATE TABLE user_custom_attributes (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    key text NOT NULL,
+    value jsonb NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT check_8df49217f1 CHECK ((char_length(key) <= 255))
+);
+
+CREATE SEQUENCE user_custom_attributes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE user_custom_attributes_id_seq OWNED BY user_custom_attributes.id;
+
 CREATE TABLE user_identities (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
@@ -1429,6 +1448,8 @@ ALTER TABLE ONLY sub_flow_settings ALTER COLUMN id SET DEFAULT nextval('sub_flow
 ALTER TABLE ONLY sub_flows ALTER COLUMN id SET DEFAULT nextval('sub_flows_id_seq'::regclass);
 
 ALTER TABLE ONLY translations ALTER COLUMN id SET DEFAULT nextval('translations_id_seq'::regclass);
+
+ALTER TABLE ONLY user_custom_attributes ALTER COLUMN id SET DEFAULT nextval('user_custom_attributes_id_seq'::regclass);
 
 ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_identities_id_seq'::regclass);
 
@@ -1627,6 +1648,9 @@ ALTER TABLE ONLY sub_flows
 
 ALTER TABLE ONLY translations
     ADD CONSTRAINT translations_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY user_custom_attributes
+    ADD CONSTRAINT user_custom_attributes_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY user_identities
     ADD CONSTRAINT user_identities_pkey PRIMARY KEY (id);
@@ -1865,6 +1889,8 @@ CREATE INDEX index_sub_flows_on_starting_node_id ON sub_flows USING btree (start
 
 CREATE INDEX index_translations_on_owner ON translations USING btree (owner_type, owner_id);
 
+CREATE UNIQUE INDEX index_user_custom_attributes_on_user_id_and_key ON user_custom_attributes USING btree (user_id, key);
+
 CREATE UNIQUE INDEX index_user_identities_on_provider_id_and_identifier ON user_identities USING btree (provider_id, identifier);
 
 CREATE INDEX index_user_identities_on_user_id ON user_identities USING btree (user_id);
@@ -1947,6 +1973,9 @@ ALTER TABLE ONLY data_type_data_type_links
 
 ALTER TABLE p_execution_node_results
     ADD CONSTRAINT fk_rails_460ac90523 FOREIGN KEY (execution_result_id, created_at) REFERENCES p_execution_results(id, created_at) ON DELETE CASCADE;
+
+ALTER TABLE ONLY user_custom_attributes
+    ADD CONSTRAINT fk_rails_47b91868a8 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY module_configurations
     ADD CONSTRAINT fk_rails_47f7323aca FOREIGN KEY (namespace_project_runtime_assignment_id) REFERENCES namespace_project_runtime_assignments(id) ON DELETE CASCADE;

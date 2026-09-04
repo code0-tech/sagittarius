@@ -5,13 +5,13 @@ require 'simplecov-cobertura'
 SimpleCov.start do
   coverage_dir 'tmp/coverage'
 
-  add_filter 'spec'
+  skip 'spec'
 
   %w[controllers finders graphql grpc jobs models policies services].each do |type|
-    add_group type.capitalize, "app/#{type}"
+    group type.capitalize, "app/#{type}"
   end
 
-  add_group 'Tooling', 'tooling'
+  group 'Tooling', 'tooling'
 
   formatter SimpleCov::Formatter::MultiFormatter.new(
     [

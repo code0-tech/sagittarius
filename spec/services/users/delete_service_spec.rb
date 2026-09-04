@@ -66,6 +66,8 @@ RSpec.describe Users::DeleteService do
   context 'when deleting the current user' do
     let(:user) { current_user }
 
+    before { create(:user, :admin) }
+
     it 'creates the deletion audit event with the ghost user as author' do
       expect(service_response).to be_success
 

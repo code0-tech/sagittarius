@@ -51,6 +51,10 @@ module Types
           null: true,
           description: 'Multi-factor authentication status of this user'
 
+    field :deletion_restriction, Types::UserDeletionRestrictionEnum,
+          null: true,
+          description: 'The reason why this user cannot be deleted'
+
     lookahead_field :namespace_memberships,
                     base_scope: ->(object) { object.namespace_memberships },
                     conditional_lookaheads: { user: :user, namespace: { namespace: :namespace_members } }
