@@ -34,6 +34,7 @@ class ErrorCode
       invalid_login_data: { description: 'Invalid login data provided' },
       user_blocked: { description: 'The user is blocked from accessing the application' },
       totp_secret_already_set: { description: 'This user already has TOTP set up' },
+      totp_secret_not_set: { description: 'This user does not have TOTP set up' },
       invalid_totp_secret: { description: 'The TOTP secret is invalid or cannot be verified' },
       wrong_totp: { description: 'Invalid TOTP code provided' },
       invalid_verification_code: { description: 'Invalid verification code provided' },

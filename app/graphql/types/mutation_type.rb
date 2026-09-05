@@ -39,6 +39,7 @@ module Types
     mount_mutation Mutations::Users::Identity::Register
     mount_mutation Mutations::Users::Identity::Unlink
     mount_mutation Mutations::Users::Mfa::BackupCodes::Rotate
+    mount_mutation Mutations::Users::Mfa::Totp::Disable
     mount_mutation Mutations::Users::Mfa::Totp::GenerateSecret
     mount_mutation Mutations::Users::Mfa::Totp::ValidateSecret
     mount_mutation Mutations::Users::Create
