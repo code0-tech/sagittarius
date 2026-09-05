@@ -36,7 +36,7 @@ module Users
               :mfa_disabled,
               author_id: current_user.id,
               entity: current_user,
-              details: { type: mfa_type },
+              details: { type: :totp, mfa_type: mfa_type },
               target: current_user
             )
 

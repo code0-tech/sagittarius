@@ -74,7 +74,7 @@ RSpec.describe Users::Mfa::Totp::DisableService do
         entity_id: current_user.id,
         target_type: 'User',
         target_id: current_user.id,
-        details: { type: 'totp' }
+        details: { type: 'totp', mfa_type: 'totp' }
       )
     }
   end
