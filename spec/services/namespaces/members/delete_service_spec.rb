@@ -95,6 +95,9 @@ RSpec.describe Namespaces::Members::DeleteService do
     let!(:namespace_pin) do
       create(:user_namespace_pin, user: namespace_member.user, namespace: namespace)
     end
+    let!(:project_pin) do
+      create(:user_project_pin, user: namespace_member.user, project: create(:namespace_project, namespace: namespace))
+    end
 
     before do
       create(:namespace_member, namespace: namespace, user: current_user)
@@ -107,6 +110,12 @@ RSpec.describe Namespaces::Members::DeleteService do
     it 'removes the namespace pin for the deleted member' do
       expect { service_response }
         .to change { UserNamespacePin.exists?(namespace_pin.id) }
+        .from(true).to(false)
+    end
+
+    it 'removes the project pins for the deleted member' do
+      expect { service_response }
+        .to change { UserProjectPin.exists?(project_pin.id) }
         .from(true).to(false)
     end
 
@@ -126,6 +135,7 @@ RSpec.describe Namespaces::Members::DeleteService do
     let(:namespace) { create(:namespace, :user) }
     let(:current_user) { create(:user) }
     let!(:namespace_pin) { create(:user_namespace_pin, user: namespace_member.user) }
+    let!(:project_pin) { create(:user_project_pin, user: namespace_member.user) }
 
     before do
       create(:namespace_member, namespace: namespace, user: current_user)
@@ -135,6 +145,11 @@ RSpec.describe Namespaces::Members::DeleteService do
     it 'does not remove unrelated namespace pins' do
       expect { service_response }
         .not_to(change { UserNamespacePin.exists?(namespace_pin.id) })
+    end
+
+    it 'does not remove unrelated project pins' do
+      expect { service_response }
+        .not_to(change { UserProjectPin.exists?(project_pin.id) })
     end
   end
 end

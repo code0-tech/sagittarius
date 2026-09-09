@@ -1312,6 +1312,24 @@ CREATE SEQUENCE user_namespace_pins_id_seq
 
 ALTER SEQUENCE user_namespace_pins_id_seq OWNED BY user_namespace_pins.id;
 
+CREATE TABLE user_project_pins (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    priority integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE user_project_pins_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE user_project_pins_id_seq OWNED BY user_project_pins.id;
+
 CREATE TABLE user_sessions (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
@@ -1472,6 +1490,8 @@ ALTER TABLE ONLY user_custom_attributes ALTER COLUMN id SET DEFAULT nextval('use
 ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_identities_id_seq'::regclass);
 
 ALTER TABLE ONLY user_namespace_pins ALTER COLUMN id SET DEFAULT nextval('user_namespace_pins_id_seq'::regclass);
+
+ALTER TABLE ONLY user_project_pins ALTER COLUMN id SET DEFAULT nextval('user_project_pins_id_seq'::regclass);
 
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
 
@@ -1677,6 +1697,9 @@ ALTER TABLE ONLY user_identities
 
 ALTER TABLE ONLY user_namespace_pins
     ADD CONSTRAINT user_namespace_pins_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY user_project_pins
+    ADD CONSTRAINT user_project_pins_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT user_sessions_pkey PRIMARY KEY (id);
@@ -1924,6 +1947,10 @@ CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_namespace_id ON use
 
 CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_priority ON user_namespace_pins USING btree (user_id, priority);
 
+CREATE UNIQUE INDEX index_user_project_pins_on_user_id_and_priority ON user_project_pins USING btree (user_id, priority);
+
+CREATE UNIQUE INDEX index_user_project_pins_on_user_id_and_project_id ON user_project_pins USING btree (user_id, project_id);
+
 CREATE UNIQUE INDEX index_user_sessions_on_token ON user_sessions USING btree (token);
 
 CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_id);
@@ -2151,6 +2178,9 @@ ALTER TABLE ONLY runtime_module_definition_flow_type_links
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_bc5ce475f9 FOREIGN KEY (inline_reference_value_id) REFERENCES inline_reference_values(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY user_project_pins
+    ADD CONSTRAINT fk_rails_bdcf326814 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY namespace_project_runtime_assignments
     ADD CONSTRAINT fk_rails_c019e5b233 FOREIGN KEY (namespace_project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
 
@@ -2195,6 +2225,9 @@ ALTER TABLE ONLY flow_data_type_links
 
 ALTER TABLE ONLY flow_type_settings
     ADD CONSTRAINT fk_rails_f6af7d8edf FOREIGN KEY (flow_type_id) REFERENCES flow_types(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY user_project_pins
+    ADD CONSTRAINT fk_rails_fb7140d2fd FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY node_functions
     ADD CONSTRAINT fk_rails_fbc91a3407 FOREIGN KEY (next_node_id) REFERENCES node_functions(id) DEFERRABLE INITIALLY DEFERRED;
