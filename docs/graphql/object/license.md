@@ -13,6 +13,8 @@ title: License
 | `id` | [`LicenseID!`](../scalar/licenseid.md) | Global ID of this License |
 | `licensee` | [`JSON!`](../scalar/json.md) | The licensee information |
 | `namespace` | [`Namespace!`](../object/namespace.md) | (Cloud only) The namespace the license belongs to |
+| `options` | [`LicenseOptions!`](../object/licenseoptions.md) | The options of the license |
+| `restrictions` | [`LicenseRestrictions!`](../object/licenserestrictions.md) | The restrictions of the license |
 | `startDate` | [`Time!`](../scalar/time.md) | The start date of the license |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this License was last updated |
 | `userAbilities` | [`LicenseUserAbilities!`](../object/licenseuserabilities.md) | Abilities for the current user on this License |

@@ -10,6 +10,8 @@ RSpec.describe SagittariusSchema.types['License'] do
       startDate
       endDate
       licensee
+      restrictions
+      options
       userAbilities
       createdAt
       updatedAt
