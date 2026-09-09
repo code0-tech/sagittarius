@@ -6,7 +6,6 @@ RSpec.describe SagittariusSchema.types['LicenseRestrictions'] do
   let(:fields) do
     %w[
       aiTokens
-      userCount
       workflowExecutions
     ]
   end

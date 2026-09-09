@@ -9,5 +9,4 @@ title: LicenseRestrictions
 | Name | Type | Description |
 |------|------|-------------|
 | `aiTokens` | [`Int`](../scalar/int.md) | AI token entitlement |
-| `userCount` | [`Int`](../scalar/int.md) | Maximum number of regular users |
 | `workflowExecutions` | [`Int`](../scalar/int.md) | Workflow execution entitlement |
