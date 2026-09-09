@@ -14,12 +14,7 @@ RSpec.describe 'usersUpdateNamespacePins Mutation' do
           #{error_query}
           user {
             id
-            namespacePins {
-              priority
-              namespace {
-                id
-              }
-            }
+            namespacePins
           }
         }
       }
@@ -50,8 +45,7 @@ RSpec.describe 'usersUpdateNamespacePins Mutation' do
       expect(graphql_data_at(:users_update_namespace_pins, :user, :id)).to eq(current_user.to_global_id.to_s)
 
       pins = graphql_data_at(:users_update_namespace_pins, :user, :namespace_pins)
-      expect(pins.pluck('priority')).to eq([0, 1])
-      expect(pins.pluck('namespace').pluck('id')).to eq(
+      expect(pins).to eq(
         [organization_namespace.to_global_id.to_s, personal_namespace.to_global_id.to_s]
       )
     end
