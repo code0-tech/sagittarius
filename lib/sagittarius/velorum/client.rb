@@ -46,23 +46,13 @@ module Sagittarius
       def jwt
         raise ArgumentError, 'velorum.jwt_secret must be configured' if jwt_secret.to_s.empty?
 
-        header = {
-          alg: 'HS256',
-          typ: 'JWT',
-        }
         now = Time.now.to_i
-        payload = {
+        claims = {
           iat: now - 60,
           exp: now + jwt_ttl_minutes.to_i.minutes.to_i,
         }
-        body = [header, payload].map { |part| base64_url_encode(part.to_json) }.join('.')
-        signature = OpenSSL::HMAC.digest('SHA256', jwt_secret, body)
 
-        "#{body}.#{base64_url_encode(signature)}"
-      end
-
-      def base64_url_encode(value)
-        Base64.urlsafe_encode64(value, padding: false)
+        Sagittarius::Jwt.encode(claims, secret: jwt_secret)
       end
     end
   end

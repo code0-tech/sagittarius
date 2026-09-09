@@ -77,6 +77,10 @@ module Sagittarius
           jwt_secret: nil,
           jwt_ttl_minutes: 8,
         },
+        crater: {
+          jwt_secret: nil,
+          jwt_ttl_minutes: 5,
+        },
         opentelemetry: {
           enabled: false,
           service_name: 'sagittarius',

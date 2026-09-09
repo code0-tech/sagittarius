@@ -26,6 +26,10 @@ FactoryBot.define do
       user_type { :ghost }
     end
 
+    trait :crater do
+      user_type { :crater }
+    end
+
     trait :with_namespace do
       after :build, &:ensure_namespace
     end
