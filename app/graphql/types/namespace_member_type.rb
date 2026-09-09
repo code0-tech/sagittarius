@@ -12,6 +12,10 @@ module Types
     field :member_roles, NamespaceMemberRoleType.connection_type, null: false, description: 'Memberroles of the member'
     field :roles, NamespaceRoleType.connection_type, null: false, description: 'Roles of the member'
 
+    lookahead_preload :namespace, :namespace
+    lookahead_preload :user, :user
+    lookahead_preload :namespace, { namespace: :namespace_members }, profile: :namespace_memberships
+
     expose_abilities %i[
       assign_member_roles
       delete_member
