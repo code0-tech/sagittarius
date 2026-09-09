@@ -47,6 +47,12 @@ module Types
           description: 'Identities of this user',
           method: :user_identities
 
+    # rubocop:disable-next GraphQL/ExtractType -- namespace pins are directly on the user, not a nested namespace type
+    field :namespace_pins, [Types::GlobalIdType[::Namespace]],
+          null: false,
+          description: 'IDs of the pinned namespaces of this user, ordered by priority',
+          authorize: :read_user_namespace_pins
+
     field :mfa_status, Types::MfaStatusType,
           null: true,
           description: 'Multi-factor authentication status of this user'
@@ -72,6 +78,10 @@ module Types
       return unless object.avatar.attached?
 
       Rails.application.routes.url_helpers.rails_storage_proxy_path object.avatar
+    end
+
+    def namespace_pins
+      object.user_namespace_pins.map { |pin| pin.namespace.to_global_id }
     end
 
     def mfa_status
