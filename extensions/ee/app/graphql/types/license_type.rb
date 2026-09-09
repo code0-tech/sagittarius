@@ -12,6 +12,10 @@ module Types
 
     field :licensee, GraphQL::Types::JSON, null: false, description: 'The licensee information'
 
+    field :restrictions, Types::LicenseRestrictionsType, null: false, description: 'The restrictions of the license'
+
+    field :options, Types::LicenseOptionsType, null: false, description: 'The options of the license'
+
     expose_abilities %i[
       delete_license
     ]

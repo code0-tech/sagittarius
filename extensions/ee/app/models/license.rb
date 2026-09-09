@@ -55,6 +55,10 @@ class License < ApplicationRecord
     license&.restrictions
   end
 
+  def options
+    license&.options
+  end
+
   def restricted?(attribute)
     license&.restricted?(attribute)
   end
