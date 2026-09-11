@@ -177,4 +177,20 @@ RSpec.describe 'Graphql' do
       expect(response.body).to be_empty
     end
   end
+
+  describe 'variable parsing' do
+    it 'preserves null entries nested inside array variables' do
+      captured_variables = nil
+      allow(SagittariusSchema).to receive(:execute) do |*_args, **kwargs|
+        captured_variables = kwargs[:variables]
+        { 'data' => {} }
+      end
+
+      post graphql_path,
+           headers: { 'content-type': 'application/json' },
+           params: { query: query, variables: { list: [1, nil, 3], scalar: nil } }.to_json
+
+      expect(captured_variables).to eq('list' => [1, nil, 3], 'scalar' => nil)
+    end
+  end
 end

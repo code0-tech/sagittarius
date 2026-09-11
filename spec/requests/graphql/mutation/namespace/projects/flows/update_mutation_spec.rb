@@ -303,6 +303,30 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
         expect(setting.object).to be_nil
       end
     end
+
+    context 'when a literal value contains an array with a null entry' do
+      before do
+        input[:flowInput][:nodes][0][:parameters][0][:value][:literalValue][:value] = [1, nil, 3]
+      end
+
+      it 'preserves the null entry when persisted' do
+        mutate!
+
+        flow_nodes = graphql_data_at(:namespaces_projects_flows_update, :flow, :nodes, :nodes)
+        parameter_response = flow_nodes
+                             .flat_map { |node| node['parameters']['nodes'] }
+                             .find do |parameter|
+          parameter.dig(
+            'value', '__typename'
+          ) == 'LiteralValue'
+        end
+
+        expect(parameter_response['value']['value']).to eq([1, nil, 3])
+
+        parameter = SagittariusSchema.object_from_id(parameter_response['id'])
+        expect(parameter.reload.literal_value).to eq([1, nil, 3])
+      end
+    end
   end
 
   context 'when updating a sub-flow by function identifier' do

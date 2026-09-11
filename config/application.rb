@@ -92,6 +92,14 @@ module Sagittarius
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Rails' deep_munge strips `null` entries out of any Array in `params` (but not out of
+    # Hash values), which silently drops nulls from array-typed GraphQL variables (e.g. a
+    # literalValue array containing null). GraphQL-ruby validates all variables against the
+    # schema's declared types before they reach resolver code, so the SQL-injection-style
+    # scenario deep_munge guards against (raw params arrays landing in ActiveRecord `where`
+    # clauses) doesn't apply to our GraphQL variable handling.
+    config.action_dispatch.perform_deep_munge = false
+
     # Autofix after generators
     config.generators.after_generate do |files|
       parsable_files = files.filter { |file| file.end_with?('.rb') }
