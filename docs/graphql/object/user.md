@@ -23,9 +23,20 @@ Represents a user
 | `namespace` | [`Namespace`](../object/namespace.md) | Namespace of this user |
 | `namespaceMemberships` | [`NamespaceMemberConnection!`](../object/namespacememberconnection.md) | Namespace Memberships of this user |
 | `namespacePins` | [`[NamespaceID!]!`](../scalar/namespaceid.md) | IDs of the pinned namespaces of this user, ordered by priority |
-| `projectPins` | [`[NamespaceProjectID!]!`](../scalar/namespaceprojectid.md) | IDs of the pinned projects of this user, ordered by priority |
 | `readme` | [`String`](../scalar/string.md) | Readme of the user |
 | `sessions` | [`UserSessionConnection!`](../object/usersessionconnection.md) | Sessions of this user |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this User was last updated |
 | `userAbilities` | [`UserUserAbilities!`](../object/useruserabilities.md) | Abilities for the current user on this User |
 | `username` | [`String!`](../scalar/string.md) | Username of the user |
+
+## Fields with arguments
+
+### projectPins
+
+IDs of the pinned projects of this user within the given namespace, ordered by priority
+
+Returns [`[NamespaceProjectID!]!`](../scalar/namespaceprojectid.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `namespaceId` | [`NamespaceID!`](../scalar/namespaceid.md) | ID of the namespace to list the pinned projects for |

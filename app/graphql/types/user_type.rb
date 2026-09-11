@@ -55,8 +55,12 @@ module Types
 
     field :project_pins, [Types::GlobalIdType[::NamespaceProject]],
           null: false,
-          description: 'IDs of the pinned projects of this user, ordered by priority',
-          authorize: :read_user_project_pins
+          description: 'IDs of the pinned projects of this user within the given namespace, ordered by priority',
+          authorize: :read_user_project_pins do
+      argument :namespace_id, Types::GlobalIdType[::Namespace],
+               required: true,
+               description: 'ID of the namespace to list the pinned projects for'
+    end
 
     field :mfa_status, Types::MfaStatusType,
           null: true,
@@ -89,8 +93,8 @@ module Types
       object.user_namespace_pins.map { |pin| pin.namespace.to_global_id }
     end
 
-    def project_pins
-      object.user_project_pins.map { |pin| pin.project.to_global_id }
+    def project_pins(namespace_id:)
+      object.user_project_pins.where(namespace_id: namespace_id.model_id).map { |pin| pin.project.to_global_id }
     end
 
     def mfa_status

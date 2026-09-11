@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Users::UpdateProjectPinsService do
   subject(:service_response) do
-    described_class.new(create_authentication(current_user), project_ids).execute
+    described_class.new(create_authentication(current_user), namespace_id, project_ids).execute
   end
 
   let(:user) { create(:user) }
@@ -12,6 +12,7 @@ RSpec.describe Users::UpdateProjectPinsService do
   let(:organization_namespace) { organization.ensure_namespace }
   let(:project_one) { create(:namespace_project, namespace: organization_namespace) }
   let(:project_two) { create(:namespace_project, namespace: organization_namespace) }
+  let(:namespace_id) { organization_namespace.id }
   let(:project_ids) { [project_one.id, project_two.id] }
 
   before do
@@ -44,6 +45,17 @@ RSpec.describe Users::UpdateProjectPinsService do
     it { expect(service_response.payload[:error_code]).to eq(:project_not_found) }
   end
 
+  context 'when a project does not belong to the given namespace' do
+    let(:current_user) { user }
+    let(:other_project) { create(:namespace_project, namespace: create(:organization).ensure_namespace) }
+    let(:project_ids) { [project_one.id, other_project.id] }
+
+    before { create(:namespace_member, namespace: other_project.namespace, user: user) }
+
+    it { is_expected.not_to be_success }
+    it { expect(service_response.payload[:error_code]).to eq(:project_not_found) }
+  end
+
   context 'when input is valid' do
     let(:current_user) { user }
 
@@ -65,18 +77,34 @@ RSpec.describe Users::UpdateProjectPinsService do
         entity_id: current_user.id,
         target_type: 'User',
         target_id: current_user.id,
-        details: { project_ids: project_ids }
+        details: { namespace_id: namespace_id, project_ids: project_ids }
       )
     end
 
-    context 'when the user already had different pins' do
+    context 'when the user already had different pins in the same namespace' do
       before do
-        create(:user_project_pin, user: user, project: create(:namespace_project, namespace: organization_namespace),
+        create(:user_project_pin, user: user, namespace: organization_namespace,
+                                  project: create(:namespace_project, namespace: organization_namespace),
                                   priority: 0)
       end
 
       it 'replaces the old pins entirely' do
         expect { service_response }.to change { user.reload.user_project_pins.count }.to(2)
+      end
+    end
+
+    context 'when the user has pins in a different namespace' do
+      let(:other_namespace) { create(:organization).ensure_namespace }
+
+      before do
+        create(:namespace_member, namespace: other_namespace, user: user)
+        create(:user_project_pin, user: user, namespace: other_namespace,
+                                  project: create(:namespace_project, namespace: other_namespace),
+                                  priority: 0)
+      end
+
+      it 'does not remove pins from the other namespace' do
+        expect { service_response }.not_to(change { UserProjectPin.where(namespace: other_namespace).count })
       end
     end
   end

@@ -9,12 +9,12 @@ RSpec.describe 'usersUpdateProjectPins Mutation' do
 
   let(:mutation) do
     <<~QUERY
-      mutation($input: UsersUpdateProjectPinsInput!) {
+      mutation($input: UsersUpdateProjectPinsInput!, $namespaceId: NamespaceID!) {
         usersUpdateProjectPins(input: $input) {
           #{error_query}
           user {
             id
-            projectPins
+            projectPins(namespaceId: $namespaceId)
           }
         }
       }
@@ -29,10 +29,11 @@ RSpec.describe 'usersUpdateProjectPins Mutation' do
 
   let(:input) do
     {
+      namespaceId: organization_namespace.to_global_id.to_s,
       projectIds: [project_one.to_global_id.to_s, project_two.to_global_id.to_s],
     }
   end
-  let(:variables) { { input: input } }
+  let(:variables) { { input: input, namespaceId: organization_namespace.to_global_id.to_s } }
 
   context 'when the user is a member of the project namespace' do
     before do

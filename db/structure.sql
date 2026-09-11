@@ -1315,6 +1315,7 @@ ALTER SEQUENCE user_namespace_pins_id_seq OWNED BY user_namespace_pins.id;
 CREATE TABLE user_project_pins (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
+    namespace_id bigint NOT NULL,
     project_id bigint NOT NULL,
     priority integer NOT NULL,
     created_at timestamp with time zone NOT NULL,
@@ -1947,7 +1948,7 @@ CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_namespace_id ON use
 
 CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_priority ON user_namespace_pins USING btree (user_id, priority);
 
-CREATE UNIQUE INDEX index_user_project_pins_on_user_id_and_priority ON user_project_pins USING btree (user_id, priority);
+CREATE UNIQUE INDEX idx_on_user_id_namespace_id_priority_9ed5ac7317 ON user_project_pins USING btree (user_id, namespace_id, priority);
 
 CREATE UNIQUE INDEX index_user_project_pins_on_user_id_and_project_id ON user_project_pins USING btree (user_id, project_id);
 
@@ -2027,6 +2028,9 @@ ALTER TABLE ONLY module_configurations
 
 ALTER TABLE ONLY data_type_data_type_links
     ADD CONSTRAINT fk_rails_443c90661b FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
+
+ALTER TABLE ONLY user_project_pins
+    ADD CONSTRAINT fk_rails_449389e9b6 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE p_execution_node_results
     ADD CONSTRAINT fk_rails_460ac90523 FOREIGN KEY (execution_result_id, created_at) REFERENCES p_execution_results(id, created_at) ON DELETE CASCADE;

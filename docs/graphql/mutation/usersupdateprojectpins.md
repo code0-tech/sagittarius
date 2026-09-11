@@ -2,14 +2,15 @@
 title: usersUpdateProjectPins
 ---
 
-Updates the pinned projects for the current user, in the given order
+Updates the pinned projects for the current user within a namespace, in the given order
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
-| `projectIds` | [`[NamespaceProjectID!]!`](../scalar/namespaceprojectid.md) | Ordered list of project IDs to pin for the user |
+| `namespaceId` | [`NamespaceID!`](../scalar/namespaceid.md) | ID of the namespace to pin the projects to |
+| `projectIds` | [`[NamespaceProjectID!]!`](../scalar/namespaceprojectid.md) | Ordered list of project IDs to pin for the user within the namespace |
 
 ## Fields
 

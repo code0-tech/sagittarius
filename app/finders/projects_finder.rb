@@ -4,6 +4,7 @@ class ProjectsFinder < ApplicationFinder
   def execute
     projects = base_scope
     projects = by_id(projects)
+    projects = by_namespace(projects)
     projects = by_namespace_member_user(projects)
 
     super(projects)
@@ -19,6 +20,12 @@ class ProjectsFinder < ApplicationFinder
     return projects unless params[:id]
 
     projects.where(id: params[:id])
+  end
+
+  def by_namespace(projects)
+    return projects unless params.key?(:namespace_id)
+
+    projects.where(namespace_id: params[:namespace_id])
   end
 
   def by_namespace_member_user(projects)
