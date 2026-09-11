@@ -3,6 +3,22 @@
 require 'rails_helper'
 
 RSpec.describe FlowHandler do
+  describe '.no_active_license?' do
+    subject(:no_active_license) do
+      Class.new { extend EE::FlowHandler::ClassMethods }.no_active_license?
+    end
+
+    it 'is true when no active license exists' do
+      expect(no_active_license).to be true
+    end
+
+    it 'is false when an active license exists' do
+      create(:license)
+
+      expect(no_active_license).to be false
+    end
+  end
+
   describe '#flows_for' do
     let(:flow) { create(:flow, validation_status: :valid) }
     let(:runtime) { create(:runtime, namespace: flow.project.namespace) }
@@ -16,15 +32,17 @@ RSpec.describe FlowHandler do
       )
     end
 
-    context 'when an active license exists' do
-      before { create(:license) }
+    context 'when FlowHandler reports an active license' do
+      before { stub_no_active_license(false) }
 
       it 'returns the valid flows' do
         expect(described_class.new.flows_for(runtime).flows).to contain_exactly(flow.to_grpc)
       end
     end
 
-    context 'when no active license exists' do
+    context 'when FlowHandler reports no active license' do
+      before { stub_no_active_license(true) }
+
       it 'returns an empty flow list' do
         expect(described_class.new.flows_for(runtime).flows).to be_empty
       end
@@ -46,7 +64,9 @@ RSpec.describe FlowHandler do
       allow(described_class).to receive(:gateway_client).and_return(gateway_client)
     end
 
-    context 'when no active license exists' do
+    context 'when FlowHandler reports no active license' do
+      before { stub_no_active_license(true) }
+
       it 'does not push flow updates' do
         described_class.update_flow(flow)
 
@@ -60,8 +80,8 @@ RSpec.describe FlowHandler do
       end
     end
 
-    context 'when an active license exists' do
-      before { create(:license) }
+    context 'when FlowHandler reports an active license' do
+      before { stub_no_active_license(false) }
 
       it 'still pushes flow updates' do
         described_class.update_flow(flow)
@@ -86,7 +106,9 @@ RSpec.describe FlowHandler do
       allow(described_class).to receive(:gateway_client).and_return(gateway_client)
     end
 
-    context 'when no active license exists' do
+    context 'when FlowHandler reports no active license' do
+      before { stub_no_active_license(true) }
+
       it 'only pushes an empty flow list and skips module configurations' do
         described_class.update_runtime(runtime)
 
@@ -98,8 +120,8 @@ RSpec.describe FlowHandler do
       end
     end
 
-    context 'when an active license exists' do
-      before { create(:license) }
+    context 'when FlowHandler reports an active license' do
+      before { stub_no_active_license(false) }
 
       it 'pushes the full flow and module configuration state' do
         described_class.update_runtime(runtime)

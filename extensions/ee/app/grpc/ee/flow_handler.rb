@@ -7,7 +7,7 @@ module EE
 
     override :flows_for
     def flows_for(runtime)
-      return Tucana::Shared::Flows.new(flows: []) if License.current.nil?
+      return Tucana::Shared::Flows.new(flows: []) if self.class.no_active_license?
 
       super
     end
@@ -15,16 +15,21 @@ module EE
     class_methods do
       include Sagittarius::Override
 
+      # Own method so Cloud can override it away (see CLOUD::FlowHandler).
+      def no_active_license?
+        License.current.nil?
+      end
+
       override :push_to_project_runtimes
       def push_to_project_runtimes(project, response)
-        return if License.current.nil?
+        return if no_active_license?
 
         super
       end
 
       override :update_runtime
       def update_runtime(runtime)
-        return push_empty_flows(runtime) if License.current.nil?
+        return push_empty_flows(runtime) if no_active_license?
 
         super
       end

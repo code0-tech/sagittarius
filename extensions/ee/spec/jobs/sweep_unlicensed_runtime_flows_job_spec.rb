@@ -11,7 +11,9 @@ RSpec.describe SweepUnlicensedRuntimeFlowsJob do
     allow(FlowHandler).to receive(:gateway_client).and_return(gateway_client)
   end
 
-  context 'when no active license exists' do
+  context 'when FlowHandler reports no active license' do
+    before { stub_no_active_license(true) }
+
     it 'pushes an empty flow list to every connected runtime' do
       running_runtime = create(:runtime)
       running_runtime.runtime_status.record_status!(status: :running)
@@ -27,9 +29,10 @@ RSpec.describe SweepUnlicensedRuntimeFlowsJob do
     end
   end
 
-  context 'when an active license exists' do
+  context 'when FlowHandler reports an active license' do
+    before { stub_no_active_license(false) }
+
     it 'does not push any flow updates' do
-      create(:license)
       runtime = create(:runtime)
       runtime.runtime_status.record_status!(status: :running)
 

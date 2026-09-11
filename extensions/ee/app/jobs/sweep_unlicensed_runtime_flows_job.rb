@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-# FlowHandler only clears a runtime's flows when it reconnects or when one of its flows
-# changes. This sweeps already-connected runtimes so a lapsed license takes effect without
-# waiting for either of those to happen.
+# FlowHandler only clears flows on reconnect or flow change; this sweeps already-connected
+# runtimes so a lapsed license takes effect without waiting for either.
 class SweepUnlicensedRuntimeFlowsJob < ApplicationJob
   def perform
-    return if License.current.present?
+    return unless FlowHandler.no_active_license?
 
     RuntimeStatus.running.find_each do |runtime_status|
       FlowHandler.gateway_client.push_flow(
