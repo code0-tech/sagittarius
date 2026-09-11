@@ -66,5 +66,22 @@ RSpec.describe Namespaces::Projects::Flows::DeleteService do
 
       expect(DeleteFlowForProjectJob).to have_received(:perform_later).with(namespace_project.id, flow.id)
     end
+
+    context 'when a node in the flow is the starting node of a sub-flow' do
+      let(:owner_node) { create(:node_function, flow: flow) }
+      let(:sub_flow_starting_node) { create(:node_function, flow: flow) }
+      let(:node_parameter) do
+        create(:node_parameter, node_function: owner_node, literal_value: nil, reference_value: nil)
+      end
+      let!(:sub_flow) { create(:sub_flow, node_parameter: node_parameter, starting_node: sub_flow_starting_node) }
+
+      it { is_expected.to be_success }
+
+      it 'deletes the flow along with the nested sub-flow' do
+        expect { service_response }.to change { Flow.count }.by(-1)
+
+        expect(SubFlow.exists?(sub_flow.id)).to be false
+      end
+    end
   end
 end

@@ -2176,7 +2176,7 @@ ALTER TABLE ONLY flow_settings
     ADD CONSTRAINT fk_rails_da3b2fb3c5 FOREIGN KEY (flow_id) REFERENCES flows(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY sub_flows
-    ADD CONSTRAINT fk_rails_e27dd4d82a FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_e27dd4d82a FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE p_execution_parameter_results
     ADD CONSTRAINT fk_rails_e2c2b3fddc FOREIGN KEY (execution_node_result_id, created_at) REFERENCES p_execution_node_results(id, created_at) ON DELETE CASCADE;
