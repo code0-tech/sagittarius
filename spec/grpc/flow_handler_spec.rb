@@ -62,7 +62,6 @@ RSpec.describe FlowHandler do
     let(:gateway_client) { instance_double(Sagittarius::Gateway::Client, push_flow: nil) }
 
     before do
-      create(:license)
       create(
         :namespace_project_runtime_assignment,
         namespace_project: flow.project,
@@ -103,7 +102,6 @@ RSpec.describe FlowHandler do
     let(:runtime) { create(:runtime, namespace: flow.project.namespace) }
 
     before do
-      create(:license)
       create(
         :namespace_project_runtime_assignment,
         namespace_project: flow.project,
