@@ -124,6 +124,7 @@ GEM
     factory_bot_rails (6.5.1)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
+    ffi (1.17.4)
     fiber-storage (0.1.2)
     fugit (1.12.3)
       et-orbi (~> 1.4)
@@ -568,6 +569,9 @@ GEM
     ruby-saml (1.18.1)
       nokogiri (>= 1.13.10)
       rexml
+    ruby-vips (2.3.0)
+      ffi (~> 1.12)
+      logger
     securerandom (0.4.1)
     seed-fu (2.3.9)
       activerecord (>= 3.1)
@@ -644,6 +648,7 @@ DEPENDENCIES
   rubocop-rails (~> 2.19)
   rubocop-rspec (~> 3.0)
   rubocop-rspec_rails (~> 2.30)
+  ruby-vips (~> 2.0)
   seed-fu (~> 2.3)
   shoulda-matchers (~> 8.0)
   simplecov (~> 1.0.0)

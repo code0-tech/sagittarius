@@ -88,7 +88,8 @@ gem 'pry-byebug', '~> 3.10'
 
 gem 'code0-zero_track', '0.0.9'
 
-gem 'image_processing', '>= 1.2'
+gem 'image_processing', '>= 1.2', require: false
+gem 'ruby-vips', '~> 2.0', require: false
 
 gem 'json-schema', '~> 6.0'
 
