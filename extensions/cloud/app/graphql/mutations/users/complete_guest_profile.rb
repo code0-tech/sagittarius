@@ -24,7 +24,7 @@ module Mutations
           return { user_session: nil, errors: [create_error(:invalid_password_repeat, 'Invalid password repeat')] }
         end
 
-        response = ::CLOUD::Users::CompleteGuestProfileService.new(
+        response = ::Users::CompleteGuestProfileService.new(
           claim_token,
           password: password,
           **params

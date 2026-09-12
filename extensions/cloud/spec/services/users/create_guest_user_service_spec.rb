@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe CLOUD::Users::CreateGuestUserService do
+RSpec.describe Users::CreateGuestUserService do
   subject(:service_response) do
     described_class.new(current_authentication, username: username, email: email).execute
   end

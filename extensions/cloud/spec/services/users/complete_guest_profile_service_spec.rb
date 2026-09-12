@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe CLOUD::Users::CompleteGuestProfileService do
+RSpec.describe Users::CompleteGuestProfileService do
   subject(:service_response) do
     described_class.new(
       claim_token,

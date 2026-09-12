@@ -14,7 +14,7 @@ module Mutations
       argument :username, String, required: true, description: 'Username for the guest user.'
 
       def resolve(**params)
-        response = ::CLOUD::Users::CreateGuestUserService.new(current_authentication, **params).execute
+        response = ::Users::CreateGuestUserService.new(current_authentication, **params).execute
 
         return { user: nil, claim_token: nil, errors: response.to_mutation_response[:errors] } if response.error?
 
