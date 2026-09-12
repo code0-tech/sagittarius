@@ -20,6 +20,7 @@ RSpec.describe SagittariusSchema.types['User'] do
       sessions
       identities
       namespacePins
+      projectPins
       mfaStatus
       deletionRestriction
       userAbilities

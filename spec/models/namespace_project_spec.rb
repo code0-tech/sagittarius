@@ -23,6 +23,8 @@ RSpec.describe NamespaceProject do
                                                .inverse_of(:assigned_projects)
       is_expected.to have_many(:flows).class_name('Flow').inverse_of(:project)
     end
+
+    it { is_expected.to have_many(:user_project_pins).inverse_of(:project) }
   end
 
   describe 'validations' do

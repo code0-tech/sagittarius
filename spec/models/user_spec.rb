@@ -12,6 +12,7 @@ RSpec.describe User do
     it { is_expected.to have_many(:namespaces).through(:namespace_memberships).inverse_of(:users) }
     it { is_expected.to have_many(:user_custom_attributes).inverse_of(:user) }
     it { is_expected.to have_many(:user_namespace_pins).inverse_of(:user) }
+    it { is_expected.to have_many(:user_project_pins).inverse_of(:user) }
   end
 
   describe 'validations' do

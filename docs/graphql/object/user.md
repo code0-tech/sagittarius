@@ -28,3 +28,15 @@ Represents a user
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this User was last updated |
 | `userAbilities` | [`UserUserAbilities!`](../object/useruserabilities.md) | Abilities for the current user on this User |
 | `username` | [`String!`](../scalar/string.md) | Username of the user |
+
+## Fields with arguments
+
+### projectPins
+
+IDs of the pinned projects of this user within the given namespace, ordered by priority
+
+Returns [`[NamespaceProjectID!]!`](../scalar/namespaceprojectid.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `namespaceId` | [`NamespaceID!`](../scalar/namespaceid.md) | ID of the namespace to list the pinned projects for |

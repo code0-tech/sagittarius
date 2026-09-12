@@ -1312,6 +1312,25 @@ CREATE SEQUENCE user_namespace_pins_id_seq
 
 ALTER SEQUENCE user_namespace_pins_id_seq OWNED BY user_namespace_pins.id;
 
+CREATE TABLE user_project_pins (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    namespace_id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    priority integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE SEQUENCE user_project_pins_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE user_project_pins_id_seq OWNED BY user_project_pins.id;
+
 CREATE TABLE user_sessions (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
@@ -1472,6 +1491,8 @@ ALTER TABLE ONLY user_custom_attributes ALTER COLUMN id SET DEFAULT nextval('use
 ALTER TABLE ONLY user_identities ALTER COLUMN id SET DEFAULT nextval('user_identities_id_seq'::regclass);
 
 ALTER TABLE ONLY user_namespace_pins ALTER COLUMN id SET DEFAULT nextval('user_namespace_pins_id_seq'::regclass);
+
+ALTER TABLE ONLY user_project_pins ALTER COLUMN id SET DEFAULT nextval('user_project_pins_id_seq'::regclass);
 
 ALTER TABLE ONLY user_sessions ALTER COLUMN id SET DEFAULT nextval('user_sessions_id_seq'::regclass);
 
@@ -1678,6 +1699,9 @@ ALTER TABLE ONLY user_identities
 ALTER TABLE ONLY user_namespace_pins
     ADD CONSTRAINT user_namespace_pins_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY user_project_pins
+    ADD CONSTRAINT user_project_pins_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY user_sessions
     ADD CONSTRAINT user_sessions_pkey PRIMARY KEY (id);
 
@@ -1721,6 +1745,8 @@ CREATE UNIQUE INDEX idx_on_runtime_id_namespace_project_id_bc3c86cc70 ON namespa
 CREATE UNIQUE INDEX idx_on_runtime_id_runtime_name_de2ab1bfc0 ON runtime_function_definitions USING btree (runtime_id, runtime_name);
 
 CREATE UNIQUE INDEX idx_on_runtime_module_definition_id_flow_type_id_2a6aed02ba ON runtime_module_definition_flow_type_links USING btree (runtime_module_definition_id, flow_type_id);
+
+CREATE UNIQUE INDEX idx_on_user_id_namespace_id_priority_9ed5ac7317 ON user_project_pins USING btree (user_id, namespace_id, priority);
 
 CREATE UNIQUE INDEX idx_p_exec_node_results_on_execution_id_and_position ON ONLY p_execution_node_results USING btree (created_at, execution_result_id, "position");
 
@@ -1924,6 +1950,8 @@ CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_namespace_id ON use
 
 CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_priority ON user_namespace_pins USING btree (user_id, priority);
 
+CREATE UNIQUE INDEX index_user_project_pins_on_user_id_and_project_id ON user_project_pins USING btree (user_id, project_id);
+
 CREATE UNIQUE INDEX index_user_sessions_on_token ON user_sessions USING btree (token);
 
 CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_id);
@@ -2000,6 +2028,9 @@ ALTER TABLE ONLY module_configurations
 
 ALTER TABLE ONLY data_type_data_type_links
     ADD CONSTRAINT fk_rails_443c90661b FOREIGN KEY (referenced_data_type_id) REFERENCES data_types(id) ON DELETE RESTRICT;
+
+ALTER TABLE ONLY user_project_pins
+    ADD CONSTRAINT fk_rails_449389e9b6 FOREIGN KEY (namespace_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
 ALTER TABLE p_execution_node_results
     ADD CONSTRAINT fk_rails_460ac90523 FOREIGN KEY (execution_result_id, created_at) REFERENCES p_execution_results(id, created_at) ON DELETE CASCADE;
@@ -2151,6 +2182,9 @@ ALTER TABLE ONLY runtime_module_definition_flow_type_links
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_bc5ce475f9 FOREIGN KEY (inline_reference_value_id) REFERENCES inline_reference_values(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY user_project_pins
+    ADD CONSTRAINT fk_rails_bdcf326814 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY namespace_project_runtime_assignments
     ADD CONSTRAINT fk_rails_c019e5b233 FOREIGN KEY (namespace_project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
 
@@ -2195,6 +2229,9 @@ ALTER TABLE ONLY flow_data_type_links
 
 ALTER TABLE ONLY flow_type_settings
     ADD CONSTRAINT fk_rails_f6af7d8edf FOREIGN KEY (flow_type_id) REFERENCES flow_types(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY user_project_pins
+    ADD CONSTRAINT fk_rails_fb7140d2fd FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY node_functions
     ADD CONSTRAINT fk_rails_fbc91a3407 FOREIGN KEY (next_node_id) REFERENCES node_functions(id) DEFERRABLE INITIALLY DEFERRED;
