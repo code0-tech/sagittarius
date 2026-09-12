@@ -1746,6 +1746,8 @@ CREATE UNIQUE INDEX idx_on_runtime_id_runtime_name_de2ab1bfc0 ON runtime_functio
 
 CREATE UNIQUE INDEX idx_on_runtime_module_definition_id_flow_type_id_2a6aed02ba ON runtime_module_definition_flow_type_links USING btree (runtime_module_definition_id, flow_type_id);
 
+CREATE UNIQUE INDEX idx_on_user_id_namespace_id_priority_9ed5ac7317 ON user_project_pins USING btree (user_id, namespace_id, priority);
+
 CREATE UNIQUE INDEX idx_p_exec_node_results_on_execution_id_and_position ON ONLY p_execution_node_results USING btree (created_at, execution_result_id, "position");
 
 CREATE UNIQUE INDEX idx_p_exec_param_results_on_node_result_id_and_position ON ONLY p_execution_parameter_results USING btree (created_at, execution_node_result_id, "position");
@@ -1947,8 +1949,6 @@ CREATE UNIQUE INDEX index_user_identities_on_user_id_and_provider_id ON user_ide
 CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_namespace_id ON user_namespace_pins USING btree (user_id, namespace_id);
 
 CREATE UNIQUE INDEX index_user_namespace_pins_on_user_id_and_priority ON user_namespace_pins USING btree (user_id, priority);
-
-CREATE UNIQUE INDEX idx_on_user_id_namespace_id_priority_9ed5ac7317 ON user_project_pins USING btree (user_id, namespace_id, priority);
 
 CREATE UNIQUE INDEX index_user_project_pins_on_user_id_and_project_id ON user_project_pins USING btree (user_id, project_id);
 
