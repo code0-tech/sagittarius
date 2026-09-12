@@ -8,8 +8,7 @@ module CLOUD
     prepended do
       generates_token_for :crater_login, expires_in: 10.minutes
 
-      # Invalidated once the guest sets a real password during profile completion.
-      generates_token_for :guest_claim, expires_in: 7.days do
+      generates_token_for :guest_claim do
         password_digest&.last(20)
       end
     end
