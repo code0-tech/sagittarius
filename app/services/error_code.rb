@@ -45,6 +45,7 @@ class ErrorCode
       invalid_setting: { description: 'Invalid setting provided' },
       invalid_user: { description: 'The user is invalid because of active model errors' },
       invalid_user_namespace_pin: { description: 'The user namespace pin is invalid because of active model errors' },
+      invalid_user_project_pin: { description: 'The user project pin is invalid because of active model errors' },
       invalid_password_repeat: { description: 'The provided password repeat does not match the password' },
       cannot_modify_admin: { description: 'Only administrators can modify admin status of users' },
       cannot_modify_own_admin: { description: 'Users cannot modify their own admin status' },

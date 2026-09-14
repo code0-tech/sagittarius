@@ -46,6 +46,7 @@ class AuditEvent < ApplicationRecord
     project_module_configurations_updated: 40,
     mfa_disabled: 41,
     user_namespace_pins_updated: 42,
+    user_project_pins_updated: 43,
   }.with_indifferent_access
 
   # rubocop:disable-next Lint/StructNewOverride

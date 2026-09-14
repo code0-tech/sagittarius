@@ -28,6 +28,7 @@ module Namespaces
 
           check_last_administrator(t)
           remove_namespace_pin
+          remove_project_pins
 
           AuditService.audit(
             :namespace_member_deleted,
@@ -60,6 +61,13 @@ module Namespaces
         UserNamespacePin.where(
           user: namespace_member.user,
           namespace: namespace_member.namespace
+        ).delete_all
+      end
+
+      def remove_project_pins
+        UserProjectPin.where(
+          user: namespace_member.user,
+          project: namespace_member.namespace.projects
         ).delete_all
       end
     end
