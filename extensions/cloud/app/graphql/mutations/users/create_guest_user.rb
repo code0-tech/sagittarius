@@ -11,7 +11,6 @@ module Mutations
       field :user, Types::UserType, null: true, description: 'The created guest user.'
 
       argument :email, String, required: true, description: 'Email for the guest user.'
-      argument :username, String, required: true, description: 'Username for the guest user.'
 
       def resolve(**params)
         response = ::Users::CreateGuestUserService.new(current_authentication, **params).execute

@@ -4,11 +4,10 @@ module Users
   class CreateGuestUserService
     include Sagittarius::Database::Transactional
 
-    attr_reader :current_authentication, :username, :email
+    attr_reader :current_authentication, :email
 
-    def initialize(current_authentication, username:, email:)
+    def initialize(current_authentication, email:)
       @current_authentication = current_authentication
-      @username = username
       @email = email
     end
 
@@ -17,13 +16,15 @@ module Users
         return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
       end
 
+      username = generate_username
+
       transactional do |t|
         user = ::User.create(
           username: username,
           email: email,
           # Guests can't create a session (GlobalPolicy#create_user_session requires `regular?`),
           # so this password only needs to satisfy has_secure_password's presence validation.
-          password: SecureRandom.hex(32),
+          password: SecureRandom.base58(50),
           user_type: :guest
         )
         unless user.persisted?
@@ -44,6 +45,20 @@ module Users
 
         ServiceResponse.success(payload: user)
       end
+    end
+
+    private
+
+    def generate_username
+      username = email.split('@').first
+      username = username[0..49] if username.length > 50
+
+      while User.exists?(username: username)
+        username += SecureRandom.base36(1)
+        username = SecureRandom.base36(20) if username.length > 50
+      end
+
+      username
     end
   end
 end

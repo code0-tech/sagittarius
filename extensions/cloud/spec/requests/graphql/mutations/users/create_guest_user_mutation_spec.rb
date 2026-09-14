@@ -22,9 +22,8 @@ RSpec.describe 'usersCreateGuestUser Mutation' do
     QUERY
   end
 
-  let(:username) { generate(:username) }
   let(:email) { generate(:email) }
-  let(:variables) { { input: { username: username, email: email } } }
+  let(:variables) { { input: { email: email } } }
 
   let(:secret) { 'crater-secret' }
   # rubocop:disable-next RSpec/LetSetup -- needs to exist in the DB for the controller to find it
@@ -52,8 +51,8 @@ RSpec.describe 'usersCreateGuestUser Mutation' do
 
     before { mutate! }
 
-    it 'creates a guest user' do
-      expect(graphql_data_at(:users_create_guest_user, :user, :username)).to eq(username)
+    it 'creates a guest user with a username generated from the email' do
+      expect(graphql_data_at(:users_create_guest_user, :user, :username)).to eq(email.split('@').first)
     end
 
     it 'returns a claim token' do
@@ -63,7 +62,7 @@ RSpec.describe 'usersCreateGuestUser Mutation' do
     it 'persists the user as a guest' do
       mutate!
 
-      expect(User.find_by(username: username)).to be_guest
+      expect(User.find_by(username: email.split('@').first)).to be_guest
     end
   end
 

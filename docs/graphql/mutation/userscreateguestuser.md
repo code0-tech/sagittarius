@@ -10,7 +10,6 @@ title: usersCreateGuestUser
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `email` | [`String!`](../scalar/string.md) | Email for the guest user. |
-| `username` | [`String!`](../scalar/string.md) | Username for the guest user. |
 
 ## Fields
 

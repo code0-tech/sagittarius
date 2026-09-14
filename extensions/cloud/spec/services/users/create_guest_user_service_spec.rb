@@ -4,10 +4,9 @@ require 'rails_helper'
 
 RSpec.describe Users::CreateGuestUserService do
   subject(:service_response) do
-    described_class.new(current_authentication, username: username, email: email).execute
+    described_class.new(current_authentication, email: email).execute
   end
 
-  let(:username) { generate(:username) }
   let(:email) { generate(:email) }
 
   shared_examples 'does not create a guest user' do
@@ -38,8 +37,8 @@ RSpec.describe Users::CreateGuestUserService do
       expect(service_response.payload).to be_guest
     end
 
-    it 'sets username and email' do
-      expect(service_response.payload.username).to eq(username)
+    it 'sets email and generates a username from it' do
+      expect(service_response.payload.username).to eq(email.split('@').first)
       expect(service_response.payload.email).to eq(email)
     end
 
@@ -48,9 +47,18 @@ RSpec.describe Users::CreateGuestUserService do
         :guest_user_created,
         author_id: crater_user.id,
         entity_type: 'User',
-        details: { 'username' => username, 'email' => email },
+        details: { 'username' => email.split('@').first, 'email' => email },
         target_type: 'global'
       )
+    end
+
+    context 'when the generated username is already taken' do
+      let!(:existing_user) { create(:user, username: email.split('@').first) }
+
+      it 'appends a random suffix to make it unique' do
+        expect(service_response.payload.username).to start_with(email.split('@').first)
+        expect(service_response.payload.username).not_to eq(existing_user.username)
+      end
     end
   end
 
