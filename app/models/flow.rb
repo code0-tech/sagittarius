@@ -98,6 +98,7 @@ class Flow < ApplicationRecord
           .join_sources
       )
       .where(ft[:id].eq(flow_type_id))
+      .where(rfts[:removed_at].eq(nil))
       .order(rfts[:position].asc)
       .select(fs[Arel.star])
   end
