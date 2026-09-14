@@ -94,7 +94,7 @@ module Sagittarius
     end
 
     def self.cron_jobs
-      {
+      jobs = {
         partition_manager_sync_job: {
           cron: '0 * * * *',
           class: 'PartitionManagerSyncJob',
@@ -106,6 +106,16 @@ module Sagittarius
           set: { queue: 'cron' },
         },
       }
+
+      Sagittarius::Extensions.ee do
+        jobs[:sweep_unlicensed_runtime_flows] = {
+          cron: '* * * * *',
+          class: 'SweepUnlicensedRuntimeFlowsJob',
+          set: { queue: 'cron' },
+        }
+      end
+
+      jobs
     end
   end
 end
