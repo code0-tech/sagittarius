@@ -52,6 +52,7 @@ module Types
     mount_mutation Mutations::Users::Register
     mount_mutation Mutations::Users::Update
     mount_mutation Mutations::Users::UpdateNamespacePins
+    mount_mutation Mutations::Users::UpdateProjectPins
   end
 end
 

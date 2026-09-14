@@ -89,5 +89,16 @@ RSpec.describe NodeFunction do
         ]
       )
     end
+
+    it 'excludes node parameters whose runtime parameter definition was removed' do
+      runtime_function_definition.parameters[1].update!(removed_at: Time.current)
+
+      expect(node_function.ordered_parameters.to_a).to eq(
+        [
+          node_function.node_parameters[2],
+          node_function.node_parameters[1]
+        ]
+      )
+    end
   end
 end

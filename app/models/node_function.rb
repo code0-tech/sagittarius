@@ -63,6 +63,7 @@ class NodeFunction < ApplicationRecord
       )
       .where(fd[:id].eq(function_definition_id))
       .where(np[:node_function_id].eq(id))
+      .where(rpd[:removed_at].eq(nil))
       .order(rpd[:position].asc)
       .select(np[Arel.star])
   end

@@ -129,3 +129,5 @@ class FlowHandler < Tucana::Sagittarius::Rails::FlowService::Service
     Tucana::Shared::Flows.new(flows: flows)
   end
 end
+
+FlowHandler.prepend_extensions

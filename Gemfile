@@ -50,7 +50,7 @@ group :development, :test do
 
   gem 'database_cleaner-active_record', '~> 2.1'
 
-  gem 'simplecov', '~> 1.1.0', require: false
+  gem 'simplecov', '~> 1.2.0', require: false
   gem 'simplecov-cobertura', '~> 4.0', require: false
 end
 
@@ -92,7 +92,7 @@ gem 'image_processing', '>= 1.2'
 
 gem 'json-schema', '~> 6.0'
 
-gem 'triangulum', '0.33.0'
+gem 'triangulum', '0.34.0'
 
 gem 'benchmark'
 

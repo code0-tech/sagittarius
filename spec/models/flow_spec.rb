@@ -42,6 +42,43 @@ RSpec.describe Flow do
     end
   end
 
+  describe '#ordered_settings' do
+    let(:runtime_flow_type) { create(:runtime_flow_type) }
+    let(:flow_type) { create(:flow_type, runtime_flow_type: runtime_flow_type) }
+
+    let(:active_runtime_setting) do
+      create(:runtime_flow_type_setting, runtime_flow_type: runtime_flow_type, identifier: 'ACTIVE_SETTING')
+    end
+    let(:removed_runtime_setting) do
+      create(:runtime_flow_type_setting, runtime_flow_type: runtime_flow_type, identifier: 'REMOVED_SETTING',
+                                         removed_at: Time.current)
+    end
+
+    let!(:active_flow_type_setting) do
+      create(:flow_type_setting, flow_type: flow_type, identifier: 'ACTIVE_SETTING',
+                                 runtime_flow_type_setting: active_runtime_setting)
+    end
+    let!(:removed_flow_type_setting) do
+      create(:flow_type_setting, flow_type: flow_type, identifier: 'REMOVED_SETTING',
+                                 runtime_flow_type_setting: removed_runtime_setting)
+    end
+
+    let!(:active_flow_setting) do
+      create(:flow_setting, flow_setting_id: active_flow_type_setting.identifier, object: { url: '/active' })
+    end
+    let!(:removed_flow_setting) do
+      create(:flow_setting, flow_setting_id: removed_flow_type_setting.identifier, object: { url: '/removed' })
+    end
+
+    let(:flow) do
+      create(:flow, flow_type: flow_type, flow_settings: [active_flow_setting, removed_flow_setting])
+    end
+
+    it 'excludes flow settings whose runtime flow type setting was removed' do
+      expect(flow.ordered_settings.to_a).to eq([active_flow_setting])
+    end
+  end
+
   describe '#to_grpc' do
     let(:runtime_flow_type) { create(:runtime_flow_type, identifier: 'RUNTIME_HTTP') }
     let(:runtime_flow_type_setting) do
