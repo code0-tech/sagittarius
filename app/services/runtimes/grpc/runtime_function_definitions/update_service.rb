@@ -9,21 +9,23 @@ module Runtimes
         include Runtimes::Grpc::TranslationUpdateHelper
         include Runtimes::Grpc::DataTypeHelper
 
-        attr_reader :current_runtime, :runtime_function_definitions, :runtime_module, :update_runtime_compatibility
+        attr_reader :current_runtime, :runtime_function_definitions, :runtime_module, :definition_source,
+                    :update_runtime_compatibility
 
-        def initialize(current_runtime, runtime_function_definitions, runtime_module:,
+        def initialize(current_runtime, runtime_function_definitions, runtime_module:, definition_source: nil,
                        update_runtime_compatibility: true)
           @current_runtime = current_runtime
           @runtime_function_definitions = runtime_function_definitions
           @runtime_module = runtime_module
+          @definition_source = definition_source
           @update_runtime_compatibility = update_runtime_compatibility
         end
 
         def execute
           transactional do |t|
             # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
-            RuntimeFunctionDefinition.where(runtime: current_runtime,
-                                            runtime_module: runtime_module).update_all(removed_at: Time.zone.now)
+            RuntimeFunctionDefinition.where(runtime: current_runtime, runtime_module: runtime_module,
+                                            definition_source: definition_source).update_all(removed_at: Time.zone.now)
             runtime_function_definitions.each do |runtime_function_definition|
               update_runtime_function_definition(runtime_function_definition, t)
             end
