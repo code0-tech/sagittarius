@@ -53,7 +53,7 @@ class Flow < ApplicationRecord
   end
 
   def to_grpc
-    Tucana::Shared::ValidationFlow.new(
+    grpc_flow = Tucana::Shared::ValidationFlow.new(
       flow_id: id,
       project_id: project.id,
       project_slug: project.slug,
@@ -67,6 +67,11 @@ class Flow < ApplicationRecord
       name: name,
       definition_source: flow_type.runtime_flow_type&.definition_source
     )
+
+    grpc_flow.input_schema = Tucana::Shared::Struct.from_hash(input_schema) if input_schema.present?
+    grpc_flow.output_schema = Tucana::Shared::Struct.from_hash(output_schema) if output_schema.present?
+
+    grpc_flow
   end
 
   def to_generation_grpc

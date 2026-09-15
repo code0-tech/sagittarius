@@ -29,6 +29,9 @@ class SubFlow < ApplicationRecord
       grpc_sub_flow.function = Tucana::Shared::SubFlowFunction.new(**function_args)
     end
 
+    grpc_sub_flow.input_schema = Tucana::Shared::Struct.from_hash(input_schema) if input_schema.present?
+    grpc_sub_flow.output_schema = Tucana::Shared::Struct.from_hash(output_schema) if output_schema.present?
+
     grpc_sub_flow
   end
 
