@@ -43,6 +43,23 @@ class GraphqlController < ApplicationController
     end
   end
 
+  protected
+
+  def anonymous_mutation?
+    selections = query.selected_operation.selections
+    return false unless selections.length == 1
+
+    mutation_name = selections.first.name
+    %w[
+      usersLogin
+      usersRegister
+      usersIdentityRegister
+      usersIdentityLogin
+      usersPasswordResetRequest
+      usersPasswordReset
+    ].include?(mutation_name)
+  end
+
   private
 
   # Handle variables in form data, JSON body, or a blank value
@@ -76,21 +93,6 @@ class GraphqlController < ApplicationController
 
   def mutation?
     query.mutation?
-  end
-
-  def anonymous_mutation?
-    selections = query.selected_operation.selections
-    return false unless selections.length == 1
-
-    mutation_name = selections.first.name
-    %w[
-      usersLogin
-      usersRegister
-      usersIdentityRegister
-      usersIdentityLogin
-      usersPasswordResetRequest
-      usersPasswordReset
-    ].include?(mutation_name)
   end
 
   def with_performance_tracking(current_user)
@@ -137,3 +139,5 @@ class GraphqlController < ApplicationController
     end
   end
 end
+
+GraphqlController.prepend_extensions

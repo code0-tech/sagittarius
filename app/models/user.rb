@@ -7,6 +7,7 @@ class User < ApplicationRecord
     regular: 0,
     ghost: 1,
     crater: 2,
+    guest: 3,
   }.freeze
 
   has_secure_password

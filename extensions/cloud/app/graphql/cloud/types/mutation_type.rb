@@ -8,7 +8,9 @@ module CLOUD
       prepended do
         mount_mutation Mutations::Namespaces::Licenses::Create
         mount_mutation Mutations::Namespaces::Licenses::Delete
+        mount_mutation Mutations::Users::CompleteGuestProfile
         mount_mutation Mutations::Users::CreateCraterToken
+        mount_mutation Mutations::Users::CreateGuestUser
       end
     end
   end

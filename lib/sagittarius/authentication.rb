@@ -4,6 +4,7 @@ module Sagittarius
   Authentication = Struct.new(:type, :authentication) do
     def mutations_allowed?
       return true if session?
+      return true if crater?
 
       false
     end

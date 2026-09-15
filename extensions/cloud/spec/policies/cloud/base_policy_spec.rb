@@ -58,4 +58,31 @@ RSpec.describe BasePolicy do
     it { is_expected.to be_allowed(:delete_license) }
     it { is_expected.not_to be_allowed(:namespace_administrator) }
   end
+
+  describe 'crater authentication globally' do
+    subject(:policy) { GlobalPolicy.new(authentication, :global) }
+
+    let(:crater_user) { create(:user, :crater) }
+
+    let(:authentication) do
+      Sagittarius::Authentication.new(
+        :crater,
+        CLOUD::ApplicationController::CraterToken.new(user: crater_user)
+      )
+    end
+
+    it { is_expected.to be_allowed(:create_guest_user) }
+  end
+
+  describe 'guest authentication' do
+    subject(:policy) { UserPolicy.new(authentication, guest_user) }
+
+    let(:guest_user) { create(:user, :guest) }
+
+    let(:authentication) { create_authentication(guest_user) }
+
+    it { is_expected.to be_allowed(:read_user) }
+    it { is_expected.not_to be_allowed(:update_user) }
+    it { is_expected.not_to be_allowed(:delete_user) }
+  end
 end
