@@ -379,13 +379,13 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
 
       perform :execute,
               query: <<~GQL,
-                subscription($executionIdentifier: String!) {
-                  namespacesProjectsFlowsExecutionResult(executionIdentifier: $executionIdentifier) {
+                subscription($flowId: FlowID!) {
+                  namespacesProjectsFlowsExecutionResult(flowId: $flowId) {
                     executionResult { success }
                   }
                 }
               GQL
-              variables: { executionIdentifier: 'execution-identifier' }
+              variables: { flowId: flow.to_global_id.to_s }
     end
 
     it 'delivers the execution result to subscribers without visibility profile error' do
