@@ -8,10 +8,10 @@ Subscription to asynchronously receive an execution result
 
 | Name | Type | Description |
 |------|------|-------------|
-| `executionIdentifier` | [`String!`](../scalar/string.md) | Execution identifier of the triggered execution |
+| `flowId` | [`FlowID!`](../scalar/flowid.md) | Id of the flow to receive execution results for |
 
 ## Fields
 
 | Name | Type | Description |
 |------|------|-------------|
-| `executionResult` | [`ExecutionResult`](../object/executionresult.md) | The execution result of the relevant execution |
+| `executionResult` | [`ExecutionResult`](../object/executionresult.md) | The most recent execution result of the relevant flow |
