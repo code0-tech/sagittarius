@@ -338,13 +338,18 @@ RSpec.describe 'sagittarius_rails.ModuleService', :need_grpc_server do
     end
 
     context 'when a definition is not sent anymore' do
-      let!(:runtime_module) { create(:runtime_module, runtime: runtime, identifier: 'taurus') }
-      let!(:data_type) { create(:data_type, runtime: runtime, runtime_module: runtime_module) }
+      let!(:runtime_module) do
+        create(:runtime_module, runtime: runtime, identifier: 'taurus', definition_source: 'taurus')
+      end
+      let!(:data_type) do
+        create(:data_type, runtime: runtime, runtime_module: runtime_module, definition_source: 'taurus')
+      end
       let(:modules) do
         [
           {
             identifier: 'taurus',
             version: '1.2.3',
+            definition_source: 'taurus',
             definition_data_types: [],
             runtime_flow_types: [],
             flow_types: [],
@@ -359,6 +364,130 @@ RSpec.describe 'sagittarius_rails.ModuleService', :need_grpc_server do
         expect(stub.update(message, authorization(runtime)).success).to be(true)
 
         expect(data_type.reload.removed_at).to be_present
+      end
+    end
+
+    context 'when a different definition_source updates the same module' do
+      let!(:runtime_module) do
+        create(:runtime_module, runtime: runtime, identifier: 'taurus', definition_source: 'taurus')
+      end
+      let!(:taurus_data_type) do
+        create(:data_type, runtime: runtime, runtime_module: runtime_module, identifier: 'TAURUS_TYPE',
+                           definition_source: 'taurus')
+      end
+      let!(:taurus_function) do
+        create(:runtime_function_definition, runtime: runtime, runtime_module: runtime_module,
+                                             runtime_name: 'std::taurus::fn', definition_source: 'taurus')
+      end
+      let(:modules) do
+        [
+          {
+            identifier: 'taurus',
+            version: '1.2.3',
+            definition_source: 'draco',
+            definition_data_types: [
+              {
+                identifier: 'DRACO_TYPE',
+                type: 'string',
+                linked_data_type_identifiers: [],
+                version: '1.0.0',
+                definition_source: 'draco',
+              }
+            ],
+            runtime_flow_types: [],
+            flow_types: [],
+            runtime_function_definitions: [
+              {
+                runtime_name: 'std::draco::fn',
+                signature: '(): void',
+                version: '1.0.0',
+                definition_source: 'draco',
+              }
+            ],
+            function_definitions: [],
+            configurations: [],
+          }
+        ]
+      end
+
+      it 'does not touch definitions from other definition_sources' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+        expect(taurus_data_type.reload.removed_at).to be_nil
+        expect(taurus_function.reload.removed_at).to be_nil
+        expect(DataType.find_by!(runtime: runtime, identifier: 'DRACO_TYPE').removed_at).to be_nil
+        expect(RuntimeFunctionDefinition.find_by!(runtime: runtime, runtime_name: 'std::draco::fn').removed_at)
+          .to be_nil
+      end
+
+      it 'marks its own previously sent, now-missing definitions as removed' do
+        create(:data_type, runtime: runtime, runtime_module: runtime_module, identifier: 'OLD_DRACO_TYPE',
+                           definition_source: 'draco')
+
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+        expect(DataType.find_by!(runtime: runtime, identifier: 'OLD_DRACO_TYPE').removed_at).to be_present
+        expect(taurus_data_type.reload.removed_at).to be_nil
+      end
+    end
+
+    context 'when available_definition_sources no longer includes a previously known source' do
+      let!(:runtime_module) do
+        create(:runtime_module, runtime: runtime, identifier: 'taurus', definition_source: 'taurus')
+      end
+      let!(:taurus_data_type) do
+        create(:data_type, runtime: runtime, runtime_module: runtime_module, identifier: 'TAURUS_TYPE',
+                           definition_source: 'taurus')
+      end
+      let!(:draco_data_type) do
+        create(:data_type, runtime: runtime, runtime_module: runtime_module, identifier: 'DRACO_TYPE',
+                           definition_source: 'draco')
+      end
+      let!(:draco_function) do
+        create(:runtime_function_definition, runtime: runtime, runtime_module: runtime_module,
+                                             runtime_name: 'std::draco::fn', definition_source: 'draco')
+      end
+      let!(:draco_function_definition) do
+        create(:function_definition, runtime: runtime, runtime_module: runtime_module,
+                                     runtime_function_definition: draco_function)
+      end
+      let(:message) do
+        Tucana::Sagittarius::Rails::ModuleUpdateRequest.new(
+          modules: modules,
+          available_definition_sources: %w[taurus]
+        )
+      end
+      let(:modules) do
+        [
+          {
+            identifier: 'taurus',
+            version: '1.2.3',
+            definition_source: 'taurus',
+            definition_data_types: [
+              {
+                identifier: 'TAURUS_TYPE',
+                type: 'string',
+                linked_data_type_identifiers: [],
+                version: '1.0.0',
+                definition_source: 'taurus',
+              }
+            ],
+            runtime_flow_types: [],
+            flow_types: [],
+            runtime_function_definitions: [],
+            function_definitions: [],
+            configurations: [],
+          }
+        ]
+      end
+
+      it 'marks definitions from the unavailable source as removed, but leaves available ones untouched' do
+        expect(stub.update(message, authorization(runtime)).success).to be(true)
+
+        expect(draco_data_type.reload.removed_at).to be_present
+        expect(draco_function.reload.removed_at).to be_present
+        expect(draco_function_definition.reload.removed_at).to be_present
+        expect(taurus_data_type.reload.removed_at).to be_nil
       end
     end
 
