@@ -277,6 +277,8 @@ CREATE TABLE flows (
     disabled_reason integer,
     signature text DEFAULT ''::text NOT NULL,
     validation_diagnostics jsonb DEFAULT '[]'::jsonb NOT NULL,
+    input_schema jsonb,
+    output_schema jsonb,
     CONSTRAINT check_8c731c24ec CHECK ((char_length(signature) <= 500))
 );
 
@@ -1223,6 +1225,8 @@ CREATE TABLE sub_flows (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     inline_reference_value_id bigint,
+    input_schema jsonb,
+    output_schema jsonb,
     CONSTRAINT check_53a99b1dd3 CHECK ((num_nonnulls(starting_node_id, function_definition_id) = 1)),
     CONSTRAINT check_943d01babb CHECK ((char_length(signature) <= 500)),
     CONSTRAINT check_e3ee180b07 CHECK ((num_nonnulls(node_parameter_id, inline_reference_value_id) = 1))

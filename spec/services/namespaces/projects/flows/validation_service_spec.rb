@@ -52,6 +52,17 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
       allow(Triangulum::Validation).to receive(:new).and_return(
         instance_double(Triangulum::Validation, validate: result)
       )
+
+      schema_result = Triangulum::FlowSchemaExtraction::Result.new(
+        flow: Triangulum::FlowSchemaExtraction::SchematizedObject.new(
+          input_schema: { 'type' => 'object' },
+          output_schema: { 'type' => 'string' }
+        ),
+        subflow_parameters: []
+      )
+      allow(Triangulum::FlowSchemaExtraction).to receive(:new).and_return(
+        instance_double(Triangulum::FlowSchemaExtraction, extract: schema_result)
+      )
     end
 
     let(:diagnostics) { [] }
@@ -75,6 +86,61 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
         service.execute
 
         expect(UpdateFlowForProjectJob).to have_received(:perform_later).with(flow.id)
+      end
+
+      it 'persists the extracted flow input and output schema' do
+        service.execute
+
+        expect(flow.reload).to have_attributes(
+          input_schema: { 'type' => 'object' },
+          output_schema: { 'type' => 'string' }
+        )
+      end
+
+      context 'when the flow has a sub flow parameter' do
+        let(:sub_flow_function_definition) do
+          create(:function_definition, runtime_function_definition: create(:runtime_function_definition,
+                                                                           runtime: runtime))
+        end
+        let(:sub_flow_node_function) do
+          create(:node_function, function_definition: function_definition, flow: flow)
+        end
+        let(:node_parameter) do
+          create(:node_parameter, parameter_definition: function_definition.parameter_definitions[0],
+                                  node_function: sub_flow_node_function, literal_value: nil)
+        end
+        let!(:sub_flow) do
+          create(:sub_flow, node_parameter: node_parameter, starting_node: nil,
+                            function_definition: sub_flow_function_definition)
+        end
+
+        before do
+          schema_result = Triangulum::FlowSchemaExtraction::Result.new(
+            flow: Triangulum::FlowSchemaExtraction::SchematizedObject.new(
+              input_schema: {},
+              output_schema: {}
+            ),
+            subflow_parameters: [
+              Triangulum::FlowSchemaExtraction::SchematizedObject.new(
+                id: node_parameter.id,
+                input_schema: { 'type' => 'sub-input' },
+                output_schema: { 'type' => 'sub-output' }
+              )
+            ]
+          )
+          allow(Triangulum::FlowSchemaExtraction).to receive(:new).and_return(
+            instance_double(Triangulum::FlowSchemaExtraction, extract: schema_result)
+          )
+        end
+
+        it 'persists the extracted schema onto the matching sub flow' do
+          service.execute
+
+          expect(sub_flow.reload).to have_attributes(
+            input_schema: { 'type' => 'sub-input' },
+            output_schema: { 'type' => 'sub-output' }
+          )
+        end
       end
     end
 
@@ -103,6 +169,13 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
         service.execute
 
         expect(flow.reload.validation_status).to eq('invalid')
+      end
+
+      it 'does not extract or persist a schema' do
+        service.execute
+
+        expect(Triangulum::FlowSchemaExtraction).not_to have_received(:new)
+        expect(flow.reload).to have_attributes(input_schema: nil, output_schema: nil)
       end
 
       it 'stores validation diagnostics' do

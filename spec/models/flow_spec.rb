@@ -191,6 +191,22 @@ RSpec.describe Flow do
         }
       )
     end
+
+    it 'omits the input and output schema when not yet computed' do
+      grpc_object = build(:flow, input_schema: nil, output_schema: nil).to_grpc
+
+      expect(grpc_object.has_input_schema?).to be(false)
+      expect(grpc_object.has_output_schema?).to be(false)
+    end
+
+    it 'serializes the computed input and output schema' do
+      flow.update!(input_schema: { 'type' => 'object' }, output_schema: { 'type' => 'string' })
+
+      grpc_object = flow.to_grpc
+
+      expect(grpc_object.input_schema.to_h).to eq({ 'type' => 'object' })
+      expect(grpc_object.output_schema.to_h).to eq({ 'type' => 'string' })
+    end
   end
 
   describe '#to_generation_grpc' do
