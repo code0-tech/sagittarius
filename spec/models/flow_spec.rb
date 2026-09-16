@@ -40,6 +40,26 @@ RSpec.describe Flow do
       it { expect(described_class.validation_status_valid).to contain_exactly(valid_flow) }
       it { expect(described_class.validation_status_invalid).to contain_exactly(invalid_flow) }
     end
+
+    describe 'disabled_expired' do
+      it 'only includes disabled flows whose disabled_until has passed' do
+        expired_flow = create(:flow, disabled_reason: :usage_limit_exceeded, disabled_until: Date.yesterday)
+        create(:flow, disabled_reason: :usage_limit_exceeded, disabled_until: Date.tomorrow)
+        create(:flow)
+
+        expect(described_class.disabled_expired).to contain_exactly(expired_flow)
+      end
+    end
+  end
+
+  describe '#reenable!' do
+    subject(:flow) { create(:flow, disabled_reason: :usage_limit_exceeded, disabled_until: Date.tomorrow) }
+
+    it 'clears the disabled reason and disabled_until' do
+      flow.reenable!
+
+      expect(flow.reload).to have_attributes(disabled_reason: nil, disabled_until: nil)
+    end
   end
 
   describe '#ordered_settings' do
@@ -187,7 +207,7 @@ RSpec.describe Flow do
               },
             }
           ],
-          disable_reason: '_dummy',
+          disable_reason: 'usage_limit_exceeded',
         }
       )
     end

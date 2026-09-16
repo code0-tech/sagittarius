@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Namespaces::Projects::Flows::RecordExecutionUsageService do
+  include ActiveJob::TestHelper
+
   describe '#execute' do
     let(:flow) { create(:flow) }
     let(:execution_result) do
@@ -28,6 +30,14 @@ RSpec.describe Namespaces::Projects::Flows::RecordExecutionUsageService do
       response = described_class.new(execution_result).execute
 
       expect(response).to be_success
+    end
+
+    it 'enqueues a delayed usage limit enforcement job for the flow' do
+      described_class.new(execution_result).execute
+
+      job = enqueued_jobs.find { |enqueued| enqueued[:job] == EnforceRuntimeUsageLimitJob }
+      expect(job[:args].first).to eq(flow.id)
+      expect(job[:at]).to be_within(1.second).of((Time.current + EnforceRuntimeUsageLimitJob::DELAY).to_f)
     end
   end
 end
