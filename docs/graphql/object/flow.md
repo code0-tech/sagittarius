@@ -10,6 +10,7 @@ Represents a flow
 |------|------|-------------|
 | `createdAt` | [`Time!`](../scalar/time.md) | Time when this Flow was created |
 | `disabledReason` | [`FlowDisabledReason`](../enum/flowdisabledreason.md) | The reason why the flow is disabled, if it is disabled |
+| `disabledUntil` | [`ISO8601Date`](../scalar/iso8601date.md) | Date the disabled_reason will be cleared, if the flow is disabled |
 | `executionResults` | [`ExecutionResultConnection!`](../object/executionresultconnection.md) | Execution results of the flow |
 | `id` | [`FlowID!`](../scalar/flowid.md) | Global ID of this Flow |
 | `linkedDataTypes` | [`DataTypeConnection!`](../object/datatypeconnection.md) | The data types that are referenced in this flow |
