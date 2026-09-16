@@ -6,6 +6,7 @@ Represents the available error responses
 
 | Value | Description |
 |-------|-------------|
+| `AI_USAGE_LIMIT_EXCEEDED` | The AI usage limit has been exceeded for the billing cycle |
 | `CANNOT_DELETE_LAST_ADMIN_ROLE` | This action would remove the last administrative role |
 | `CANNOT_MODERATE_USER` | Only administrators can modify moderation status of users |
 | `CANNOT_MODIFY_ADMIN` | Only administrators can modify admin status of users |

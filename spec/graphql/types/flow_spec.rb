@@ -7,6 +7,7 @@ RSpec.describe SagittariusSchema.types['Flow'] do
     %w[
       name
       disabled_reason
+      disabled_until
       validation_status
       validation_diagnostics
       project

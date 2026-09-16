@@ -105,6 +105,11 @@ module Sagittarius
           class: 'SweepStaleRuntimeStatusesJob',
           set: { queue: 'cron' },
         },
+        reset_expired_flow_disables: {
+          cron: '0 * * * *',
+          class: 'ResetExpiredFlowDisablesJob',
+          set: { queue: 'cron' },
+        },
       }
 
       Sagittarius::Extensions.ee do

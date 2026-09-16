@@ -6,4 +6,4 @@ The disabled reason of a flow.
 
 | Value | Description |
 |-------|-------------|
-| `_DUMMY` | Dummy value |
+| `USAGE_LIMIT_EXCEEDED` | Runtime usage limit exceeded for the current billing cycle |
