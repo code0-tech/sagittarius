@@ -138,4 +138,24 @@ RSpec.describe 'aiGenerateFlow Mutation' do
       expect(VelorumGenerateFlowJob).not_to have_received(:perform_later)
     end
   end
+
+  context 'when the AI usage limit is exceeded' do
+    before do
+      allow(Namespaces::Projects::EnforceAiUsageLimitService).to receive(:new).with(project).and_return(
+        instance_double(
+          Namespaces::Projects::EnforceAiUsageLimitService,
+          execute: ServiceResponse.error(message: 'AI usage limit exceeded. Resets on 2026-10-15.',
+                                         error_code: :ai_usage_limit_exceeded)
+        )
+      )
+    end
+
+    it 'returns an error and does not enqueue a job' do
+      mutate!
+
+      expect(graphql_data_at(:ai_generate_flow, :execution_identifier)).to be_nil
+      expect(graphql_data_at(:ai_generate_flow, :errors, 0, :error_code)).to eq('AI_USAGE_LIMIT_EXCEEDED')
+      expect(VelorumGenerateFlowJob).not_to have_received(:perform_later)
+    end
+  end
 end
