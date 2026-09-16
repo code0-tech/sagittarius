@@ -8,7 +8,7 @@ class Flow < ApplicationRecord
   }.with_indifferent_access
 
   DISABLED_REASON = {
-    _dummy: { db: 0, description: 'Dummy value' }, # temporary until the first real disabled reason gets introduced
+    usage_limit_exceeded: { db: 0, description: 'Runtime usage limit exceeded for the current billing cycle' },
   }.with_indifferent_access
 
   belongs_to :project, class_name: 'NamespaceProject'
@@ -47,9 +47,14 @@ class Flow < ApplicationRecord
 
   scope :enabled, -> { where(disabled_reason: nil) }
   scope :disabled, -> { where.not(disabled_reason: nil) }
+  scope :disabled_expired, -> { disabled.where(disabled_until: ..Date.current) }
 
   def disabled?
     disabled_reason.present?
+  end
+
+  def reenable!
+    update!(disabled_reason: nil, disabled_until: nil)
   end
 
   def to_grpc

@@ -11,9 +11,15 @@ module Types
 
     field :name, String, null: false, description: 'Name of the flow'
 
+    # rubocop:disable GraphQL/ExtractType -- disabled state is exposed directly on Flow
     field :disabled_reason, Types::FlowDisabledReasonEnum,
           null: true,
           description: 'The reason why the flow is disabled, if it is disabled'
+
+    field :disabled_until, GraphQL::Types::ISO8601Date,
+          null: true,
+          description: 'Date the disabled_reason will be cleared, if the flow is disabled'
+    # rubocop:enable GraphQL/ExtractType
 
     # rubocop:disable GraphQL/ExtractType -- validation metadata is exposed directly on Flow
     field :validation_status, Types::FlowValidationStatusEnum,
