@@ -28,6 +28,8 @@ module Namespaces
             date: date, execution_time_us: duration_us, unique_by: %i[flow_id date]
           )
 
+          EnforceRuntimeUsageLimitJob.enqueue_for(flow)
+
           ServiceResponse.success(message: 'Execution usage recorded')
         rescue StandardError => e
           logger.error(message: 'Failed to record execution usage', execution_result_id: execution_result.id,
