@@ -48,5 +48,21 @@ RSpec.describe SubFlow do
       )
       expect(grpc_sub_flow.function.has_definition_source?).to be(true)
     end
+
+    it 'omits the input and output schema when not yet computed' do
+      grpc_sub_flow = build(:sub_flow, input_schema: nil, output_schema: nil).to_grpc
+
+      expect(grpc_sub_flow.has_input_schema?).to be(false)
+      expect(grpc_sub_flow.has_output_schema?).to be(false)
+    end
+
+    it 'serializes the computed input and output schema' do
+      sub_flow = build(:sub_flow, input_schema: { 'type' => 'object' }, output_schema: { 'type' => 'string' })
+
+      grpc_sub_flow = sub_flow.to_grpc
+
+      expect(grpc_sub_flow.input_schema.to_h).to eq({ 'type' => 'object' })
+      expect(grpc_sub_flow.output_schema.to_h).to eq({ 'type' => 'string' })
+    end
   end
 end
