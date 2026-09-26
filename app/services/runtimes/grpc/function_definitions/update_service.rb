@@ -8,12 +8,15 @@ module Runtimes
         include Code0::ZeroTrack::Loggable
         include Runtimes::Grpc::TranslationUpdateHelper
 
-        attr_reader :current_runtime, :function_definitions, :runtime_module, :update_runtime_compatibility
+        attr_reader :current_runtime, :function_definitions, :runtime_module, :definition_source,
+                    :update_runtime_compatibility
 
-        def initialize(current_runtime, function_definitions, runtime_module:, update_runtime_compatibility: true)
+        def initialize(current_runtime, function_definitions, runtime_module:, definition_source: nil,
+                       update_runtime_compatibility: true)
           @current_runtime = current_runtime
           @function_definitions = function_definitions
           @runtime_module = runtime_module
+          @definition_source = definition_source
           @update_runtime_compatibility = update_runtime_compatibility
         end
 
@@ -39,7 +42,9 @@ module Runtimes
 
         def mark_existing_function_definitions_as_removed
           # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, validations are irrelevant
-          FunctionDefinition.where(runtime: current_runtime, runtime_module: runtime_module)
+          FunctionDefinition.joins(:runtime_function_definition)
+                            .where(runtime: current_runtime, runtime_module: runtime_module)
+                            .where(runtime_function_definitions: { definition_source: definition_source })
                             .update_all(removed_at: Time.zone.now)
         end
 
