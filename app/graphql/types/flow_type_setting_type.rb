@@ -15,7 +15,9 @@ module Types
     field :names, [Types::TranslationType], null: false, description: 'Names of the flow type setting'
     field :optional, Boolean, null: false, description: 'Indicates if the flow type setting is optional'
     field :removed_at, Types::TimeType, null: true, description: 'The timestamp when this setting was soft removed'
-    field :unique, Boolean, null: false, description: 'Unique status of the flow type setting'
+    field :unique, Types::RuntimeFlowTypeSettingUniqueEnum,
+          null: false,
+          description: 'Unique status of the flow type setting'
 
     id_field FlowTypeSetting
     timestamps

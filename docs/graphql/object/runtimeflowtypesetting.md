@@ -18,5 +18,5 @@ Represents a runtime flow type setting
 | `optional` | [`Boolean!`](../scalar/boolean.md) | Indicates if the runtime flow type setting is optional |
 | `removedAt` | [`Time`](../scalar/time.md) | The timestamp when this setting was soft removed |
 | `runtimeFlowType` | [`RuntimeFlowType!`](../object/runtimeflowtype.md) | Runtime flow type of this setting |
-| `unique` | [`String!`](../scalar/string.md) | Unique scope of the runtime flow type setting |
+| `unique` | [`RuntimeFlowTypeSettingUnique!`](../enum/runtimeflowtypesettingunique.md) | Unique scope of the runtime flow type setting |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this RuntimeFlowTypeSetting was last updated |

@@ -17,7 +17,9 @@ module Types
     field :removed_at, Types::TimeType, null: true, description: 'The timestamp when this setting was soft removed'
     field :runtime_flow_type, Types::RuntimeFlowTypeType, null: false,
                                                           description: 'Runtime flow type of this setting'
-    field :unique, String, null: false, description: 'Unique scope of the runtime flow type setting'
+    field :unique, Types::RuntimeFlowTypeSettingUniqueEnum,
+          null: false,
+          description: 'Unique scope of the runtime flow type setting'
 
     id_field RuntimeFlowTypeSetting
     timestamps
