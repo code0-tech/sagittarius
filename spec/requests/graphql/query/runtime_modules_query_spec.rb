@@ -160,7 +160,7 @@ RSpec.describe 'runtime modules Query' do
           a_hash_including(
             'id' => runtime_flow_type_setting.to_global_id.to_s,
             'identifier' => 'scope',
-            'unique' => 'project'
+            'unique' => 'PROJECT'
           )
         ),
         'flowTypes' => {
