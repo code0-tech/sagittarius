@@ -11,6 +11,7 @@ module CLOUD
         mount_mutation Mutations::Users::CompleteGuestProfile
         mount_mutation Mutations::Users::CreateCraterToken
         mount_mutation Mutations::Users::CreateGuestUser
+        mount_mutation Mutations::Users::SetActiveSubscription
       end
     end
   end
