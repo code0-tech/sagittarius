@@ -5,6 +5,7 @@ class ExecutionNodeResult < ApplicationRecord
   include TruncateTimePrecision
 
   partition_by :created_at, strategy: :daily, retain_for: 1.month
+  drop_foreign_keys_on_detach :fk_rails_460ac90523
   truncate_time_precision :created_at
 
   self.table_name = 'p_execution_node_results'
