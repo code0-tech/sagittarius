@@ -28,7 +28,7 @@ RSpec.describe Namespaces::Licenses::CreateService do
   end
 
   context 'when params are invalid' do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:user, :admin) }
 
     context 'when data is invalid' do
       let(:params) { { data: '', namespace: namespace } }
@@ -44,8 +44,7 @@ RSpec.describe Namespaces::Licenses::CreateService do
     end
   end
 
-  context 'when user and params are valid' do
-    let(:current_user) { create(:user) }
+  context 'when params are valid' do
     let(:license_data) do
       {
         licensee: { 'company' => 'Code0' },
@@ -61,26 +60,65 @@ RSpec.describe Namespaces::Licenses::CreateService do
       { data: create(:license, **license_data).data, namespace: namespace }
     end
 
-    before do
-      stub_allowed_ability(NamespacePolicy, :create_license, user: current_user, subject: namespace)
+    context 'when user is admin' do
+      let(:current_user) { create(:user, :admin) }
+
+      it { is_expected.to be_success }
+      it { expect(service_response.payload.reload).to be_valid }
+
+      it 'adds license to the namespace' do
+        expect { service_response }.to change { License.where(namespace: namespace).count }.by(1)
+      end
+
+      it do
+        is_expected.to create_audit_event(
+          :license_created,
+          author_id: current_user.id,
+          entity_type: 'License',
+          details: license_data,
+          target_id: namespace.id,
+          target_type: 'Namespace'
+        )
+      end
     end
 
-    it { is_expected.to be_success }
-    it { expect(service_response.payload.reload).to be_valid }
+    context 'when user is crater' do
+      let(:current_user) { create(:user, :crater) }
 
-    it 'adds license to the namespace' do
-      expect { service_response }.to change { License.where(namespace: namespace).count }.by(1)
+      it { is_expected.to be_success }
+      it { expect(service_response.payload.reload).to be_valid }
+
+      it 'adds license to the namespace' do
+        expect { service_response }.to change { License.where(namespace: namespace).count }.by(1)
+      end
+
+      it do
+        is_expected.to create_audit_event(
+          :license_created,
+          author_id: current_user.id,
+          entity_type: 'License',
+          details: license_data,
+          target_id: namespace.id,
+          target_type: 'Namespace'
+        )
+      end
     end
 
-    it do
-      is_expected.to create_audit_event(
-        :license_created,
-        author_id: current_user.id,
-        entity_type: 'License',
-        details: license_data,
-        target_id: namespace.id,
-        target_type: 'Namespace'
-      )
+    context 'when user is namespace administrator' do
+      let(:current_user) { create(:user) }
+
+      before do
+        role = create(
+          :namespace_role,
+          namespace: namespace,
+          abilities: [
+            build(:namespace_role_ability, ability: :namespace_administrator)
+          ]
+        )
+        create(:namespace_member, user: current_user, namespace: namespace, roles: [role])
+      end
+
+      it_behaves_like 'does not create'
     end
   end
 end

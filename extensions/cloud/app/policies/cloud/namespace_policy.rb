@@ -14,9 +14,12 @@ module CLOUD
         enable :delete_license
       end
 
+      rule { admin }.policy do
+        enable :create_license
+        enable :delete_license
+      end
+
       customizable_permission :read_license
-      customizable_permission :create_license
-      customizable_permission :delete_license
     end
   end
 end
