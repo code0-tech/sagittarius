@@ -14,6 +14,8 @@ module CLOUD
       condition(:crater) { authentication.crater? }
 
       rule { crater }.prevent_all do
+        except :read_user
+        except :read_organization
         except :read_namespace
         except :read_license
         except :create_license
