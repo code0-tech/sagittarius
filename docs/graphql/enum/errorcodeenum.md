@@ -93,7 +93,7 @@ Represents the available error responses
 | `NO_PRIMARY_RUNTIME` | The project does not have a primary runtime |
 | `ORGANIZATION_NOT_FOUND` | The organization with the given identifier was not found |
 | `OUTDATED_DEFINITION` | The primary runtime has a newer definition than this one |
-| `PRIMARY_LEVEL_NOT_FOUND` | **Deprecated:** Outdated concept |
+| `PRIMARY_LEVEL_NOT_FOUND` |  **Deprecated:** Outdated concept |
 | `PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
 | `REFERENCED_VALUE_NOT_FOUND` | A referenced value could not be found |
 | `REGISTRATION_DISABLED` | Self-registration is disabled |
@@ -102,8 +102,8 @@ Represents the available error responses
 | `RUNTIME_NOT_ASSIGNED` | The runtime is not assigned to the project |
 | `RUNTIME_NOT_COMPATIBLE` | The runtime is not compatible with the primary runtime |
 | `RUNTIME_NOT_FOUND` | The runtime with the given identifier was not found |
-| `SECONDARY_LEVEL_NOT_FOUND` | **Deprecated:** Outdated concept |
-| `TERTIARY_LEVEL_EXCEEDS_PARAMETERS` | **Deprecated:** Outdated concept |
+| `SECONDARY_LEVEL_NOT_FOUND` |  **Deprecated:** Outdated concept |
+| `TERTIARY_LEVEL_EXCEEDS_PARAMETERS` |  **Deprecated:** Outdated concept |
 | `TOTP_SECRET_ALREADY_SET` | This user already has TOTP set up |
 | `TOTP_SECRET_NOT_SET` | This user does not have TOTP set up |
 | `UNMODIFIABLE_FIELD` | The user is not permitted to modify this field |
