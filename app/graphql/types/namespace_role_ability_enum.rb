@@ -5,7 +5,9 @@ module Types
     description 'Represents abilities that can be granted to roles in namespaces.'
 
     NamespaceRoleAbility::ABILITIES.each do |ability, settings|
-      value ability.upcase, settings[:description], value: ability, **settings.except(:db, :description)
+      value ability.upcase, settings[:description],
+            value: ability,
+            deprecation_reason: settings.fetch(:deprecation_reason, nil)
     end
   end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class NamespaceRoleAbility < ApplicationRecord
+  # rubocop:disable-next Layout/LineLength -- we want to keep it as one ability per line
   ABILITIES = {
     create_namespace_role: { db: 1, description: 'Allows the creation of roles in a namespace' },
     invite_member: { db: 2, description: 'Allows to invite new members to a namespace' },
@@ -12,11 +13,11 @@ class NamespaceRoleAbility < ApplicationRecord
     delete_organization: { db: 8, description: 'Allows to delete the organization' },
     delete_namespace_role: { db: 9, description: 'Allows the deletion of roles in a namespace' },
     namespace_administrator: { db: 10, description: 'Allows to perform any action in the namespace' },
-    create_license: { db: 11, description: 'Allows to create a license for the namespace' }, # Cloud-specific
+    create_license: { db: 11, description: 'Allows to create a license for the namespace', deprecation_reason: 'Licenses can only be managed by admins and crater. This ability is now ignored.' }, # Cloud-specific
     read_license: { db: 12, description: 'Allows to read the license of the namespace' }, # Cloud-specific
     create_namespace_project: { db: 13, description: 'Allows to create a project in the namespace' },
     read_namespace_project: { db: 14, description: 'Allows to read the project of the namespace' },
-    delete_license: { db: 15, description: 'Allows to delete the license of the namespace' }, # Cloud-specific
+    delete_license: { db: 15, description: 'Allows to delete the license of the namespace', deprecation_reason: 'Licenses can only be managed by admins and crater. This ability is now ignored.' }, # Cloud-specific
     update_namespace_project: { db: 16, description: 'Allows to update the project of the namespace' },
     delete_namespace_project: { db: 17, description: 'Allows to delete the project of the namespace' },
     create_runtime: { db: 18, description: 'Allows to create a runtime globally or for the namespace' },
@@ -30,6 +31,7 @@ class NamespaceRoleAbility < ApplicationRecord
     update_flow: { db: 26, description: 'Allows to update flows in the project' },
     update_module_configurations: { db: 27, description: 'Allows to update module configurations in the project' },
   }.with_indifferent_access
+
   enum :ability, ABILITIES.transform_values { |v| v[:db] }, prefix: :can
 
   belongs_to :namespace_role, inverse_of: :abilities, class_name: 'NamespaceRole'

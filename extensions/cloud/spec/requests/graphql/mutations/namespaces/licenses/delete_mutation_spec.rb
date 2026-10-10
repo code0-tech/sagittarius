@@ -34,12 +34,8 @@ RSpec.describe 'namespacesLicensesDelete Mutation' do
   let(:variables) { { input: input } }
   let(:current_user) { create(:user) }
 
-  context 'when user is a member of the namespace' do
-    before do
-      create(:namespace_member, namespace: namespace, user: current_user)
-      stub_allowed_ability(NamespacePolicy, :delete_license, user: current_user, subject: namespace)
-      stub_allowed_ability(NamespacePolicy, :read_license, user: current_user, subject: namespace)
-    end
+  context 'when user is admin' do
+    let(:current_user) { create(:user, :admin) }
 
     it 'deletes namespace license' do
       mutate!
