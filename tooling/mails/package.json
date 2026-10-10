@@ -1,0 +1,21 @@
+{
+    "name": "sagittarius-mails",
+    "version": "1.1.0",
+    "private": true,
+    "scripts": {
+        "build": "email build",
+        "dev": "email dev",
+        "export": "email export",
+        "export:erb": "node export-erb.mjs"
+    },
+    "dependencies": {
+        "react-email": "6.9.1",
+        "react-dom": "19.2.4",
+        "react": "19.2.4"
+    },
+    "devDependencies": {
+        "@react-email/ui": "6.9.1",
+        "@types/react": "19.2.14",
+        "@types/react-dom": "19.2.3"
+    }
+}
