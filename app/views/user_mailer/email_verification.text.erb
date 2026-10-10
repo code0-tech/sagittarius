@@ -1,1 +1,19 @@
-Click here to verify your email: https://code0.tech/verify?code=<%= @verification_code %>
+<%= @company_name %> — Verify your email
+
+Hi <%= @user_name %>,
+
+Welcome to <%= @company_name %>. Confirm that <%= @email %> belongs to you to
+activate your account and start using it.
+
+Account:         <%= @account_name %>
+Email address:   <%= @email %>
+Link expires in: <%= @link_expires_in %>
+
+Verify your email address:
+<%= @verification_url %>
+
+If you didn't create this account, you can safely ignore this email.
+
+If you need help verifying your email, contact us at <%= @support_email %>.
+
+This is a transactional email about the <%= @company_name %> account for <%= @email %>.
