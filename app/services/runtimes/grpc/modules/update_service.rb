@@ -17,11 +17,13 @@ module Runtimes
           configurations: Runtimes::Grpc::ModuleConfigurationDefinitions::UpdateService,
         }.freeze
 
-        attr_reader :current_runtime, :modules, :definition_update_services
+        attr_reader :current_runtime, :modules, :available_definition_sources, :definition_update_services
 
-        def initialize(current_runtime, modules, definition_update_services: DEFAULT_DEFINITION_UPDATE_SERVICES)
+        def initialize(current_runtime, modules, available_definition_sources: nil,
+                       definition_update_services: DEFAULT_DEFINITION_UPDATE_SERVICES)
           @current_runtime = current_runtime
           @modules = modules
+          @available_definition_sources = available_definition_sources
           @definition_update_services = definition_update_services
         end
 
@@ -35,6 +37,7 @@ module Runtimes
             update_data_types(module_records.payload, t)
             update_definition_services(module_records.payload, t)
             update_module_definitions(module_records.payload, t)
+            remove_definitions_from_unavailable_sources
 
             UpdateRuntimeCompatibilityJob.perform_later({ runtime_id: current_runtime.id })
 
@@ -79,8 +82,10 @@ module Runtimes
 
         def update_data_types(module_records, t)
           data_type_runtime_modules = {}
+          runtime_module_definition_sources = {}
           data_types = modules.flat_map do |grpc_module|
             runtime_module = module_records.fetch(grpc_module)
+            runtime_module_definition_sources[runtime_module] = grpc_module.definition_source.presence
 
             grpc_module.definition_data_types.each do |data_type|
               data_type_runtime_modules[data_type.identifier] = runtime_module
@@ -92,7 +97,7 @@ module Runtimes
             data_types,
             runtime_module: nil,
             runtime_module_resolver: ->(data_type) { data_type_runtime_modules.fetch(data_type.identifier) },
-            runtime_modules_to_update: module_records.values,
+            runtime_module_definition_sources: runtime_module_definition_sources,
             update_runtime_compatibility: false
           ).execute
 
@@ -106,11 +111,31 @@ module Runtimes
               response = build_definition_update_service(
                 service,
                 grpc_module.public_send(definition_field),
-                runtime_module
+                runtime_module,
+                grpc_module.definition_source.presence
               ).execute
               t.rollback_and_return! response unless response.success?
             end
           end
+        end
+
+        def remove_definitions_from_unavailable_sources
+          return if available_definition_sources.blank?
+
+          sources = available_definition_sources.to_a
+
+          [RuntimeFunctionDefinition, DataType, FlowType, RuntimeFlowType].each do |klass|
+            # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
+            klass.where(runtime: current_runtime)
+                 .where.not(definition_source: [nil, *sources])
+                 .update_all(removed_at: Time.zone.now)
+          end
+
+          # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
+          FunctionDefinition.joins(:runtime_function_definition)
+                            .where(runtime: current_runtime)
+                            .where.not(runtime_function_definitions: { definition_source: [nil, *sources] })
+                            .update_all(removed_at: Time.zone.now)
         end
 
         def update_module_definitions(module_records, t)
@@ -162,11 +187,12 @@ module Runtimes
           )
         end
 
-        def build_definition_update_service(service, definitions, runtime_module)
+        def build_definition_update_service(service, definitions, runtime_module, definition_source)
           service.new(
             current_runtime,
             definitions,
             runtime_module: runtime_module,
+            definition_source: definition_source,
             update_runtime_compatibility: false
           )
         end

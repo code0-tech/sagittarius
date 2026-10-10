@@ -7,7 +7,11 @@ class ModuleHandler < Tucana::Sagittarius::Rails::ModuleService::Service
   def update(request, _call)
     current_runtime = Runtime.find(Code0::ZeroTrack::Context.current[:runtime][:id])
 
-    response = Runtimes::Grpc::Modules::UpdateService.new(current_runtime, request.modules).execute
+    response = Runtimes::Grpc::Modules::UpdateService.new(
+      current_runtime,
+      request.modules,
+      available_definition_sources: request.available_definition_sources
+    ).execute
 
     logger.debug("ModuleHandler#update response: #{response.inspect}")
     unless response.success?
