@@ -13,12 +13,6 @@ module CLOUD
         include Code0::ZeroTrack::Memoize
 
         def current_for_namespace(namespace)
-          memoize(:current_for_namespace, reset_on_change: -> { namespace.id }) do
-            load_license_for_namespace(namespace)
-          end
-        end
-
-        def load_license_for_namespace(namespace)
           for_namespace(namespace).last_fifty.find do |namespace_license|
             namespace_license.license.in_active_time?
           end
