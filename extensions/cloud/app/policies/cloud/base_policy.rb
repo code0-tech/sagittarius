@@ -21,6 +21,7 @@ module CLOUD
         except :create_license
         except :delete_license
         except :create_guest_user
+        except :update_user_custom_attribute
       end
 
       # Guests never get a session today (they only exist until they complete their profile,

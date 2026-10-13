@@ -44,3 +44,5 @@ class UserPolicy < BasePolicy
 
   rule { deletion_restriction }.prevent :delete_user
 end
+
+UserPolicy.prepend_extensions
