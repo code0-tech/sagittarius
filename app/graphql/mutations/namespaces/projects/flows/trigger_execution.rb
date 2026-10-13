@@ -20,10 +20,10 @@ module Mutations
                    description: 'The id of the runtime to trigger the execution on'
 
           argument :input, GraphQL::Types::JSON,
-                   required: true,
+                   required: false,
                    description: 'The input for the execution'
 
-          def resolve(flow_id:, runtime_id:, input:)
+          def resolve(flow_id:, runtime_id:, input: nil)
             flow = SagittariusSchema.object_from_id(flow_id)
 
             if flow.nil?
