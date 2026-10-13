@@ -10,7 +10,7 @@ Triggers a execution on the flow.
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `flowId` | [`FlowID!`](../scalar/flowid.md) | The id of the flow which will be triggered |
-| `input` | [`JSON!`](../scalar/json.md) | The input for the execution |
+| `input` | [`JSON`](../scalar/json.md) | The input for the execution |
 | `runtimeId` | [`RuntimeID!`](../scalar/runtimeid.md) | The id of the runtime to trigger the execution on |
 
 ## Fields
