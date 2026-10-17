@@ -1,0 +1,52 @@
+{
+    "emailVerification": {
+        "preview": "Verify your email address to finish setting up your {{companyName}} account",
+        "heading": "Verify your email",
+        "greeting": "Hi {{userName}},",
+        "explanation": "Welcome to {{companyName}}. Confirm that {{email}} belongs to you to activate your account and start using it.",
+        "labels": {
+            "account": "Account",
+            "email": "Email address",
+            "linkExpires": "Link expires in"
+        },
+        "actions": {
+            "verifyEmail": "Verify email address"
+        },
+        "fallback": {
+            "beforeLink": "If the button doesn't work, copy this link into your browser:"
+        },
+        "notice": "If you didn't create this account, you can safely ignore this email.",
+        "support": {
+            "beforeEmail": "If you need help verifying your email, contact us at",
+            "afterEmail": "."
+        },
+        "footer": {
+            "transactionalNotice": "This is a transactional email about the {{companyName}} account for {{email}}."
+        }
+    },
+    "passwordReset": {
+        "preview": "Reset the password for your {{companyName}} account",
+        "heading": "Reset your password",
+        "greeting": "Hi {{userName}},",
+        "explanation": "We received a request to reset the password for {{email}}. Choose a new password with the button below. The link only works once.",
+        "labels": {
+            "account": "Account",
+            "email": "Email address",
+            "linkExpires": "Link expires in"
+        },
+        "actions": {
+            "resetPassword": "Choose a new password"
+        },
+        "fallback": {
+            "beforeLink": "If the button doesn't work, copy this link into your browser:"
+        },
+        "notice": "If you didn't request a password reset, you can ignore this email — your password stays unchanged.",
+        "support": {
+            "beforeEmail": "If you didn't request this or need help, contact us at",
+            "afterEmail": "."
+        },
+        "footer": {
+            "transactionalNotice": "This is a transactional email about the {{companyName}} account for {{email}}."
+        }
+    }
+}

@@ -40,7 +40,8 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.delivery_method = :file
+  # Mailer previews live next to the specs, not in Rails' default test/mailers/previews.
+  config.action_mailer.preview_paths << Rails.root.join('spec/mailers/previews').to_s
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

@@ -84,11 +84,13 @@ class User < ApplicationRecord
     :last_administrator unless self.class.where.not(id: id).exists?(admin: true)
   end
 
-  generates_token_for :email_verification, expires_in: 15.minutes do
+  EMAIL_VERIFICATION_TOKEN_EXPIRY = 15.minutes
+  generates_token_for :email_verification, expires_in: EMAIL_VERIFICATION_TOKEN_EXPIRY do
     email
   end
 
-  generates_token_for :password_reset, expires_in: 15.minutes do
+  PASSWORD_RESET_TOKEN_EXPIRY = 15.minutes
+  generates_token_for :password_reset, expires_in: PASSWORD_RESET_TOKEN_EXPIRY do
     password_digest&.last(20)
   end
 end

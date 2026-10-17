@@ -245,3 +245,14 @@ npm-types:publish-graphql:
     - if: $C0_GH_REF_NAME == "main"
       when: manual
       allow_failure: true
+
+mails:verify-generated:
+  image: node:24.15.0
+  stage: build
+  script:
+    - cd tooling/mails
+    - npm ci
+    - npm run export:erb
+    - cd ../..
+    - git add app/views
+    - git diff --exit-code --staged

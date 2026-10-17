@@ -58,3 +58,5 @@
 config/sagittarius.yml
 gateway/target
 target
+tooling/mails/node_modules/
+tooling/mails/.react-email/
