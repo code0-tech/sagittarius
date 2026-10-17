@@ -13,6 +13,11 @@ services:
       - ./tooling/init-dev-db:/docker-entrypoint-initdb.d
     ports:
       - "5433:5432"
+  maildev:
+    image: maildev/maildev:3.0.0
+    ports:
+      - "1025:1025"
+      - "1080:1080"
 
 volumes:
   database:

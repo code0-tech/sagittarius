@@ -30,6 +30,19 @@ module Sagittarius
       config[:application_setting_overrides]
     end
 
+    def self.external_url
+      web_config = config.dig(:rails, :web, :external)
+      protocol = web_config[:protocol]
+      port = web_config[:port]
+      host = "#{protocol}://#{web_config[:host]}"
+
+      if (protocol == 'http' && port == 80) || (protocol == 'https' && port == 443)
+        host
+      else
+        "#{host}:#{port}"
+      end
+    end
+
     def self.defaults
       {
         rails: {
@@ -38,6 +51,11 @@ module Sagittarius
             port: 3000,
             force_ssl: nil,
             bind: nil,
+            external: {
+              host: 'localhost',
+              port: 3000,
+              protocol: 'http',
+            },
           },
           grpc: {
             threads: 3,
@@ -51,11 +69,13 @@ module Sagittarius
           log_level: 'info',
           mailer: {
             from: 'Code0 <testmail@code0.tech>',
-            address: 'smtp.example.com',
-            port: 587,
-            domain: 'code0.tech',
-            username: 'testmail@code0.tech',
-            password: 'changeme',
+            smtp_settings: {
+              address: 'smtp.example.com',
+              port: 587,
+              domain: nil,
+              user_name: nil,
+              password: nil,
+            },
           },
           db: {
             host: 'localhost',

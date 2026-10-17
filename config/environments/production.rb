@@ -57,19 +57,6 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: Sagittarius::Configuration.config[:rails][:mailer][:address],
-    port: Sagittarius::Configuration.config[:rails][:mailer][:port],
-    domain: Sagittarius::Configuration.config[:rails][:mailer][:domain],
-    user_name: Sagittarius::Configuration.config[:rails][:mailer][:username],
-    password: Sagittarius::Configuration.config[:rails][:mailer][:password],
-    authentication: 'plain',
-    enable_starttls: true,
-    open_timeout: 5,
-    read_timeout: 5,
-  }
-
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false

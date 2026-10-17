@@ -44,19 +44,7 @@ module Sagittarius
     ]
     ActiveRecord::QueryLogs.prepend_comment = true
 
-    Rails.application.default_url_options =
-      if ENV['SAGITTARIUS_RAILS_HOSTNAME'].nil?
-        {
-          host: 'localhost',
-          port: 3000,
-        }
-      else
-        {
-          host: ENV['SAGITTARIUS_RAILS_HOSTNAME'],
-          port: ENV['SAGITTARIUS_RAILS_PORT'] || 443,
-          protocol: ENV['SAGITTARIUS_RAILS_PROTOCOL'] || 'https',
-        }
-      end
+    Rails.application.default_url_options = Sagittarius::Configuration.config.dig(:rails, :web, :external)
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
