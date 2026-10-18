@@ -35,6 +35,8 @@ module Users
           )
         end
 
+        GuestUserMailer.with(user: user).guest_user_created.deliver_later
+
         AuditService.audit(
           :guest_user_created,
           author_id: current_authentication.user.id,

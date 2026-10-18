@@ -52,6 +52,12 @@ RSpec.describe Users::CreateGuestUserService do
       )
     end
 
+    it_behaves_like 'sends an email' do
+      let(:mailer_class) { GuestUserMailer }
+      let(:mail_method) { :guest_user_created }
+      let(:mail_params) { { user: an_instance_of(User) } }
+    end
+
     context 'when the generated username is already taken' do
       let!(:existing_user) { create(:user, username: email.split('@').first) }
 
