@@ -254,5 +254,5 @@ mails:verify-generated:
     - npm ci
     - npm run export:erb
     - cd ../..
-    - git add app/views
+    - git add {extensions/*/,}app/views
     - git diff --exit-code --staged
