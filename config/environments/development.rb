@@ -42,6 +42,9 @@ Rails.application.configure do
 
   # Mailer previews live next to the specs, not in Rails' default test/mailers/previews.
   config.action_mailer.preview_paths << Rails.root.join('spec/mailers/previews').to_s
+  Sagittarius::Extensions.active.each do |extension|
+    config.action_mailer.preview_paths << Rails.root.join("extensions/#{extension}/spec/mailers/previews").to_s
+  end
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

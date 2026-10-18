@@ -9,4 +9,8 @@ class ApplicationMailer < ActionMailer::Base
 
     mail(to: @user.email, subject: 'Test mail')
   end
+
+  def self.load_extension_views(extension)
+    prepend_view_path Rails.root.join("extensions/#{extension}/app/views").to_s
+  end
 end
