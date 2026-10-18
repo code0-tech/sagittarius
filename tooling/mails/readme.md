@@ -28,11 +28,24 @@ Open [localhost:3000](http://localhost:3000) with your browser to see the result
 npm run export:erb
 ```
 
-This renders every template straight into `app/views/<folder>/<template>.html.erb`,
-mirroring the folder layout under `emails/`, with each prop emitted as an ERB tag
-(`<%= @verification_url %>`, `<%= @user_name %>`, ...). So `emails/user_mailer/`
-exports to `app/views/user_mailer/`; add another folder under `emails/` and it
-is exported the same way. Supply the matching instance variables from the mailer.
+This renders every template straight into the matching Rails view folder as
+`<template>.html.erb`, with each prop emitted as an ERB tag
+(`<%= @verification_url %>`, `<%= @user_name %>`, ...). Supply the matching
+instance variables from the mailer — `ApplicationMailer#assign_common` already
+assigns the ones every template shares.
+
+The folder layout under `emails/` decides where a template lands:
+
+| Template                                                    | Rails view                                                        |
+| ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| `emails/user_mailer/password_reset.tsx`                     | `app/views/user_mailer/password_reset.html.erb`                   |
+| `emails/extensions/cloud/guest_user_mailer/guest_user_created.tsx` | `extensions/cloud/app/views/guest_user_mailer/guest_user_created.html.erb` |
+
+So `emails/extensions/<extension>/` holds the mailers of an extension and
+exports into that extension's own view path; everything else is a core mailer.
+Add another folder at either level and it is exported the same way. An extension
+mailer additionally needs `load_extension_views :<extension>` so Rails resolves
+the view (see `GuestUserMailer`).
 
 Only the generated `.html.erb` files are overwritten — every other file in
 `app/views` (e.g. the hand-written `.text.erb` companions) is left untouched.
@@ -57,8 +70,8 @@ How it works (`export-erb.mjs`):
 
 Notes:
 
-- Folders named `static` or prefixed with `_` under `emails/` are not exported
-  as mailer views. The `emails/static/` assets are **not** copied into
+- Folders named `static` or prefixed with `_` are not exported as mailer views
+  (at either level). The `emails/static/` assets are **not** copied into
   `app/views` — serve those through the Rails asset pipeline instead.
 - The footer year comes from `new Date().getFullYear()` (not a prop), so it is
   baked in at export time. Turn it into a prop if you need it dynamic in Rails.

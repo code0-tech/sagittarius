@@ -48,5 +48,29 @@
         "footer": {
             "transactionalNotice": "This is a transactional email about the {{companyName}} account for {{email}}."
         }
+    },
+    "guestUserCreated": {
+        "preview": "Finish setting up the {{companyName}} account that was created for you",
+        "heading": "Complete your account",
+        "greeting": "Hi {{userName}},",
+        "explanation": "An account on {{companyName}} was created for {{email}}. Pick a username and password with the button below to finish setting it up — until then the account stays incomplete and can't be signed in to.",
+        "labels": {
+            "account": "Account",
+            "email": "Email address"
+        },
+        "actions": {
+            "completeAccount": "Complete your account"
+        },
+        "fallback": {
+            "beforeLink": "If the button doesn't work, copy this link into your browser:"
+        },
+        "notice": "If you weren't expecting this, you can safely ignore this email — the account stays incomplete and nobody can sign in to it.",
+        "support": {
+            "beforeEmail": "If you didn't expect this account or need help completing it, contact us at",
+            "afterEmail": "."
+        },
+        "footer": {
+            "transactionalNotice": "This is a transactional email about the {{companyName}} account for {{email}}."
+        }
     }
 }

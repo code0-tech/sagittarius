@@ -1,1 +1,20 @@
-Complete your profile. Use token <%= @claim_token %>
+<%= @company_name %> — Complete your account
+
+Hi <%= @user_name %>,
+
+An account on <%= @company_name %> was created for <%= @email %>. Pick a
+username and password with the link below to finish setting it up — until then
+the account stays incomplete and can't be signed in to.
+
+Account:       <%= @account_name %>
+Email address: <%= @email %>
+
+Complete your account:
+<%= @claim_url %>
+
+If you weren't expecting this, you can safely ignore this email — the account
+stays incomplete and nobody can sign in to it.
+
+If you didn't expect this account or need help completing it, contact us at <%= @support_email %>.
+
+This is a transactional email about the <%= @company_name %> account for <%= @email %>.
