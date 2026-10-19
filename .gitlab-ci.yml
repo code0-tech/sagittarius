@@ -192,7 +192,7 @@ npm-types:generate-graphql:
 
 
 .npm-types:publish-graphql:
-  image: node:24.15.0
+  image: node:24.21.0
   needs:
     - npm-types:generate-graphql
   variables:
@@ -247,7 +247,7 @@ npm-types:publish-graphql:
       allow_failure: true
 
 mails:verify-generated:
-  image: node:24.15.0
+  image: node:24.21.0
   stage: build
   script:
     - cd tooling/mails
