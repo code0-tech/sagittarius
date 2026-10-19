@@ -10,15 +10,15 @@ module Runtimes
         include Runtimes::Grpc::DataTypeHelper
 
         attr_reader :current_runtime, :data_types, :runtime_module, :runtime_module_resolver,
-                    :runtime_modules_to_update, :update_runtime_compatibility
+                    :runtime_module_definition_sources, :update_runtime_compatibility
 
         def initialize(current_runtime, data_types, runtime_module:, update_runtime_compatibility: true,
-                       runtime_module_resolver: nil, runtime_modules_to_update: nil)
+                       runtime_module_resolver: nil, runtime_module_definition_sources: nil)
           @current_runtime = current_runtime
           @data_types = data_types
           @runtime_module = runtime_module
           @runtime_module_resolver = runtime_module_resolver || ->(_data_type) { runtime_module }
-          @runtime_modules_to_update = runtime_modules_to_update
+          @runtime_module_definition_sources = runtime_module_definition_sources
           @update_runtime_compatibility = update_runtime_compatibility
         end
 
@@ -110,13 +110,14 @@ module Runtimes
         end
 
         def mark_existing_data_types_as_removed
-          runtime_modules = runtime_modules_to_update || data_types.filter_map do |data_type|
-            runtime_module_resolver.call(data_type)
-          end.uniq
+          scopes = runtime_module_definition_sources || { runtime_module => nil }
 
-          # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
-          DataType.where(runtime: current_runtime, runtime_module: runtime_modules)
-                  .update_all(removed_at: Time.zone.now)
+          scopes.each do |scoped_runtime_module, definition_source|
+            # rubocop:disable-next Rails/SkipsModelValidations -- when marking definitions as removed, we don't care about validations
+            DataType.where(runtime: current_runtime, runtime_module: scoped_runtime_module,
+                           definition_source: definition_source)
+                    .update_all(removed_at: Time.zone.now)
+          end
         end
 
         def enqueue_runtime_compatibility_update
