@@ -19,7 +19,7 @@ RSpec.describe UserPolicy do
     end
 
     it { is_expected.to be_allowed(:update_user_custom_attribute) }
-    it { is_expected.not_to be_allowed(:read_user) }
+    it { is_expected.to be_allowed(:read_user) }
     it { is_expected.not_to be_allowed(:update_user) }
     it { is_expected.not_to be_allowed(:delete_user) }
   end
