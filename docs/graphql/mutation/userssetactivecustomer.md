@@ -1,14 +1,14 @@
 ---
-title: usersSetActiveSubscription
+title: usersSetActiveCustomer
 ---
 
-(Cloud only) Set or unset the active subscription status for a user. Used by Crater.
+(Cloud only) Set or unset the active customer access status for a user. Used by Crater.
 
 ## Arguments
 
 | Name | Type | Description |
 |------|------|-------------|
-| `active` | [`Boolean!`](../scalar/boolean.md) | Whether the user has an active subscription. |
+| `active` | [`Boolean!`](../scalar/boolean.md) | Whether the user has an active customer. |
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
 | `userId` | [`UserID!`](../scalar/userid.md) | ID of the user to update. |
 

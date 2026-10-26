@@ -7,5 +7,11 @@ class UserCustomAttribute < ApplicationRecord
                   allow_blank: false,
                   length: { maximum: 255 },
                   uniqueness: { scope: :user_id }
-  validates :value, presence: true
+  validate :value_must_not_be_nil
+
+  private
+
+  def value_must_not_be_nil
+    errors.add(:value, :blank) if value.nil?
+  end
 end
