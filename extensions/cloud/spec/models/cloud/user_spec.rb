@@ -22,15 +22,15 @@ RSpec.describe User do
   describe '#deletion_restriction' do
     subject(:user) { create(:user) }
 
-    context 'when user has an active_subscription custom attribute' do
-      before { create(:user_custom_attribute, user: user, key: 'active_subscription', value: true) }
+    context 'when user has an active_customer custom attribute' do
+      before { create(:user_custom_attribute, user: user, key: 'active_customer', value: true) }
 
-      it 'returns :active_subscription' do
-        expect(user.deletion_restriction).to eq(:active_subscription)
+      it 'returns :active_customer' do
+        expect(user.deletion_restriction).to eq(:active_customer)
       end
     end
 
-    context 'when user does not have an active_subscription custom attribute' do
+    context 'when user does not have an active_customer custom attribute' do
       before { create(:user, admin: true) }
 
       it 'falls through to the base implementation' do
@@ -38,7 +38,7 @@ RSpec.describe User do
       end
     end
 
-    context 'when user has other custom attributes but not active_subscription' do
+    context 'when user has other custom attributes but not active_customer' do
       before do
         create(:user, admin: true)
         create(:user_custom_attribute, user: user, key: 'some_other_key', value: 'some_value')

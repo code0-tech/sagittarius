@@ -65,6 +65,7 @@ Represents the available error responses
 | `INVALID_SETTING` | Invalid setting provided |
 | `INVALID_TOTP_SECRET` | The TOTP secret is invalid or cannot be verified |
 | `INVALID_USER` | The user is invalid because of active model errors |
+| `INVALID_USER_CUSTOM_ATTRIBUTE` | The user custom attribute is invalid because of active model errors |
 | `INVALID_USER_IDENTITY` | The user identity is invalid because of active model errors |
 | `INVALID_USER_NAMESPACE_PIN` | The user namespace pin is invalid because of active model errors |
 | `INVALID_USER_PROJECT_PIN` | The user project pin is invalid because of active model errors |

@@ -13,9 +13,11 @@ module CLOUD
       end
     end
 
+    ACTIVE_CUSTOMER_KEY = 'active_customer'
+
     override :deletion_restriction
     def deletion_restriction
-      return :active_subscription if user_custom_attributes.exists?(key: 'active_subscription')
+      return :active_customer if user_custom_attributes.find_by(key: ACTIVE_CUSTOMER_KEY)&.value
 
       super
     end

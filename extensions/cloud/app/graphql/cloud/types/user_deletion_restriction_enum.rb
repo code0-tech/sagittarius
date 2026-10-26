@@ -6,9 +6,9 @@ module CLOUD
       extend ActiveSupport::Concern
 
       prepended do
-        value 'ACTIVE_SUBSCRIPTION',
-              '(Cloud only) The current user has an active subscription.',
-              value: :active_subscription
+        value 'ACTIVE_CUSTOMER',
+              '(Cloud only) The current user has access to a customer in crater.',
+              value: :active_customer
       end
     end
   end
