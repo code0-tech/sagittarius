@@ -8,7 +8,9 @@ Input type for sub-flow parameter values
 
 | Name | Type | Description |
 |------|------|-------------|
+| `description` | [`String`](../scalar/string.md) | The sub-flow description |
 | `functionIdentifier` | [`String`](../scalar/string.md) | The function identifier to execute |
-| `settings` | [`[SubFlowValueSettingInput!]`](../input_object/subflowvaluesettinginput.md) | The sub-flow settings |
+| `name` | [`String`](../scalar/string.md) | The sub-flow name |
+| `parameters` | [`[SubFlowValueParameterInput!]`](../input_object/subflowvalueparameterinput.md) | The sub-flow parameters |
 | `signature` | [`String!`](../scalar/string.md) | The sub-flow signature |
 | `startingNodeId` | [`NodeFunctionID`](../scalar/nodefunctionid.md) | The starting node to execute |

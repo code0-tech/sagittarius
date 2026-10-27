@@ -27,7 +27,10 @@ module Types
           description: 'Unix epoch time in microseconds when this node execution started'
     field :success, GraphQL::Types::JSON,
           null: true,
-          description: 'Successful value returned by this node execution'
+          description: 'Successful raw value returned by this node execution'
+    field :success_sub_flow_function_result, GraphQL::Types::JSON,
+          null: true,
+          description: 'Successful sub-flow function result returned by this node execution'
 
     id_field ExecutionNodeResult
     timestamps
