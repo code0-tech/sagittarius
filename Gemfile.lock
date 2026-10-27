@@ -141,13 +141,13 @@ GEM
     google-protobuf (4.36.2)
       bigdecimal
       rake (~> 13.3)
-    googleapis-common-protos-types (1.23.0)
+    googleapis-common-protos-types (1.24.0)
       google-protobuf (~> 4.26)
     graphql (2.6.10)
       base64
       fiber-storage
       logger
-    grpc (1.84.0)
+    grpc (1.84.1)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     httparty (0.24.2)
@@ -601,7 +601,7 @@ GEM
       open3 (~> 0.2)
       tucana (~> 0.0, >= 0.0.82)
     tsort (0.2.0)
-    tucana (0.0.82)
+    tucana (0.0.83)
       grpc (~> 1.64)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -662,7 +662,7 @@ DEPENDENCIES
   simplecov-cobertura (~> 4.0)
   test-prof (~> 1.0)
   triangulum (= 0.37.2)
-  tucana (= 0.0.82)
+  tucana (= 0.0.83)
   tzinfo-data
 
 RUBY VERSION
