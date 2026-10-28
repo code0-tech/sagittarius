@@ -222,7 +222,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       starting_node = nodes.find do |n|
         n['id'] == graphql_data_at(:namespaces_projects_flows_update, :flow, :starting_node_id)
       end
-      expect(starting_node['parameters']['count']).to eq(1)
+      expect(starting_node['parameters']['count']).to eq(function_definition.parameter_definitions.count)
 
       expect(flow).to be_present
       expect(project.flows).to include(flow)

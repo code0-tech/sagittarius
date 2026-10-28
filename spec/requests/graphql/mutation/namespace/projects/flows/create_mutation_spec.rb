@@ -231,6 +231,31 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
         target_type: 'NamespaceProject'
       )
     end
+
+    context 'when parameter values are omitted' do
+      before do
+        input[:flow][:nodes].each { |node| node[:parameters] = [] }
+      end
+
+      it 'creates a parameter for every function parameter definition' do
+        mutate!
+
+        expect(graphql_data_at(:namespaces_projects_flows_create, :errors)).to be_blank
+
+        response_nodes = graphql_data_at(:namespaces_projects_flows_create, :flow, :nodes, :nodes)
+        expect(response_nodes.pluck('parameters').pluck('count')).to all(eq(1))
+
+        created_flow_id = graphql_data_at(:namespaces_projects_flows_create, :flow, :id)
+        created_flow = SagittariusSchema.object_from_id(created_flow_id)
+        parameter_definition = function_definition.parameter_definitions.first
+
+        created_flow.node_functions.each do |node|
+          expect(node.node_parameters).to contain_exactly(
+            have_attributes(parameter_definition: parameter_definition, literal_value: nil)
+          )
+        end
+      end
+    end
   end
 
   context 'when user does not have the permission' do
