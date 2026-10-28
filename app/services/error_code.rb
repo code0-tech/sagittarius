@@ -56,6 +56,7 @@ class ErrorCode
       invalid_user_identity: { description: 'The user identity is invalid because of active model errors' },
       invalid_user_session: { description: 'The user session is invalid because of active model errors' },
       invalid_runtime: { description: 'The runtime is invalid because of active model errors' },
+      runtime_unavailable: { description: 'The runtime is currently unavailable' },
       invalid_organization: { description: 'The organization is invalid because of active model errors' },
       invalid_namespace_role: { description: 'The namespace role is invalid because of active model errors' },
       invalid_namespace_project: { description: 'The namespace project is invalid because of active model errors' },

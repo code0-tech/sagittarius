@@ -103,6 +103,7 @@ Represents the available error responses
 | `RUNTIME_NOT_ASSIGNED` | The runtime is not assigned to the project |
 | `RUNTIME_NOT_COMPATIBLE` | The runtime is not compatible with the primary runtime |
 | `RUNTIME_NOT_FOUND` | The runtime with the given identifier was not found |
+| `RUNTIME_UNAVAILABLE` | The runtime is currently unavailable |
 | `SECONDARY_LEVEL_NOT_FOUND` |  **Deprecated:** Outdated concept |
 | `TERTIARY_LEVEL_EXCEEDS_PARAMETERS` |  **Deprecated:** Outdated concept |
 | `TOTP_SECRET_ALREADY_SET` | This user already has TOTP set up |

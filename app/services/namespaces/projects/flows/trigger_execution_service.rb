@@ -29,6 +29,8 @@ module Namespaces
           ExecutionHandler.send_execution_request(runtime.id, execution_request)
 
           ServiceResponse.success(message: 'Triggered test execution', payload: execution_identifier)
+        rescue GRPC::Unavailable
+          ServiceResponse.error(message: 'Runtime is unavailable', error_code: :runtime_unavailable)
         end
       end
     end
