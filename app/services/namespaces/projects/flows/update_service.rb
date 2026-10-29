@@ -276,7 +276,7 @@ module Namespaces
           )
         end
 
-        def update_sub_flow(t, node_parameter, sub_flow_input, all_nodes)
+        def update_sub_flow(t, owner, sub_flow_input, all_nodes)
           starting_node = nil
           function_definition = nil
 
@@ -304,27 +304,31 @@ module Namespaces
             end
           end
 
-          sub_flow = node_parameter.sub_flow || node_parameter.build_sub_flow
+          sub_flow = owner.sub_flow || owner.build_sub_flow
           sub_flow.assign_attributes(
             starting_node: starting_node,
             function_definition: function_definition,
-            signature: sub_flow_input.signature
+            signature: sub_flow_input.signature,
+            name: sub_flow_input.try(:name),
+            description: sub_flow_input.try(:description)
           )
 
-          sub_flow_settings_input = Array(sub_flow_input.try(:settings))
-          sub_flow_settings = sub_flow.sub_flow_settings.first(sub_flow_settings_input.length)
+          update_sub_flow_parameters(t, sub_flow, sub_flow_input, all_nodes)
+        end
 
-          sub_flow_settings_input.each_with_index do |setting, index|
-            sub_flow_settings[index] ||= sub_flow.sub_flow_settings.build
-            sub_flow_settings[index].assign_attributes(
-              identifier: setting.identifier,
-              default_value: setting.try(:default_value),
-              optional: setting.try(:optional) || false,
-              hidden: setting.try(:hidden) || false
-            )
+        def update_sub_flow_parameters(t, sub_flow, sub_flow_input, all_nodes)
+          parameters_input = Array(sub_flow_input.try(:parameters))
+          sub_flow_parameters = sub_flow.sub_flow_parameters.first(parameters_input.length)
+
+          parameters_input.each_with_index do |parameter, index|
+            sub_flow_parameters[index] ||= sub_flow.sub_flow_parameters.build
+            sub_flow_parameters[index].identifier = parameter.identifier
+            sub_flow_parameters[index].cast = parameter.try(:cast)
+
+            assign_node_value(t, sub_flow_parameters[index], parameter.value, all_nodes)
           end
 
-          (sub_flow.sub_flow_settings - sub_flow_settings).each(&:destroy)
+          (sub_flow.sub_flow_parameters - sub_flow_parameters).each(&:destroy)
         end
       end
     end

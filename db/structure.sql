@@ -400,7 +400,8 @@ CREATE TABLE inline_reference_values (
     literal_value jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_0d28d5496a CHECK ((num_nonnulls(node_parameter_id, parent_inline_reference_value_id) = 1)),
+    sub_flow_parameter_id bigint,
+    CONSTRAINT check_0d28d5496a CHECK ((num_nonnulls(node_parameter_id, parent_inline_reference_value_id, sub_flow_parameter_id) = 1)),
     CONSTRAINT check_d4a03a969a CHECK ((char_length(signature) <= 500))
 );
 
@@ -734,6 +735,7 @@ CREATE TABLE p_execution_node_results (
     error jsonb,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
+    success_sub_flow_function_result jsonb,
     CONSTRAINT check_63b54a1a28 CHECK ((num_nonnulls(success, error) <= 1))
 )
 PARTITION BY RANGE (created_at);
@@ -753,7 +755,8 @@ CREATE TABLE p_execution_parameter_results (
     "position" integer NOT NULL,
     value jsonb,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    sub_flow_function_result jsonb
 )
 PARTITION BY RANGE (created_at);
 
@@ -915,7 +918,8 @@ CREATE TABLE reference_values (
     input_type_identifier text,
     node_parameter_id bigint,
     inline_reference_value_id bigint,
-    CONSTRAINT check_18132d63ea CHECK ((num_nonnulls(node_parameter_id, inline_reference_value_id) = 1)),
+    sub_flow_parameter_id bigint,
+    CONSTRAINT check_18132d63ea CHECK ((num_nonnulls(node_parameter_id, inline_reference_value_id, sub_flow_parameter_id) = 1)),
     CONSTRAINT check_a2e3734389 CHECK ((num_nonnulls(parameter_index, input_index) = ANY (ARRAY[0, 2])))
 );
 
@@ -1196,25 +1200,25 @@ CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
 
-CREATE TABLE sub_flow_settings (
-    id bigint NOT NULL,
-    sub_flow_id bigint NOT NULL,
-    identifier text NOT NULL,
-    default_value jsonb,
-    optional boolean DEFAULT false NOT NULL,
-    hidden boolean DEFAULT false NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+CREATE TABLE sub_flow_parameters (
+    id bigint CONSTRAINT sub_flow_settings_id_not_null NOT NULL,
+    sub_flow_id bigint CONSTRAINT sub_flow_settings_sub_flow_id_not_null NOT NULL,
+    identifier text CONSTRAINT sub_flow_settings_identifier_not_null NOT NULL,
+    created_at timestamp with time zone CONSTRAINT sub_flow_settings_created_at_not_null NOT NULL,
+    updated_at timestamp with time zone CONSTRAINT sub_flow_settings_updated_at_not_null NOT NULL,
+    "cast" text,
+    literal_value jsonb,
+    CONSTRAINT check_c730283ae5 CHECK ((char_length("cast") <= 500))
 );
 
-CREATE SEQUENCE sub_flow_settings_id_seq
+CREATE SEQUENCE sub_flow_parameters_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE sub_flow_settings_id_seq OWNED BY sub_flow_settings.id;
+ALTER SEQUENCE sub_flow_parameters_id_seq OWNED BY sub_flow_parameters.id;
 
 CREATE TABLE sub_flows (
     id bigint NOT NULL,
@@ -1227,9 +1231,14 @@ CREATE TABLE sub_flows (
     inline_reference_value_id bigint,
     input_schema jsonb,
     output_schema jsonb,
+    name text,
+    description text,
+    sub_flow_parameter_id bigint,
+    CONSTRAINT check_1ed0ac3ced CHECK ((char_length(name) <= 255)),
     CONSTRAINT check_53a99b1dd3 CHECK ((num_nonnulls(starting_node_id, function_definition_id) = 1)),
     CONSTRAINT check_943d01babb CHECK ((char_length(signature) <= 500)),
-    CONSTRAINT check_e3ee180b07 CHECK ((num_nonnulls(node_parameter_id, inline_reference_value_id) = 1))
+    CONSTRAINT check_abd9044c79 CHECK ((char_length(description) <= 1000)),
+    CONSTRAINT check_e3ee180b07 CHECK ((num_nonnulls(node_parameter_id, inline_reference_value_id, sub_flow_parameter_id) = 1))
 );
 
 CREATE SEQUENCE sub_flows_id_seq
@@ -1484,7 +1493,7 @@ ALTER TABLE ONLY runtime_statuses ALTER COLUMN id SET DEFAULT nextval('runtime_s
 
 ALTER TABLE ONLY runtimes ALTER COLUMN id SET DEFAULT nextval('runtimes_id_seq'::regclass);
 
-ALTER TABLE ONLY sub_flow_settings ALTER COLUMN id SET DEFAULT nextval('sub_flow_settings_id_seq'::regclass);
+ALTER TABLE ONLY sub_flow_parameters ALTER COLUMN id SET DEFAULT nextval('sub_flow_parameters_id_seq'::regclass);
 
 ALTER TABLE ONLY sub_flows ALTER COLUMN id SET DEFAULT nextval('sub_flows_id_seq'::regclass);
 
@@ -1685,8 +1694,8 @@ ALTER TABLE ONLY runtimes
 ALTER TABLE ONLY schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
 
-ALTER TABLE ONLY sub_flow_settings
-    ADD CONSTRAINT sub_flow_settings_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY sub_flow_parameters
+    ADD CONSTRAINT sub_flow_parameters_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT sub_flows_pkey PRIMARY KEY (id);
@@ -1860,6 +1869,8 @@ CREATE INDEX index_good_jobs_on_unfinished_or_errored ON good_jobs USING btree (
 
 CREATE INDEX index_inline_reference_values_on_node_parameter_id ON inline_reference_values USING btree (node_parameter_id);
 
+CREATE INDEX index_inline_reference_values_on_sub_flow_parameter_id ON inline_reference_values USING btree (sub_flow_parameter_id);
+
 CREATE INDEX index_licenses_on_namespace_id ON licenses USING btree (namespace_id);
 
 CREATE INDEX index_namespace_member_roles_on_member_id ON namespace_member_roles USING btree (member_id);
@@ -1918,6 +1929,8 @@ CREATE INDEX index_reference_values_on_node_function_id ON reference_values USIN
 
 CREATE INDEX index_reference_values_on_node_parameter_id ON reference_values USING btree (node_parameter_id);
 
+CREATE INDEX index_reference_values_on_sub_flow_parameter_id ON reference_values USING btree (sub_flow_parameter_id);
+
 CREATE UNIQUE INDEX index_runtime_flow_types_on_runtime_id_and_identifier ON runtime_flow_types USING btree (runtime_id, identifier);
 
 CREATE INDEX index_runtime_module_definitions_on_runtime_module_id ON runtime_module_definitions USING btree (runtime_module_id);
@@ -1930,7 +1943,7 @@ CREATE INDEX index_runtimes_on_namespace_id ON runtimes USING btree (namespace_i
 
 CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
 
-CREATE INDEX index_sub_flow_settings_on_sub_flow_id ON sub_flow_settings USING btree (sub_flow_id);
+CREATE INDEX index_sub_flow_parameters_on_sub_flow_id ON sub_flow_parameters USING btree (sub_flow_id);
 
 CREATE INDEX index_sub_flows_on_function_definition_id ON sub_flows USING btree (function_definition_id);
 
@@ -1939,6 +1952,8 @@ CREATE UNIQUE INDEX index_sub_flows_on_inline_reference_value_id ON sub_flows US
 CREATE UNIQUE INDEX index_sub_flows_on_node_parameter_id ON sub_flows USING btree (node_parameter_id);
 
 CREATE INDEX index_sub_flows_on_starting_node_id ON sub_flows USING btree (starting_node_id);
+
+CREATE UNIQUE INDEX index_sub_flows_on_sub_flow_parameter_id ON sub_flows USING btree (sub_flow_parameter_id);
 
 CREATE INDEX index_translations_on_owner ON translations USING btree (owner_type, owner_id);
 
@@ -2069,7 +2084,7 @@ ALTER TABLE ONLY node_functions
 ALTER TABLE ONLY backup_codes
     ADD CONSTRAINT fk_rails_556c1feac3 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY sub_flow_settings
+ALTER TABLE ONLY sub_flow_parameters
     ADD CONSTRAINT fk_rails_55f76c79cc FOREIGN KEY (sub_flow_id) REFERENCES sub_flows(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY namespace_members
@@ -2129,6 +2144,9 @@ ALTER TABLE ONLY namespace_projects
 ALTER TABLE p_execution_node_results
     ADD CONSTRAINT fk_rails_7aca8c4942 FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE SET NULL;
 
+ALTER TABLE ONLY inline_reference_values
+    ADD CONSTRAINT fk_rails_7beb797bbc FOREIGN KEY (sub_flow_parameter_id) REFERENCES sub_flow_parameters(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY flows
     ADD CONSTRAINT fk_rails_7de9ce6578 FOREIGN KEY (starting_node_id) REFERENCES node_functions(id) ON DELETE SET NULL;
 
@@ -2180,6 +2198,9 @@ ALTER TABLE ONLY reference_values
 ALTER TABLE ONLY runtime_flow_type_data_type_links
     ADD CONSTRAINT fk_rails_b300bcf944 FOREIGN KEY (runtime_flow_type_id) REFERENCES runtime_flow_types(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY reference_values
+    ADD CONSTRAINT fk_rails_b5784cf278 FOREIGN KEY (sub_flow_parameter_id) REFERENCES sub_flow_parameters(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY runtime_module_definition_flow_type_links
     ADD CONSTRAINT fk_rails_ba8933f234 FOREIGN KEY (runtime_module_definition_id) REFERENCES runtime_module_definitions(id) ON DELETE CASCADE;
 
@@ -2218,6 +2239,9 @@ ALTER TABLE ONLY sub_flows
 
 ALTER TABLE p_execution_parameter_results
     ADD CONSTRAINT fk_rails_e2c2b3fddc FOREIGN KEY (execution_node_result_id, created_at) REFERENCES p_execution_node_results(id, created_at) ON DELETE CASCADE;
+
+ALTER TABLE ONLY sub_flows
+    ADD CONSTRAINT fk_rails_e52a872fd3 FOREIGN KEY (sub_flow_parameter_id) REFERENCES sub_flow_parameters(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY runtime_flow_types
     ADD CONSTRAINT fk_rails_e729dc57e7 FOREIGN KEY (runtime_module_id) REFERENCES runtime_modules(id) ON DELETE CASCADE;

@@ -5,12 +5,18 @@ module Types
     class SubFlowValueInputType < Types::BaseInputObject
       description 'Input type for sub-flow parameter values'
 
+      argument :description, String,
+               required: false,
+               description: 'The sub-flow description'
       argument :function_identifier, String,
                required: false,
                description: 'The function identifier to execute'
-      argument :settings, [Types::Input::SubFlowValueSettingInputType],
+      argument :name, String,
                required: false,
-               description: 'The sub-flow settings'
+               description: 'The sub-flow name'
+      argument :parameters, [Types::Input::SubFlowValueParameterInputType],
+               required: false,
+               description: 'The sub-flow parameters'
       argument :signature, String,
                required: true,
                description: 'The sub-flow signature'

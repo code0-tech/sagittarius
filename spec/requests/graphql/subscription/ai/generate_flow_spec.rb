@@ -99,12 +99,17 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
                 starting_node_id: 'generated-1',
                 function_definition: function_definition,
                 signature: '(): undefined',
-                settings: [
+                name: 'Helper',
+                description: 'a helper sub-flow',
+                parameters: [
                   {
                     identifier: 'region',
-                    default_value: 'eu',
-                    optional: false,
-                    hidden: true,
+                    cast: nil,
+                    value: {
+                      generated_value_type: :literal_value,
+                      value: 'eu',
+                      references: [],
+                    },
                   }
                 ],
               },
@@ -167,11 +172,17 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
                       identifier
                     }
                     signature
-                    settings {
+                    name
+                    description
+                    parameters {
                       identifier
-                      defaultValue
-                      optional
-                      hidden
+                      cast
+                      value {
+                        __typename
+                        ... on AiGenerationLiteralValue {
+                          value
+                        }
+                      }
                     }
                   }
                 }
@@ -266,12 +277,16 @@ RSpec.describe 'aiGenerateFlow Subscription', type: :channel do
                     'identifier' => 'sum',
                   },
                   'signature' => '(): undefined',
-                  'settings' => [
+                  'name' => 'Helper',
+                  'description' => 'a helper sub-flow',
+                  'parameters' => [
                     {
                       'identifier' => 'region',
-                      'defaultValue' => 'eu',
-                      'optional' => false,
-                      'hidden' => true,
+                      'cast' => nil,
+                      'value' => {
+                        '__typename' => 'AiGenerationLiteralValue',
+                        'value' => 'eu',
+                      },
                     }
                   ],
                 },
