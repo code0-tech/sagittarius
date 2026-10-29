@@ -23,6 +23,7 @@ class ReplaceSubFlowSettingsWithParameters < Code0::ZeroTrack::Database::Migrati
                                                             to_table: :sub_flow_parameters, on_delete: :cascade
                                                           }
     remove_check_constraint :reference_values,
+                            'num_nonnulls(node_parameter_id, inline_reference_value_id) = 1',
                             name: check_constraint_name(:reference_values, :owner, :one_of)
     add_check_constraint :reference_values,
                          'num_nonnulls(node_parameter_id, inline_reference_value_id, sub_flow_parameter_id) = 1',
@@ -33,6 +34,7 @@ class ReplaceSubFlowSettingsWithParameters < Code0::ZeroTrack::Database::Migrati
                                                                    to_table: :sub_flow_parameters, on_delete: :cascade
                                                                  }
     remove_check_constraint :inline_reference_values,
+                            'num_nonnulls(node_parameter_id, parent_inline_reference_value_id) = 1',
                             name: check_constraint_name(:inline_reference_values, :owner, :one_of)
     add_check_constraint :inline_reference_values,
                          'num_nonnulls(node_parameter_id, parent_inline_reference_value_id, sub_flow_parameter_id) = 1',
@@ -43,6 +45,7 @@ class ReplaceSubFlowSettingsWithParameters < Code0::ZeroTrack::Database::Migrati
                                                      to_table: :sub_flow_parameters, on_delete: :cascade
                                                    }
     remove_check_constraint :sub_flows,
+                            'num_nonnulls(node_parameter_id, inline_reference_value_id) = 1',
                             name: check_constraint_name(:sub_flows, :owner, :one_of)
     add_check_constraint :sub_flows,
                          'num_nonnulls(node_parameter_id, inline_reference_value_id, sub_flow_parameter_id) = 1',
