@@ -4,6 +4,8 @@ module Namespaces
   module Projects
     module Flows
       class TriggerExecutionService
+        include Code0::ZeroTrack::Loggable
+
         attr_reader :current_authentication, :flow, :runtime, :input
 
         def initialize(current_authentication, flow:, runtime:, input:)
@@ -29,6 +31,14 @@ module Namespaces
           ExecutionHandler.send_execution_request(runtime.id, execution_request)
 
           ServiceResponse.success(message: 'Triggered test execution', payload: execution_identifier)
+        rescue GRPC::Unavailable => e
+          logger.warn(
+            message: 'Failed to push test execution request to gateway',
+            runtime_id: runtime.id,
+            grpc_details: e.details
+          )
+
+          ServiceResponse.error(message: 'Runtime is not connected to the gateway', error_code: :runtime_unavailable)
         end
       end
     end
