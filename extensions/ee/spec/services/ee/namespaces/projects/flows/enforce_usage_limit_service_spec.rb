@@ -45,19 +45,6 @@ RSpec.describe Namespaces::Projects::Flows::EnforceUsageLimitService do
 
   it { expect(described_class).to include_module(EE::Namespaces::Projects::Flows::EnforceUsageLimitService) }
 
-  describe '.concurrency_scope_key' do
-    # Isolated the same way as above: Cloud overrides this class method too, narrowing the scope
-    # to a namespace, so exercising it through the real class would test Cloud's behavior.
-    subject(:scope_key) do
-      Class.new { extend EE::Namespaces::Projects::Flows::EnforceUsageLimitService::ClassMethods }
-           .concurrency_scope_key(flow)
-    end
-
-    it 'is a single shared key for the whole installation, regardless of the flow' do
-      expect(scope_key).to eq('installation')
-    end
-  end
-
   context 'without an active license' do
     it 'disables the flow on its very first execution (strict 0 limit)' do
       record_usage(flow, 1)

@@ -3,21 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe Namespaces::Projects::Flows::RecordExecutionUsageService do
-  include ActiveJob::TestHelper
-
   describe '#execute' do
     let(:flow) { create(:flow) }
-    let(:execution_result) do
-      create(:execution_result, flow: flow, started_at: 1_000, finished_at: 3_500, created_at: Time.zone.now)
-    end
 
     it 'records a single denormalized usage row for the flow/project/namespace' do
-      described_class.new(execution_result).execute
+      described_class.new(flow: flow, duration: 2_500).execute
 
-      date = execution_result.created_at.to_date
       project = flow.project
 
-      expect(RuntimeUsageDailyAggregate.find_by(flow_id: flow.id, date: date)).to have_attributes(
+      expect(RuntimeUsageDailyAggregate.find_by(flow_id: flow.id, date: Time.zone.today)).to have_attributes(
         execution_count: 1,
         total_execution_time_us: 2_500,
         project_id: project.id,
@@ -27,17 +21,18 @@ RSpec.describe Namespaces::Projects::Flows::RecordExecutionUsageService do
     end
 
     it 'returns a successful service response' do
-      response = described_class.new(execution_result).execute
+      response = described_class.new(flow: flow, duration: 2_500).execute
 
       expect(response).to be_success
     end
 
-    it 'enqueues a delayed usage limit enforcement job for the flow' do
-      described_class.new(execution_result).execute
+    it 'returns an error response if recording usage fails' do
+      allow(RuntimeUsageDailyAggregate).to receive(:record_execution!).and_raise(StandardError, 'boom')
 
-      job = enqueued_jobs.find { |enqueued| enqueued[:job] == EnforceRuntimeUsageLimitJob }
-      expect(job[:args].first).to eq(flow.id)
-      expect(job[:at]).to be_within(1.second).of((Time.current + EnforceRuntimeUsageLimitJob::DELAY).to_f)
+      response = described_class.new(flow: flow, duration: 2_500).execute
+
+      expect(response).to be_error
+      expect(response.payload[:error_code]).to eq(:execution_usage_recording_failed)
     end
   end
 end

@@ -9,7 +9,6 @@ module EE
         # both to a single namespace (see CLOUD::Namespaces::Projects::Flows::EnforceUsageLimitService).
         module EnforceUsageLimitService
           include Sagittarius::Override
-          extend ActiveSupport::Concern
 
           override :execute
           def execute
@@ -18,17 +17,6 @@ module EE
             disable_flows!
 
             ServiceResponse.success(message: 'Usage limit exceeded, flows disabled')
-          end
-
-          class_methods do
-            include Sagittarius::Override
-
-            # Own module so Cloud can override it away (see
-            # CLOUD::Namespaces::Projects::Flows::EnforceUsageLimitService::ClassOverrides).
-            override :concurrency_scope_key
-            def concurrency_scope_key(_flow)
-              'installation'
-            end
           end
 
           protected

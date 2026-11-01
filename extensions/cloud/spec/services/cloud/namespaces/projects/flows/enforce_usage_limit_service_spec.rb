@@ -26,16 +26,6 @@ RSpec.describe Namespaces::Projects::Flows::EnforceUsageLimitService do
 
   it { expect(described_class).to include_module(CLOUD::Namespaces::Projects::Flows::EnforceUsageLimitService) }
 
-  describe '.concurrency_scope_key' do
-    it 'is shared by every flow in the namespace' do
-      other_project_flow = create(:flow, project: create(:namespace_project, namespace: namespace))
-
-      expect(described_class.concurrency_scope_key(flow))
-        .to eq(described_class.concurrency_scope_key(other_project_flow))
-      expect(described_class.concurrency_scope_key(flow)).to eq("namespace-#{namespace.id}")
-    end
-  end
-
   context 'without a namespace license' do
     it 'defaults to a limit of 50, anchored to the namespace creation date' do
       travel_to(namespace.created_at + 10.days) { record_usage(flow, 50) }

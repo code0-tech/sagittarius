@@ -15,13 +15,6 @@ module Namespaces
         def execute
           ServiceResponse.success(message: 'No usage limit enforcement configured')
         end
-
-        # Groups per-execution-result checks (see EnforceRuntimeUsageLimitJob) that share the
-        # same license scope, so a burst across many flows collapses into a single delayed check.
-        # Core has no license scope, so each flow is its own group.
-        def self.concurrency_scope_key(flow)
-          "flow-#{flow.id}"
-        end
       end
     end
   end

@@ -10,19 +10,6 @@ module CLOUD
         module EnforceUsageLimitService
           include Sagittarius::Override
 
-          # Not named ClassMethods: EE already defines one via `class_methods do`, and a second
-          # same-named one here breaks Sagittarius::Override's ancestor-based lookup for EE's own
-          # overrides (see CLOUD::FlowHandler for the same workaround).
-          module ClassOverrides
-            def concurrency_scope_key(flow)
-              "namespace-#{flow.project.namespace_id}"
-            end
-          end
-
-          def self.prepended(base)
-            base.singleton_class.prepend(ClassOverrides)
-          end
-
           protected
 
           override :license
