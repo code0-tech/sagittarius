@@ -16,7 +16,7 @@ module CLOUD
 
         expose_abilities %i[
           create_license
-          namespace_administrator
+          read_namespace_ownership
         ]
       end
     end

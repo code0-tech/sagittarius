@@ -137,7 +137,7 @@ RSpec.describe 'Crater authentication' do
         query {
           namespace(id: "#{namespace.to_global_id}") {
             userAbilities {
-              namespaceAdministrator
+              readNamespaceOwnership
             }
           }
         }
@@ -151,10 +151,10 @@ RSpec.describe 'Crater authentication' do
     end
 
     context 'when the impersonated user is only a plain member' do
-      it 'reports namespaceAdministrator as false' do
+      it 'reports readNamespaceOwnership as false' do
         request!
 
-        expect(graphql_data_at(:namespace, :userAbilities, :namespaceAdministrator)).to be false
+        expect(graphql_data_at(:namespace, :userAbilities, :readNamespaceOwnership)).to be false
       end
     end
 
@@ -165,10 +165,18 @@ RSpec.describe 'Crater authentication' do
         impersonated_user.namespace_memberships.find_by(namespace: namespace).roles << role
       end
 
-      it 'reports namespaceAdministrator as true' do
+      it 'reports readNamespaceOwnership as true' do
         request!
 
-        expect(graphql_data_at(:namespace, :userAbilities, :namespaceAdministrator)).to be true
+        expect(graphql_data_at(:namespace, :userAbilities, :readNamespaceOwnership)).to be true
+      end
+
+      it 'never grants crater the namespace_administrator ability itself' do
+        auth = Sagittarius::Authentication.new(
+          :crater, CLOUD::ApplicationController::CraterToken.new(user: impersonated_user)
+        )
+
+        expect(Ability.allowed?(auth, :namespace_administrator, namespace)).to be false
       end
     end
   end
