@@ -4,12 +4,14 @@ use tucana::sagittarius_gateway::execution_service_server::ExecutionServiceServe
 use tucana::sagittarius_gateway::flow_service_server::FlowServiceServer;
 use tucana::sagittarius_gateway::module_service_server::ModuleServiceServer;
 use tucana::sagittarius_gateway::runtime_status_service_server::RuntimeStatusServiceServer;
+use tucana::sagittarius_gateway::runtime_usage_service_server::RuntimeUsageServiceServer;
 
 use crate::auth::{JwtClient, JwtVerifier};
 use crate::client::execution_service_client::SagittariusRailsExecutionServiceClient;
 use crate::client::flow_service_client::SagittariusRailsFlowServiceClient;
 use crate::client::module_service_client::SagittariusRailsModuleServiceClient;
 use crate::client::runtime_status_service_client::SagittariusRailsRuntimeStatusServiceClient;
+use crate::client::runtime_usage_service_client::SagittariusRailsRuntimeUsageServiceClient;
 use crate::client::token_service_client::SagittariusRailsTokenServiceClient;
 use crate::config::Config;
 use crate::server::execution_service_server::SagittariusExecutionService;
@@ -17,6 +19,7 @@ use crate::server::flow_service_server::SagittariusFlowService;
 use crate::server::health_service::GatewayHealthService;
 use crate::server::module_service_server::SagittariusModuleService;
 use crate::server::runtime_status_service_server::SagittariusRuntimeStatusService;
+use crate::server::runtime_usage_service_server::SagittariusRuntimeUsageService;
 
 mod auth;
 mod client;
@@ -68,6 +71,9 @@ async fn run(config: Config) -> anyhow::Result<()> {
     let rails_status_client =
         SagittariusRailsRuntimeStatusServiceClient::connect(channel.clone(), retry_policy.clone())
             .await?;
+    let rails_usage_client =
+        SagittariusRailsRuntimeUsageServiceClient::connect(channel.clone(), retry_policy.clone())
+            .await?;
     let rails_token_client =
         SagittariusRailsTokenServiceClient::connect(channel.clone(), retry_policy).await?;
     let jwt_client = JwtClient::new_hs256(
@@ -99,13 +105,19 @@ async fn run(config: Config) -> anyhow::Result<()> {
         jwt_client.clone(),
         jwt_verifier,
     );
-    let rails_status_server =
-        SagittariusRuntimeStatusService::new(rails_status_client, rails_token_client, jwt_client);
+    let rails_status_server = SagittariusRuntimeStatusService::new(
+        rails_status_client,
+        rails_token_client.clone(),
+        jwt_client.clone(),
+    );
+    let rails_usage_server =
+        SagittariusRuntimeUsageService::new(rails_usage_client, rails_token_client, jwt_client);
     let mut server_builder = Server::builder()
         .add_service(ExecutionServiceServer::new(rails_execution_server))
         .add_service(FlowServiceServer::new(rails_flow_server))
         .add_service(ModuleServiceServer::new(rails_module_server))
-        .add_service(RuntimeStatusServiceServer::new(rails_status_server));
+        .add_service(RuntimeStatusServiceServer::new(rails_status_server))
+        .add_service(RuntimeUsageServiceServer::new(rails_usage_server));
 
     if config.grpc.with_health_service {
         server_builder = server_builder.add_service(
