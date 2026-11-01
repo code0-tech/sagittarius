@@ -25,10 +25,10 @@ RSpec.describe RuntimeUsageDailyAggregate do
     let(:project) { flow.project }
     let(:date) { Time.zone.today }
 
-    def record(execution_time_us:, record_date: date)
+    def record(execution_time_us:, record_date: date, count: 1)
       described_class.record_execution!(
         flow_id: flow.id, project_id: project.id, namespace_id: project.namespace_id,
-        date: record_date, execution_time_us: execution_time_us, unique_by: %i[flow_id date]
+        date: record_date, execution_time_us: execution_time_us, count: count, unique_by: %i[flow_id date]
       )
     end
 
@@ -56,6 +56,21 @@ RSpec.describe RuntimeUsageDailyAggregate do
       record(execution_time_us: 500, record_date: date - 1.day)
 
       expect(described_class.where(flow_id: flow.id).count).to eq(2)
+    end
+
+    it 'adds the given count to execution_count on first use' do
+      record(execution_time_us: 1_000, count: 3)
+
+      expect(described_class.find_by(flow_id: flow.id, date: date).execution_count).to eq(3)
+    end
+
+    it 'accumulates the given count on subsequent calls' do
+      record(execution_time_us: 1_000, count: 2)
+      record(execution_time_us: 1_000, count: 3)
+
+      aggregate = described_class.find_by(flow_id: flow.id, date: date)
+      expect(aggregate.execution_count).to eq(5)
+      expect(aggregate.total_execution_time_us).to eq(2_000)
     end
   end
 end

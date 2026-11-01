@@ -14,5 +14,6 @@ Represents the application settings
 | `organizationCreationRestricted` | [`Boolean!`](../scalar/boolean.md) | Shows if organization creation is restricted to administrators |
 | `privacyUrl` | [`String`](../scalar/string.md) | URL to the privacy policy page |
 | `runtimeMaxHeartbeatIntervalMinutes` | [`Int!`](../scalar/int.md) | The maximum amount of minutes a runtime is shown as connected after the last heartbeat |
+| `runtimeUsageDurationWeightThresholdSeconds` | [`Int!`](../scalar/int.md) | Execution duration in seconds above which an execution counts as more than one toward the runtime usage limit; 0 disables weighting |
 | `termsAndConditionsUrl` | [`String`](../scalar/string.md) | URL to the terms and conditions page |
 | `userRegistrationEnabled` | [`Boolean!`](../scalar/boolean.md) | Shows if user registration is enabled |

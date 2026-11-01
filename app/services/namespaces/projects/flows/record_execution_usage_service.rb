@@ -21,7 +21,7 @@ module Namespaces
 
           RuntimeUsageDailyAggregate.record_execution!(
             flow_id: flow.id, project_id: project.id, namespace_id: project.namespace_id,
-            date: Time.zone.today, execution_time_us: duration, unique_by: %i[flow_id date]
+            date: Time.zone.today, execution_time_us: duration, count: usage_weight, unique_by: %i[flow_id date]
           )
 
           ServiceResponse.success(message: 'Execution usage recorded')
@@ -30,6 +30,20 @@ module Namespaces
 
           ServiceResponse.error(message: 'Failed to record execution usage',
                                 error_code: :execution_usage_recording_failed)
+        end
+
+        private
+
+        # How much this execution counts toward the usage limit. Executions up to the configured
+        # threshold count as 1; each further whole threshold interval adds another (threshold 5s =>
+        # <=5s counts as 1, a 6s execution as 2, an 11s execution as 3). A threshold of 0 (or less)
+        # disables weighting, so every execution counts as 1.
+        def usage_weight
+          threshold_seconds = ApplicationSetting.current[:runtime_usage_duration_weight_threshold_seconds].to_i
+          return 1 unless threshold_seconds.positive?
+
+          threshold_us = threshold_seconds * 1_000_000
+          [(duration + threshold_us - 1) / threshold_us, 1].max
         end
       end
     end

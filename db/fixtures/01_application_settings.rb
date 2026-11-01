@@ -39,3 +39,9 @@ ApplicationSetting.seed_once :setting do |s|
   s.setting = :runtime_max_heartbeat_interval_minutes
   s.value = 10
 end
+
+# 0 disables duration weighting: every execution counts as 1 regardless of its duration.
+ApplicationSetting.seed_once :setting do |s|
+  s.setting = :runtime_usage_duration_weight_threshold_seconds
+  s.value = 0
+end

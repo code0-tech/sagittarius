@@ -19,11 +19,12 @@ class ApplicationSetting < ApplicationRecord
     privacy_url: 6,
     legal_notice_url: 7,
     runtime_max_heartbeat_interval_minutes: 8,
+    runtime_usage_duration_weight_threshold_seconds: 9,
   }.with_indifferent_access
 
   BOOLEAN_OPTIONS = %i[user_registration_enabled organization_creation_restricted admin_status_visible].freeze
   URL_OPTIONS = %i[terms_and_conditions_url privacy_url legal_notice_url].freeze
-  NUMBER_OPTIONS = %i[runtime_max_heartbeat_interval_minutes].freeze
+  NUMBER_OPTIONS = %i[runtime_max_heartbeat_interval_minutes runtime_usage_duration_weight_threshold_seconds].freeze
 
   enum :setting, SETTINGS
 

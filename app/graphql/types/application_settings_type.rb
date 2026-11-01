@@ -33,8 +33,15 @@ module Types
           null: false,
           description: 'List of configured identity providers'
 
+    # rubocop:disable GraphQL/ExtractType -- these are flat installation-wide runtime knobs, not a sub-object
     field :runtime_max_heartbeat_interval_minutes, GraphQL::Types::Int,
           null: false,
           description: 'The maximum amount of minutes a runtime is shown as connected after the last heartbeat'
+
+    field :runtime_usage_duration_weight_threshold_seconds, GraphQL::Types::Int,
+          null: false,
+          description: 'Execution duration in seconds above which an execution counts as more than ' \
+                       'one toward the runtime usage limit; 0 disables weighting'
+    # rubocop:enable GraphQL/ExtractType
   end
 end
