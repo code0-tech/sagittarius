@@ -9,6 +9,11 @@ module Namespaces
       class RecordExecutionUsageService
         include Code0::ZeroTrack::Loggable
 
+        # Duration (in microseconds) of one usage unit. An execution's weight is its duration
+        # rounded to the nearest whole number of these units (min 1), i.e. a 31s execution counts
+        # as 1, a 46s execution as 2, a 75s execution as 3.
+        DURATION_WEIGHT_THRESHOLD_US = 30 * 1_000_000
+
         attr_reader :flow, :duration
 
         def initialize(flow:, duration:)
@@ -21,7 +26,7 @@ module Namespaces
 
           RuntimeUsageDailyAggregate.record_execution!(
             flow_id: flow.id, project_id: project.id, namespace_id: project.namespace_id,
-            date: Time.zone.today, execution_time_us: duration, unique_by: %i[flow_id date]
+            date: Time.zone.today, execution_time_us: duration, count: usage_weight, unique_by: %i[flow_id date]
           )
 
           ServiceResponse.success(message: 'Execution usage recorded')
@@ -30,6 +35,14 @@ module Namespaces
 
           ServiceResponse.error(message: 'Failed to record execution usage',
                                 error_code: :execution_usage_recording_failed)
+        end
+
+        private
+
+        # How much this execution counts toward the usage limit: its duration rounded to the
+        # nearest whole threshold interval (half rounds up), with a floor of 1.
+        def usage_weight
+          [(duration + (DURATION_WEIGHT_THRESHOLD_US / 2)) / DURATION_WEIGHT_THRESHOLD_US, 1].max
         end
       end
     end
