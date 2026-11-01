@@ -46,6 +46,14 @@ module Users
         end
       end
 
+      current_password = params.delete(:current_password)
+
+      if params.key?(:password) && current_authentication.user == user &&
+         !(current_password.present? && user.authenticate(current_password))
+        return ServiceResponse.error(message: 'Current password is missing or incorrect',
+                                     error_code: :invalid_current_password)
+      end
+
       transactional do |t|
         mfa_type = nil
         if params.keys.intersect?(REQUIRES_MFA_FIELDS) && user.mfa_enabled? # is "critical" field

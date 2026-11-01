@@ -82,6 +82,7 @@ RSpec.describe 'usersUpdate Mutation' do
           userId: current_user.to_global_id.to_s,
           password: password,
           passwordRepeat: password,
+          currentPassword: current_user.password,
         }
       end
 
@@ -98,6 +99,39 @@ RSpec.describe 'usersUpdate Mutation' do
           target_id: user.id,
           target_type: 'User'
         )
+      end
+    end
+
+    context 'when current password is missing' do
+      let(:input) do
+        password = generate(:password)
+        {
+          userId: current_user.to_global_id.to_s,
+          password: password,
+          passwordRepeat: password,
+        }
+      end
+
+      it 'returns an error' do
+        expect(graphql_data_at(:users_update, :user)).to be_nil
+        expect(graphql_data_at(:users_update, :errors, :error_code)).to include('INVALID_CURRENT_PASSWORD')
+      end
+    end
+
+    context 'when current password is incorrect' do
+      let(:input) do
+        password = generate(:password)
+        {
+          userId: current_user.to_global_id.to_s,
+          password: password,
+          passwordRepeat: password,
+          currentPassword: 'not-the-current-password',
+        }
+      end
+
+      it 'returns an error' do
+        expect(graphql_data_at(:users_update, :user)).to be_nil
+        expect(graphql_data_at(:users_update, :errors, :error_code)).to include('INVALID_CURRENT_PASSWORD')
       end
     end
   end
