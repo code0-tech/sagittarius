@@ -29,8 +29,6 @@ module Namespaces
             )
           end
 
-          RecordExecutionUsageService.new(execution_result).execute
-
           SubscriptionTriggers.execution_result(execution_result)
 
           ServiceResponse.success(message: 'Execution result persisted', payload: execution_result)

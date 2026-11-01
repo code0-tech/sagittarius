@@ -56,6 +56,13 @@ RSpec.describe 'aiGenerateFlow Mutation' do
     allow(Sagittarius::Configuration).to receive(:config)
       .and_return(velorum: { enabled: true })
     allow(VelorumGenerateFlowJob).to receive(:perform_later)
+    # Real usage-limit enforcement (EE strict 0 / Cloud 25000 defaults) is edition-specific and
+    # covered by its own EE/Cloud specs - stub it to a neutral success here so this file stays
+    # edition-agnostic and doesn't depend on license setup.
+    allow(Namespaces::Projects::EnforceAiUsageLimitService).to receive(:new).and_return(
+      instance_double(Namespaces::Projects::EnforceAiUsageLimitService,
+                      execute: ServiceResponse.success(message: 'AI usage within limit'))
+    )
 
     create(:namespace_member, namespace: project.namespace, user: current_user)
     stub_allowed_ability(NamespaceProjectPolicy, :create_flow, user: current_user, subject: project)
@@ -135,6 +142,28 @@ RSpec.describe 'aiGenerateFlow Mutation' do
 
       expect(graphql_data_at(:ai_generate_flow, :execution_identifier)).to be_nil
       expect(graphql_data_at(:ai_generate_flow, :errors, 0, :error_code)).to eq('NO_DEFINITIONS')
+      expect(VelorumGenerateFlowJob).not_to have_received(:perform_later)
+    end
+  end
+
+  context 'when the usage limit check returns an error' do
+    # error_code is a core-registered one (not the EE-only :ai_usage_limit_exceeded) since this
+    # spec runs under every edition (including CE, which has no EE error codes registered) - the
+    # point here is only to verify the mutation surfaces whatever error the service returns.
+    before do
+      allow(Namespaces::Projects::EnforceAiUsageLimitService).to receive(:new).with(project).and_return(
+        instance_double(
+          Namespaces::Projects::EnforceAiUsageLimitService,
+          execute: ServiceResponse.error(message: 'Usage limit exceeded', error_code: :missing_permission)
+        )
+      )
+    end
+
+    it 'returns an error and does not enqueue a job' do
+      mutate!
+
+      expect(graphql_data_at(:ai_generate_flow, :execution_identifier)).to be_nil
+      expect(graphql_data_at(:ai_generate_flow, :errors, 0, :error_code)).to eq('MISSING_PERMISSION')
       expect(VelorumGenerateFlowJob).not_to have_received(:perform_later)
     end
   end

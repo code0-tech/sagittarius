@@ -47,6 +47,9 @@ module Mutations
           return error_response(:no_definitions, 'The primary runtime must provide functions and flow types')
         end
 
+        usage_limit = ::Namespaces::Projects::EnforceAiUsageLimitService.new(project).execute
+        return error_response(usage_limit.payload[:error_code], usage_limit.message) if usage_limit.error?
+
         execution_identifier = SecureRandom.uuid
         VelorumGenerateFlowJob.perform_later(execution_identifier, project.id, prompt, model_identifier, flow&.id)
 

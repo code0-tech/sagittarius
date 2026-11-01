@@ -279,6 +279,7 @@ CREATE TABLE flows (
     validation_diagnostics jsonb DEFAULT '[]'::jsonb NOT NULL,
     input_schema jsonb,
     output_schema jsonb,
+    disabled_until date,
     CONSTRAINT check_8c731c24ec CHECK ((char_length(signature) <= 500))
 );
 
