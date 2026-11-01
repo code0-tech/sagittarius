@@ -13,7 +13,6 @@ RSpec.describe SagittariusSchema.types['ApplicationSettings'] do
       privacyUrl
       legalNoticeUrl
       runtimeMaxHeartbeatIntervalMinutes
-      runtimeUsageDurationWeightThresholdSeconds
     ]
   end
 

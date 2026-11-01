@@ -9,6 +9,11 @@ module Namespaces
       class RecordExecutionUsageService
         include Code0::ZeroTrack::Loggable
 
+        # Duration (in microseconds) above which an execution counts as more than one toward the
+        # runtime usage limit: each further whole interval of this adds one (30s => <=30s counts
+        # as 1, a 31s execution as 2, a 61s execution as 3).
+        DURATION_WEIGHT_THRESHOLD_US = 30 * 1_000_000
+
         attr_reader :flow, :duration
 
         def initialize(flow:, duration:)
@@ -34,16 +39,10 @@ module Namespaces
 
         private
 
-        # How much this execution counts toward the usage limit. Executions up to the configured
-        # threshold count as 1; each further whole threshold interval adds another (threshold 5s =>
-        # <=5s counts as 1, a 6s execution as 2, an 11s execution as 3). A threshold of 0 (or less)
-        # disables weighting, so every execution counts as 1.
+        # How much this execution counts toward the usage limit. Executions up to the threshold
+        # count as 1; each further whole threshold interval adds another.
         def usage_weight
-          threshold_seconds = ApplicationSetting.current[:runtime_usage_duration_weight_threshold_seconds].to_i
-          return 1 unless threshold_seconds.positive?
-
-          threshold_us = threshold_seconds * 1_000_000
-          [(duration + threshold_us - 1) / threshold_us, 1].max
+          [(duration + DURATION_WEIGHT_THRESHOLD_US - 1) / DURATION_WEIGHT_THRESHOLD_US, 1].max
         end
       end
     end

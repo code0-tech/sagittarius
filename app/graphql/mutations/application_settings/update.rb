@@ -28,10 +28,6 @@ module Mutations
       argument :runtime_max_heartbeat_interval_minutes, GraphQL::Types::Int,
                required: false,
                description: 'Set the maximum amount of minutes a runtime is shown as connected after the last heartbeat'
-      argument :runtime_usage_duration_weight_threshold_seconds, GraphQL::Types::Int,
-               required: false,
-               description: 'Set the execution duration in seconds above which an execution counts as more than ' \
-                            'one toward the runtime usage limit; 0 disables weighting'
       argument :terms_and_conditions_url, String,
                required: false,
                description: 'Set the URL to the terms and conditions page.'
