@@ -14,6 +14,10 @@ module CLOUD
         enable :delete_license
       end
 
+      # Lets crater check the real permissions of a user it is impersonating (authentication.user
+      # is that user, not the crater account), scoped to their actual namespace membership.
+      rule { crater & is_member }.enable :read_namespace
+
       rule { admin }.policy do
         enable :create_license
         enable :delete_license

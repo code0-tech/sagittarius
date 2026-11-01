@@ -3,11 +3,12 @@
 module CLOUD
   class CraterJwt
     class << self
-      def valid?(token, secret:, ttl_minutes:)
+      def verify(token, secret:, ttl_minutes:)
         claims = Sagittarius::Jwt.decode(token, secret: secret)
-        return false if claims.nil?
+        return nil if claims.nil?
+        return nil unless valid_claims?(claims, ttl_minutes)
 
-        valid_claims?(claims, ttl_minutes)
+        claims
       end
 
       private
