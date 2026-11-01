@@ -16,6 +16,7 @@ module CLOUD
 
         expose_abilities %i[
           create_license
+          read_namespace_ownership
         ]
       end
     end
