@@ -52,5 +52,16 @@ RSpec.describe Namespaces::Projects::Flows::TriggerExecutionService do
         expect(request.body.to_ruby(true)).to eq(input)
       end
     end
+
+    context 'when the runtime is not connected to the gateway' do
+      before do
+        allow(ExecutionHandler).to receive(:send_execution_request).and_raise(GRPC::Unavailable)
+      end
+
+      it 'returns an error instead of raising' do
+        expect(service_response).to be_error
+        expect(service_response.payload[:error_code]).to eq(:runtime_unavailable)
+      end
+    end
   end
 end

@@ -119,6 +119,7 @@ class ErrorCode
       lock_timeout: { description: 'Could not acquire a database lock in time' },
       execution_usage_recording_failed: { description: 'Failed to record execution usage counters' },
       generation_usage_recording_failed: { description: 'Failed to record AI generation usage counters' },
+      runtime_unavailable: { description: 'The runtime is not currently connected to the gateway' },
     }
   end
 end
