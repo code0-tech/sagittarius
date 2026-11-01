@@ -9,9 +9,9 @@ module Namespaces
       class RecordExecutionUsageService
         include Code0::ZeroTrack::Loggable
 
-        # Duration (in microseconds) above which an execution counts as more than one toward the
-        # runtime usage limit: each further whole interval of this adds one (30s => <=30s counts
-        # as 1, a 31s execution as 2, a 61s execution as 3).
+        # Duration (in microseconds) of one usage unit. An execution's weight is its duration
+        # rounded to the nearest whole number of these units (min 1), i.e. a 31s execution counts
+        # as 1, a 46s execution as 2, a 75s execution as 3.
         DURATION_WEIGHT_THRESHOLD_US = 30 * 1_000_000
 
         attr_reader :flow, :duration
@@ -39,10 +39,10 @@ module Namespaces
 
         private
 
-        # How much this execution counts toward the usage limit. Executions up to the threshold
-        # count as 1; each further whole threshold interval adds another.
+        # How much this execution counts toward the usage limit: its duration rounded to the
+        # nearest whole threshold interval (half rounds up), with a floor of 1.
         def usage_weight
-          [(duration + DURATION_WEIGHT_THRESHOLD_US - 1) / DURATION_WEIGHT_THRESHOLD_US, 1].max
+          [(duration + (DURATION_WEIGHT_THRESHOLD_US / 2)) / DURATION_WEIGHT_THRESHOLD_US, 1].max
         end
       end
     end

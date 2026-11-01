@@ -31,20 +31,20 @@ RSpec.describe Namespaces::Projects::Flows::RecordExecutionUsageService do
         RuntimeUsageDailyAggregate.find_by(flow_id: flow.id, date: Time.zone.today).execution_count
       end
 
-      it 'counts an execution at or below the threshold as 1' do
-        described_class.new(flow: flow, duration: 30_000_000).execute
+      it 'rounds a just-over-threshold execution back down to 1' do
+        described_class.new(flow: flow, duration: 31_000_000).execute
 
         expect(execution_count_for(flow)).to eq(1)
       end
 
-      it 'counts an execution just above the threshold as 2' do
-        described_class.new(flow: flow, duration: 31_000_000).execute
+      it 'rounds up to 2 once past the halfway point' do
+        described_class.new(flow: flow, duration: 46_000_000).execute
 
         expect(execution_count_for(flow)).to eq(2)
       end
 
-      it 'adds one per whole threshold interval' do
-        described_class.new(flow: flow, duration: 61_000_000).execute
+      it 'rounds to the nearest whole interval for longer executions' do
+        described_class.new(flow: flow, duration: 75_000_000).execute
 
         expect(execution_count_for(flow)).to eq(3)
       end
