@@ -3,10 +3,12 @@
 class SubFlow < ApplicationRecord
   belongs_to :node_parameter, inverse_of: :sub_flow, optional: true
   belongs_to :inline_reference_value, inverse_of: :sub_flow, optional: true
+  belongs_to :sub_flow_parameter, inverse_of: :sub_flow, optional: true
   belongs_to :starting_node, class_name: 'NodeFunction', optional: true
   belongs_to :function_definition, optional: true
 
-  has_many :sub_flow_settings, inverse_of: :sub_flow, autosave: true
+  has_many :sub_flow_parameters, inverse_of: :parent_sub_flow,
+                                 autosave: true, dependent: :destroy
 
   validate :validate_execution_reference
   validate :validate_owner
@@ -19,8 +21,11 @@ class SubFlow < ApplicationRecord
     grpc_sub_flow = Tucana::Shared::SubFlow.new(
       starting_node_id: starting_node_id,
       signature: signature,
-      settings: sub_flow_settings.map(&:to_grpc)
+      parameters: sub_flow_parameters.map(&:to_grpc)
     )
+    grpc_sub_flow.name = name if name.present?
+    grpc_sub_flow.description = description if description.present?
+
     if function_definition.present?
       function_args = { function_identifier: function_identifier }
       definition_source = function_definition.runtime_function_definition.definition_source
@@ -44,8 +49,9 @@ class SubFlow < ApplicationRecord
   end
 
   def validate_owner
-    return if [node_parameter.present?, inline_reference_value.present?].count(true) == 1
+    owners = [node_parameter.present?, inline_reference_value.present?, sub_flow_parameter.present?]
+    return if owners.count(true) == 1
 
-    errors.add(:base, 'Exactly one of node_parameter or inline_reference_value must be present')
+    errors.add(:base, 'Exactly one of node_parameter, inline_reference_value or sub_flow_parameter must be present')
   end
 end

@@ -34,7 +34,8 @@ class ExecutionNodeResult < ApplicationRecord
   end
 
   def only_one_result_present
-    return if [!success.nil?, !error.nil?].count(true) <= 1
+    success_present = !success.nil? || !success_sub_flow_function_result.nil?
+    return if [success_present, !error.nil?].count(true) <= 1
 
     errors.add(:base, 'Only one of success or error can be present')
   end

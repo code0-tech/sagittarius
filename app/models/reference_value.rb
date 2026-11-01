@@ -4,6 +4,7 @@ class ReferenceValue < ApplicationRecord
   belongs_to :node_function, optional: true # real value association
   belongs_to :node_parameter, inverse_of: :reference_value, optional: true
   belongs_to :inline_reference_value, inverse_of: :reference_value, optional: true
+  belongs_to :sub_flow_parameter, inverse_of: :reference_value, optional: true
   has_many :reference_paths, inverse_of: :reference_value, autosave: true, dependent: :destroy
 
   validate :validate_indexes
@@ -18,9 +19,10 @@ class ReferenceValue < ApplicationRecord
   end
 
   def validate_owner
-    return if [node_parameter.present?, inline_reference_value.present?].count(true) == 1
+    owners = [node_parameter.present?, inline_reference_value.present?, sub_flow_parameter.present?]
+    return if owners.count(true) == 1
 
-    errors.add(:base, 'Exactly one of node_parameter or inline_reference_value must be present')
+    errors.add(:base, 'Exactly one of node_parameter, inline_reference_value or sub_flow_parameter must be present')
   end
 
   def to_grpc

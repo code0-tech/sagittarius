@@ -25,6 +25,25 @@ module NodeValueOwner
     end
   end
 
+  # Builds the `Tucana::Shared::NodeValue` represented by this record: a reference,
+  # a nested sub-flow, or a literal value with its inline references.
+  def to_grpc_node_value
+    node_value = Tucana::Shared::NodeValue.new
+
+    if reference_value.present?
+      node_value.reference_value = reference_value.to_grpc
+    elsif sub_flow.present?
+      node_value.sub_flow = sub_flow.to_grpc
+    else
+      node_value.literal_value = Tucana::Shared::LiteralValue.new(
+        value: Tucana::Shared::Value.from_ruby(literal_value),
+        references: inline_reference_values.map(&:to_grpc)
+      )
+    end
+
+    node_value
+  end
+
   private
 
   def only_one_value_present

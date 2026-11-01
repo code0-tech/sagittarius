@@ -66,7 +66,7 @@ module Namespaces
               created_at: created_at
             )
 
-            assign_result(node_record, node_result)
+            assign_node_result(node_record, node_result)
             build_parameter_results(node_record, node_result, created_at)
           end
         end
@@ -75,7 +75,8 @@ module Namespaces
           node_result.parameter_results.each_with_index do |parameter_result, index|
             node_record.parameter_results.build(
               position: index,
-              value: parameter_result.value&.to_ruby(true),
+              value: node_value_raw_value(parameter_result),
+              sub_flow_function_result: node_value_sub_flow_function_result(parameter_result),
               created_at: created_at
             )
           end
@@ -106,6 +107,7 @@ module Namespaces
           )
         end
 
+        # The top-level ExecutionResult still carries a plain Value for its success.
         def assign_result(record, grpc_record)
           case grpc_record.result
           when :success
@@ -113,6 +115,60 @@ module Namespaces
           when :error
             record.error = error_to_hash(grpc_record.error)
           end
+        end
+
+        # A node's success is a NodeValueExecutionResult: either a raw value or a
+        # sub-flow function result.
+        def assign_node_result(record, node_result)
+          case node_result.result
+          when :success
+            assign_node_success(record, node_result.success)
+          when :error
+            record.error = error_to_hash(node_result.error)
+          end
+        end
+
+        def assign_node_success(record, node_value_result)
+          case node_value_result.value
+          when :raw_value
+            record.success = node_value_result.raw_value&.to_ruby(true)
+          when :sub_flow_function_result
+            record.success_sub_flow_function_result =
+              sub_flow_function_result_to_hash(node_value_result.sub_flow_function_result)
+          end
+        end
+
+        def node_value_raw_value(node_value_result)
+          return unless node_value_result.value == :raw_value
+
+          node_value_result.raw_value&.to_ruby(true)
+        end
+
+        def node_value_sub_flow_function_result(node_value_result)
+          return unless node_value_result.value == :sub_flow_function_result
+
+          sub_flow_function_result_to_hash(node_value_result.sub_flow_function_result)
+        end
+
+        def sub_flow_function_result_to_hash(result)
+          return if result.nil?
+
+          {
+            function: sub_flow_function_to_hash(result.function),
+            input_schema: result.input_schema&.to_h,
+            output_schema: result.output_schema&.to_h,
+            name: result.name,
+            description: result.description,
+          }
+        end
+
+        def sub_flow_function_to_hash(function)
+          return if function.nil?
+
+          {
+            function_identifier: function.function_identifier,
+            definition_source: (function.definition_source if function.has_definition_source?),
+          }
         end
 
         def error_to_hash(error)

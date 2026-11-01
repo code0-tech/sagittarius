@@ -206,16 +206,17 @@ module Velorum
         starting_node_id: node_reference_id(sub_flow.starting_node_id),
         function_definition: function_definition,
         signature: sub_flow.signature,
-        settings: sub_flow.settings.map { |setting| sub_flow_setting_to_h(setting) },
+        name: (sub_flow.name if sub_flow.has_name?),
+        description: (sub_flow.description if sub_flow.has_description?),
+        parameters: sub_flow.parameters.map { |parameter| sub_flow_parameter_to_h(parameter) },
       }
     end
 
-    def sub_flow_setting_to_h(setting)
+    def sub_flow_parameter_to_h(parameter)
       {
-        identifier: setting.identifier,
-        default_value: setting.default_value&.to_ruby(true),
-        optional: setting.optional,
-        hidden: setting.hidden,
+        identifier: parameter.identifier,
+        cast: blank_zero(parameter.cast),
+        value: node_value_to_h(parameter.value, generated_parameter_id),
       }
     end
 

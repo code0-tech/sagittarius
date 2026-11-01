@@ -270,7 +270,7 @@ RSpec.describe Velorum::GenerationFlowSerializer do
       starting_node_id: nil,
       function_definition: nil,
       signature: '(): undefined',
-      settings: []
+      parameters: []
     )
   end
 

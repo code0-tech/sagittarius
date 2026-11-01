@@ -44,7 +44,7 @@ RSpec.describe ReferenceValue do
 
         expect(reference_value).not_to be_valid
         expect(reference_value.errors[:base])
-          .to include('Exactly one of node_parameter or inline_reference_value must be present')
+          .to include('Exactly one of node_parameter, inline_reference_value or sub_flow_parameter must be present')
       end
     end
   end

@@ -8,9 +8,10 @@ RSpec.describe SubFlow do
   describe 'associations' do
     it { is_expected.to belong_to(:node_parameter).inverse_of(:sub_flow).optional }
     it { is_expected.to belong_to(:inline_reference_value).inverse_of(:sub_flow).optional }
+    it { is_expected.to belong_to(:sub_flow_parameter).inverse_of(:sub_flow).optional }
     it { is_expected.to belong_to(:starting_node).class_name('NodeFunction').optional }
     it { is_expected.to belong_to(:function_definition).optional }
-    it { is_expected.to have_many(:sub_flow_settings).inverse_of(:sub_flow) }
+    it { is_expected.to have_many(:sub_flow_parameters).inverse_of(:parent_sub_flow) }
   end
 
   describe 'validations' do
@@ -26,7 +27,7 @@ RSpec.describe SubFlow do
 
       expect(sub_flow).not_to be_valid
       expect(sub_flow.errors[:base])
-        .to include('Exactly one of node_parameter or inline_reference_value must be present')
+        .to include('Exactly one of node_parameter, inline_reference_value or sub_flow_parameter must be present')
     end
   end
 
