@@ -16,6 +16,7 @@ module CLOUD
 
         expose_abilities %i[
           create_license
+          namespace_administrator
         ]
       end
     end

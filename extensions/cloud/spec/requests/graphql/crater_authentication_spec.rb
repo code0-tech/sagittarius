@@ -78,7 +78,7 @@ RSpec.describe 'Crater authentication' do
     let(:impersonated_user) { create(:user) }
 
     before do
-      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: impersonated_user.id.to_s)}" }
+      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: impersonated_user.to_global_id.to_s)}" }
     end
 
     it 'authorizes based on the impersonated user and denies access' do
@@ -91,7 +91,7 @@ RSpec.describe 'Crater authentication' do
 
     before do
       create(:namespace_member, namespace: namespace, user: impersonated_user)
-      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: impersonated_user.id.to_s)}" }
+      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: impersonated_user.to_global_id.to_s)}" }
     end
 
     it 'authorizes based on the impersonated user and allows access' do
@@ -101,11 +101,75 @@ RSpec.describe 'Crater authentication' do
 
   context 'with a crater jwt impersonating a nonexistent user' do
     before do
-      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: (User.maximum(:id).to_i + 1).to_s)}" }
+      nonexistent_gid = "gid://sagittarius/User/#{User.maximum(:id).to_i + 1}"
+      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: nonexistent_gid)}" }
     end
 
     it 'does not authenticate' do
       expect(graphql_data_at(:namespace)).to be_nil
+    end
+  end
+
+  context 'with a crater jwt whose sub is not a well-formed GlobalID' do
+    before do
+      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: 'not-a-global-id')}" }
+    end
+
+    it 'does not authenticate' do
+      expect(graphql_data_at(:namespace)).to be_nil
+    end
+  end
+
+  context 'with a crater jwt whose sub names a non-User GlobalID' do
+    before do
+      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: namespace.to_global_id.to_s)}" }
+    end
+
+    it 'does not authenticate' do
+      expect(graphql_data_at(:namespace)).to be_nil
+    end
+  end
+
+  context 'with a crater jwt impersonating a user, checking namespace ownership' do
+    let(:impersonated_user) { create(:user) }
+    let(:query) do
+      <<~QUERY
+        query {
+          namespace(id: "#{namespace.to_global_id}") {
+            userAbilities {
+              namespaceAdministrator
+            }
+          }
+        }
+      QUERY
+    end
+
+    before { create(:namespace_member, namespace: namespace, user: impersonated_user) }
+
+    def request!
+      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: impersonated_user.to_global_id.to_s)}" }
+    end
+
+    context 'when the impersonated user is only a plain member' do
+      it 'reports namespaceAdministrator as false' do
+        request!
+
+        expect(graphql_data_at(:namespace, :userAbilities, :namespaceAdministrator)).to be false
+      end
+    end
+
+    context 'when the impersonated user holds a namespace_administrator role' do
+      before do
+        role = create(:namespace_role, namespace: namespace)
+        create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
+        impersonated_user.namespace_memberships.find_by(namespace: namespace).roles << role
+      end
+
+      it 'reports namespaceAdministrator as true' do
+        request!
+
+        expect(graphql_data_at(:namespace, :userAbilities, :namespaceAdministrator)).to be true
+      end
     end
   end
 
@@ -114,7 +178,7 @@ RSpec.describe 'Crater authentication' do
 
     before do
       create(:namespace_member, namespace: namespace, user: impersonated_user)
-      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: impersonated_user.id.to_s)}" }
+      post_graphql query, headers: { authorization: "Crater #{jwt(secret, sub: impersonated_user.to_global_id.to_s)}" }
     end
 
     it 'does not authenticate' do
