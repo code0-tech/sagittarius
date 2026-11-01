@@ -51,7 +51,8 @@ RSpec.describe Users::UpdateService do
   context 'when user and params are valid' do
     let(:params) do
       { username: generate(:username),
-        password: generate(:password) }
+        password: generate(:password),
+        current_password: current_user.password }
     end
     let(:current_user) { create(:user) }
 
@@ -276,6 +277,59 @@ RSpec.describe Users::UpdateService do
             target_type: 'User'
           )
         end
+      end
+    end
+
+    context 'when user changes own password' do
+      let(:params) { { password: generate(:password), current_password: current_password } }
+
+      context 'when current password is correct' do
+        let(:current_password) { current_user.password }
+
+        it { is_expected.to be_success }
+
+        it 'updates the password' do
+          expect { service_response }.to change { current_user.reload.password }
+            .from(current_user.password).to(params[:password])
+        end
+      end
+
+      context 'when current password is incorrect' do
+        let(:current_password) { 'not-the-current-password' }
+
+        it { is_expected.not_to be_success }
+        it { expect(service_response.payload[:error_code]).to eq(:invalid_current_password) }
+
+        it 'does not update the password' do
+          expect { service_response }.not_to(change { current_user.reload.password_digest })
+        end
+
+        it { expect { service_response }.not_to create_audit_event }
+      end
+
+      context 'when current password is missing' do
+        let(:current_password) { nil }
+
+        it { is_expected.not_to be_success }
+        it { expect(service_response.payload[:error_code]).to eq(:invalid_current_password) }
+
+        it 'does not update the password' do
+          expect { service_response }.not_to(change { current_user.reload.password_digest })
+        end
+      end
+    end
+
+    context 'when an admin changes another users password' do
+      subject(:service_response) { described_class.new(create_authentication(current_user), user, mfa, params).execute }
+
+      let(:current_user) { create(:user, :admin) }
+      let(:user) { create(:user) }
+      let(:params) { { password: generate(:password) } }
+
+      it { is_expected.to be_success }
+
+      it 'updates the password' do
+        expect { service_response }.to change { user.reload.password }.from(user.password).to(params[:password])
       end
     end
 

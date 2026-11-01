@@ -48,6 +48,7 @@ class ErrorCode
       invalid_user_custom_attribute: { description: 'The user custom attribute is invalid because of active model errors' },
       invalid_user_project_pin: { description: 'The user project pin is invalid because of active model errors' },
       invalid_password_repeat: { description: 'The provided password repeat does not match the password' },
+      invalid_current_password: { description: 'The provided current password is missing or incorrect' },
       cannot_modify_admin: { description: 'Only administrators can modify admin status of users' },
       cannot_modify_own_admin: { description: 'Users cannot modify their own admin status' },
       cannot_moderate_user: { description: 'Only administrators can modify moderation status of users' },
