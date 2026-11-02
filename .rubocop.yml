@@ -29,7 +29,8 @@ Code0/ZeroTrack/Migration/Timestamps:
 Code0/ZeroTrack/Migration/VersionedClass:
   Enabled: true
   AllowedVersions:
-    2023_11_29_17_37_16..: 1.0
+    2023_11_29_17_37_16..2026_11_09_00_00_00: 1.0
+    2026_11_02_00_00_00..: 1.1
 
 GraphQL/ExtractInputType:
   Enabled: false
