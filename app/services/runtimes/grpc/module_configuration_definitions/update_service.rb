@@ -9,12 +9,17 @@ module Runtimes
         include Runtimes::Grpc::TranslationUpdateHelper
         include Runtimes::Grpc::DataTypeHelper
 
-        attr_reader :current_runtime, :configuration_definitions, :runtime_module, :update_runtime_compatibility
+        attr_reader :current_runtime, :configuration_definitions, :runtime_module, :definition_source,
+                    :update_runtime_compatibility
 
-        def initialize(current_runtime, configuration_definitions, runtime_module:, update_runtime_compatibility: true)
+        # definition_source is accepted for interface parity with the other definition update services called
+        # from Modules::UpdateService, but module configuration definitions are not source-scoped or removable.
+        def initialize(current_runtime, configuration_definitions, runtime_module:, definition_source: nil,
+                       update_runtime_compatibility: true)
           @current_runtime = current_runtime
           @configuration_definitions = configuration_definitions
           @runtime_module = runtime_module
+          @definition_source = definition_source
           @update_runtime_compatibility = update_runtime_compatibility
         end
 
