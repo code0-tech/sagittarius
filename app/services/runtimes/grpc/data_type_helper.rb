@@ -26,22 +26,29 @@ module Runtimes
       # @param t [Object] The transaction context.
       def link_data_types(record, identifiers, t)
         link_relation = record.public_send(:"#{record.class.name.underscore}_data_type_links")
-        db_links = link_relation.first(identifiers.length)
 
-        identifiers.each_with_index do |identifier, index|
-          db_links[index] ||= link_relation.build
-          db_links[index].referenced_data_type = find_data_type(identifier, t)
+        target_data_types = identifiers.map { |identifier| find_data_type(identifier, t) }
+        target_ids = target_data_types.map(&:id)
 
-          next if db_links[index].save
+        # Drop links that are no longer referenced BEFORE inserting, so a new link can never
+        # transiently collide with a stale row on the unique (<record>_id, referenced_data_type_id)
+        # index while the two sets overlap in a different order.
+        link_relation.where.not(referenced_data_type_id: target_ids).delete_all
+
+        existing_ids = link_relation.pluck(:referenced_data_type_id)
+
+        target_data_types.each do |data_type|
+          next if existing_ids.include?(data_type.id)
+
+          link = link_relation.build(referenced_data_type: data_type)
+          next if link.save
 
           t.rollback_and_return! ServiceResponse.error(
-            message: "Could not link data type #{identifier}",
+            message: "Could not link data type #{data_type.identifier}",
             error_code: :invalid_data_type_link,
-            details: db_links[index].errors
+            details: link.errors
           )
         end
-
-        link_relation.where.not(id: db_links.map(&:id)).delete_all
       end
     end
   end
