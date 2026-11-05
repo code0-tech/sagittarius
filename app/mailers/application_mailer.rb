@@ -2,6 +2,10 @@
 
 class ApplicationMailer < ActionMailer::Base
   COMPANY_NAME = 'Code0'
+  # Where a customer is told to write back. Deliberately not derived from the mailer's "from"
+  # address: that one is the unattended sending identity (no-reply@...), so pointing a customer at
+  # it tells them to reply into a mailbox nobody reads.
+  SUPPORT_EMAIL = 'support@codezero.build'
 
   default from: Sagittarius::Configuration.config[:rails][:mailer][:from]
   layout 'mailer'
@@ -26,10 +30,9 @@ class ApplicationMailer < ActionMailer::Base
     @account_name = @user.username
     @email = @user.email
     @support_email = support_email
-    @logo_url = "#{Sagittarius::Configuration.external_url}/public/logo.svg"
   end
 
   def support_email
-    Mail::Address.new(Sagittarius::Configuration.config.dig(:rails, :mailer, :from)).address
+    SUPPORT_EMAIL
   end
 end

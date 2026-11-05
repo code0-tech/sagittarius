@@ -11,7 +11,6 @@ interface EmailVerificationProps {
     email: string
     linkExpiresIn: string
     supportEmail: string
-    logoUrl: string
 }
 
 export const EmailVerification = ({
@@ -22,7 +21,6 @@ export const EmailVerification = ({
     email = "<%= @email %>",
     linkExpiresIn = "<%= @link_expires_in %>",
     supportEmail = "<%= @support_email %>",
-    logoUrl = "<%= @logo_url %>",
 }: EmailVerificationProps) => {
     const content = messages.emailVerification
 
@@ -104,7 +102,7 @@ export const EmailVerification = ({
                     </Section>
 
                     <Section style={logoSection}>
-                        <Img src={logoUrl} alt={`${companyName} logo`} width={160} height={39} style={logo} />
+                        <Img src="https://codezero.build/api/media/file/CodeZero_Logo.png" alt={`${companyName} logo`} width={160} height={32} style={logo} />
                     </Section>
 
                     <Section style={footer}>
@@ -127,7 +125,6 @@ EmailVerification.PreviewProps = {
     email: "root@code0.tech",
     linkExpiresIn: "15 minutes",
     supportEmail: "support@code0.tech",
-    logoUrl: "https://codezero.build/api/media/file/Logo-03%20copy-cropped%20copy.svg",
 } satisfies EmailVerificationProps
 
 export default EmailVerification
@@ -295,7 +292,7 @@ const logoSection: CSSProperties = {
 
 const logo: CSSProperties = {
     display: "block",
-    height: "39px",
+    height: "32px",
     margin: "0 auto",
     width: "160px",
 }
