@@ -9,7 +9,7 @@ class GuestUserMailer < ApplicationMailer
   def guest_user_created
     assign_common
     claim_token = @user.generate_token_for(:guest_claim)
-    @claim_url = "#{Sagittarius::Configuration.external_url}/guest/claim?code=#{CGI.escape(claim_token)}"
+    @claim_url = "#{Sagittarius::Configuration.external_url}/complete-profile?claimToken=#{CGI.escape(claim_token)}"
 
     mail(to: @user.email, subject: 'Complete your account')
   end

@@ -5,6 +5,7 @@ import { colors } from "../../../theme"
 
 interface GuestUserCreatedProps {
     companyName: string
+    legalName: string
     claimUrl: string
     userName: string
     accountName: string
@@ -14,6 +15,7 @@ interface GuestUserCreatedProps {
 
 export const GuestUserCreated = ({
     companyName = "<%= @company_name %>",
+    legalName = "<%= @legal_name %>",
     claimUrl = "<%= @claim_url %>",
     userName = "<%= @user_name %>",
     accountName = "<%= @account_name %>",
@@ -97,7 +99,7 @@ export const GuestUserCreated = ({
                     <Section style={footer}>
                         <Text style={footerText}>
                             {interpolate(content.footer.transactionalNotice, { companyName, email })}
-                            <br />© {new Date().getFullYear()} {companyName}
+                            <br />© {new Date().getFullYear()} {legalName}
                         </Text>
                     </Section>
                 </Container>
@@ -108,7 +110,8 @@ export const GuestUserCreated = ({
 
 GuestUserCreated.PreviewProps = {
     companyName: "CodeZero",
-    claimUrl: "https://codezero.build/guest/claim?code=eyJfcmFpbHMiOnsiZGF0YSI6WzEsIm5vcmVwbHlAY29kZTAudGVjaCJdfX0",
+    legalName: "Code0 UG (haftungsbeschränkt)",
+    claimUrl: "https://codezero.build/complete-profile?claimToken=eyJfcmFpbHMiOnsiZGF0YSI6WzEsIm5vcmVwbHlAY29kZTAudGVjaCJdfX0",
     userName: "nsammito",
     accountName: "nsammito",
     email: "root@code0.tech",

@@ -5,6 +5,7 @@ import { colors } from "../theme"
 
 interface EmailVerificationProps {
     companyName: string
+    legalName: string
     verificationUrl: string
     userName: string
     accountName: string
@@ -15,6 +16,7 @@ interface EmailVerificationProps {
 
 export const EmailVerification = ({
     companyName = "<%= @company_name %>",
+    legalName = "<%= @legal_name %>",
     verificationUrl = "<%= @verification_url %>",
     userName = "<%= @user_name %>",
     accountName = "<%= @account_name %>",
@@ -108,7 +110,7 @@ export const EmailVerification = ({
                     <Section style={footer}>
                         <Text style={footerText}>
                             {interpolate(content.footer.transactionalNotice, { companyName, email })}
-                            <br />© {new Date().getFullYear()} {companyName}
+                            <br />© {new Date().getFullYear()} {legalName}
                         </Text>
                     </Section>
                 </Container>
@@ -119,6 +121,7 @@ export const EmailVerification = ({
 
 EmailVerification.PreviewProps = {
     companyName: "CodeZero",
+    legalName: "Code0 UG (haftungsbeschränkt)",
     verificationUrl: "https://codezero.build/verify?code=eyJfcmFpbHMiOnsiZGF0YSI6WzEsIm5vcmVwbHlAY29kZTAudGVjaCJdfX0",
     userName: "nsammito",
     accountName: "Nico Sammito",
