@@ -1,5 +1,19 @@
 CREATE SCHEMA sagittarius_partitions_dynamic;
 
+CREATE FUNCTION delete_polymorphic_records_v1() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+  EXECUTE format(
+    'DELETE FROM %I WHERE %I = $1 AND %I IN (SELECT id FROM old_rows)',
+    TG_ARGV[0],
+    TG_ARGV[1] || '_type',
+    TG_ARGV[1] || '_id'
+  ) USING TG_ARGV[2];
+  RETURN NULL;
+END;
+$_$;
+
 CREATE TABLE active_storage_attachments (
     id bigint NOT NULL,
     name character varying NOT NULL,
@@ -1979,6 +1993,32 @@ CREATE INDEX index_user_sessions_on_user_id ON user_sessions USING btree (user_i
 CREATE UNIQUE INDEX "index_users_on_LOWER_email" ON users USING btree (lower(email));
 
 CREATE UNIQUE INDEX "index_users_on_LOWER_username" ON users USING btree (lower(username));
+
+CREATE TRIGGER trigger_delete_polymorphic_0053718fb0 AFTER DELETE ON parameter_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'ParameterDefinition');
+
+CREATE TRIGGER trigger_delete_polymorphic_56fdd32666 AFTER DELETE ON runtime_flow_type_settings REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'RuntimeFlowTypeSetting');
+
+CREATE TRIGGER trigger_delete_polymorphic_5effc59bee AFTER DELETE ON flow_types REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'FlowType');
+
+CREATE TRIGGER trigger_delete_polymorphic_639bdef7da AFTER DELETE ON runtime_flow_types REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'RuntimeFlowType');
+
+CREATE TRIGGER trigger_delete_polymorphic_7f17eb4444 AFTER DELETE ON runtime_parameter_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'RuntimeParameterDefinition');
+
+CREATE TRIGGER trigger_delete_polymorphic_7f8c18636e AFTER DELETE ON module_configuration_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'ModuleConfigurationDefinition');
+
+CREATE TRIGGER trigger_delete_polymorphic_8320745131 AFTER DELETE ON runtime_function_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'RuntimeFunctionDefinition');
+
+CREATE TRIGGER trigger_delete_polymorphic_8718d020dc AFTER DELETE ON runtime_modules REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'RuntimeModule');
+
+CREATE TRIGGER trigger_delete_polymorphic_975b85db95 AFTER DELETE ON flow_type_settings REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'FlowTypeSetting');
+
+CREATE TRIGGER trigger_delete_polymorphic_a44b21109e AFTER DELETE ON function_definitions REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'FunctionDefinition');
+
+CREATE TRIGGER trigger_delete_polymorphic_aab2330063 AFTER DELETE ON data_types REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('translations', 'owner', 'DataType');
+
+CREATE TRIGGER trigger_delete_polymorphic_d1c3d28570 AFTER DELETE ON organizations REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('namespaces', 'parent', 'Organization');
+
+CREATE TRIGGER trigger_delete_polymorphic_ff224651eb AFTER DELETE ON users REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION delete_polymorphic_records_v1('namespaces', 'parent', 'User');
 
 ALTER TABLE ONLY node_parameters
     ADD CONSTRAINT fk_rails_0d79310cfa FOREIGN KEY (node_function_id) REFERENCES node_functions(id) ON DELETE CASCADE;
