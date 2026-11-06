@@ -11,14 +11,12 @@ module Namespaces
         end
 
         def execute
-          node_functions = flow.node_functions
-          node_parameters = NodeParameter.where(node_function: node_functions)
+          runtime = flow.project.primary_runtime
 
           function_definitions = FunctionDefinition
-                                 .by_node_function(node_functions)
-                                 .or(FunctionDefinition.by_sub_flow_node_parameter(node_parameters))
+                                 .where(runtime: runtime)
                                  .preload(:runtime_function_definition)
-          data_types = DataType.where(runtime: flow.project.primary_runtime)
+          data_types = DataType.where(runtime: runtime)
 
           flow_grpc = flow.to_grpc
           function_definitions_grpc = function_definitions.map(&:to_grpc)

@@ -6,7 +6,7 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
   subject(:service) { described_class.new(flow) }
 
   let(:runtime) { create(:runtime) }
-  let(:namespace_project) { create(:namespace_project) }
+  let(:namespace_project) { create(:namespace_project, primary_runtime: runtime) }
   let(:flow_type) { create(:flow_type, runtime: runtime) }
   let(:runtime_function_definition) do
     create(:runtime_function_definition, runtime: runtime, signature: '(arg: string): void')
