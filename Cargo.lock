@@ -154,9 +154,9 @@ dependencies = [
 
 [[package]]
 name = "code0-flow"
-version = "0.0.46"
+version = "0.0.47"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a757d08dc48f2e416c7c755447ac30c432af83632b84bf1c4bb67a4c299baf6d"
+checksum = "83520bda842abac1bd3f7c583835519bc935b23def1cca42b63eac95116de9f6"
 dependencies = [
  "opentelemetry",
  "opentelemetry-appender-tracing",
