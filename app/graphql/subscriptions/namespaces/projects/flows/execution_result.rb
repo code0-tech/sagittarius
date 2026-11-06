@@ -18,7 +18,7 @@ module Subscriptions
                 description: 'The most recent execution result of the relevant flow'
 
           def update(*)
-            { execution_result: object }
+            { execution_result: ::ExecutionResult.find(object) }
           end
         end
       end
