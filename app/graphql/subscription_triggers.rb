@@ -5,7 +5,7 @@ module SubscriptionTriggers
     SagittariusSchema.subscriptions.trigger(
       :namespaces_projects_flows_execution_result,
       { flow_id: execution_result.flow.to_global_id },
-      execution_result,
+      execution_result.id,
       context: { visibility_profile: :execution }
     )
   end

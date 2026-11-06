@@ -1,0 +1,108 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'json'
+require 'socket'
+require 'uri'
+require 'websocket/driver'
+
+QUERY = <<~GRAPHQL.strip
+  subscription {
+    namespacesProjectsFlowsExecutionResult(flowId: "gid://sagittarius/Flow/1") {
+      executionResult {
+        id
+      }
+    }
+  }
+GRAPHQL
+
+# Wraps a raw TCPSocket so websocket-driver can drive the handshake and framing.
+class SocketConnection
+  attr_reader :url
+
+  def initialize(url)
+    @url = url
+    uri = URI.parse(url)
+    port = uri.port || (uri.scheme == 'wss' ? 443 : 80)
+    raise "Only ws:// is supported (got #{uri.scheme})" if uri.scheme == 'wss'
+
+    @socket = TCPSocket.new(uri.host, port)
+  end
+
+  def write(data)
+    @socket.write(data)
+  end
+
+  def readpartial(size)
+    @socket.readpartial(size)
+  end
+
+  def close
+    @socket.close unless @socket.closed?
+  end
+end
+
+def main
+  token = ARGV[0] || 'no-token-set'
+  url = ARGV[1] || 'ws://localhost:3000/cable'
+
+  # The identifier must be byte-for-byte identical between the subscribe
+  # command and the message command for Action Cable to route it correctly.
+  identifier = JSON.generate(channel: 'GraphqlChannel', token: token)
+
+  connection = SocketConnection.new(url)
+  driver = WebSocket::Driver.client(connection)
+
+  driver.on(:open) do
+    puts "Connected to #{url}"
+    puts "Subscribing with identifier: #{identifier}"
+    driver.text(JSON.generate(command: 'subscribe', identifier: identifier))
+  end
+
+  driver.on(:message) do |event|
+    message = JSON.parse(event.data)
+
+    case message['type']
+    when 'ping', 'welcome'
+      # Noise from the Action Cable protocol; ignore.
+      next
+    when 'confirm_subscription'
+      puts 'Subscription confirmed, sending query'
+      driver.text(JSON.generate(
+        command: 'message',
+        identifier: identifier,
+        data: JSON.generate(action: 'execute', query: QUERY, variables: {})
+      ))
+    when 'reject_subscription'
+      abort 'ERROR: subscription rejected (check your token)'
+    else
+      puts "Received: #{JSON.pretty_generate(message)}"
+    end
+  end
+
+  driver.on(:close) do |event|
+    puts "WS closed: #{event.code} #{event.reason}"
+    exit
+  end
+
+  driver.on(:error) do |event|
+    abort "WS error: #{event.message}"
+  end
+
+  driver.start
+
+  # Pump bytes from the socket into the driver until the connection closes.
+  loop do
+    data = connection.readpartial(4096)
+    driver.parse(data)
+  end
+rescue EOFError, Errno::ECONNRESET
+  puts 'Connection closed by server'
+rescue Interrupt
+  puts "\nInterrupted"
+ensure
+  connection&.close
+end
+
+main
