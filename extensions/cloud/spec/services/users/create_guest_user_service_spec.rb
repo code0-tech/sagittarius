@@ -9,6 +9,10 @@ RSpec.describe Users::CreateGuestUserService do
 
   let(:email) { generate(:email) }
 
+  before do
+    stub_application_settings(user_registration_enabled: true)
+  end
+
   shared_examples 'does not create a guest user' do
     before { current_authentication }
 
@@ -65,6 +69,15 @@ RSpec.describe Users::CreateGuestUserService do
         expect(service_response.payload.username).to start_with(email.split('@').first)
         expect(service_response.payload.username).not_to eq(existing_user.username)
       end
+    end
+
+    context 'when user registration is disabled' do
+      before { stub_application_settings(user_registration_enabled: false) }
+
+      it_behaves_like 'does not create a guest user'
+
+      it { expect(service_response.message).to eq('User registration is disabled') }
+      it { expect(service_response.payload[:error_code]).to eq(:registration_disabled) }
     end
   end
 

@@ -30,6 +30,8 @@ RSpec.describe 'usersCreateGuestUser Mutation' do
   let!(:crater_user) { create(:user, :crater) }
 
   before do
+    stub_application_settings(user_registration_enabled: true)
+
     allow(Sagittarius::Configuration).to receive(:config).and_wrap_original do |original|
       original.call.deep_merge(crater: { jwt_secret: secret })
     end

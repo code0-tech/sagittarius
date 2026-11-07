@@ -18,6 +18,10 @@ RSpec.describe Users::CompleteGuestProfileService do
   let(:username) { generate(:username) }
   let(:password) { generate(:password) }
 
+  before do
+    stub_application_settings(user_registration_enabled: true)
+  end
+
   context 'with a valid claim token' do
     it { is_expected.to be_success }
 
@@ -72,5 +76,17 @@ RSpec.describe Users::CompleteGuestProfileService do
 
     it { is_expected.to be_error }
     it { expect(service_response.payload[:error_code]).to eq(:invalid_verification_code) }
+  end
+
+  context 'when user registration is disabled' do
+    before { stub_application_settings(user_registration_enabled: false) }
+
+    it { is_expected.to be_error }
+    it { expect(service_response.payload[:error_code]).to eq(:registration_disabled) }
+
+    it 'does not promote the guest' do
+      service_response
+      expect(guest.reload).to be_guest
+    end
   end
 end

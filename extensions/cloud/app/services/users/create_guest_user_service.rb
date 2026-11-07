@@ -16,6 +16,10 @@ module Users
         return ServiceResponse.error(message: 'Missing permissions', error_code: :missing_permission)
       end
 
+      unless ApplicationSetting.current[:user_registration_enabled]
+        return ServiceResponse.error(message: 'User registration is disabled', error_code: :registration_disabled)
+      end
+
       username = generate_username
 
       transactional do |t|
