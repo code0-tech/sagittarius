@@ -51,7 +51,15 @@ module Namespaces
 
           schema_result.subflow_parameters.each do |param|
             # rubocop:disable-next Rails/SkipsModelValidations -- schema fields have no validations to run
-            SubFlow.where(node_parameter_id: param.id).update_all(
+            SubFlow.where(node_parameter_id: GlobalID.parse(param.id).model_id).update_all(
+              input_schema: param.input_schema,
+              output_schema: param.output_schema
+            )
+          end
+
+          schema_result.subflow_references.each do |param|
+            # rubocop:disable-next Rails/SkipsModelValidations -- schema fields have no validations to run
+            SubFlow.where(inline_reference_value_id: GlobalID.parse(param.id).model_id).update_all(
               input_schema: param.input_schema,
               output_schema: param.output_schema
             )

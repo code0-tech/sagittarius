@@ -58,7 +58,8 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
           input_schema: { 'type' => 'object' },
           output_schema: { 'type' => 'string' }
         ),
-        subflow_parameters: []
+        subflow_parameters: [],
+        subflow_references: []
       )
       allow(Triangulum::FlowSchemaExtraction).to receive(:new).and_return(
         instance_double(Triangulum::FlowSchemaExtraction, extract: schema_result)
@@ -122,11 +123,12 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
             ),
             subflow_parameters: [
               Triangulum::FlowSchemaExtraction::SchematizedObject.new(
-                id: node_parameter.id,
+                id: node_parameter.to_global_id.to_s,
                 input_schema: { 'type' => 'sub-input' },
                 output_schema: { 'type' => 'sub-output' }
               )
-            ]
+            ],
+            subflow_references: []
           )
           allow(Triangulum::FlowSchemaExtraction).to receive(:new).and_return(
             instance_double(Triangulum::FlowSchemaExtraction, extract: schema_result)
@@ -139,6 +141,49 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
           expect(sub_flow.reload).to have_attributes(
             input_schema: { 'type' => 'sub-input' },
             output_schema: { 'type' => 'sub-output' }
+          )
+        end
+      end
+
+      context 'when the flow has a sub flow reference' do
+        let(:inline_reference_value) do
+          create(:inline_reference_value, node_parameter: node_function.node_parameters.first)
+        end
+        let!(:sub_flow) do
+          create(:sub_flow, node_parameter: nil, inline_reference_value: inline_reference_value,
+                            starting_node: nil,
+                            function_definition: create(:function_definition,
+                                                        runtime_function_definition: create(
+                                                          :runtime_function_definition, runtime: runtime
+                                                        )))
+        end
+
+        before do
+          schema_result = Triangulum::FlowSchemaExtraction::Result.new(
+            flow: Triangulum::FlowSchemaExtraction::SchematizedObject.new(
+              input_schema: {},
+              output_schema: {}
+            ),
+            subflow_parameters: [],
+            subflow_references: [
+              Triangulum::FlowSchemaExtraction::SchematizedObject.new(
+                id: inline_reference_value.to_global_id.to_s,
+                input_schema: { 'type' => 'ref-input' },
+                output_schema: { 'type' => 'ref-output' }
+              )
+            ]
+          )
+          allow(Triangulum::FlowSchemaExtraction).to receive(:new).and_return(
+            instance_double(Triangulum::FlowSchemaExtraction, extract: schema_result)
+          )
+        end
+
+        it 'persists the extracted schema onto the matching sub flow' do
+          service.execute
+
+          expect(sub_flow.reload).to have_attributes(
+            input_schema: { 'type' => 'ref-input' },
+            output_schema: { 'type' => 'ref-output' }
           )
         end
       end
@@ -225,6 +270,15 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
       expect(flow.reload.validation_status).to eq('valid')
     end
 
+    it 'persists the extracted input and output schema onto the flow' do
+      service.execute
+
+      expect(flow.reload).to have_attributes(
+        input_schema: { 'type' => 'object', 'additionalProperties' => false },
+        output_schema: { 'not' => {} }
+      )
+    end
+
     context 'with a direct mapping sub flow' do
       let(:callback_runtime_function_definition) do
         create(:runtime_function_definition, runtime: runtime, signature: '(arg: () => string): void')
@@ -259,22 +313,20 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
           callback_node_function.update!(flow: f)
         end
       end
-
-      before do
-        create(
+      let!(:sub_flow) do
+        node_parameter = create(
           :node_parameter,
           parameter_definition: callback_function_definition.parameter_definitions[0],
           node_function: callback_node_function,
           literal_value: nil
-        ).tap do |np|
-          create(
-            :sub_flow,
-            node_parameter: np,
-            starting_node: nil,
-            function_definition: sub_flow_function_definition,
-            signature: '(): string'
-          )
-        end
+        )
+        create(
+          :sub_flow,
+          node_parameter: node_parameter,
+          starting_node: nil,
+          function_definition: sub_flow_function_definition,
+          signature: '(): string'
+        )
       end
 
       it 'includes the sub flow function definition and sets validation status to valid' do
@@ -282,6 +334,90 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
 
         expect(result).to have_attributes(valid?: true, diagnostics: [])
         expect(flow.reload.validation_status).to eq('valid')
+      end
+
+      it 'persists the extracted input and output schema onto the sub flow' do
+        service.execute
+
+        expect(sub_flow.reload).to have_attributes(
+          input_schema: { 'type' => 'object', 'additionalProperties' => false },
+          output_schema: { 'type' => 'string' }
+        )
+      end
+    end
+
+    context 'with an inline reference sub flow' do
+      # The top-level function takes a list of callables; the only way to fill it
+      # is a literal list carrying an inline reference whose value is a sub flow.
+      # Triangulum reports such a sub flow under `subflow_references`, keyed by the
+      # inline reference value's database id.
+      let(:tools_runtime_function_definition) do
+        create(:runtime_function_definition, runtime: runtime, signature: '(tools: Array<() => string>): void')
+      end
+      let(:tools_function_definition) do
+        create(:function_definition, runtime_function_definition: tools_runtime_function_definition).tap do |fd|
+          rpd = create(
+            :runtime_parameter_definition,
+            runtime_function_definition: tools_runtime_function_definition,
+            runtime_name: 'tools'
+          )
+          create(:parameter_definition, runtime_parameter_definition: rpd, function_definition: fd)
+        end
+      end
+      let(:tools_node_function) do
+        create(:node_function, function_definition: tools_function_definition)
+      end
+      let(:sub_flow_runtime_function_definition) do
+        create(:runtime_function_definition, runtime: runtime, signature: '(): string')
+      end
+      let(:sub_flow_function_definition) do
+        create(:function_definition, runtime_function_definition: sub_flow_runtime_function_definition)
+      end
+      let(:flow) do
+        create(
+          :flow,
+          project: namespace_project,
+          flow_type: flow_type,
+          validation_status: :unvalidated,
+          starting_node: tools_node_function
+        ).tap do |f|
+          tools_node_function.update!(flow: f)
+        end
+      end
+      let(:inline_reference_value) do
+        node_parameter = create(
+          :node_parameter,
+          parameter_definition: tools_function_definition.parameter_definitions[0],
+          node_function: tools_node_function,
+          literal_value: ['${item_0}']
+        )
+        create(:inline_reference_value, node_parameter: node_parameter, signature: 'item_0', literal_value: nil)
+      end
+      let!(:sub_flow) do
+        create(
+          :sub_flow,
+          node_parameter: nil,
+          inline_reference_value: inline_reference_value,
+          starting_node: nil,
+          function_definition: sub_flow_function_definition,
+          signature: '(): string'
+        )
+      end
+
+      it 'sets validation status to valid' do
+        result = service.execute
+
+        expect(result).to have_attributes(valid?: true, diagnostics: [])
+        expect(flow.reload.validation_status).to eq('valid')
+      end
+
+      it 'persists the extracted input and output schema onto the sub flow' do
+        service.execute
+
+        expect(sub_flow.reload).to have_attributes(
+          input_schema: { 'type' => 'object', 'additionalProperties' => false },
+          output_schema: { 'type' => 'string' }
+        )
       end
     end
   end

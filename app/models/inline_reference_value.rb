@@ -16,7 +16,11 @@ class InlineReferenceValue < ApplicationRecord
   validate :validate_owner
 
   def to_grpc
-    Tucana::Shared::InlineReferenceValue.new(signature: signature, value: to_grpc_node_value)
+    Tucana::Shared::InlineReferenceValue.new(
+      signature: signature,
+      value: to_grpc_node_value,
+      database_id: id
+    )
   end
 
   private
