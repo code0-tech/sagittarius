@@ -34,15 +34,17 @@ module CLOUD
             RuntimeUsageDailyAggregate.where(namespace_id: namespace.id)
           end
 
-          override :scope_flows
-          def scope_flows
-            Flow.enabled.where(project: NamespaceProject.where(namespace_id: namespace.id))
+          override :flows_in_scope
+          def flows_in_scope
+            Flow.where(project: NamespaceProject.where(namespace_id: namespace.id))
           end
 
           private
 
+          # Enforcement derives the namespace from the flow being recorded; a license-triggered
+          # re-enable passes the namespace explicitly, as there is no single flow in context.
           def namespace
-            flow.project.namespace
+            @namespace || flow.project.namespace
           end
         end
       end

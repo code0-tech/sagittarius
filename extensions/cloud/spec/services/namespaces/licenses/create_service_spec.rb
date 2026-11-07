@@ -70,6 +70,17 @@ RSpec.describe Namespaces::Licenses::CreateService do
         expect { service_response }.to change { License.where(namespace: namespace).count }.by(1)
       end
 
+      it 're-enables namespace flows disabled for exceeding the usage limit' do
+        project = create(:namespace_project, namespace: namespace)
+        flow = create(:flow, project: project, disabled_reason: :usage_limit_exceeded,
+                             disabled_until: Date.tomorrow)
+        allow(FlowHandler).to receive(:update_flow)
+
+        service_response
+
+        expect(flow.reload.disabled?).to be(false)
+      end
+
       it do
         is_expected.to create_audit_event(
           :license_created,
