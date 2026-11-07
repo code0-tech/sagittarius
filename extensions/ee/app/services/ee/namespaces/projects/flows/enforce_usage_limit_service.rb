@@ -19,6 +19,21 @@ module EE
             ServiceResponse.success(message: 'Usage limit exceeded, flows disabled')
           end
 
+          # Re-enables flows previously disabled for exceeding the usage limit, once usage is back
+          # within the (possibly upgraded) limit. Triggered after a license change, since a new
+          # license can raise the limit and/or shift the billing cycle so the pool is no longer
+          # exceeded. Flows disabled for any other reason are left untouched.
+          def reenable_flows
+            return ServiceResponse.success(message: 'Usage still exceeds limit, flows stay disabled') if limit_exceeded?
+
+            scope_disabled_flows.find_each do |scoped_flow|
+              scoped_flow.reenable!
+              ::FlowHandler.update_flow(scoped_flow)
+            end
+
+            ServiceResponse.success(message: 'Usage within limit, disabled flows re-enabled')
+          end
+
           protected
 
           # Marked `protected`, not `private`, because Cloud needs to override several of these
@@ -50,9 +65,20 @@ module EE
             RuntimeUsageDailyAggregate.all
           end
 
-          # EE: every enabled flow, installation-wide.
+          # EE: all flows, installation-wide. Cloud narrows this to a single namespace; the enabled
+          # / usage-limit-disabled scopes below are derived from it so both subclasses stay in sync.
+          def flows_in_scope
+            Flow.all
+          end
+
+          # Enabled flows eligible to be disabled when the pool is exceeded.
           def scope_flows
-            Flow.enabled
+            flows_in_scope.enabled
+          end
+
+          # Flows disabled specifically for exceeding the usage limit, eligible to be re-enabled.
+          def scope_disabled_flows
+            flows_in_scope.disabled_reason_usage_limit_exceeded
           end
 
           def limit_exceeded?

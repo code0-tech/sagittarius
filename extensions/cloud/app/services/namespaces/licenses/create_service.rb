@@ -44,6 +44,10 @@ module Namespaces
             }
           )
 
+          # A new license can raise the limit or shift the billing cycle, so flows disabled for
+          # exceeding the old limit may now be back within it and should be re-enabled.
+          ::Namespaces::Projects::Flows::EnforceUsageLimitService.new(namespace: namespace).reenable_flows
+
           ServiceResponse.success(message: 'Created new namespace license', payload: namespace_license)
         end
       end
