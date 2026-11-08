@@ -25,6 +25,9 @@ module Types
     field :started_at, Types::BigIntType,
           null: false,
           description: 'Unix epoch time in microseconds when this node execution started'
+    field :sub_flow_identifier, String,
+          null: true,
+          description: 'Identifier of a sub-flow that only lives in the runtime, if this result targets one'
     field :success, GraphQL::Types::JSON,
           null: true,
           description: 'Successful raw value returned by this node execution'

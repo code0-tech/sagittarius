@@ -751,6 +751,7 @@ CREATE TABLE p_execution_node_results (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     success_sub_flow_function_result jsonb,
+    sub_flow_identifier text,
     CONSTRAINT check_63b54a1a28 CHECK ((num_nonnulls(success, error, success_sub_flow_function_result) <= 1))
 )
 PARTITION BY RANGE (created_at);

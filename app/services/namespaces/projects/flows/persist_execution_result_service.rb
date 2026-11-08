@@ -61,6 +61,7 @@ module Namespaces
               finished_at: node_result.finished_at,
               node_function: node_function_for(node_result, result.flow),
               function_definition: function_definition_for(node_result, result.flow),
+              sub_flow_identifier: sub_flow_identifier_for(node_result),
               created_at: created_at
             )
 
@@ -103,6 +104,14 @@ module Namespaces
             runtime: flow.project.primary_runtime,
             identifier: node_result.function_identifier
           )
+        end
+
+        # Sub-flows invoked here only live in the runtime, so there is nothing to look up:
+        # we persist the identifier the runtime reports as-is.
+        def sub_flow_identifier_for(node_result)
+          return unless node_result.id == :subflow_identifier
+
+          node_result.subflow_identifier
         end
 
         # The top-level ExecutionResult still carries a plain Value for its success.

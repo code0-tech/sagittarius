@@ -279,6 +279,38 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     end
   end
 
+  context 'when a node execution result targets a runtime-only sub-flow' do
+    let(:grpc_result) do
+      Tucana::Shared::ExecutionResult.new(
+        execution_identifier: 'execution-identifier',
+        flow_id: flow.id,
+        started_at: started_at,
+        finished_at: finished_at,
+        input: Tucana::Shared::Value.from_ruby('input' => 'value'),
+        success: Tucana::Shared::Value.from_ruby('result' => true),
+        node_execution_results: [
+          Tucana::Shared::NodeExecutionResult.new(
+            subflow_identifier: 'runtime-sub-flow',
+            started_at: started_at,
+            finished_at: finished_at,
+            success: node_value_result('sub_flow' => 'ok')
+          )
+        ]
+      )
+    end
+
+    it 'persists the sub-flow identifier as the execution target' do
+      expect(service_response).to be_success
+
+      expect(service_response.payload.node_results.sole).to have_attributes(
+        node_function: nil,
+        function_definition: nil,
+        sub_flow_identifier: 'runtime-sub-flow',
+        success: { 'sub_flow' => 'ok' }
+      )
+    end
+  end
+
   context 'when the result is an error' do
     let(:grpc_result) do
       Tucana::Shared::ExecutionResult.new(

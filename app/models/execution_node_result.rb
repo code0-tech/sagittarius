@@ -28,9 +28,10 @@ class ExecutionNodeResult < ApplicationRecord
   private
 
   def only_one_execution_target_present
-    return if [node_function.present?, function_definition.present?].count(true) == 1
+    targets = [node_function.present?, function_definition.present?, sub_flow_identifier.present?]
+    return if targets.count(true) == 1
 
-    errors.add(:base, 'Only one of node_function or function_definition must be present')
+    errors.add(:base, 'Exactly one of node_function, function_definition or sub_flow_identifier must be present')
   end
 
   def only_one_result_present
