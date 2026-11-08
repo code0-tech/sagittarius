@@ -37,15 +37,20 @@ module Namespaces
 
           touched_flows.each_value { |flow| EnforceUsageLimitService.new(flow).execute }
 
-          # Once per namespace touched, not once per flow: the limits (and the mails about them)
-          # are namespace- or installation-wide, so a batch spanning ten flows of one namespace
-          # has exactly one usage situation to report.
-          namespaces_of(touched_flows.values).each do |namespace|
-            ::Namespaces::Usage::NotifyLimitsService.new(namespace: namespace).execute
-          end
+          # Once per namespace touched, not once per flow: what an extension does with a
+          # recorded batch (EE mails about usage limits) is namespace- or installation-wide, so a
+          # batch spanning ten flows of one namespace has exactly one situation to report.
+          after_recording(namespaces_of(touched_flows.values))
 
           ServiceResponse.success(message: 'Runtime usage recorded')
         end
+
+        protected
+
+        # Extension hook, handed every namespace whose usage this batch recorded. Core has
+        # nothing to do with it; EE notifies about usage limits from here (see
+        # EE::Namespaces::Projects::Flows::RecordRuntimeUsageBatchService).
+        def after_recording(_namespaces); end
 
         private
 
@@ -66,3 +71,5 @@ module Namespaces
     end
   end
 end
+
+Namespaces::Projects::Flows::RecordRuntimeUsageBatchService.prepend_extensions

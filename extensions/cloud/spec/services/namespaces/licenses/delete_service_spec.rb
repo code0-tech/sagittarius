@@ -45,7 +45,7 @@ RSpec.describe Namespaces::Licenses::DeleteService do
         allow(Licenses::NotifyRemovalService).to receive(:new).and_return(notification)
 
         expect(service_response).to be_success
-        expect(Licenses::NotifyRemovalService).to have_received(:new).with(license, namespace: namespace)
+        expect(Licenses::NotifyRemovalService).to have_received(:new).with(license)
         expect(notification).to have_received(:execute)
       end
 

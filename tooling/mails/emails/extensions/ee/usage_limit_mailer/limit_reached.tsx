@@ -1,19 +1,18 @@
 import { Body, Button, Column, Container, Head, Heading, Html, Img, Link, Preview, Row, Section, Text } from "react-email"
-import messages from "../../messgages/en.json"
-import * as s from "../styles"
+import messages from "../../../../messgages/en.json"
+import * as s from "../../../styles"
 
 /**
- * The heads-up sent once a metered resource crosses its warning threshold. Same shape as
- * `limit_reached`, but nothing is blocked yet - so it is tinted as a warning and names the
- * share used rather than declaring the budget gone.
+ * Both meters are always shown, even the one that is still fine: the mail is read by someone who
+ * has to decide what to do about the account, and that decision needs both numbers.
+ * `affectedResources` names the one(s) that actually ran out.
  */
-interface UsageLimitWarningProps {
+interface UsageLimitReachedProps {
     companyName: string
     legalName: string
     userName: string
     accountName: string
     affectedResources: string
-    thresholdPercentage: string
     aiUsageSummary: string
     workflowUsageSummary: string
     resetDate: string
@@ -22,32 +21,31 @@ interface UsageLimitWarningProps {
     supportEmail: string
 }
 
-export const UsageLimitWarning = ({
+export const UsageLimitReached = ({
     companyName = "<%= @company_name %>",
     legalName = "<%= @legal_name %>",
     userName = "<%= @user_name %>",
     accountName = "<%= @account_name %>",
     affectedResources = "<%= @affected_resources %>",
-    thresholdPercentage = "<%= @threshold_percentage %>",
     aiUsageSummary = "<%= @ai_usage_summary %>",
     workflowUsageSummary = "<%= @workflow_usage_summary %>",
     resetDate = "<%= @reset_date %>",
     dashboardUrl = "<%= @dashboard_url %>",
     email = "<%= @email %>",
     supportEmail = "<%= @support_email %>",
-}: UsageLimitWarningProps) => {
-    const content = messages.usageLimitWarning
+}: UsageLimitReachedProps) => {
+    const content = messages.usageLimitReached
 
     return (
         <Html lang="en">
             <Head />
-            <Preview>{s.interpolate(content.preview, { thresholdPercentage, affectedResources })}</Preview>
+            <Preview>{s.interpolate(content.preview, { affectedResources })}</Preview>
 
             <Body style={s.body}>
                 <Container style={s.container}>
                     <Section style={s.card}>
-                        <Section style={s.statusIcon("warningBackground")}>
-                            <Text style={s.statusMark("warning")}>▲</Text>
+                        <Section style={s.statusIcon("errorBackground")}>
+                            <Text style={s.statusMark("error")}>!</Text>
                         </Section>
 
                         <Heading as="h1" style={s.heading}>
@@ -58,7 +56,7 @@ export const UsageLimitWarning = ({
                             {s.interpolate(content.greeting, { userName })}
                             <br />
                             <br />
-                            {s.interpolate(content.explanation, { thresholdPercentage, affectedResources })}
+                            {s.interpolate(content.explanation, { affectedResources })}
                         </Text>
 
                         <Section style={s.summary}>
@@ -94,7 +92,7 @@ export const UsageLimitWarning = ({
                                     <Text style={s.label}>{content.labels.resets}</Text>
                                 </Column>
                                 <Column style={s.valueColumn}>
-                                    <Text style={s.highlightedValue("warning")}>{resetDate}</Text>
+                                    <Text style={s.highlightedValue("error")}>{resetDate}</Text>
                                 </Column>
                             </Row>
                         </Section>
@@ -109,7 +107,7 @@ export const UsageLimitWarning = ({
 
                         <Text style={s.help}>
                             {content.support.beforeEmail}{" "}
-                            <Link href={`mailto:${supportEmail}`} style={s.link("warning")}>
+                            <Link href={`mailto:${supportEmail}`} style={s.link("error")}>
                                 {supportEmail}
                             </Link>
                             {content.support.afterEmail}
@@ -132,19 +130,18 @@ export const UsageLimitWarning = ({
     )
 }
 
-UsageLimitWarning.PreviewProps = {
+UsageLimitReached.PreviewProps = {
     companyName: "CodeZero",
     legalName: "Code0 UG (haftungsbeschränkt)",
     userName: "nsammito",
     accountName: "nsammito",
-    affectedResources: "AI tokens",
-    thresholdPercentage: "80%",
-    aiUsageSummary: "20,400 of 25,000 (82%)",
-    workflowUsageSummary: "12 of 50 (24%)",
+    affectedResources: "AI tokens and workflow executions",
+    aiUsageSummary: "25,000 of 25,000 (100%)",
+    workflowUsageSummary: "51 of 50 (102%)",
     resetDate: "January 15, 2027",
     dashboardUrl: "https://codezero.build",
     email: "root@code0.tech",
     supportEmail: "support@codezero.build",
-} satisfies UsageLimitWarningProps
+} satisfies UsageLimitReachedProps
 
-export default UsageLimitWarning
+export default UsageLimitReached

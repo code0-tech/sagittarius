@@ -19,13 +19,11 @@ module CLOUD
 
         protected
 
-        # Memoized for the same reason EE memoizes it: the mails read the limits back per
-        # recipient, and every read is a query.
+        # Namespace#current_license memoizes, which matters for the same reason EE memoizes:
+        # the mails read the limits back per recipient, and every read would be a query.
         override :license
         def license
-          return @license if defined?(@license)
-
-          @license = ::License.current_for_namespace(namespace)
+          namespace.current_license
         end
 
         # Unlike EE, an unlicensed Cloud namespace is a perfectly normal free-tier namespace with

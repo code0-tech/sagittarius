@@ -3,8 +3,9 @@
 # Usage limit mails for the metered resources (AI tokens, workflow executions).
 #
 # Deliberately license-agnostic: everything the templates show is passed in as a plain value by
-# the caller (see Namespaces::Usage::NotifyLimitsService and its EE/Cloud overrides), so this
-# mailer does not need the License model - which only exists in the EE extension.
+# the caller (see Namespaces::Usage::NotifyLimitsService and its EE/Cloud overrides), so the
+# same mail serves EE's installation-wide license limits and Cloud's per-namespace ones,
+# free-tier limits included.
 #
 # Both mails always show both meters, even when only one of them triggered the notification: the
 # other one is the context a recipient needs to judge the situation, and the react-email

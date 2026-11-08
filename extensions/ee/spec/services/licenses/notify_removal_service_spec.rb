@@ -2,8 +2,11 @@
 
 require 'rails_helper'
 
-RSpec.describe Licenses::NotifyRemovalService do
-  subject(:service_response) { described_class.new(license, namespace: namespace).execute }
+# Cloud redirects the recipients to the license's namespace (see
+# CLOUD::Licenses::NotifyRemovalService), so EE's installation-wide behavior - and the
+# namespace-less license it needs - only exists where cloud is not active.
+RSpec.describe Licenses::NotifyRemovalService, unless: Sagittarius::Extensions.cloud? do
+  subject(:service_response) { described_class.new(license).execute }
 
   let(:license) do
     create(:license, licensee: { company: 'Code0' }, options: { plan: 'PRO' },
@@ -19,7 +22,6 @@ RSpec.describe Licenses::NotifyRemovalService do
   end
 
   context 'with an installation-wide license' do
-    let(:namespace) { nil }
     let!(:administrator) { create(:user, admin: true) }
 
     it 'mails the installation administrators' do
@@ -73,31 +75,7 @@ RSpec.describe Licenses::NotifyRemovalService do
     end
   end
 
-  # Cloud licenses belong to a namespace, so its administrators are the ones to tell - not the
-  # installation's.
-  context 'with a namespace license' do
-    let(:namespace) { create(:namespace) }
-    let(:namespace_administrator) { create(:user) }
-
-    before do
-      create(:user, admin: true)
-
-      member = create(:namespace_member, namespace: namespace, user: namespace_administrator)
-      role = create(:namespace_role, namespace: namespace)
-      create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
-      create(:namespace_member_role, role: role, member: member)
-    end
-
-    it 'mails the namespace administrators only' do
-      expect(service_response).to be_success
-      expect(LicenseMailer).to have_received(:with).with(hash_including(user: namespace_administrator))
-      expect(LicenseMailer).to have_received(:with).exactly(1).time
-    end
-  end
-
   context 'when the notification cannot be enqueued' do
-    let(:namespace) { nil }
-
     before do
       create(:user, admin: true)
       allow(LicenseMailer).to receive(:with).and_raise(StandardError, 'nope')

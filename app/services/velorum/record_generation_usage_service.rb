@@ -24,10 +24,7 @@ module Velorum
         usage: usage, unique_by: %i[project_id flow_id date]
       )
 
-      # Right after the recording, so the mail reflects the generation that pushed usage over a
-      # threshold. The enforcement gate in Mutations::Ai::GenerateFlow runs before a generation
-      # and so can never see that moment.
-      ::Namespaces::Usage::NotifyLimitsService.new(namespace: project.namespace).execute
+      after_recording([project.namespace])
 
       ServiceResponse.success(message: 'Generation usage recorded')
     rescue StandardError => e
@@ -36,5 +33,14 @@ module Velorum
       ServiceResponse.error(message: 'Failed to record generation usage',
                             error_code: :generation_usage_recording_failed)
     end
+
+    protected
+
+    # Extension hook, handed every namespace whose usage this call recorded. Core has nothing to
+    # do with it; EE notifies about usage limits from here (see
+    # EE::Velorum::RecordGenerationUsageService).
+    def after_recording(_namespaces); end
   end
 end
+
+Velorum::RecordGenerationUsageService.prepend_extensions

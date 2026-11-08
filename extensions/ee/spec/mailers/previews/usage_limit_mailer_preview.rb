@@ -13,7 +13,7 @@ class UsageLimitMailerPreview < ActionMailer::Preview
   private
 
   # Plain values rather than a real license: the mailer is license-agnostic by design, so a
-  # preview does not need the EE extension to be set up (see UsageLimitMailer).
+  # preview needs no license installed (see UsageLimitMailer).
   def usage_params
     {
       user: user,

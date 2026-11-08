@@ -2,36 +2,24 @@
 
 require 'rails_helper'
 
-RSpec.describe Namespaces::Usage::NotifyLimitsService do
+# Cloud overrides every hook this service exposes and narrows the installation-wide license EE
+# measures against to a single namespace's, so EE's behavior only exists where cloud is not
+# active - same as the other EE license specs.
+RSpec.describe Namespaces::Usage::NotifyLimitsService, unless: Sagittarius::Extensions.cloud? do
   include ActiveSupport::Testing::TimeHelpers
 
-  # Both the ee and cloud extensions are active in this test environment, and Cloud overrides
-  # every hook this service exposes. Exercising the real `Namespaces::Usage::NotifyLimitsService`
-  # here would test Cloud's behavior, not EE's - so, same as the enforcement specs, build an
-  # isolated class that only has EE's module prepended, mirroring the core class's shape.
-  subject(:service_response) { isolated_service_class.new(namespace: namespace).execute }
-
-  let(:isolated_service_class) do
-    Class.new do
-      attr_reader :namespace
-
-      def initialize(namespace:)
-        @namespace = namespace
-      end
-
-      def execute
-        ServiceResponse.success(message: 'No usage limit notifications configured')
-      end
-
-      prepend EE::Namespaces::Usage::NotifyLimitsService
-    end
-  end
+  subject(:service_response) { described_class.new(namespace: namespace).execute }
 
   # EE's license - and therefore its usage pool - is installation-wide, so which namespace
   # happened to report the usage makes no difference here.
   let(:namespace) { create(:namespace) }
   let(:project) { create(:namespace_project) }
   let!(:administrator) { create(:user, admin: true) }
+
+  # Relative to today, not a fixed date: the claim rows live in a partition per billing cycle
+  # and only the recent ones are retained (see UsageLimitNotification). The 15th makes the
+  # cycles run 15th-to-14th, so they are visibly not calendar months.
+  let(:license_start) { Date.current.beginning_of_month - 3.months + 14.days }
 
   let(:mailer) { instance_double(UsageLimitMailer) }
   let(:mail_message) { instance_double(ActionMailer::MessageDelivery, deliver_later: nil) }
@@ -83,8 +71,8 @@ RSpec.describe Namespaces::Usage::NotifyLimitsService do
 
   context 'with a license restricting ai_tokens' do
     before do
-      travel_to(Date.new(2026, 9, 20))
-      create(:license, start_date: Date.new(2026, 1, 15), end_date: Date.new(2027, 1, 14),
+      travel_to(Date.current.beginning_of_month + 19.days)
+      create(:license, start_date: license_start, end_date: license_start + 1.year - 1.day,
                        restrictions: { ai_tokens: 100 })
     end
 
@@ -122,18 +110,18 @@ RSpec.describe Namespaces::Usage::NotifyLimitsService do
     it 'sends each notification only once per billing cycle' do
       record_ai_usage(80)
 
-      2.times { isolated_service_class.new(namespace: namespace).execute }
+      2.times { described_class.new(namespace: namespace).execute }
 
       expect(mailer).to have_received(:limit_warning).once
     end
 
     it 'sends again in the next billing cycle' do
       record_ai_usage(80)
-      isolated_service_class.new(namespace: namespace).execute
+      described_class.new(namespace: namespace).execute
 
       travel 1.month
       record_ai_usage(80)
-      isolated_service_class.new(namespace: namespace).execute
+      described_class.new(namespace: namespace).execute
 
       expect(mailer).to have_received(:limit_warning).twice
     end
@@ -141,7 +129,7 @@ RSpec.describe Namespaces::Usage::NotifyLimitsService do
     it 'still warns after a warning was already sent for the other resource' do
       UsageLimitNotification.claim(
         namespace: nil, usage_kind: :workflow, notification_kind: :warning,
-        cycle_start: Sagittarius::BillingCycle.range_for(Date.new(2026, 1, 15)).begin
+        cycle_start: Sagittarius::BillingCycle.range_for(license_start).begin
       )
       record_ai_usage(80)
 
@@ -176,8 +164,8 @@ RSpec.describe Namespaces::Usage::NotifyLimitsService do
 
   context 'with a license restricting both resources' do
     before do
-      travel_to(Date.new(2026, 9, 20))
-      create(:license, start_date: Date.new(2026, 1, 15), end_date: Date.new(2027, 1, 14),
+      travel_to(Date.current.beginning_of_month + 19.days)
+      create(:license, start_date: license_start, end_date: license_start + 1.year - 1.day,
                        restrictions: { ai_tokens: 100, workflow_executions: 10 })
     end
 

@@ -34,7 +34,7 @@ module Licenses
           target: AuditEvent::GLOBAL_TARGET
         )
 
-        # Installation-wide license, so the installation's administrators are the ones to tell.
+        # Tells the administrators the license is gone (who exactly is EE/Cloud specific).
         NotifyRemovalService.new(license).execute
 
         ServiceResponse.success(message: 'Deleted license', payload: license)

@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
 module Licenses
-  # Tells the administrators that a license is gone and what that costs them.
-  #
-  # Both delete paths use this one service and only differ in the scope they hand it: EE deletes
-  # an installation-wide license (`namespace: nil`, so the installation's administrators are
-  # notified), Cloud deletes a namespace's license (so that namespace's administrators are).
-  # That is the whole difference, which is why this is a plain service rather than another
-  # core/EE/Cloud override chain.
+  # Tells the administrators that a license is gone and what that costs them. EE licenses are
+  # installation-wide, so the installation's administrators are the ones told; Cloud, whose
+  # licenses belong to a namespace, redirects that to the namespace's own administrators (see
+  # CLOUD::Licenses::NotifyRemovalService).
   #
   # Takes the license record it is told about and snapshots it immediately: the record is
   # already deleted by the time this runs - its row is gone, only the in-memory object with its
@@ -15,12 +12,10 @@ module Licenses
   class NotifyRemovalService
     include Code0::ZeroTrack::Loggable
 
-    attr_reader :license, :namespace
+    attr_reader :license
 
-    # namespace: the namespace the license belonged to, or nil for an installation-wide one.
-    def initialize(license, namespace: nil)
+    def initialize(license)
       @license = license
-      @namespace = namespace
     end
 
     def execute
@@ -39,13 +34,15 @@ module Licenses
                             error_code: :license_removal_notification_failed)
     end
 
-    private
+    protected
 
+    # Marked `protected`, not `private`, because Cloud overrides it (Sagittarius::Override's
+    # verification relies on Module#method_defined?, which ignores private methods).
     def recipients
-      return namespace.administrator_users.notifiable if namespace.present?
-
       ::User.notifiable.administrators
     end
+
+    private
 
     def snapshot
       {
@@ -72,3 +69,5 @@ module Licenses
     end
   end
 end
+
+Licenses::NotifyRemovalService.prepend_extensions
