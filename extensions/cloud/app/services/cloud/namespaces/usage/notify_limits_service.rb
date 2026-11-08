@@ -5,7 +5,7 @@ module CLOUD
     module Usage
       # Cloud licenses are per-namespace, so everything EE measures and notifies
       # installation-wide is narrowed to the namespace whose usage was just recorded (see
-      # EE::Namespaces::Usage::NotifyLimitsService).
+      # Namespaces::Usage::NotifyLimitsService).
       module NotifyLimitsService
         include Sagittarius::Override
 

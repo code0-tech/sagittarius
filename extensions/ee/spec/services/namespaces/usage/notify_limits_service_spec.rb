@@ -45,8 +45,6 @@ RSpec.describe Namespaces::Usage::NotifyLimitsService, unless: Sagittarius::Exte
     )
   end
 
-  it { expect(described_class).to include_module(EE::Namespaces::Usage::NotifyLimitsService) }
-
   context 'without an active license' do
     it 'notifies nobody - there is no plan whose limits could be approached' do
       record_ai_usage(1_000)

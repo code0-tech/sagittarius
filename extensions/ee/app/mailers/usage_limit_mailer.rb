@@ -3,7 +3,7 @@
 # Usage limit mails for the metered resources (AI tokens, workflow executions).
 #
 # Deliberately license-agnostic: everything the templates show is passed in as a plain value by
-# the caller (see Namespaces::Usage::NotifyLimitsService and its EE/Cloud overrides), so the
+# the caller (see Namespaces::Usage::NotifyLimitsService and its Cloud override), so the
 # same mail serves EE's installation-wide license limits and Cloud's per-namespace ones,
 # free-tier limits included.
 #
