@@ -29,7 +29,7 @@ module Runtimes
 
         def execute
           transactional do |t|
-            lock_existing_modules(t)
+            lock_runtime(t)
 
             module_records = update_modules(t)
             next module_records unless module_records.success?
@@ -176,10 +176,8 @@ module Runtimes
           end
         end
 
-        def lock_existing_modules(t)
-          identifiers = modules.map(&:identifier)
-          RuntimeModule.where(runtime: current_runtime, identifier: identifiers)
-                       .order(:id).lock('FOR UPDATE NOWAIT').load
+        def lock_runtime(t)
+          Runtime.where(id: current_runtime.id).lock('FOR UPDATE NOWAIT').load
         rescue ActiveRecord::LockWaitTimeout
           t.rollback_and_return! ServiceResponse.error(
             message: 'Could not acquire lock on modules',
