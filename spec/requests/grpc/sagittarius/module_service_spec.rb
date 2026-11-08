@@ -529,8 +529,7 @@ RSpec.describe 'sagittarius_rails.ModuleService', :need_grpc_server do
       end
     end
 
-    context 'when module is locked by another transaction' do
-      let!(:runtime_module) { create(:runtime_module, runtime: runtime, identifier: 'taurus') }
+    context 'when the runtime is locked by another transaction' do
       let(:modules) do
         [
           {
@@ -547,6 +546,8 @@ RSpec.describe 'sagittarius_rails.ModuleService', :need_grpc_server do
       end
 
       it 'returns an error instead of deadlocking' do
+        runtime_id = runtime.id
+
         lock_acquired = Concurrent::Event.new
         test_done = Concurrent::Event.new
 
@@ -554,7 +555,7 @@ RSpec.describe 'sagittarius_rails.ModuleService', :need_grpc_server do
           ActiveRecord::Base.connection_pool.with_connection do |conn|
             conn.execute('BEGIN')
             conn.execute(
-              "SELECT * FROM runtime_modules WHERE id = #{runtime_module.id} FOR UPDATE"
+              "SELECT * FROM runtimes WHERE id = #{runtime_id} FOR UPDATE"
             )
             lock_acquired.set
             test_done.wait(10)
