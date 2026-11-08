@@ -24,6 +24,11 @@ module Velorum
         usage: usage, unique_by: %i[project_id flow_id date]
       )
 
+      # Right after the recording, so the mail reflects the generation that pushed usage over a
+      # threshold. The enforcement gate in Mutations::Ai::GenerateFlow runs before a generation
+      # and so can never see that moment.
+      ::Namespaces::Usage::NotifyLimitsService.new(namespace: project.namespace).execute
+
       ServiceResponse.success(message: 'Generation usage recorded')
     rescue StandardError => e
       logger.error(message: 'Failed to record generation usage', project_id: project.id, error: e.message)

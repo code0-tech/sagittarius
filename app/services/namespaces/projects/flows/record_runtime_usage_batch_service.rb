@@ -37,10 +37,21 @@ module Namespaces
 
           touched_flows.each_value { |flow| EnforceUsageLimitService.new(flow).execute }
 
+          # Once per namespace touched, not once per flow: the limits (and the mails about them)
+          # are namespace- or installation-wide, so a batch spanning ten flows of one namespace
+          # has exactly one usage situation to report.
+          namespaces_of(touched_flows.values).each do |namespace|
+            ::Namespaces::Usage::NotifyLimitsService.new(namespace: namespace).execute
+          end
+
           ServiceResponse.success(message: 'Runtime usage recorded')
         end
 
         private
+
+        def namespaces_of(flows)
+          flows.map { |flow| flow.project.namespace }.uniq
+        end
 
         def flow_for(flow_id)
           Flow

@@ -1,0 +1,23 @@
+<%= @company_name %> — Usage limit reached
+
+Hi <%= @user_name %>,
+
+Your <%= @affected_resources %> are used up for the current billing cycle. From
+now until the cycle resets, workflows stop being executed and AI generation is
+refused for whichever of the two ran out. Upgrading the plan lifts the limit
+immediately.
+
+Account:              <%= @account_name %>
+AI tokens:            <%= @ai_usage_summary %>
+Workflow executions:  <%= @workflow_usage_summary %>
+Resets on:            <%= @reset_date %>
+
+Review usage:
+<%= @dashboard_url %>
+
+Usage is counted per billing cycle, so the counters clear on their own on the
+date above — nothing needs to be done if waiting is fine.
+
+To raise the limit or to go through the usage with us, contact us at <%= @support_email %>.
+
+This is a transactional email about the <%= @company_name %> account for <%= @email %>.

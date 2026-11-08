@@ -40,6 +40,15 @@ RSpec.describe Namespaces::Licenses::DeleteService do
 
       it { is_expected.to be_success }
 
+      it 'tells the namespace administrators their license is gone' do
+        notification = instance_double(Licenses::NotifyRemovalService, execute: nil)
+        allow(Licenses::NotifyRemovalService).to receive(:new).and_return(notification)
+
+        expect(service_response).to be_success
+        expect(Licenses::NotifyRemovalService).to have_received(:new).with(license, namespace: namespace)
+        expect(notification).to have_received(:execute)
+      end
+
       it 'removes license to the namespace' do
         expect { service_response }.to change { License.where(namespace: namespace).count }.by(-1)
       end

@@ -34,6 +34,9 @@ module Licenses
           target: AuditEvent::GLOBAL_TARGET
         )
 
+        # Installation-wide license, so the installation's administrators are the ones to tell.
+        NotifyRemovalService.new(license).execute
+
         ServiceResponse.success(message: 'Deleted license', payload: license)
       end
     end

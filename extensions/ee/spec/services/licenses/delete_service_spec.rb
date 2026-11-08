@@ -40,6 +40,15 @@ RSpec.describe Licenses::DeleteService, unless: Sagittarius::Extensions.cloud? d
       expect { service_response }.to change { License.count }.by(-1)
     end
 
+    it 'tells the installation administrators their license is gone' do
+      notification = instance_double(Licenses::NotifyRemovalService, execute: nil)
+      allow(Licenses::NotifyRemovalService).to receive(:new).and_return(notification)
+
+      expect(service_response).to be_success
+      expect(Licenses::NotifyRemovalService).to have_received(:new).with(license)
+      expect(notification).to have_received(:execute)
+    end
+
     it do
       is_expected.to create_audit_event(
         :license_deleted,

@@ -10,6 +10,10 @@ module CLOUD
         module EnforceUsageLimitService
           include Sagittarius::Override
 
+          # What a namespace without any license gets per billing cycle. Also the baseline the
+          # usage notification mails measure against (see CLOUD::Namespaces::Usage::NotifyLimitsService).
+          FREE_WORKFLOW_EXECUTION_LIMIT = 50
+
           protected
 
           override :license
@@ -19,7 +23,7 @@ module CLOUD
 
           override :limit
           def limit
-            return 50 if license.nil?
+            return FREE_WORKFLOW_EXECUTION_LIMIT if license.nil?
 
             super
           end

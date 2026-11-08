@@ -58,4 +58,21 @@ RSpec.describe User do
       end
     end
   end
+
+  describe 'scopes for operational mail recipients' do
+    it 'administrators finds only instance administrators' do
+      administrator = create(:user, admin: true)
+      create(:user)
+
+      expect(described_class.administrators).to contain_exactly(administrator)
+    end
+
+    it 'notifiable leaves out blocked accounts and the non-human user types' do
+      regular = create(:user)
+      create(:user, blocked_at: Time.current)
+      create(:user, :guest)
+
+      expect(described_class.notifiable).to contain_exactly(regular)
+    end
+  end
 end

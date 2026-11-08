@@ -62,6 +62,21 @@ class License < ApplicationRecord
   def restricted?(attribute)
     license&.restricted?(attribute)
   end
+
+  # The licensee is free-form JSON, so pick the field that reads like a name and fall back to
+  # whatever single value is in there - callers put this in front of a human (mails name the
+  # licensee, see Licenses::NotifyRemovalService), where a printed hash would be useless.
+  def licensee_name
+    data = licensee
+    return nil if data.blank?
+
+    data = data.with_indifferent_access
+    (data[:company] || data[:name] || data[:email] || data.values.first).presence
+  end
+
+  def plan_name
+    options&.with_indifferent_access&.[](:plan).presence
+  end
 end
 
 License.prepend_extensions
