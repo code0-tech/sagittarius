@@ -79,7 +79,7 @@ gem 'good_job', '~> 4.0'
 gem 'rotp'
 
 gem 'grpc', '~> 1.67'
-gem 'tucana', '0.0.84'
+gem 'tucana', '0.0.85'
 
 gem 'code0-identities', '~> 0.0.6'
 
@@ -92,7 +92,7 @@ gem 'image_processing', '>= 1.2'
 
 gem 'json-schema', '~> 6.0'
 
-gem 'triangulum', '0.40.1'
+gem 'triangulum', '0.40.2'
 
 gem 'benchmark'
 
