@@ -15,10 +15,6 @@ module Users
     end
 
     def execute
-      unless ApplicationSetting.current[:user_registration_enabled]
-        return ServiceResponse.error(message: 'User registration is disabled', error_code: :registration_disabled)
-      end
-
       user = ::User.find_by_token_for(:guest_claim, claim_token)
 
       if user.nil? || !user.guest?

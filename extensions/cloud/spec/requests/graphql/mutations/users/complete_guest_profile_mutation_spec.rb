@@ -39,10 +39,6 @@ RSpec.describe 'usersCompleteGuestProfile Mutation' do
     }
   end
 
-  before do
-    stub_application_settings(user_registration_enabled: true)
-  end
-
   context 'with a valid claim token' do
     before { mutate! }
 
