@@ -2,18 +2,15 @@
 
 # Usage limit mails for the metered resources (AI tokens, workflow executions).
 #
-# Deliberately license-agnostic: everything the templates show is passed in as a plain value by
-# the caller (see Namespaces::Usage::NotifyLimitsService and its Cloud override), so the
-# same mail serves EE's installation-wide license limits and Cloud's per-namespace ones,
-# free-tier limits included.
+# License-agnostic on purpose: every value shown is passed in by the caller (see
+# Namespaces::Usage::NotifyLimitsService and its Cloud override), so the same mail serves EE's
+# installation-wide limits, Cloud's per-namespace ones and the free tier.
 #
-# Both mails always show both meters, even when only one of them triggered the notification: the
-# other one is the context a recipient needs to judge the situation, and the react-email
-# templates are exported to ERB with one tag per value (see tooling/mails), so a mail cannot
-# conditionally drop a row anyway. Which resource(s) actually triggered it is named in
-# `affected_resources`.
+# Both mails always show both meters, whichever one triggered them - `affected_resources` names
+# that one. The exported ERB templates have one tag per value (see tooling/mails) and cannot drop
+# a row conditionally anyway.
 class UsageLimitMailer < ApplicationMailer
-  # The react-email templates are complete mails. No layout necessary.
+  # The react-email templates are complete mails.
   layout false
 
   def limit_reached
@@ -49,8 +46,7 @@ class UsageLimitMailer < ApplicationMailer
     "#{used} of #{number_with_delimiter(limit)} (#{percentage_of(usage, limit)}%)"
   end
 
-  # A limit of 0 (EE's "no license at all" case) has no meaningful ratio - any usage against it
-  # is fully consumed.
+  # A limit of 0 (EE without a license) has no meaningful ratio.
   def percentage_of(usage, limit)
     return 100 if limit.zero?
 

@@ -20,8 +20,7 @@ Rails.application.configure do
     partition_manager.register_model(RuntimeUsageDailyAggregate)
     partition_manager.register_model(AiUsageDailyAggregate)
 
-    # The only registration point there is, so the EE-only partitioned tables are listed here
-    # too - guarded, because the models do not exist without the extension.
+    # Guarded because the model does not exist without the extension.
     Sagittarius::Extensions.ee { partition_manager.register_model(UsageLimitNotification) }
   end
 

@@ -8,8 +8,6 @@ RSpec.describe Licenses::NotifyRemovalService do
   let(:namespace) { create(:namespace) }
   let(:license) { create(:license, namespace: namespace, licensee: { company: 'Code0' }) }
 
-  # Cloud notifies the namespace's own administrators: a member holding a role with the
-  # namespace_administrator ability.
   let(:namespace_administrator) { create(:user) }
 
   before do

@@ -36,9 +36,7 @@ module Velorum
 
     protected
 
-    # Extension hook, handed every namespace whose usage this call recorded. Core has nothing to
-    # do with it; EE notifies about usage limits from here (see
-    # EE::Velorum::RecordGenerationUsageService).
+    # Extension hook, handed every namespace this call recorded usage for.
     def after_recording(_namespaces); end
   end
 end

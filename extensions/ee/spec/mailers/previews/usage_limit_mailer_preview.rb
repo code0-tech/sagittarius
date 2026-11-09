@@ -12,8 +12,6 @@ class UsageLimitMailerPreview < ActionMailer::Preview
 
   private
 
-  # Plain values rather than a real license: the mailer is license-agnostic by design, so a
-  # preview needs no license installed (see UsageLimitMailer).
   def usage_params
     {
       user: user,

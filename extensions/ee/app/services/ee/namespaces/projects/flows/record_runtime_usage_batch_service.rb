@@ -4,9 +4,7 @@ module EE
   module Namespaces
     module Projects
       module Flows
-        # Hooks the usage limit notifications onto the runtime usage recording. The batch hands
-        # over every namespace it touched exactly once, so a batch spanning ten flows of one
-        # namespace produces one notification run, not ten.
+        # Notifies about usage limits once per namespace the batch recorded usage for.
         module RecordRuntimeUsageBatchService
           include Sagittarius::Override
           extend ActiveSupport::Concern

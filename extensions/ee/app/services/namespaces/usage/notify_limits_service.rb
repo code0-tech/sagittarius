@@ -3,25 +3,17 @@
 module Namespaces
   module Usage
     # Mails the administrators when a metered resource is about to run out, and again when it
-    # has. Defined in the EE extension because usage limits are a licensing concern - core has
-    # no limits to notify about and therefore no reason to know this service exists.
+    # has. Defined in the EE extension because usage limits are a licensing concern.
     #
     # EE licenses are installation-wide, so the usage pool measured here and the people notified
-    # about it span the whole installation. Cloud narrows both to a single namespace (see
-    # CLOUD::Namespaces::Usage::NotifyLimitsService).
+    # about it span the whole installation. Cloud narrows both to the namespace whose usage was
+    # just recorded (see CLOUD::Namespaces::Usage::NotifyLimitsService).
     #
-    # Called right after usage is recorded (see EE::Velorum::RecordGenerationUsageService and
-    # EE::Namespaces::Projects::Flows::RecordRuntimeUsageBatchService), i.e. on every generation
-    # and every reported batch of executions. It must therefore stay cheap when nothing is
-    # wrong: the limits are read off the already-loaded license and the usage sums are only
-    # queried once a limit actually exists. Sending at most one mail per resource, threshold and
-    # billing cycle is this service's job, not the caller's - it claims UsageLimitNotification
-    # rows to do it.
-    #
-    # `namespace` is the namespace whose usage was just recorded. EE ignores it (its licenses,
-    # and so its usage pool, are installation-wide); Cloud scopes everything to it.
+    # Called on every recorded generation and every reported batch of executions, so it stays
+    # cheap when nothing is wrong: the usage sums are only queried once a limit actually exists.
     class NotifyLimitsService
       include Code0::ZeroTrack::Loggable
+      include Code0::ZeroTrack::Memoize
 
       # Share of the limit at which the heads-up mail goes out.
       WARNING_RATIO = 0.8
@@ -71,11 +63,9 @@ module Namespaces
       # ignores private methods).
 
       # Memoized because the mails read the limits back per recipient, and every read of the
-      # license is a query (License.current scans the most recent licenses for an active one).
+      # license is a query.
       def license
-        return @license if defined?(@license)
-
-        @license = License.current
+        memoize(:license) { License.current }
       end
 
       # EE without a license has nothing to report against: there is no plan whose limits could
@@ -94,17 +84,16 @@ module Namespaces
         license.restrictions[restriction]
       end
 
-      # The namespace the claim rows belong to. nil = installation-wide, matching EE's
-      # installation-wide license (see UsageLimitNotification).
-      def notification_namespace
-        nil
+      # What the claim rows are scoped to. EE claims installation-wide, matching its
+      # installation-wide license; Cloud claims per namespace.
+      def notification_scope
+        {}
       end
 
       def cycle_anchor
         license&.start_date || Date.current.beginning_of_month
       end
 
-      # EE: installation-wide usage pools.
       def ai_usage_relation
         AiUsageDailyAggregate.all
       end
@@ -113,7 +102,6 @@ module Namespaces
         RuntimeUsageDailyAggregate.all
       end
 
-      # EE: the installation's administrators.
       def recipients
         ::User.notifiable.administrators
       end
@@ -121,11 +109,11 @@ module Namespaces
       private
 
       def cycle_range
-        @cycle_range ||= Sagittarius::BillingCycle.range_for(cycle_anchor)
+        memoize(:cycle_range) { Sagittarius::BillingCycle.range_for(cycle_anchor) }
       end
 
       def reset_date
-        @reset_date ||= Sagittarius::BillingCycle.next_reset_date(cycle_anchor)
+        memoize(:reset_date) { Sagittarius::BillingCycle.next_reset_date(cycle_anchor) }
       end
 
       # :reached, :warning, or nil when the resource is unlimited or comfortably within budget.
@@ -166,10 +154,10 @@ module Namespaces
 
       def claim(usage_kind, notification_kind)
         UsageLimitNotification.claim(
-          namespace: notification_namespace,
           usage_kind: usage_kind,
           notification_kind: notification_kind,
-          cycle_start: cycle_range.begin
+          cycle_start: cycle_range.begin,
+          **notification_scope
         )
       end
 

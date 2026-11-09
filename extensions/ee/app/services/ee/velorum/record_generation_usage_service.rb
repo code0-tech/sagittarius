@@ -2,10 +2,8 @@
 
 module EE
   module Velorum
-    # Hooks the usage limit notifications onto the AI usage recording: right after the
-    # recording, so the mail reflects the generation that pushed usage over a threshold. The
-    # enforcement gate in Mutations::Ai::GenerateFlow runs before a generation and so can never
-    # see that moment.
+    # Notifies about usage limits right after the recording, so the mail reflects the generation
+    # that pushed usage over a threshold.
     module RecordGenerationUsageService
       include Sagittarius::Override
       extend ActiveSupport::Concern

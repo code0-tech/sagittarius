@@ -9,8 +9,6 @@ RSpec.describe Namespaces::Usage::NotifyLimitsService do
   let(:project) { create(:namespace_project) }
   let(:other_project) { create(:namespace_project) }
 
-  # Cloud notifies the namespace's own administrators: a member holding a role with the
-  # namespace_administrator ability.
   let(:namespace_administrator) { create(:user) }
 
   before do

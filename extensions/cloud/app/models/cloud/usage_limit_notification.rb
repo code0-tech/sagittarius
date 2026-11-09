@@ -6,9 +6,8 @@ module CLOUD
 
     prepended do
       # Cloud licenses are per-namespace, so every notification belongs to one. EE's
-      # installation-wide notifications (namespace_id IS NULL) cannot occur here, which is why
-      # the column stays nullable in the schema but is required by this model.
-      validates :namespace, presence: true
+      # installation-wide notifications are what keep the column nullable in the schema.
+      belongs_to :namespace, inverse_of: :usage_limit_notifications
     end
   end
 end

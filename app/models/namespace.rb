@@ -20,10 +20,8 @@ class Namespace < ApplicationRecord
   has_many :user_namespace_pins, inverse_of: :namespace
   has_many :user_project_pins, inverse_of: :namespace
 
-  # Users who administer this namespace: members holding a role with the namespace_administrator
-  # ability, plus the owner of a personal namespace (who holds it implicitly, see
-  # NamespacePolicy). Instance administrators are deliberately not included - they administer the
-  # installation, not this namespace.
+  # Members holding the namespace_administrator ability, plus a personal namespace's owner, who
+  # holds it implicitly (see NamespacePolicy). Instance administrators are not included.
   def administrator_users
     admin_member_ids = namespace_members
                        .joins(roles: :abilities)

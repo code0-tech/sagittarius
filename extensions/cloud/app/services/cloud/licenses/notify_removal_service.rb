@@ -9,8 +9,7 @@ module CLOUD
 
       protected
 
-      # The license row is already deleted when this runs, but the in-memory object still
-      # carries its namespace_id, so the association resolves.
+      # The row is already deleted, but the in-memory object still carries its namespace_id.
       override :recipients
       def recipients
         license.namespace.administrator_users.notifiable

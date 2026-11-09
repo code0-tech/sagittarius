@@ -9,9 +9,8 @@ module CLOUD
       module NotifyLimitsService
         include Sagittarius::Override
 
-        # The free-tier caps a namespace without a license runs on. Same numbers the enforcement
-        # applies, read off those services so the mails can never state a limit that is not the
-        # one actually enforced.
+        # The free-tier caps a namespace without a license runs on. Read off the enforcement
+        # services so the mails can never state a limit that is not the one actually enforced.
         FREE_LIMITS = {
           ai: CLOUD::Namespaces::Projects::EnforceAiUsageLimitService::FREE_AI_TOKEN_LIMIT,
           workflow: CLOUD::Namespaces::Projects::Flows::EnforceUsageLimitService::FREE_WORKFLOW_EXECUTION_LIMIT,
@@ -19,8 +18,6 @@ module CLOUD
 
         protected
 
-        # Namespace#current_license memoizes, which matters for the same reason EE memoizes:
-        # the mails read the limits back per recipient, and every read would be a query.
         override :license
         def license
           namespace.current_license
@@ -40,9 +37,9 @@ module CLOUD
           super
         end
 
-        override :notification_namespace
-        def notification_namespace
-          namespace
+        override :notification_scope
+        def notification_scope
+          { namespace: namespace }
         end
 
         override :cycle_anchor
@@ -60,7 +57,6 @@ module CLOUD
           RuntimeUsageDailyAggregate.where(namespace_id: namespace.id)
         end
 
-        # Cloud: the namespace's own administrators, not the instance's.
         override :recipients
         def recipients
           namespace.administrator_users.notifiable

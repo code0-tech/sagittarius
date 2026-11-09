@@ -2,23 +2,19 @@
 
 require 'rails_helper'
 
-# Cloud overrides every hook this service exposes and narrows the installation-wide license EE
-# measures against to a single namespace's, so EE's behavior only exists where cloud is not
-# active - same as the other EE license specs.
+# Cloud narrows the installation-wide license EE measures against to a single namespace's, so
+# EE's behavior only exists where cloud is not active.
 RSpec.describe Namespaces::Usage::NotifyLimitsService, unless: Sagittarius::Extensions.cloud? do
   include ActiveSupport::Testing::TimeHelpers
 
   subject(:service_response) { described_class.new(namespace: namespace).execute }
 
-  # EE's license - and therefore its usage pool - is installation-wide, so which namespace
-  # happened to report the usage makes no difference here.
   let(:namespace) { create(:namespace) }
   let(:project) { create(:namespace_project) }
   let!(:administrator) { create(:user, admin: true) }
 
-  # Relative to today, not a fixed date: the claim rows live in a partition per billing cycle
-  # and only the recent ones are retained (see UsageLimitNotification). The 15th makes the
-  # cycles run 15th-to-14th, so they are visibly not calendar months.
+  # Relative to today, because only the recent cycles' partitions are retained. The 15th makes
+  # the cycles run 15th-to-14th, so they are visibly not calendar months.
   let(:license_start) { Date.current.beginning_of_month - 3.months + 14.days }
 
   let(:mailer) { instance_double(UsageLimitMailer) }
@@ -126,7 +122,7 @@ RSpec.describe Namespaces::Usage::NotifyLimitsService, unless: Sagittarius::Exte
 
     it 'still warns after a warning was already sent for the other resource' do
       UsageLimitNotification.claim(
-        namespace: nil, usage_kind: :workflow, notification_kind: :warning,
+        usage_kind: :workflow, notification_kind: :warning,
         cycle_start: Sagittarius::BillingCycle.range_for(license_start).begin
       )
       record_ai_usage(80)

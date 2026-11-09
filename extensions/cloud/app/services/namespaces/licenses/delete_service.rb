@@ -35,7 +35,6 @@ module Namespaces
             target: license.namespace
           )
 
-          # Per-namespace license; the Cloud override tells that namespace's administrators.
           ::Licenses::NotifyRemovalService.new(license).execute
 
           ServiceResponse.success(message: 'Deleted license', payload: license)

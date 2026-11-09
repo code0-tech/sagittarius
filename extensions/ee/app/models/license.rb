@@ -64,8 +64,7 @@ class License < ApplicationRecord
   end
 
   # The licensee is free-form JSON, so pick the field that reads like a name and fall back to
-  # whatever single value is in there - callers put this in front of a human (mails name the
-  # licensee, see Licenses::NotifyRemovalService), where a printed hash would be useless.
+  # whatever single value is in there - callers put this in front of a human.
   def licensee_name
     data = licensee
     return nil if data.blank?

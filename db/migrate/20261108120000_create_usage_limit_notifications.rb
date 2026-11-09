@@ -2,20 +2,16 @@
 
 class CreateUsageLimitNotifications < Code0::ZeroTrack::Database::Migration[1.0]
   def change
-    # Partitioned by billing cycle because the rows are transient: a claim only answers "has
-    # this notification already gone out for this cycle", which stops being a question once the
-    # cycle is over. Letting the partition manager drop whole past months keeps the table from
-    # growing without bound and spares us a cleanup job (see UsageLimitNotification).
+    # Partitioned by billing cycle because the rows are transient: a claim only answers "has this
+    # notification already gone out for this cycle". Past months are dropped as whole partitions,
+    # which spares us a cleanup job.
     #
-    # No foreign key on namespace_id, like the usage aggregates this measures: a partition is
-    # detached and dropped as a unit, and retention already removes the rows of a deleted
-    # namespace. A leftover claim can never be mistaken for a live one either, since namespace
-    # ids are not reused.
+    # No foreign key on namespace_id, like the usage aggregates this measures: retention already
+    # removes the rows of a deleted namespace, and namespace ids are not reused.
     create_partition_by_date_table :p_usage_limit_notifications,
                                    partition_column: :cycle_start do |t|
-      # Nullable on purpose: EE licenses are installation-wide, so their notifications belong to
-      # no namespace. Cloud licenses are per-namespace and fill this in (and require it, see
-      # CLOUD::UsageLimitNotification).
+      # Nullable because EE licenses are installation-wide, so their notifications belong to no
+      # namespace. Cloud requires one (see CLOUD::UsageLimitNotification).
       t.bigint :namespace_id, null: true
       t.integer :usage_kind, null: false, limit: 2
       t.integer :notification_kind, null: false, limit: 2

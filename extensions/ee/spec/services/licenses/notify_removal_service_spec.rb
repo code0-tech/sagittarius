@@ -2,9 +2,8 @@
 
 require 'rails_helper'
 
-# Cloud redirects the recipients to the license's namespace (see
-# CLOUD::Licenses::NotifyRemovalService), so EE's installation-wide behavior - and the
-# namespace-less license it needs - only exists where cloud is not active.
+# Cloud redirects the recipients to the license's namespace, so EE's installation-wide behavior
+# only exists where cloud is not active.
 RSpec.describe Licenses::NotifyRemovalService, unless: Sagittarius::Extensions.cloud? do
   subject(:service_response) { described_class.new(license).execute }
 

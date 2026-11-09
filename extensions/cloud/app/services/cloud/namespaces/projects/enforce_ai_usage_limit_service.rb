@@ -9,8 +9,6 @@ module CLOUD
       module EnforceAiUsageLimitService
         include Sagittarius::Override
 
-        # What a namespace without any license gets per billing cycle. Also the baseline the
-        # usage notification mails measure against (see CLOUD::Namespaces::Usage::NotifyLimitsService).
         FREE_AI_TOKEN_LIMIT = 25_000
 
         protected

@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 module Licenses
-  # Tells the administrators that a license is gone and what that costs them. EE licenses are
-  # installation-wide, so the installation's administrators are the ones told; Cloud, whose
-  # licenses belong to a namespace, redirects that to the namespace's own administrators (see
-  # CLOUD::Licenses::NotifyRemovalService).
+  # Tells the administrators that a license is gone. EE licenses are installation-wide, so the
+  # installation's administrators are told; Cloud redirects that to the namespace's own
+  # administrators (see CLOUD::Licenses::NotifyRemovalService).
   #
-  # Takes the license record it is told about and snapshots it immediately: the record is
-  # already deleted by the time this runs - its row is gone, only the in-memory object with its
-  # `data` is left - so nothing may be read off it later, in the mail template least of all.
+  # The record is already deleted when this runs - only the in-memory object is left - so it is
+  # snapshotted into plain values right away rather than handed to the mailer.
   class NotifyRemovalService
     include Code0::ZeroTrack::Loggable
 
@@ -36,8 +34,8 @@ module Licenses
 
     protected
 
-    # Marked `protected`, not `private`, because Cloud overrides it (Sagittarius::Override's
-    # verification relies on Module#method_defined?, which ignores private methods).
+    # `protected`, not `private`, because Cloud overrides it (Sagittarius::Override verifies
+    # with Module#method_defined?, which ignores private methods).
     def recipients
       ::User.notifiable.administrators
     end

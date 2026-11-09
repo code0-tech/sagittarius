@@ -17,9 +17,8 @@ RSpec.describe Velorum::GenerateFlowService do
   end
 
   let(:current_authentication) { instance_double(UserSession) }
-  # A real namespace rather than a double: the project is reached through for it when the
-  # recorded usage is checked against the limits (see Velorum::RecordGenerationUsageService),
-  # and that check reads enough off it that stubbing it would only restate the implementation.
+  # A real namespace rather than a double: the recorded usage is checked against the limits of
+  # the project's namespace, and that check reads enough off it that stubbing only restates it.
   let(:project) do
     instance_double(
       NamespaceProject, id: 12, namespace_id: namespace.id, namespace: namespace, primary_runtime: runtime
