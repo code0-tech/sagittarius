@@ -7,9 +7,6 @@ module Types
     field :description, String,
           null: true,
           description: 'Description of the sub-flow function.'
-    field :function, Types::SubFlowFunctionType,
-          null: true,
-          description: 'The sub-flow function that was executed.'
     field :input_schema, GraphQL::Types::JSON,
           null: true,
           description: 'JSON schema describing the sub-flow function input.'

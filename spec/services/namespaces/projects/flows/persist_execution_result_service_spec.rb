@@ -103,10 +103,6 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
             success: Tucana::Shared::NodeValueExecutionResult.new(
               sub_flow_function_result: Tucana::Shared::SubFlowFunctionResult.new(
                 subflow_identifier: 'sub-flow-run-1',
-                function: Tucana::Shared::SubFlowFunction.new(
-                  function_identifier: 'my-sub-flow',
-                  definition_source: 'taurus'
-                ),
                 input_schema: Tucana::Shared::Struct.from_hash('type' => 'object'),
                 output_schema: Tucana::Shared::Struct.from_hash('type' => 'string'),
                 name: 'My Sub Flow',
@@ -116,7 +112,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
             parameter_results: [
               Tucana::Shared::NodeValueExecutionResult.new(
                 sub_flow_function_result: Tucana::Shared::SubFlowFunctionResult.new(
-                  function: Tucana::Shared::SubFlowFunction.new(function_identifier: 'nested'),
+                  subflow_identifier: 'nested',
                   name: 'Nested',
                   description: ''
                 )
@@ -134,7 +130,6 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       expect(node_result.success).to be_nil
       expect(node_result.success_sub_flow_function_result).to eq(
         'subflow_identifier' => 'sub-flow-run-1',
-        'function' => { 'function_identifier' => 'my-sub-flow', 'definition_source' => 'taurus' },
         'input_schema' => { 'type' => 'object' },
         'output_schema' => { 'type' => 'string' },
         'name' => 'My Sub Flow',
@@ -144,7 +139,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       parameter_result = node_result.parameter_results.sole
       expect(parameter_result.value).to be_nil
       expect(parameter_result.sub_flow_function_result).to include(
-        'function' => { 'function_identifier' => 'nested', 'definition_source' => nil },
+        'subflow_identifier' => 'nested',
         'name' => 'Nested'
       )
     end

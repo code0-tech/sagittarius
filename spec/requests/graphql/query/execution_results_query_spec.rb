@@ -76,7 +76,6 @@ RSpec.describe 'execution results Query' do
            success: nil,
            success_sub_flow_function_result: {
              'subflow_identifier' => 'runtime-sub-flow',
-             'function' => { 'function_identifier' => 'my-sub-flow', 'definition_source' => 'taurus' },
              'input_schema' => { 'type' => 'object' },
              'output_schema' => { 'type' => 'string' },
              'name' => 'My Sub Flow',
@@ -126,10 +125,6 @@ RSpec.describe 'execution results Query' do
                         }
                         ... on SubFlowFunctionResult {
                           subflowIdentifier
-                          function {
-                            functionIdentifier
-                            definitionSource
-                          }
                           inputSchema
                           outputSchema
                           name
@@ -239,7 +234,6 @@ RSpec.describe 'execution results Query' do
         'position' => 2,
         'success' => {
           'subflowIdentifier' => 'runtime-sub-flow',
-          'function' => { 'functionIdentifier' => 'my-sub-flow', 'definitionSource' => 'taurus' },
           'inputSchema' => { 'type' => 'object' },
           'outputSchema' => { 'type' => 'string' },
           'name' => 'My Sub Flow',
