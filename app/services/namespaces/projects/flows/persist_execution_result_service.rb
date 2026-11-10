@@ -161,6 +161,7 @@ module Namespaces
           return if result.nil?
 
           {
+            subflow_identifier: result.subflow_identifier,
             function: sub_flow_function_to_hash(result.function),
             input_schema: result.input_schema&.to_h,
             output_schema: result.output_schema&.to_h,

@@ -60,6 +60,30 @@ RSpec.describe 'execution results Query' do
            position: 0,
            value: { 'value' => 'done' })
   end
+  let!(:raw_value_node_result) do
+    create(:execution_node_result,
+           execution_result: execution_result,
+           node_function: create(:node_function, flow: flow),
+           position: 1,
+           success: { 'node' => 'ok' },
+           error: nil)
+  end
+  let!(:sub_flow_node_result) do
+    create(:execution_node_result,
+           execution_result: execution_result,
+           node_function: create(:node_function, flow: flow),
+           position: 2,
+           success: nil,
+           success_sub_flow_function_result: {
+             'subflow_identifier' => 'runtime-sub-flow',
+             'function' => { 'function_identifier' => 'my-sub-flow', 'definition_source' => 'taurus' },
+             'input_schema' => { 'type' => 'object' },
+             'output_schema' => { 'type' => 'string' },
+             'name' => 'My Sub Flow',
+             'description' => 'does things',
+           },
+           error: nil)
+  end
   let(:current_user) do
     create(:user).tap do |user|
       create(:namespace_member, namespace: namespace, user: user)
@@ -96,7 +120,22 @@ RSpec.describe 'execution results Query' do
                       position
                       startedAt
                       finishedAt
-                      success
+                      success {
+                        ... on RawValue {
+                          value
+                        }
+                        ... on SubFlowFunctionResult {
+                          subflowIdentifier
+                          function {
+                            functionIdentifier
+                            definitionSource
+                          }
+                          inputSchema
+                          outputSchema
+                          name
+                          description
+                        }
+                      }
                       error {
                         code
                         category
@@ -188,6 +227,25 @@ RSpec.describe 'execution results Query' do
             'value' => { 'value' => 'done' }
           )
         )
+      ),
+      a_hash_including(
+        'id' => raw_value_node_result.to_global_id.to_s,
+        'position' => 1,
+        'success' => { 'value' => { 'node' => 'ok' } },
+        'error' => nil
+      ),
+      a_hash_including(
+        'id' => sub_flow_node_result.to_global_id.to_s,
+        'position' => 2,
+        'success' => {
+          'subflowIdentifier' => 'runtime-sub-flow',
+          'function' => { 'functionIdentifier' => 'my-sub-flow', 'definitionSource' => 'taurus' },
+          'inputSchema' => { 'type' => 'object' },
+          'outputSchema' => { 'type' => 'string' },
+          'name' => 'My Sub Flow',
+          'description' => 'does things',
+        },
+        'error' => nil
       )
     )
 

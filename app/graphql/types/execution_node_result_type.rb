@@ -28,18 +28,23 @@ module Types
     field :sub_flow_identifier, String,
           null: true,
           description: 'Identifier of a sub-flow that only lives in the runtime, if this result targets one'
-    field :success, GraphQL::Types::JSON,
+    field :success, Types::NodeExecutionSuccessType,
           null: true,
-          description: 'Successful raw value returned by this node execution'
-    field :success_sub_flow_function_result, GraphQL::Types::JSON,
-          null: true,
-          description: 'Successful sub-flow function result returned by this node execution'
+          description: 'Successful value returned by this node execution: a raw value or a sub-flow function result'
 
     id_field ExecutionNodeResult
     timestamps
 
     def parameter_results
       object.parameter_results.order(:position)
+    end
+
+    def success
+      if object.success_sub_flow_function_result.present?
+        object.success_sub_flow_function_result
+      elsif !object.success.nil?
+        Sagittarius::Graphql::RawValue.new(object.success)
+      end
     end
   end
 end

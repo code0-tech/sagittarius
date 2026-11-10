@@ -102,6 +102,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
             finished_at: finished_at,
             success: Tucana::Shared::NodeValueExecutionResult.new(
               sub_flow_function_result: Tucana::Shared::SubFlowFunctionResult.new(
+                subflow_identifier: 'sub-flow-run-1',
                 function: Tucana::Shared::SubFlowFunction.new(
                   function_identifier: 'my-sub-flow',
                   definition_source: 'taurus'
@@ -132,6 +133,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       node_result = service_response.payload.node_results.sole
       expect(node_result.success).to be_nil
       expect(node_result.success_sub_flow_function_result).to eq(
+        'subflow_identifier' => 'sub-flow-run-1',
         'function' => { 'function_identifier' => 'my-sub-flow', 'definition_source' => 'taurus' },
         'input_schema' => { 'type' => 'object' },
         'output_schema' => { 'type' => 'string' },

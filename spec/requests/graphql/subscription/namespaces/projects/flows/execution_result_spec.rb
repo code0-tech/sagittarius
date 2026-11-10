@@ -22,7 +22,14 @@ RSpec.describe 'namespacesProjectsFlowsExecutionResult Subscription', type: :cha
             success
             nodeResults {
               nodes {
-                success
+                success {
+                  ... on RawValue {
+                    value
+                  }
+                  ... on SubFlowFunctionResult {
+                    name
+                  }
+                }
                 parameterResults {
                   value
                 }
