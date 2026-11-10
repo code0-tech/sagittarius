@@ -18,6 +18,5 @@ Represents a node result of an execution result
 | `position` | [`Int!`](../scalar/int.md) | Position of this node result in the execution result |
 | `startedAt` | [`BigInt!`](../scalar/bigint.md) | Unix epoch time in microseconds when this node execution started |
 | `subFlowIdentifier` | [`String`](../scalar/string.md) | Identifier of a sub-flow that only lives in the runtime, if this result targets one |
-| `success` | [`JSON`](../scalar/json.md) | Successful raw value returned by this node execution |
-| `successSubFlowFunctionResult` | [`JSON`](../scalar/json.md) | Successful sub-flow function result returned by this node execution |
+| `success` | [`NodeExecutionSuccess`](../union/nodeexecutionsuccess.md) | Successful value returned by this node execution: a raw value or a sub-flow function result |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this ExecutionNodeResult was last updated |

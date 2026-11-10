@@ -161,20 +161,11 @@ module Namespaces
           return if result.nil?
 
           {
-            function: sub_flow_function_to_hash(result.function),
+            subflow_identifier: result.subflow_identifier,
             input_schema: result.input_schema&.to_h,
             output_schema: result.output_schema&.to_h,
             name: result.name,
             description: result.description,
-          }
-        end
-
-        def sub_flow_function_to_hash(function)
-          return if function.nil?
-
-          {
-            function_identifier: function.function_identifier,
-            definition_source: (function.definition_source if function.has_definition_source?),
           }
         end
 
