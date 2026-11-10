@@ -74,6 +74,7 @@ Represents the available error responses
 | `INVALID_VERIFICATION_CODE` | Invalid verification code provided |
 | `IS_PRIMARY_RUNTIME` | This runtime is the primary runtime of a project |
 | `LICENSE_NOT_FOUND` | The license with the given identifier was not found |
+| `LICENSE_REMOVAL_NOTIFICATION_FAILED` | Failed to notify about a removed license |
 | `LOADING_IDENTITY_FAILED` | Failed to load user identity from external provider |
 | `LOCK_TIMEOUT` | Could not acquire a database lock in time |
 | `MFA_FAILED` | Invalid MFA data provided |
@@ -111,6 +112,7 @@ Represents the available error responses
 | `TOTP_SECRET_NOT_SET` | This user does not have TOTP set up |
 | `UNMODIFIABLE_FIELD` | The user is not permitted to modify this field |
 | `UNSUPPORTED_AUTHENTICATION` | The current authentication is not supported for this operation |
+| `USAGE_LIMIT_NOTIFICATION_FAILED` | Failed to process the usage limit notifications |
 | `USER_BLOCKED` | The user is blocked from accessing the application |
 | `USER_NOT_FOUND` | The user with the given identifier was not found |
 | `USER_SESSION_NOT_FOUND` | The user session with the given identifier was not found |

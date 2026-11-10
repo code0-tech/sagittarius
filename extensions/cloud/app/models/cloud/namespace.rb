@@ -7,6 +7,7 @@ module CLOUD
 
     prepended do
       has_many :licenses, inverse_of: :namespace
+      has_many :usage_limit_notifications, inverse_of: :namespace
     end
 
     def current_license

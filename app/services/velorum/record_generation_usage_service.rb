@@ -24,6 +24,8 @@ module Velorum
         usage: usage, unique_by: %i[project_id flow_id date]
       )
 
+      after_recording([project.namespace])
+
       ServiceResponse.success(message: 'Generation usage recorded')
     rescue StandardError => e
       logger.error(message: 'Failed to record generation usage', project_id: project.id, error: e.message)
@@ -31,5 +33,12 @@ module Velorum
       ServiceResponse.error(message: 'Failed to record generation usage',
                             error_code: :generation_usage_recording_failed)
     end
+
+    protected
+
+    # Extension hook, handed every namespace this call recorded usage for.
+    def after_recording(_namespaces); end
   end
 end
+
+Velorum::RecordGenerationUsageService.prepend_extensions

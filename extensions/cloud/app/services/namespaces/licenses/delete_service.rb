@@ -35,6 +35,8 @@ module Namespaces
             target: license.namespace
           )
 
+          ::Licenses::NotifyRemovalService.new(license).execute
+
           ServiceResponse.success(message: 'Deleted license', payload: license)
         end
       end

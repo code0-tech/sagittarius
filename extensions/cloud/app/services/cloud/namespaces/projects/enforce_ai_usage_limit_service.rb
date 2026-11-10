@@ -9,6 +9,8 @@ module CLOUD
       module EnforceAiUsageLimitService
         include Sagittarius::Override
 
+        FREE_AI_TOKEN_LIMIT = 25_000
+
         protected
 
         override :license
@@ -18,7 +20,7 @@ module CLOUD
 
         override :limit
         def limit
-          return 25_000 if license.nil?
+          return FREE_AI_TOKEN_LIMIT if license.nil?
 
           super
         end

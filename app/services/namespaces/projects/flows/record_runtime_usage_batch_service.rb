@@ -37,10 +37,21 @@ module Namespaces
 
           touched_flows.each_value { |flow| EnforceUsageLimitService.new(flow).execute }
 
+          after_recording(namespaces_of(touched_flows.values))
+
           ServiceResponse.success(message: 'Runtime usage recorded')
         end
 
+        protected
+
+        # Extension hook, handed every namespace this batch recorded usage for, once each.
+        def after_recording(_namespaces); end
+
         private
+
+        def namespaces_of(flows)
+          flows.map { |flow| flow.project.namespace }.uniq
+        end
 
         def flow_for(flow_id)
           Flow
@@ -55,3 +66,5 @@ module Namespaces
     end
   end
 end
+
+Namespaces::Projects::Flows::RecordRuntimeUsageBatchService.prepend_extensions

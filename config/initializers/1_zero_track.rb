@@ -19,6 +19,9 @@ Rails.application.configure do
     partition_manager.register_model(RuntimeStatusDailyUptime)
     partition_manager.register_model(RuntimeUsageDailyAggregate)
     partition_manager.register_model(AiUsageDailyAggregate)
+
+    # Guarded because the model does not exist without the extension.
+    Sagittarius::Extensions.ee { partition_manager.register_model(UsageLimitNotification) }
   end
 
   config.after_initialize do

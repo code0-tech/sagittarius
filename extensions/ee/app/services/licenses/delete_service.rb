@@ -34,6 +34,8 @@ module Licenses
           target: AuditEvent::GLOBAL_TARGET
         )
 
+        NotifyRemovalService.new(license).execute
+
         ServiceResponse.success(message: 'Deleted license', payload: license)
       end
     end

@@ -842,6 +842,26 @@ CREATE TABLE p_runtime_usage_daily_aggregates (
 )
 PARTITION BY RANGE (date);
 
+CREATE TABLE p_usage_limit_notifications (
+    id bigint NOT NULL,
+    namespace_id bigint,
+    usage_kind smallint NOT NULL,
+    notification_kind smallint NOT NULL,
+    cycle_start date NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+)
+PARTITION BY RANGE (cycle_start);
+
+CREATE SEQUENCE p_usage_limit_notifications_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE p_usage_limit_notifications_id_seq OWNED BY p_usage_limit_notifications.id;
+
 CREATE TABLE parameter_definitions (
     id bigint NOT NULL,
     runtime_parameter_definition_id bigint NOT NULL,
@@ -1479,6 +1499,8 @@ ALTER TABLE ONLY p_execution_parameter_results ALTER COLUMN id SET DEFAULT nextv
 
 ALTER TABLE ONLY p_execution_results ALTER COLUMN id SET DEFAULT nextval('p_execution_results_id_seq'::regclass);
 
+ALTER TABLE ONLY p_usage_limit_notifications ALTER COLUMN id SET DEFAULT nextval('p_usage_limit_notifications_id_seq'::regclass);
+
 ALTER TABLE ONLY parameter_definitions ALTER COLUMN id SET DEFAULT nextval('parameter_definitions_id_seq'::regclass);
 
 ALTER TABLE ONLY reference_paths ALTER COLUMN id SET DEFAULT nextval('reference_paths_id_seq'::regclass);
@@ -1661,6 +1683,9 @@ ALTER TABLE ONLY p_runtime_status_daily_uptimes
 
 ALTER TABLE ONLY p_runtime_usage_daily_aggregates
     ADD CONSTRAINT p_runtime_usage_daily_aggregates_pkey PRIMARY KEY (flow_id, date);
+
+ALTER TABLE ONLY p_usage_limit_notifications
+    ADD CONSTRAINT p_usage_limit_notifications_pkey PRIMARY KEY (id, cycle_start);
 
 ALTER TABLE ONLY parameter_definitions
     ADD CONSTRAINT parameter_definitions_pkey PRIMARY KEY (id);
@@ -1972,6 +1997,10 @@ CREATE INDEX index_sub_flows_on_starting_node_id ON sub_flows USING btree (start
 CREATE UNIQUE INDEX index_sub_flows_on_sub_flow_parameter_id ON sub_flows USING btree (sub_flow_parameter_id);
 
 CREATE INDEX index_translations_on_owner ON translations USING btree (owner_type, owner_id);
+
+CREATE UNIQUE INDEX index_usage_limit_notifications_on_global_scope ON ONLY p_usage_limit_notifications USING btree (usage_kind, notification_kind, cycle_start) WHERE (namespace_id IS NULL);
+
+CREATE UNIQUE INDEX index_usage_limit_notifications_on_namespace_scope ON ONLY p_usage_limit_notifications USING btree (namespace_id, usage_kind, notification_kind, cycle_start) WHERE (namespace_id IS NOT NULL);
 
 CREATE UNIQUE INDEX index_user_custom_attributes_on_user_id_and_key ON user_custom_attributes USING btree (user_id, key);
 

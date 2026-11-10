@@ -44,6 +44,40 @@ RSpec.describe Namespace do
     end
   end
 
+  describe '#administrator_users' do
+    let(:namespace) { create(:namespace) }
+
+    def add_member(user, administrator:)
+      member = create(:namespace_member, namespace: namespace, user: user)
+      role = create(:namespace_role, namespace: namespace)
+      create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator) if administrator
+      create(:namespace_member_role, role: role, member: member)
+    end
+
+    it 'finds the members holding the administrator ability' do
+      administrator = create(:user)
+      add_member(administrator, administrator: true)
+      add_member(create(:user), administrator: false)
+
+      expect(namespace.administrator_users).to contain_exactly(administrator)
+    end
+
+    it 'leaves instance administrators out - they administer the installation, not the namespace' do
+      create(:user, admin: true)
+
+      expect(namespace.administrator_users).to be_empty
+    end
+
+    context 'with a personal namespace' do
+      let(:owner) { create(:user) }
+      let(:namespace) { owner.ensure_namespace }
+
+      it 'includes the owner, who holds the ability implicitly' do
+        expect(namespace.administrator_users).to include(owner)
+      end
+    end
+  end
+
   describe 'personal namespace administrator via ensure_namespace' do
     let(:user) { create(:user) }
 

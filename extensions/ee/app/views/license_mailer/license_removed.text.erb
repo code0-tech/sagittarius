@@ -1,0 +1,24 @@
+<%= @company_name %> — License removed
+
+Hi <%= @user_name %>,
+
+Your license was removed, so its entitlements no longer apply. AI tokens and
+workflow executions now run on the limits that apply without a license, and
+anything beyond them is blocked until a license is added again.
+
+Account:     <%= @account_name %>
+Licensee:    <%= @licensee %>
+Plan:        <%= @plan %>
+Was valid:   <%= @license_period %>
+Removed on:  <%= @removed_at %>
+
+Open dashboard:
+<%= @dashboard_url %>
+
+Projects, flows and data are untouched by this — only the entitlements are gone.
+If the removal was not intended, add the license again and everything continues
+where it left off.
+
+If you didn't expect this or need help restoring the license, contact us at <%= @support_email %>.
+
+This is a transactional email about the <%= @company_name %> account for <%= @email %>.

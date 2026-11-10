@@ -20,6 +20,19 @@ class Namespace < ApplicationRecord
   has_many :user_namespace_pins, inverse_of: :namespace
   has_many :user_project_pins, inverse_of: :namespace
 
+  # Members holding the namespace_administrator ability, plus a personal namespace's owner, who
+  # holds it implicitly (see NamespacePolicy). Instance administrators are not included.
+  def administrator_users
+    admin_member_ids = namespace_members
+                       .joins(roles: :abilities)
+                       .where(namespace_role_abilities: { ability: :namespace_administrator })
+                       .select(:user_id)
+
+    users = User.where(id: admin_member_ids)
+    users = users.or(User.where(id: parent_id)) if user_type?
+    users
+  end
+
   def organization_type?
     parent_type == Organization.name
   end

@@ -72,5 +72,75 @@
         "footer": {
             "transactionalNotice": "This is a transactional email about the {{companyName}} account for {{email}}."
         }
+    },
+    "usageLimitReached": {
+        "preview": "Your {{affectedResources}} are used up for this billing cycle",
+        "heading": "Usage limit reached",
+        "greeting": "Hi {{userName}},",
+        "explanation": "Your {{affectedResources}} are used up for the current billing cycle. From now until the cycle resets, workflows stop being executed and AI generation is refused for whichever of the two ran out. Upgrading the plan lifts the limit immediately.",
+        "labels": {
+            "account": "Account",
+            "aiTokens": "AI tokens",
+            "workflowExecutions": "Workflow executions",
+            "resets": "Resets on"
+        },
+        "actions": {
+            "openDashboard": "Review usage"
+        },
+        "notice": "Usage is counted per billing cycle, so the counters clear on their own on the date above - nothing needs to be done if waiting is fine.",
+        "support": {
+            "beforeEmail": "To raise the limit or to go through the usage with us, contact us at",
+            "afterEmail": "."
+        },
+        "footer": {
+            "transactionalNotice": "This is a transactional email about the {{companyName}} account for {{email}}."
+        }
+    },
+    "usageLimitWarning": {
+        "preview": "You have used {{thresholdPercentage}} of your {{affectedResources}}",
+        "heading": "Close to the usage limit",
+        "greeting": "Hi {{userName}},",
+        "explanation": "You have used {{thresholdPercentage}} of your {{affectedResources}} for the current billing cycle. Nothing is blocked yet - but once the limit is reached, workflows stop being executed and AI generation is refused until the cycle resets.",
+        "labels": {
+            "account": "Account",
+            "aiTokens": "AI tokens",
+            "workflowExecutions": "Workflow executions",
+            "resets": "Resets on"
+        },
+        "actions": {
+            "openDashboard": "Review usage"
+        },
+        "notice": "Upgrading the plan lifts the limit immediately; otherwise the counters clear on their own on the date above.",
+        "support": {
+            "beforeEmail": "To raise the limit or to go through the usage with us, contact us at",
+            "afterEmail": "."
+        },
+        "footer": {
+            "transactionalNotice": "This is a transactional email about the {{companyName}} account for {{email}}."
+        }
+    },
+    "licenseRemoved": {
+        "preview": "Your {{companyName}} license was removed",
+        "heading": "License removed",
+        "greeting": "Hi {{userName}},",
+        "explanation": "Your license was removed, so its entitlements no longer apply. AI tokens and workflow executions now run on the limits that apply without a license, and anything beyond them is blocked until a license is added again.",
+        "labels": {
+            "account": "Account",
+            "licensee": "Licensee",
+            "plan": "Plan",
+            "period": "Was valid",
+            "removedOn": "Removed on"
+        },
+        "actions": {
+            "openDashboard": "Open dashboard"
+        },
+        "notice": "Projects, flows and data are untouched by this - only the entitlements are gone. If the removal was not intended, add the license again and everything continues where it left off.",
+        "support": {
+            "beforeEmail": "If you didn't expect this or need help restoring the license, contact us at",
+            "afterEmail": "."
+        },
+        "footer": {
+            "transactionalNotice": "This is a transactional email about the {{companyName}} account for {{email}}."
+        }
     }
 }

@@ -1,0 +1,23 @@
+<%= @company_name %> — Close to the usage limit
+
+Hi <%= @user_name %>,
+
+You have used <%= @threshold_percentage %> of your <%= @affected_resources %>
+for the current billing cycle. Nothing is blocked yet — but once the limit is
+reached, workflows stop being executed and AI generation is refused until the
+cycle resets.
+
+Account:              <%= @account_name %>
+AI tokens:            <%= @ai_usage_summary %>
+Workflow executions:  <%= @workflow_usage_summary %>
+Resets on:            <%= @reset_date %>
+
+Review usage:
+<%= @dashboard_url %>
+
+Upgrading the plan lifts the limit immediately; otherwise the counters clear on
+their own on the date above.
+
+To raise the limit or to go through the usage with us, contact us at <%= @support_email %>.
+
+This is a transactional email about the <%= @company_name %> account for <%= @email %>.

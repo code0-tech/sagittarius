@@ -14,6 +14,10 @@ class User < ApplicationRecord
 
   enum :user_type, USER_TYPES
 
+  scope :administrators, -> { where(admin: true) }
+  # Blocked accounts and the non-human user types are nobody to send an operational mail to.
+  scope :notifiable, -> { where(blocked_at: nil, user_type: :regular) }
+
   validates :username, length: { maximum: 50 },
                        presence: true,
                        allow_blank: false,
