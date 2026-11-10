@@ -81,4 +81,47 @@ RSpec.describe Namespaces::Projects::Flows::EnforceUsageLimitService do
       expect(flow.reload.disabled?).to be(false)
     end
   end
+
+  describe '#reenable_flows' do
+    subject(:reenable_response) { described_class.new(namespace: namespace).reenable_flows }
+
+    let!(:flow) do
+      create(:flow, project: project, disabled_reason: :usage_limit_exceeded,
+                    disabled_until: Date.new(2026, 10, 15))
+    end
+
+    context 'with a namespace license restricting workflow_executions' do
+      before do
+        create(:license, namespace: namespace, start_date: Date.new(2026, 1, 15),
+                         restrictions: { workflow_executions: 5 })
+      end
+
+      it 're-enables usage-limit-disabled flows once usage is within the limit' do
+        travel_to(Date.new(2026, 9, 16)) { record_usage(flow, 5) }
+
+        travel_to(Date.new(2026, 9, 16)) { expect(reenable_response).to be_success }
+
+        expect(flow.reload.disabled?).to be(false)
+        expect(FlowHandler).to have_received(:update_flow).with(flow)
+      end
+
+      it 'keeps flows disabled while usage still exceeds the limit' do
+        travel_to(Date.new(2026, 9, 16)) { record_usage(flow, 6) }
+
+        travel_to(Date.new(2026, 9, 16)) { reenable_response }
+
+        expect(flow.reload).to have_attributes(disabled_reason: 'usage_limit_exceeded')
+      end
+    end
+
+    it 'only re-enables flows within the same namespace' do
+      other_namespace_flow = create(:flow, disabled_reason: :usage_limit_exceeded,
+                                           disabled_until: Date.new(2026, 10, 15))
+
+      reenable_response
+
+      expect(flow.reload.disabled?).to be(false)
+      expect(other_namespace_flow.reload.disabled?).to be(true)
+    end
+  end
 end
