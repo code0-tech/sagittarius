@@ -168,22 +168,27 @@ module Namespaces
         end
 
         def update_node_parameters(t, current_node, current_node_input, all_nodes)
-          db_parameters = current_node.node_parameters.first(current_node_input.parameters.count)
-          current_node_input.parameters.each_with_index do |parameter, index|
+          parameter_definitions = current_node.function_definition.parameter_definitions.ordered.to_a
+          parameters_input = current_node_input.parameters
+
+          if parameters_input.count > parameter_definitions.count
+            t.rollback_and_return! ServiceResponse.error(
+              message: 'Invalid parameter index',
+              error_code: :invalid_parameter_index
+            )
+          end
+
+          db_parameters = current_node.node_parameters.first(parameter_definitions.count)
+
+          parameter_definitions.each_with_index do |parameter_definition, index|
             db_parameters[index] ||= current_node.node_parameters.build
 
-            parameter_definition = current_node.function_definition.parameter_definitions[index]
-            if parameter_definition.nil?
-              t.rollback_and_return! ServiceResponse.error(
-                message: 'Invalid parameter index',
-                error_code: :invalid_parameter_index
-              )
-            end
+            parameter = parameters_input[index]
 
             db_parameters[index].parameter_definition = parameter_definition
-            db_parameters[index].cast = parameter.try(:cast)
+            db_parameters[index].cast = parameter&.try(:cast)
 
-            assign_node_value(t, db_parameters[index], parameter.value, all_nodes)
+            assign_node_value(t, db_parameters[index], parameter&.value, all_nodes)
 
             next if db_parameters[index].valid?
 
@@ -198,17 +203,17 @@ module Namespaces
         end
 
         def assign_node_value(t, owner, value_input, all_nodes)
-          owner.literal_value = value_input.literal_value&.value
-          update_inline_reference_values(t, owner, value_input.literal_value&.references, all_nodes)
+          owner.literal_value = value_input&.literal_value&.value
+          update_inline_reference_values(t, owner, value_input&.literal_value&.references, all_nodes)
 
-          if value_input.try(:sub_flow_value).present?
+          if value_input&.try(:sub_flow_value).present?
             update_sub_flow(t, owner, value_input.sub_flow_value, all_nodes)
           else
             owner.sub_flow&.destroy
             owner.sub_flow = nil
           end
 
-          if value_input.reference_value.present?
+          if value_input&.reference_value.present?
             assign_reference_value(t, owner, value_input.reference_value, all_nodes)
           else
             owner.reference_value&.destroy
