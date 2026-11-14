@@ -5,7 +5,10 @@ use tucana::sagittarius_rails::token_service_client::TokenServiceClient;
 use tucana::sagittarius_rails::token_verify_response::Data;
 use tucana::sagittarius_rails::{TokenVerifyRequest, TokenVerifyResponse};
 
+use async_trait::async_trait;
+
 use super::retry::{RetryPolicy, retry};
+use crate::server::stream_registry::TokenValidator;
 
 pub enum RuntimeVerificationStatus {
     Verified { runtime_id: i64 },
@@ -70,5 +73,23 @@ impl SagittariusRailsTokenServiceClient {
             },
             None => RuntimeVerificationStatus::Unverified,
         }
+    }
+}
+
+#[async_trait]
+impl TokenValidator for SagittariusRailsTokenServiceClient {
+    async fn is_token_valid(&self, runtime_id: i64, token: String) -> bool {
+        let response = match self.verify(token).await {
+            Ok(response) => response,
+            // Rails was unreachable even after retries. Keep the stream connected rather than
+            // tearing every runtime's stream down during a transient control-plane outage; only a
+            // definitive "unverified" answer should disconnect a stream.
+            Err(_) => return true,
+        };
+
+        matches!(
+            response.into_inner().data,
+            Some(Data::Verified(verified)) if verified.runtime_id == runtime_id
+        )
     }
 }
