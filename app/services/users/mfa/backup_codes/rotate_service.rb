@@ -6,11 +6,12 @@ module Users
       class RotateService
         include Sagittarius::Database::Transactional
 
-        attr_reader :current_authentication, :current_user
+        attr_reader :current_authentication, :current_user, :mfa
 
-        def initialize(current_authentication)
+        def initialize(current_authentication, mfa)
           @current_authentication = current_authentication
           @current_user = current_authentication.user
+          @mfa = mfa
         end
 
         def execute
@@ -19,6 +20,16 @@ module Users
           end
 
           transactional do |t|
+            if current_user.mfa_enabled?
+              return ServiceResponse.error(error_code: :mfa_required) if mfa.nil?
+
+              mfa_passed, = current_user.validate_mfa!(mfa)
+
+              unless mfa_passed
+                t.rollback_and_return! ServiceResponse.error(message: 'MFA failed', error_code: :mfa_failed)
+              end
+            end
+
             old_codes = BackupCode.where(user: current_user)
             old_codes.delete_all
             unless old_codes.none?
