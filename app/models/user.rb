@@ -12,6 +12,11 @@ class User < ApplicationRecord
 
   has_secure_password
 
+  # Opt-in flag set by the registration and admin-creation flows so the password
+  # policy is only enforced where a human chooses their own password. Generated
+  # passwords (identity/SSO registration, guest users) are intentionally exempt.
+  attr_accessor :enforce_password_policy
+
   enum :user_type, USER_TYPES
 
   scope :administrators, -> { where(admin: true) }
@@ -30,6 +35,8 @@ class User < ApplicationRecord
 
   validates :firstname, length: { maximum: 50 }
   validates :lastname, length: { maximum: 50 }
+
+  validates :password, 'sagittarius/validators/password': true, allow_blank: true, if: :enforce_password_policy
 
   encrypts :totp_secret
 
