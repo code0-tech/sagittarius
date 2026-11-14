@@ -29,8 +29,7 @@ module Types
 
     field :namespace_memberships, Types::NamespaceMemberType.connection_type,
           null: false,
-          description: 'Namespace Memberships of this user',
-          extras: [:lookahead]
+          description: 'Namespace Memberships of this user'
 
     field :namespace, Types::NamespaceType,
           null: true,
@@ -69,10 +68,6 @@ module Types
     field :deletion_restriction, Types::UserDeletionRestrictionEnum,
           null: true,
           description: 'The reason why this user cannot be deleted'
-
-    lookahead_field :namespace_memberships,
-                    base_scope: ->(object) { object.namespace_memberships },
-                    conditional_lookaheads: { user: :user, namespace: { namespace: :namespace_members } }
 
     expose_abilities %i[
       manage_mfa

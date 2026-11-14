@@ -62,25 +62,24 @@ module Types
       define_method(:user_abilities) { object || {} }
     end
 
-    def self.lookahead_field(field, base_scope:, lookaheads: [], conditional_lookaheads: {})
-      define_method(field) do |*_args, lookahead:, **_kwargs|
-        field_selected = lambda do |f|
-          lookahead.selects?(f) ||
-            lookahead.selection(:nodes).selects?(f) ||
-            lookahead.selection(:edges).selection(:node).selects?(f)
-        end
-
-        scope = lookaheads.reduce(base_scope.call(object)) { |acc, f| acc.preload(f) }
-
-        conditional_lookaheads.reduce(scope) do |acc, (f, preload_field)|
-          field_selected.call(f) ? acc.preload(preload_field) : acc
-        end
+    # Associations to batch-preload before this object's authorization runs, so
+    # policy checks that walk them don't N+1. E.g. `authorization_preloads namespace: :namespace_members`.
+    def self.authorization_preloads(*associations)
+      if associations.any?
+        @authorization_preloads = associations.freeze
+      else
+        @authorization_preloads ||
+          (superclass.respond_to?(:authorization_preloads) ? superclass.authorization_preloads : [])
       end
     end
 
     def self.authorized?(object, context)
       if object.instance_variable_defined?(:@sagittarius_object_authorization_bypass)
         return object.instance_variable_get(:@sagittarius_object_authorization_bypass)
+      end
+
+      authorization_preloads.each do |association|
+        context.dataloader.with(Sources::AssociationSource, association).load(object)
       end
 
       subject = object.try(:declarative_policy_subject) || @declarative_policy_subject.try(:call, object) || object
@@ -105,6 +104,11 @@ module Types
 
     def current_authentication
       context[:current_authentication]
+    end
+
+    # Batch-loads an association on this object via Sources::AssociationSource to avoid N+1.
+    def preload(association)
+      context.dataloader.with(Sources::AssociationSource, association).load(object)
     end
   end
 end

@@ -21,13 +21,10 @@ module Types
 
     field :members, Types::NamespaceMemberType.connection_type, null: false,
                                                                 description: 'Members of the namespace',
-                                                                extras: [:lookahead]
+                                                                method: :namespace_members
 
     field :roles, Types::NamespaceRoleType.connection_type, null: false, description: 'Roles of the namespace'
     field :runtimes, Types::RuntimeType.connection_type, null: false, description: 'Runtime of the namespace'
-
-    lookahead_field :members, base_scope: ->(object) { object.namespace_members },
-                              conditional_lookaheads: { user: :user, namespace: :namespace }
 
     expose_abilities %i[
       invite_member
