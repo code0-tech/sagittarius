@@ -9,6 +9,7 @@ Rotates the backup codes of a user.
 | Name | Type | Description |
 |------|------|-------------|
 | `clientMutationId` | [`String`](../scalar/string.md) | A unique identifier for the client performing the mutation. |
+| `mfa` | [`MfaInput`](../input_object/mfainput.md) | The mfa validation data, required when MFA is enabled. |
 
 ## Fields
 

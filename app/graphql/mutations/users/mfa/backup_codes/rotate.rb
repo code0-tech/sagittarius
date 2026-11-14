@@ -9,9 +9,13 @@ module Mutations
 
           field :codes, [String], null: true, description: 'The newly rotated backup codes.'
 
-          def resolve
+          argument :mfa, Types::Input::MfaInput, required: false,
+                                                 description: 'The mfa validation data, required when MFA is enabled.'
+
+          def resolve(mfa: nil)
             ::Users::Mfa::BackupCodes::RotateService.new(
-              current_authentication
+              current_authentication,
+              mfa
             ).execute.to_mutation_response(success_key: :codes)
           end
         end
