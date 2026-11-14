@@ -5,11 +5,11 @@ use crate::client::module_service_client::SagittariusRailsModuleServiceClient;
 use crate::client::token_service_client::{
     RuntimeVerificationStatus, SagittariusRailsTokenServiceClient,
 };
-use std::collections::HashMap;
+use crate::server::stream_registry::StreamRegistry;
 use std::pin::Pin;
 use std::sync::Arc;
 
-use tokio::sync::{Mutex, mpsc};
+use tokio::sync::mpsc;
 use tonic::codegen::tokio_stream::Stream;
 use tonic::codegen::tokio_stream::wrappers::ReceiverStream;
 use tonic::metadata::MetadataMap;
@@ -31,7 +31,7 @@ pub struct SagittariusModuleService {
     token_client: SagittariusRailsTokenServiceClient,
     jwt_client: JwtClient,
     jwt_verifier: JwtVerifier,
-    streams: Arc<Mutex<HashMap<i64, ModuleConfigurationSender>>>,
+    streams: Arc<StreamRegistry<ModuleConfigurationResponse>>,
 }
 
 type ModuleConfigurationsStream = Pin<
@@ -52,17 +52,23 @@ impl SagittariusModuleService {
             token_client,
             jwt_client,
             jwt_verifier,
-            streams: Arc::new(Mutex::new(HashMap::new())),
+            streams: StreamRegistry::new("module configuration"),
         }
+    }
+
+    /// The registry of connected module configuration streams, exposed so the shared revalidation
+    /// task can disconnect streams whose runtime token has been rotated.
+    pub fn stream_registry(&self) -> Arc<StreamRegistry<ModuleConfigurationResponse>> {
+        Arc::clone(&self.streams)
     }
 
     async fn run_configurations_stream(
         runtime_id: i64,
-        streams: Arc<Mutex<HashMap<i64, ModuleConfigurationSender>>>,
+        streams: Arc<StreamRegistry<ModuleConfigurationResponse>>,
         outgoing_stream: ModuleConfigurationSender,
     ) {
         outgoing_stream.closed().await;
-        streams.lock().await.remove(&runtime_id);
+        streams.remove(runtime_id).await;
         log::info!(
             "Aquila module configuration stream closed for runtime {}.",
             runtime_id
@@ -71,49 +77,14 @@ impl SagittariusModuleService {
 
     async fn verify_stream_runtime(
         token_client: &SagittariusRailsTokenServiceClient,
-        metadata: &MetadataMap,
+        token: String,
     ) -> Result<i64, Status> {
-        let token = authentication_token(metadata)?;
-
         match token_client.validate_token(token).await {
             RuntimeVerificationStatus::Verified { runtime_id } => Ok(runtime_id),
             RuntimeVerificationStatus::Unverified => Err(Status::unauthenticated(
                 "invalid Aquila authentication token",
             )),
         }
-    }
-
-    async fn register_stream(
-        streams: &Arc<Mutex<HashMap<i64, ModuleConfigurationSender>>>,
-        runtime_id: i64,
-        sender: ModuleConfigurationSender,
-    ) -> Result<(), Status> {
-        let mut streams = streams.lock().await;
-
-        if streams.contains_key(&runtime_id) {
-            return Err(Status::already_exists(
-                "Aquila module configuration stream is already connected for runtime",
-            ));
-        }
-
-        streams.insert(runtime_id, sender);
-        Ok(())
-    }
-
-    async fn stream_for_runtime(
-        &self,
-        runtime_id: i64,
-    ) -> Result<ModuleConfigurationSender, Status> {
-        self.streams
-            .lock()
-            .await
-            .get(&runtime_id)
-            .cloned()
-            .ok_or_else(|| {
-                Status::unavailable(format!(
-                    "no Aquila module configuration stream connected for runtime {runtime_id}"
-                ))
-            })
     }
 
     async fn send_to_aquila_stream(
@@ -173,8 +144,8 @@ impl ModuleService for SagittariusModuleService {
         &self,
         request: tonic::Request<ModuleUpdateRequest>,
     ) -> Result<tonic::Response<ModuleUpdateResponse>, tonic::Status> {
-        let runtime_id =
-            Self::verify_stream_runtime(&self.token_client, request.metadata()).await?;
+        let token = authentication_token(request.metadata())?;
+        let runtime_id = Self::verify_stream_runtime(&self.token_client, token).await?;
         let authorization = self.jwt_client.authorization_for_runtime(runtime_id)?;
         let rails_request = Self::to_rails_update_request(request.into_inner());
         let rails_response = self
@@ -194,11 +165,13 @@ impl ModuleService for SagittariusModuleService {
         &self,
         request: tonic::Request<ModuleConfigurationRequest>,
     ) -> Result<tonic::Response<Self::ConfigurationsStream>, tonic::Status> {
-        let metadata = request.metadata();
-        let runtime_id = Self::verify_stream_runtime(&self.token_client, metadata).await?;
+        let token = authentication_token(request.metadata())?;
+        let runtime_id = Self::verify_stream_runtime(&self.token_client, token.clone()).await?;
         let (response_tx, response_rx) = mpsc::channel(MODULE_CONFIGURATION_QUEUE_CAPACITY);
 
-        Self::register_stream(&self.streams, runtime_id, response_tx.clone()).await?;
+        self.streams
+            .register(runtime_id, token, response_tx.clone())
+            .await?;
 
         log::info!(
             "Aquila module configuration stream connected for runtime {}.",
@@ -227,12 +200,12 @@ impl ModuleService for SagittariusModuleService {
         };
         Self::ensure_matching_runtime(runtime_id, request_runtime_id)?;
 
-        let stream = self.stream_for_runtime(runtime_id).await?;
+        let stream = self.streams.sender_for(runtime_id).await?;
         if Self::send_to_aquila_stream(&stream, configuration)
             .await
             .is_err()
         {
-            self.streams.lock().await.remove(&runtime_id);
+            self.streams.remove(runtime_id).await;
             return Err(Status::unavailable(format!(
                 "Aquila module configuration stream closed for runtime {runtime_id}"
             )));

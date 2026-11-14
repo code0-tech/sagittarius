@@ -29,6 +29,9 @@ pub struct Config {
 pub struct Auth {
     pub jwt_secret: String,
     pub jwt_ttl_seconds: u64,
+    /// How often connected Aquila streams are re-checked against Rails so that a runtime whose
+    /// token has been rotated is disconnected. Set to `0` to disable the check.
+    pub token_revalidation_interval_seconds: u64,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -81,6 +84,7 @@ impl Default for Auth {
         Self {
             jwt_secret: String::from("jwt-secret"),
             jwt_ttl_seconds: 300,
+            token_revalidation_interval_seconds: 60,
         }
     }
 }

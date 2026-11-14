@@ -5,10 +5,10 @@ use crate::client::execution_service_client::SagittariusRailsExecutionServiceCli
 use crate::client::token_service_client::{
     RuntimeVerificationStatus, SagittariusRailsTokenServiceClient,
 };
-use std::collections::HashMap;
+use crate::server::stream_registry::StreamRegistry;
 use std::pin::Pin;
 use std::sync::Arc;
-use tokio::sync::{Mutex, mpsc};
+use tokio::sync::mpsc;
 use tonic::codegen::tokio_stream::Stream;
 use tonic::codegen::tokio_stream::wrappers::ReceiverStream;
 use tonic::metadata::MetadataMap;
@@ -28,7 +28,7 @@ pub struct SagittariusExecutionService {
     token_client: SagittariusRailsTokenServiceClient,
     jwt_client: JwtClient,
     jwt_verifier: JwtVerifier,
-    streams: Arc<Mutex<HashMap<i64, ExecutionResponseSender>>>,
+    streams: Arc<StreamRegistry<ExecutionLogonResponse>>,
 }
 
 type ExecutionUpdateStream =
@@ -48,13 +48,19 @@ impl SagittariusExecutionService {
             token_client,
             jwt_client,
             jwt_verifier,
-            streams: Arc::new(Mutex::new(HashMap::new())),
+            streams: StreamRegistry::new("execution"),
         }
+    }
+
+    /// The registry of connected execution streams, exposed so the shared revalidation task can
+    /// disconnect streams whose runtime token has been rotated.
+    pub fn stream_registry(&self) -> Arc<StreamRegistry<ExecutionLogonResponse>> {
+        Arc::clone(&self.streams)
     }
 
     async fn run_update_stream(
         runtime_id: i64,
-        streams: Arc<Mutex<HashMap<i64, ExecutionResponseSender>>>,
+        streams: Arc<StreamRegistry<ExecutionLogonResponse>>,
         client: SagittariusRailsExecutionServiceClient,
         jwt_client: JwtClient,
         mut incoming_stream: tonic::Streaming<ExecutionLogonRequest>,
@@ -75,7 +81,7 @@ impl SagittariusExecutionService {
             }
         }
 
-        streams.lock().await.remove(&runtime_id);
+        streams.remove(runtime_id).await;
         log::info!("Aquila execution stream closed for runtime {}.", runtime_id);
     }
 
@@ -117,46 +123,14 @@ impl SagittariusExecutionService {
 
     async fn verify_stream_runtime(
         token_client: &SagittariusRailsTokenServiceClient,
-        metadata: &MetadataMap,
+        token: String,
     ) -> Result<i64, Status> {
-        let token = authentication_token(metadata)?;
-
         match token_client.validate_token(token).await {
             RuntimeVerificationStatus::Verified { runtime_id } => Ok(runtime_id),
             RuntimeVerificationStatus::Unverified => Err(Status::unauthenticated(
                 "invalid Aquila authentication token",
             )),
         }
-    }
-
-    async fn register_stream(
-        streams: &Arc<Mutex<HashMap<i64, ExecutionResponseSender>>>,
-        runtime_id: i64,
-        sender: ExecutionResponseSender,
-    ) -> Result<(), Status> {
-        let mut streams = streams.lock().await;
-
-        if streams.contains_key(&runtime_id) {
-            return Err(Status::already_exists(
-                "Aquila execution stream is already connected for runtime",
-            ));
-        }
-
-        streams.insert(runtime_id, sender);
-        Ok(())
-    }
-
-    async fn stream_for_runtime(&self, runtime_id: i64) -> Result<ExecutionResponseSender, Status> {
-        self.streams
-            .lock()
-            .await
-            .get(&runtime_id)
-            .cloned()
-            .ok_or_else(|| {
-                Status::unavailable(format!(
-                    "no Aquila execution stream connected for runtime {runtime_id}"
-                ))
-            })
     }
 
     async fn send_to_aquila_stream(
@@ -194,10 +168,13 @@ impl ExecutionService for SagittariusExecutionService {
         request: tonic::Request<tonic::Streaming<ExecutionLogonRequest>>,
     ) -> Result<tonic::Response<Self::UpdateStream>, tonic::Status> {
         let (metadata, _, incoming_stream) = request.into_parts();
-        let runtime_id = Self::verify_stream_runtime(&self.token_client, &metadata).await?;
+        let token = authentication_token(&metadata)?;
+        let runtime_id = Self::verify_stream_runtime(&self.token_client, token.clone()).await?;
         let (response_tx, response_rx) = mpsc::channel(EXECUTION_QUEUE_CAPACITY);
 
-        Self::register_stream(&self.streams, runtime_id, response_tx).await?;
+        self.streams
+            .register(runtime_id, token, response_tx)
+            .await?;
 
         log::info!(
             "Aquila execution stream connected for runtime {}.",
@@ -227,12 +204,12 @@ impl ExecutionService for SagittariusExecutionService {
             return Ok(Self::empty_push_response());
         };
 
-        let stream = self.stream_for_runtime(runtime_id).await?;
+        let stream = self.streams.sender_for(runtime_id).await?;
         if Self::send_to_aquila_stream(&stream, test_execution)
             .await
             .is_err()
         {
-            self.streams.lock().await.remove(&runtime_id);
+            self.streams.remove(runtime_id).await;
             return Err(Status::unavailable(format!(
                 "Aquila execution stream closed for runtime {runtime_id}"
             )));

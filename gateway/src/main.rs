@@ -1,3 +1,6 @@
+use std::sync::Arc;
+use std::time::Duration;
+
 use code0_flow::flow_telemetry::{self as telemetry, TelemetrySettings};
 use tonic::transport::{Channel, Server};
 use tucana::sagittarius_gateway::execution_service_server::ExecutionServiceServer;
@@ -20,6 +23,7 @@ use crate::server::health_service::GatewayHealthService;
 use crate::server::module_service_server::SagittariusModuleService;
 use crate::server::runtime_status_service_server::SagittariusRuntimeStatusService;
 use crate::server::runtime_usage_service_server::SagittariusRuntimeUsageService;
+use crate::server::stream_registry::{Revalidatable, TokenValidator, spawn_token_revalidation};
 
 mod auth;
 mod client;
@@ -110,8 +114,28 @@ async fn run(config: Config) -> anyhow::Result<()> {
         rails_token_client.clone(),
         jwt_client.clone(),
     );
-    let rails_usage_server =
-        SagittariusRuntimeUsageService::new(rails_usage_client, rails_token_client, jwt_client);
+    let rails_usage_server = SagittariusRuntimeUsageService::new(
+        rails_usage_client,
+        rails_token_client.clone(),
+        jwt_client,
+    );
+
+    // A single background task disconnects runtime streams once their token is rotated; it sweeps
+    // every streaming service's registry on each tick.
+    let revalidation_interval =
+        Duration::from_secs(config.auth.token_revalidation_interval_seconds);
+    let revalidation_registries: Vec<Arc<dyn Revalidatable>> = vec![
+        rails_execution_server.stream_registry(),
+        rails_flow_server.stream_registry(),
+        rails_module_server.stream_registry(),
+    ];
+    let revalidation_validator: Arc<dyn TokenValidator> = Arc::new(rails_token_client);
+    spawn_token_revalidation(
+        revalidation_registries,
+        revalidation_validator,
+        revalidation_interval,
+    );
+
     let mut server_builder = Server::builder()
         .add_service(ExecutionServiceServer::new(rails_execution_server))
         .add_service(FlowServiceServer::new(rails_flow_server))
