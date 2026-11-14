@@ -182,8 +182,8 @@ RSpec.describe 'sagittarius_rails.ModuleService', :need_grpc_server do
       expect(runtime_function.definition_source).to eq('taurus')
       expect(runtime_function.design).to eq('runtime-design')
       expect(runtime_function.referenced_data_types).to contain_exactly(text, text_list)
-      expect(runtime_function.parameters.first.runtime_name).to eq('text')
-      expect(runtime_function.parameters.first).to have_attributes(optional: true, hidden: true)
+      expect(runtime_function.runtime_parameter_definitions.first.runtime_name).to eq('text')
+      expect(runtime_function.runtime_parameter_definitions.first).to have_attributes(optional: true, hidden: true)
 
       function_definition = runtime_module.function_definitions.find_by!(identifier: 'std::text::split_visible')
       expect(function_definition.runtime_function_definition).to eq(runtime_function)

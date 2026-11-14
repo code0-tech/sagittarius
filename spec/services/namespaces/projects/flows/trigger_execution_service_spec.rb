@@ -15,7 +15,7 @@ RSpec.describe Namespaces::Projects::Flows::TriggerExecutionService do
   let(:current_user) { create(:user) }
   let(:runtime) { create(:runtime) }
   let(:project) { create(:namespace_project, primary_runtime: runtime) }
-  let(:flow) { create(:flow, project: project) }
+  let(:flow) { create(:flow, namespace_project: project) }
   let(:input) { { 'value' => 42 } }
 
   before do
@@ -36,7 +36,7 @@ RSpec.describe Namespaces::Projects::Flows::TriggerExecutionService do
       namespace_member = create(:namespace_member, namespace: project.namespace, user: current_user)
 
       create(:namespace_role_ability, namespace_role: namespace_role, ability: :read_namespace_project)
-      create(:namespace_member_role, role: namespace_role, member: namespace_member)
+      create(:namespace_member_role, namespace_role: namespace_role, namespace_member: namespace_member)
     end
 
     it { is_expected.to be_success }

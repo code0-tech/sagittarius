@@ -32,7 +32,7 @@ module Types
     timestamps
 
     def node_results
-      object.node_results.order(:position)
+      object.execution_node_results.order(:position)
     end
   end
 end

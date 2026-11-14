@@ -11,7 +11,7 @@ class Flow < ApplicationRecord
     usage_limit_exceeded: { db: 0, description: 'Runtime usage limit exceeded for the current billing cycle' },
   }.with_indifferent_access
 
-  belongs_to :project, class_name: 'NamespaceProject'
+  belongs_to :namespace_project, class_name: 'NamespaceProject', foreign_key: :project_id, inverse_of: :flows
   belongs_to :flow_type
   belongs_to :starting_node, class_name: 'NodeFunction', optional: true
 
@@ -60,8 +60,8 @@ class Flow < ApplicationRecord
   def to_grpc
     grpc_flow = Tucana::Shared::ValidationFlow.new(
       flow_id: id,
-      project_id: project.id,
-      project_slug: project.slug,
+      project_id: namespace_project.id,
+      project_slug: namespace_project.slug,
       type: flow_type.runtime_identifier,
       data_types: [], # TODO: when data types are creatable
       disable_reason: disabled_reason,

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :namespace_role_project_assignment do
-    role factory: :namespace_role
-    project factory: :namespace_project
+    namespace_role factory: :namespace_role
+    namespace_project factory: :namespace_project
   end
 end

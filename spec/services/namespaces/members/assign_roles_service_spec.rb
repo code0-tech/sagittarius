@@ -12,7 +12,7 @@ RSpec.describe Namespaces::Members::AssignRolesService do
   let!(:admin_role) do
     create(:namespace_role, namespace: namespace).tap do |role|
       create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
-      create(:namespace_member_role, role: role)
+      create(:namespace_member_role, namespace_role: role)
     end
   end
 
@@ -45,7 +45,7 @@ RSpec.describe Namespaces::Members::AssignRolesService do
         let(:namespace_role) { create(:namespace_role, namespace: namespace) }
 
         before do
-          create(:namespace_member_role, member: member, role: namespace_role)
+          create(:namespace_member_role, namespace_member: member, namespace_role: namespace_role)
           stub_allowed_ability(NamespacePolicy, :assign_member_roles, user: current_user, subject: namespace)
           admin_role.delete
         end
@@ -107,7 +107,7 @@ RSpec.describe Namespaces::Members::AssignRolesService do
       let(:roles) { [] }
 
       before do
-        create(:namespace_member_role, member: member, role: namespace_role)
+        create(:namespace_member_role, namespace_member: member, namespace_role: namespace_role)
         stub_allowed_ability(NamespacePolicy, :assign_member_roles, user: current_user, subject: namespace)
       end
 
@@ -137,7 +137,7 @@ RSpec.describe Namespaces::Members::AssignRolesService do
       let(:roles) { [adding_namespace_role] }
 
       before do
-        create(:namespace_member_role, member: member, role: removing_namespace_role)
+        create(:namespace_member_role, namespace_member: member, namespace_role: removing_namespace_role)
         stub_allowed_ability(NamespacePolicy, :assign_member_roles, user: current_user, subject: namespace)
       end
 

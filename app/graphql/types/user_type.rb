@@ -71,7 +71,7 @@ module Types
           description: 'The reason why this user cannot be deleted'
 
     lookahead_field :namespace_memberships,
-                    base_scope: ->(object) { object.namespace_memberships },
+                    base_scope: ->(object) { object.namespace_members },
                     conditional_lookaheads: { user: :user, namespace: { namespace: :namespace_members } }
 
     expose_abilities %i[
@@ -94,7 +94,8 @@ module Types
     end
 
     def project_pins(namespace_id:)
-      object.user_project_pins.where(namespace_id: namespace_id.model_id).map { |pin| pin.project.to_global_id }
+      object.user_project_pins.where(namespace_id: namespace_id.model_id)
+            .map { |pin| pin.namespace_project.to_global_id }
     end
 
     def mfa_status

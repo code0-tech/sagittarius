@@ -8,7 +8,7 @@ RSpec.describe UserProjectPin do
   describe 'associations' do
     it { is_expected.to belong_to(:user).inverse_of(:user_project_pins) }
     it { is_expected.to belong_to(:namespace).inverse_of(:user_project_pins) }
-    it { is_expected.to belong_to(:project).class_name('NamespaceProject').inverse_of(:user_project_pins) }
+    it { is_expected.to belong_to(:namespace_project).class_name('NamespaceProject').inverse_of(:user_project_pins) }
   end
 
   describe 'validations' do

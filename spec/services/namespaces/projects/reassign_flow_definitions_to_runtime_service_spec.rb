@@ -8,10 +8,10 @@ RSpec.describe Namespaces::Projects::ReassignFlowDefinitionsToRuntimeService do
   let(:runtime) { create(:runtime) }
   let(:project) { create(:namespace_project, primary_runtime: runtime) }
 
-  let!(:first_flow) { create(:flow, project: project, flow_type: create(:flow_type, runtime: runtime)) }
-  let!(:second_flow) { create(:flow, project: project, flow_type: create(:flow_type, runtime: runtime)) }
+  let!(:first_flow) { create(:flow, namespace_project: project, flow_type: create(:flow_type, runtime: runtime)) }
+  let!(:second_flow) { create(:flow, namespace_project: project, flow_type: create(:flow_type, runtime: runtime)) }
   let(:other_project) { create(:namespace_project) }
-  let!(:other_flow) { create(:flow, project: other_project) }
+  let!(:other_flow) { create(:flow, namespace_project: other_project) }
 
   it 'calls ReassignDefinitionsToRuntimeService for each flow' do
     service = instance_double(Namespaces::Projects::Flows::ReassignDefinitionsToRuntimeService)

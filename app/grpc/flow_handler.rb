@@ -13,7 +13,7 @@ class FlowHandler < Tucana::Sagittarius::Rails::FlowService::Service
 
   def self.update_flow(flow)
     response = Tucana::Sagittarius::Gateway::FlowResponse.new(updated_flow: flow.to_grpc)
-    push_to_project_runtimes(flow.project, response)
+    push_to_project_runtimes(flow.namespace_project, response)
   end
 
   def self.delete_flow(project, flow_id)
@@ -22,13 +22,13 @@ class FlowHandler < Tucana::Sagittarius::Rails::FlowService::Service
   end
 
   def self.push_to_project_runtimes(project, response)
-    project.runtime_assignments.compatible.find_each do |assignment|
+    project.namespace_project_runtime_assignments.compatible.find_each do |assignment|
       gateway_client.push_flow(assignment.runtime_id, response)
     end
   end
 
   def self.update_runtime(runtime)
-    assignments = runtime.project_assignments.compatible.includes(
+    assignments = runtime.namespace_project_runtime_assignments.compatible.includes(
       :namespace_project,
       module_configurations: { module_configuration_definition: :runtime_module }
     )
@@ -120,7 +120,7 @@ class FlowHandler < Tucana::Sagittarius::Rails::FlowService::Service
   end
 
   def flows_for(runtime)
-    assignments = runtime.project_assignments.compatible.includes(:namespace_project)
+    assignments = runtime.namespace_project_runtime_assignments.compatible.includes(:namespace_project)
 
     flows = assignments.flat_map do |assignment|
       assignment.namespace_project.flows.validation_status_valid.map(&:to_grpc)

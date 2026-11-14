@@ -31,7 +31,7 @@ module Velorum
     def execute
       return missing_permission_response if authorize? && !velorum_config_allowed?
       return disabled_response unless config[:enabled]
-      return flow_project_mismatch_response if flow.present? && flow.project != project
+      return flow_project_mismatch_response if flow.present? && flow.namespace_project != project
       return missing_permission_response if authorize? && !allowed?
       return no_primary_runtime_response if runtime.nil?
       return no_definitions_response unless definitions?

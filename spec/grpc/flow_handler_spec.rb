@@ -58,14 +58,14 @@ RSpec.describe FlowHandler do
 
   describe 'project runtime updates' do
     let(:flow) { create(:flow, validation_status: :valid) }
-    let(:runtime) { create(:runtime, namespace: flow.project.namespace) }
+    let(:runtime) { create(:runtime, namespace: flow.namespace_project.namespace) }
     let(:gateway_client) { instance_double(Sagittarius::Gateway::Client, push_flow: nil) }
 
     before do
       Sagittarius::Extensions.ee { create(:license) }
       create(
         :namespace_project_runtime_assignment,
-        namespace_project: flow.project,
+        namespace_project: flow.namespace_project,
         runtime: runtime,
         compatible: true
       )
@@ -87,7 +87,7 @@ RSpec.describe FlowHandler do
 
     describe '.delete_flow' do
       it 'pushes the deleted_flow_id response to compatible project runtimes' do
-        described_class.delete_flow(flow.project, flow.id)
+        described_class.delete_flow(flow.namespace_project, flow.id)
 
         expect(gateway_client).to have_received(:push_flow) do |runtime_id, response|
           expect(runtime_id).to eq(runtime.id)
@@ -100,13 +100,13 @@ RSpec.describe FlowHandler do
 
   describe '#update' do
     let(:flow) { create(:flow, validation_status: :valid) }
-    let(:runtime) { create(:runtime, namespace: flow.project.namespace) }
+    let(:runtime) { create(:runtime, namespace: flow.namespace_project.namespace) }
 
     before do
       Sagittarius::Extensions.ee { create(:license) }
       create(
         :namespace_project_runtime_assignment,
-        namespace_project: flow.project,
+        namespace_project: flow.namespace_project,
         runtime: runtime,
         compatible: true
       )

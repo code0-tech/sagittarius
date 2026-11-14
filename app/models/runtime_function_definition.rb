@@ -7,7 +7,8 @@ class RuntimeFunctionDefinition < ApplicationRecord
   belongs_to :runtime_module, inverse_of: :runtime_function_definitions
 
   has_many :function_definitions, inverse_of: :runtime_function_definition
-  has_many :parameters, class_name: 'RuntimeParameterDefinition', inverse_of: :runtime_function_definition
+  has_many :runtime_parameter_definitions, class_name: 'RuntimeParameterDefinition',
+                                           inverse_of: :runtime_function_definition
 
   has_many :runtime_function_definition_data_type_links, inverse_of: :runtime_function_definition
   has_many :referenced_data_types, through: :runtime_function_definition_data_type_links, source: :referenced_data_type
@@ -45,7 +46,7 @@ class RuntimeFunctionDefinition < ApplicationRecord
   def to_grpc
     Tucana::Shared::RuntimeFunctionDefinition.new(
       runtime_name: runtime_name,
-      runtime_parameter_definitions: parameters.ordered.map(&:to_grpc),
+      runtime_parameter_definitions: runtime_parameter_definitions.ordered.map(&:to_grpc),
       signature: signature,
       throws_error: throws_error,
       name: names.map(&:to_grpc),

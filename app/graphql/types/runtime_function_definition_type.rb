@@ -69,7 +69,7 @@ module Types
     timestamps
 
     def runtime_parameter_definitions
-      object.parameters.ordered
+      object.runtime_parameter_definitions.ordered
     end
 
     def linked_data_types

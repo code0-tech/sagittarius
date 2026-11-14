@@ -7,7 +7,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
 
   let(:runtime) { create(:runtime) }
   let(:project) { create(:namespace_project, primary_runtime: runtime) }
-  let(:flow) { create(:flow, project: project) }
+  let(:flow) { create(:flow, namespace_project: project) }
   let(:node_function) { create(:node_function, flow: flow) }
   let(:started_at) { 1_780_430_000_000_000 }
   let(:finished_at) { 1_780_430_002_000_000 }
@@ -64,7 +64,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       finished_at: finished_at
     )
 
-    node_result = execution_result.node_results.sole
+    node_result = execution_result.execution_node_results.sole
     expect(node_result).to have_attributes(
       node_function: node_function,
       position: 0,
@@ -73,7 +73,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       error: nil
     )
 
-    expect(node_result.parameter_results.sole).to have_attributes(
+    expect(node_result.execution_parameter_results.sole).to have_attributes(
       position: 0,
       value: { 'parameter' => 1 },
       sub_flow_function_result: nil
@@ -126,7 +126,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     it 'persists the sub-flow function result for the node success and the parameter result' do
       expect(service_response).to be_success
 
-      node_result = service_response.payload.node_results.sole
+      node_result = service_response.payload.execution_node_results.sole
       expect(node_result.success).to be_nil
       expect(node_result.success_sub_flow_function_result).to eq(
         'subflow_identifier' => 'sub-flow-run-1',
@@ -136,7 +136,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
         'description' => 'does things'
       )
 
-      parameter_result = node_result.parameter_results.sole
+      parameter_result = node_result.execution_parameter_results.sole
       expect(parameter_result.value).to be_nil
       expect(parameter_result.sub_flow_function_result).to include(
         'subflow_identifier' => 'nested',
@@ -170,7 +170,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
 
     it 'persists the empty object as a valid JSON value' do
       expect(service_response).to be_success
-      expect(service_response.payload.node_results.sole.parameter_results.sole.value).to eq({})
+      expect(service_response.payload.execution_node_results.sole.execution_parameter_results.sole.value).to eq({})
     end
   end
 
@@ -199,7 +199,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
 
     it 'persists the null parameter result' do
       expect(service_response).to be_success
-      expect(service_response.payload.node_results.sole.parameter_results.sole.value).to be_nil
+      expect(service_response.payload.execution_node_results.sole.execution_parameter_results.sole.value).to be_nil
     end
   end
 
@@ -226,7 +226,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     it 'persists null success values' do
       expect(service_response).to be_success
       expect(service_response.payload.success).to be_nil
-      expect(service_response.payload.node_results.sole.success).to be_nil
+      expect(service_response.payload.execution_node_results.sole.success).to be_nil
     end
   end
 
@@ -258,7 +258,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     it 'persists the function definition as the execution target' do
       expect(service_response).to be_success
 
-      expect(service_response.payload.node_results.sole).to have_attributes(
+      expect(service_response.payload.execution_node_results.sole).to have_attributes(
         node_function: nil,
         function_definition: function_definition,
         success: { 'function' => 'ok' }
@@ -270,7 +270,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
 
       expect(service_response).to be_success
 
-      expect(service_response.payload.node_results.sole).to have_attributes(
+      expect(service_response.payload.execution_node_results.sole).to have_attributes(
         function_definition: function_definition
       )
     end
@@ -299,7 +299,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     it 'persists the sub-flow identifier as the execution target' do
       expect(service_response).to be_success
 
-      expect(service_response.payload.node_results.sole).to have_attributes(
+      expect(service_response.payload.execution_node_results.sole).to have_attributes(
         node_function: nil,
         function_definition: nil,
         sub_flow_identifier: 'runtime-sub-flow',
@@ -381,7 +381,7 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
   end
 
   context 'when a node result references a node from another flow' do
-    let(:other_flow) { create(:flow, project: project) }
+    let(:other_flow) { create(:flow, namespace_project: project) }
     let(:other_node_function) { create(:node_function, flow: other_flow) }
 
     let(:grpc_result) do
@@ -464,8 +464,8 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
     before do
       allow(SubscriptionTriggers).to receive(:execution_result).and_call_original
 
-      create(:namespace_member, namespace: flow.project.namespace, user: user)
-      stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: user, subject: flow.project)
+      create(:namespace_member, namespace: flow.namespace_project.namespace, user: user)
+      stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: user, subject: flow.namespace_project)
 
       subscribe(token: token)
 

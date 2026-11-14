@@ -15,6 +15,7 @@ module Types
     field :name, [Types::TranslationType], method: :names, null: false,
                                            description: 'Names of the flow type setting'
     field :rules, Types::DataTypeRuleType.connection_type, null: false,
+                                                           method: :data_type_rules,
                                                            description: 'Rules of the datatype'
     field :runtime, Types::RuntimeType, null: true,
                                         description: 'The runtime where this datatype belongs to'

@@ -38,7 +38,8 @@ RSpec.describe 'namespacesRolesDelete Mutation' do
   before do
     create(:namespace_role, namespace: namespace).tap do |role|
       create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
-      create(:namespace_member_role, role: role, member: create(:namespace_member, namespace: role.namespace))
+      create(:namespace_member_role, namespace_role: role,
+                                     namespace_member: create(:namespace_member, namespace: role.namespace))
     end
   end
 
@@ -73,8 +74,8 @@ RSpec.describe 'namespacesRolesDelete Mutation' do
     context 'when role is assigned to a project' do
       before do
         create(:namespace_role_project_assignment,
-               role: namespace_role,
-               project: create(:namespace_project, namespace: namespace))
+               namespace_role: namespace_role,
+               namespace_project: create(:namespace_project, namespace: namespace))
       end
 
       it 'deletes namespace role' do

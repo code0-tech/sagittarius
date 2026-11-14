@@ -6,7 +6,7 @@ RSpec.describe Flow do
   subject { create(:flow) }
 
   describe 'associations' do
-    it { is_expected.to belong_to(:project).class_name('NamespaceProject') }
+    it { is_expected.to belong_to(:namespace_project).class_name('NamespaceProject') }
     it { is_expected.to belong_to(:flow_type) }
     it { is_expected.to belong_to(:starting_node).class_name('NodeFunction').optional }
 
@@ -128,7 +128,7 @@ RSpec.describe Flow do
     end
 
     before do
-      runtime = create(:runtime, namespace: flow.project.namespace)
+      runtime = create(:runtime, namespace: flow.namespace_project.namespace)
       rfd = create(:runtime_function_definition, runtime: runtime)
       fd = create(:function_definition, runtime_function_definition: rfd)
       rpd = create(
@@ -165,8 +165,8 @@ RSpec.describe Flow do
       expect(grpc_object.to_h).to eq(
         {
           flow_id: flow.id,
-          project_id: flow.project.id,
-          project_slug: flow.project.slug,
+          project_id: flow.namespace_project.id,
+          project_slug: flow.namespace_project.slug,
           type: runtime_flow_type.identifier,
           signature: flow.signature,
           name: flow.name,
@@ -249,7 +249,7 @@ RSpec.describe Flow do
     end
 
     before do
-      runtime = create(:runtime, namespace: flow.project.namespace)
+      runtime = create(:runtime, namespace: flow.namespace_project.namespace)
       rfd = create(:runtime_function_definition, runtime: runtime)
       fd = create(:function_definition, runtime_function_definition: rfd)
       func = create(:node_function, function_definition: fd, flow: flow)

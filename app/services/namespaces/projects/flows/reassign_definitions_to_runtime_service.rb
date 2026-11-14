@@ -45,9 +45,10 @@ module Namespaces
 
         def reassign_node_parameter_definitions(node_parameter, function_definition)
           runtime_name = node_parameter.parameter_definition.runtime_parameter_definition.runtime_name
-          runtime_parameter_definition = function_definition.runtime_function_definition.parameters.find_by(
-            runtime_name: runtime_name
-          )
+          runtime_parameter_definition = function_definition.runtime_function_definition
+                                                            .runtime_parameter_definitions.find_by(
+                                                              runtime_name: runtime_name
+                                                            )
           parameter_definition = function_definition.parameter_definitions.find_by(
             runtime_parameter_definition: runtime_parameter_definition
           )

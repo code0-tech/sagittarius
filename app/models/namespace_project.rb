@@ -1,22 +1,23 @@
 # frozen_string_literal: true
 
 class NamespaceProject < ApplicationRecord
-  belongs_to :namespace, inverse_of: :projects
+  belongs_to :namespace, inverse_of: :namespace_projects
   belongs_to :primary_runtime, class_name: 'Runtime', optional: true
 
-  has_many :runtime_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :namespace_project
-  has_many :runtimes, through: :runtime_assignments, inverse_of: :projects
+  has_many :namespace_project_runtime_assignments, class_name: 'NamespaceProjectRuntimeAssignment',
+                                                   inverse_of: :namespace_project
+  has_many :runtimes, through: :namespace_project_runtime_assignments, inverse_of: :namespace_projects
 
-  has_many :role_assignments, class_name: 'NamespaceRoleProjectAssignment',
-                              inverse_of: :project
-  has_many :assigned_roles, class_name: 'NamespaceRole', through: :role_assignments,
-                            inverse_of: :assigned_projects,
-                            source: :role
-  has_many :flows, class_name: 'Flow', inverse_of: :project
-  has_many :runtime_usage_daily_aggregates, class_name: 'RuntimeUsageDailyAggregate', inverse_of: :project
-  has_many :ai_usage_daily_aggregates, class_name: 'AiUsageDailyAggregate', inverse_of: :project
+  has_many :namespace_role_project_assignments, class_name: 'NamespaceRoleProjectAssignment',
+                                                inverse_of: :namespace_project
+  has_many :namespace_roles, class_name: 'NamespaceRole', through: :namespace_role_project_assignments,
+                             inverse_of: :namespace_projects,
+                             source: :namespace_role
+  has_many :flows, class_name: 'Flow', inverse_of: :namespace_project
+  has_many :runtime_usage_daily_aggregates, class_name: 'RuntimeUsageDailyAggregate', inverse_of: :namespace_project
+  has_many :ai_usage_daily_aggregates, class_name: 'AiUsageDailyAggregate', inverse_of: :namespace_project
 
-  has_many :user_project_pins, inverse_of: :project
+  has_many :user_project_pins, inverse_of: :namespace_project
 
   validates :slug, presence: true,
                    length: { minimum: 3, maximum: 50 },

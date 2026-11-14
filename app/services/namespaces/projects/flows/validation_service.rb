@@ -11,7 +11,7 @@ module Namespaces
         end
 
         def execute
-          runtime = flow.project.primary_runtime
+          runtime = flow.namespace_project.primary_runtime
 
           function_definitions = FunctionDefinition
                                  .where(runtime: runtime)

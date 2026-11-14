@@ -47,9 +47,9 @@ module Namespaces
       def check_last_administrator(t)
         return if namespace_member.namespace.owner?
 
-        unless namespace_member.namespace.roles
-                               .joins(:abilities, :member_roles)
-                               .exists?(abilities: { ability: :namespace_administrator })
+        unless namespace_member.namespace.namespace_roles
+                               .joins(:namespace_role_abilities, :namespace_member_roles)
+                               .exists?(namespace_role_abilities: { ability: :namespace_administrator })
           t.rollback_and_return! ServiceResponse.error(
             message: 'Cannot remove last administrator from namespace',
             error_code: :cannot_remove_last_administrator
@@ -67,7 +67,7 @@ module Namespaces
       def remove_project_pins
         UserProjectPin.where(
           user: namespace_member.user,
-          project: namespace_member.namespace.projects
+          namespace_project: namespace_member.namespace.namespace_projects
         ).delete_all
       end
     end

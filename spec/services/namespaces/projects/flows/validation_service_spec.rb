@@ -34,7 +34,7 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
   let(:flow) do
     create(
       :flow,
-      project: namespace_project,
+      namespace_project: namespace_project,
       flow_type: flow_type,
       validation_status: :unvalidated,
       starting_node: node_function
@@ -305,7 +305,7 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
       let(:flow) do
         create(
           :flow,
-          project: namespace_project,
+          namespace_project: namespace_project,
           flow_type: flow_type,
           validation_status: :unvalidated,
           starting_node: callback_node_function
@@ -376,7 +376,7 @@ RSpec.describe Namespaces::Projects::Flows::ValidationService do
       let(:flow) do
         create(
           :flow,
-          project: namespace_project,
+          namespace_project: namespace_project,
           flow_type: flow_type,
           validation_status: :unvalidated,
           starting_node: tools_node_function

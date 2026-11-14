@@ -138,9 +138,10 @@ module Runtimes
 
         def find_runtime_parameter_definition(function_definition, parameter, t)
           runtime_name = parameter.runtime_definition_name.presence || parameter.runtime_name
-          runtime_parameter_definition = function_definition.runtime_function_definition.parameters.find_by(
-            runtime_name: runtime_name
-          )
+          runtime_parameter_definition = function_definition.runtime_function_definition
+                                                            .runtime_parameter_definitions.find_by(
+                                                              runtime_name: runtime_name
+                                                            )
           return runtime_parameter_definition if runtime_parameter_definition.present?
 
           logger.error(message: 'Could not find runtime parameter definition',

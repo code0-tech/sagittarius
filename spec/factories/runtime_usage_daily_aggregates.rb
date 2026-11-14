@@ -6,7 +6,7 @@ FactoryBot.define do
     execution_count { 0 }
     total_execution_time_us { 0 }
     flow
-    project { flow.project }
-    namespace { project.namespace }
+    namespace_project { flow.namespace_project }
+    namespace { namespace_project.namespace }
   end
 end

@@ -72,7 +72,7 @@ RSpec.describe Namespaces::Licenses::CreateService do
 
       it 're-enables namespace flows disabled for exceeding the usage limit' do
         project = create(:namespace_project, namespace: namespace)
-        flow = create(:flow, project: project, disabled_reason: :usage_limit_exceeded,
+        flow = create(:flow, namespace_project: project, disabled_reason: :usage_limit_exceeded,
                              disabled_until: Date.tomorrow)
         allow(FlowHandler).to receive(:update_flow)
 
@@ -122,11 +122,11 @@ RSpec.describe Namespaces::Licenses::CreateService do
         role = create(
           :namespace_role,
           namespace: namespace,
-          abilities: [
+          namespace_role_abilities: [
             build(:namespace_role_ability, ability: :namespace_administrator)
           ]
         )
-        create(:namespace_member, user: current_user, namespace: namespace, roles: [role])
+        create(:namespace_member, user: current_user, namespace: namespace, namespace_roles: [role])
       end
 
       it_behaves_like 'does not create'

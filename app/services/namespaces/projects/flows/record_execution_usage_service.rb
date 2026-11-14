@@ -22,7 +22,7 @@ module Namespaces
         end
 
         def execute
-          project = flow.project
+          project = flow.namespace_project
 
           RuntimeUsageDailyAggregate.record_execution!(
             flow_id: flow.id, project_id: project.id, namespace_id: project.namespace_id,

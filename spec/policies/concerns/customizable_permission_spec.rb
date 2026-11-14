@@ -19,7 +19,7 @@ RSpec.describe CustomizablePermission do
   let(:namespace_member) { create(:namespace_member, namespace: namespace, user: current_user) }
   let(:namespace_role) do
     create(:namespace_role, namespace: namespace).tap do |role|
-      create(:namespace_member_role, member: namespace_member, role: role)
+      create(:namespace_member_role, namespace_member: namespace_member, namespace_role: role)
     end
   end
 
@@ -62,7 +62,7 @@ RSpec.describe CustomizablePermission do
     let(:project) { create(:namespace_project, namespace: namespace) }
 
     before do
-      create(:namespace_role_project_assignment, role: namespace_role, project: assigned_project)
+      create(:namespace_role_project_assignment, namespace_role: namespace_role, namespace_project: assigned_project)
       create(:namespace_role_ability, namespace_role: namespace_role, ability: :update_namespace_project)
     end
 
@@ -98,7 +98,7 @@ RSpec.describe CustomizablePermission do
     let(:runtime) { create(:runtime, namespace: namespace) }
 
     before do
-      create(:namespace_role_project_assignment, role: namespace_role, project: assigned_project)
+      create(:namespace_role_project_assignment, namespace_role: namespace_role, namespace_project: assigned_project)
       create(:namespace_role_ability, namespace_role: namespace_role, ability: :update_module_configurations)
     end
 

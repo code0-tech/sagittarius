@@ -9,7 +9,7 @@ class DataType < ApplicationRecord
   belongs_to :runtime_module, inverse_of: :data_types
 
   has_translation :names, purpose: :name
-  has_many :rules, class_name: 'DataTypeRule', inverse_of: :data_type
+  has_many :data_type_rules, class_name: 'DataTypeRule', inverse_of: :data_type
 
   has_many :data_type_data_type_links, inverse_of: :data_type
   has_many :referenced_data_types, through: :data_type_data_type_links, source: :referenced_data_type
@@ -42,7 +42,7 @@ class DataType < ApplicationRecord
       name: names.map(&:to_grpc),
       display_message: display_messages.map(&:to_grpc),
       alias: aliases.map(&:to_grpc),
-      rules: rules.map(&:to_grpc),
+      rules: data_type_rules.map(&:to_grpc),
       generic_keys: generic_keys,
       type: type,
       linked_data_type_identifiers: referenced_data_types.map(&:identifier),

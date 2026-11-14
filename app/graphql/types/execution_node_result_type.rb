@@ -36,7 +36,7 @@ module Types
     timestamps
 
     def parameter_results
-      object.parameter_results.order(:position)
+      object.execution_parameter_results.order(:position)
     end
 
     def success

@@ -93,11 +93,11 @@ RSpec.describe Namespaces::Licenses::DeleteService do
         role = create(
           :namespace_role,
           namespace: namespace,
-          abilities: [
+          namespace_role_abilities: [
             build(:namespace_role_ability, ability: :namespace_administrator)
           ]
         )
-        create(:namespace_member, user: current_user, namespace: namespace, roles: [role])
+        create(:namespace_member, user: current_user, namespace: namespace, namespace_roles: [role])
       end
 
       it_behaves_like 'does not delete'

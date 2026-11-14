@@ -20,15 +20,17 @@ module Namespaces
         end
 
         transactional do |t|
-          current_projects = role.project_assignments
-          old_projects_for_audit_event = current_projects.map(&:project).map do |project|
+          current_projects = role.namespace_role_project_assignments
+          old_projects_for_audit_event = current_projects.map(&:namespace_project).map do |project|
             { name: project.name, id: project.id }
           end
 
-          current_projects.where.not(project: projects).delete_all
+          current_projects.where.not(namespace_project: projects).delete_all
 
-          (projects - current_projects.map(&:project)).map do |projects|
-            project_assignment = NamespaceRoleProjectAssignment.create(role: role, project: projects)
+          (projects - current_projects.map(&:namespace_project)).map do |projects|
+            project_assignment = NamespaceRoleProjectAssignment.create(
+              namespace_role: role, namespace_project: projects
+            )
 
             next if project_assignment.persisted?
 
@@ -38,7 +40,7 @@ module Namespaces
             )
           end
 
-          new_projects = role.reload.project_assignments.map(&:project)
+          new_projects = role.reload.namespace_role_project_assignments.map(&:namespace_project)
 
           AuditService.audit(
             :namespace_role_projects_updated,

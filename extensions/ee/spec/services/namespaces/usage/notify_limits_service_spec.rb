@@ -33,7 +33,7 @@ RSpec.describe Namespaces::Usage::NotifyLimitsService, unless: Sagittarius::Exte
   end
 
   def record_workflow_usage(count, date: Date.current)
-    flow = create(:flow, project: project)
+    flow = create(:flow, namespace_project: project)
 
     RuntimeUsageDailyAggregate.record_execution!(
       flow_id: flow.id, project_id: project.id, namespace_id: project.namespace_id,

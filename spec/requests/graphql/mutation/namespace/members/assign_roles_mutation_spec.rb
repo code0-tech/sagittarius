@@ -33,7 +33,7 @@ RSpec.describe 'namespacesMembersAssignRoles Mutation' do
   let(:namespace_roles) { create_list(:namespace_role, 2, namespace: namespace) }
   let(:member) do
     create(:namespace_member, namespace: namespace).tap do |m|
-      create(:namespace_member_role, member: m, role: namespace_roles.last)
+      create(:namespace_member_role, namespace_member: m, namespace_role: namespace_roles.last)
     end
   end
   let(:input) do
@@ -48,7 +48,7 @@ RSpec.describe 'namespacesMembersAssignRoles Mutation' do
   before do
     create(:namespace_role, namespace: namespace).tap do |role|
       create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
-      create(:namespace_member_role, role: role)
+      create(:namespace_member_role, namespace_role: role)
     end
   end
 
@@ -67,7 +67,7 @@ RSpec.describe 'namespacesMembersAssignRoles Mutation' do
 
       namespace_member_roles = role_ids.map { |id| SagittariusSchema.object_from_id(id) }
 
-      expect(namespace_member_roles.map(&:role)).to eq([namespace_roles.first])
+      expect(namespace_member_roles.map(&:namespace_role)).to eq([namespace_roles.first])
 
       is_expected.to create_audit_event(
         :namespace_member_roles_updated,

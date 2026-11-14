@@ -19,7 +19,8 @@ module Namespaces
         end
 
         transactional do |t|
-          old_assignments_for_audit_event = namespace_project.runtime_assignments.map do |assignment|
+          current_assignments = namespace_project.namespace_project_runtime_assignments
+          old_assignments_for_audit_event = current_assignments.map do |assignment|
             { id: assignment.runtime.id }
           end
           primary_runtime = primary_runtime_after_assignment

@@ -21,8 +21,8 @@ RSpec.describe FlowSetting do
       end
 
       context 'when the flow type setting is scoped to project' do
-        let(:existing_flow) { create(:flow, project: project, flow_type: flow_type) }
-        let(:other_flow) { create(:flow, project: project, flow_type: flow_type) }
+        let(:existing_flow) { create(:flow, namespace_project: project, flow_type: flow_type) }
+        let(:other_flow) { create(:flow, namespace_project: project, flow_type: flow_type) }
 
         before do
           create(:flow_type_setting, flow_type: flow_type, identifier: 'webhook_path', unique: :project)
@@ -43,7 +43,7 @@ RSpec.describe FlowSetting do
         end
 
         it 'allows the same value on a flow of a different project' do
-          other_project_flow = create(:flow, project: create(:namespace_project), flow_type: flow_type)
+          other_project_flow = create(:flow, namespace_project: create(:namespace_project), flow_type: flow_type)
           setting = create_flow_setting(flow: other_project_flow, value: { path: '/hook' })
 
           expect(setting).to be_valid
@@ -68,8 +68,8 @@ RSpec.describe FlowSetting do
           create(:flow_type_setting, flow_type: flow_type, identifier: 'webhook_path', unique: :none)
         end
 
-        let(:existing_flow) { create(:flow, project: project, flow_type: flow_type) }
-        let(:other_flow) { create(:flow, project: project, flow_type: flow_type) }
+        let(:existing_flow) { create(:flow, namespace_project: project, flow_type: flow_type) }
+        let(:other_flow) { create(:flow, namespace_project: project, flow_type: flow_type) }
 
         it 'allows the same value on another flow of the same project' do
           create_flow_setting(flow: existing_flow, value: { path: '/hook' }).save!

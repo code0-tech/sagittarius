@@ -21,7 +21,7 @@ RSpec.describe Velorum::RecordGenerationUsageService do
     end
 
     context 'when a flow is given' do
-      let(:flow) { create(:flow, project: project) }
+      let(:flow) { create(:flow, namespace_project: project) }
 
       it 'records a denormalized usage row for the flow/project/namespace' do
         described_class.new(project: project, usage: 17, flow: flow).execute

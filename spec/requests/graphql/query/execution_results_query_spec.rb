@@ -13,7 +13,7 @@ RSpec.describe 'execution results Query' do
   let(:flow) do
     create(
       :flow,
-      project: project,
+      namespace_project: project,
       flow_type: flow_type,
       validation_diagnostics: [
         {

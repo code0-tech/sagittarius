@@ -62,8 +62,8 @@ RSpec.describe Namespaces::Roles::DeleteService do
     before do
       create(:namespace_member, namespace: namespace_role.namespace, user: current_user)
       create(:namespace_role_ability, namespace_role: namespace_role, ability: :namespace_administrator)
-      create(:namespace_member_role, member: create(:namespace_member, namespace: namespace_role.namespace),
-                                     role: namespace_role)
+      create(:namespace_member_role, namespace_member: create(:namespace_member, namespace: namespace_role.namespace),
+                                     namespace_role: namespace_role)
       stub_allowed_ability(NamespacePolicy, :delete_namespace_role, user: current_user,
                                                                     subject: namespace_role.namespace)
     end
@@ -82,7 +82,7 @@ RSpec.describe Namespaces::Roles::DeleteService do
 
     before do
       member = create(:namespace_member, namespace: namespace_role.namespace, user: current_user)
-      create(:namespace_member_role, member: member, role: admin_role)
+      create(:namespace_member_role, namespace_member: member, namespace_role: admin_role)
       stub_allowed_ability(NamespacePolicy, :delete_namespace_role, user: current_user,
                                                                     subject: namespace_role.namespace)
     end

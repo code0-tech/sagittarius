@@ -6,8 +6,8 @@ RSpec.describe NamespaceProjectRuntimeAssignment do
   subject { create(:namespace_project_runtime_assignment) }
 
   describe 'associations' do
-    it { is_expected.to belong_to(:runtime).inverse_of(:project_assignments) }
-    it { is_expected.to belong_to(:namespace_project).inverse_of(:runtime_assignments) }
+    it { is_expected.to belong_to(:runtime).inverse_of(:namespace_project_runtime_assignments) }
+    it { is_expected.to belong_to(:namespace_project).inverse_of(:namespace_project_runtime_assignments) }
     it { is_expected.to have_many(:module_configurations).inverse_of(:namespace_project_runtime_assignment) }
   end
 
