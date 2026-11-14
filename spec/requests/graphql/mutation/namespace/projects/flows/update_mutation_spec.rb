@@ -222,7 +222,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       starting_node = nodes.find do |n|
         n['id'] == graphql_data_at(:namespaces_projects_flows_update, :flow, :starting_node_id)
       end
-      expect(starting_node['parameters']['count']).to eq(1)
+      expect(starting_node['parameters']['count']).to eq(2)
 
       expect(flow).to be_present
       expect(project.flows).to include(flow)
@@ -316,9 +316,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
         parameter_response = flow_nodes
                              .flat_map { |node| node['parameters']['nodes'] }
                              .find do |parameter|
-          parameter.dig(
-            'value', '__typename'
-          ) == 'LiteralValue'
+          parameter.dig('value', 'value') == [1, nil, 3]
         end
 
         expect(parameter_response['value']['value']).to eq([1, nil, 3])
@@ -580,6 +578,81 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       expect(graphql_data_at(:namespaces_projects_flows_update, :errors)).to be_blank
       expect(graphql_data_at(:namespaces_projects_flows_update, :flow)).to be_present
       expect(flow.reload.node_functions.count).to eq(2)
+    end
+  end
+
+  context 'when fewer parameter values are supplied than the function has definitions' do
+    before do
+      stub_allowed_ability(NamespaceProjectPolicy, :update_flow, user: current_user, subject: project)
+      stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: project)
+    end
+
+    let(:input) do
+      {
+        flowId: flow.to_global_id.to_s,
+        flowInput: {
+          name: generate(:flow_name),
+          type: flow_type.to_global_id.to_s,
+          startingNodeId: 'gid://sagittarius/NodeFunction/3000',
+          settings: [],
+          nodes: [
+            {
+              id: 'gid://sagittarius/NodeFunction/3000',
+              functionDefinitionId: function_definition.to_global_id.to_s,
+              nextNodeId: nil,
+              parameters: [],
+            }
+          ],
+        },
+      }
+    end
+
+    it 'creates a node parameter for every parameter definition regardless of supplied values' do
+      mutate!
+
+      expect(graphql_data_at(:namespaces_projects_flows_update, :errors)).to be_blank
+
+      node = flow.reload.node_functions.sole
+      expect(node.node_parameters.count).to eq(function_definition.parameter_definitions.count)
+      expect(node.node_parameters.map(&:parameter_definition))
+        .to match_array(function_definition.parameter_definitions)
+      expect(node.node_parameters).to all(have_attributes(literal_value: nil))
+    end
+  end
+
+  context 'when more parameter values are supplied than the function has definitions' do
+    before do
+      stub_allowed_ability(NamespaceProjectPolicy, :update_flow, user: current_user, subject: project)
+      stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: project)
+    end
+
+    let(:input) do
+      {
+        flowId: flow.to_global_id.to_s,
+        flowInput: {
+          name: generate(:flow_name),
+          type: flow_type.to_global_id.to_s,
+          startingNodeId: 'gid://sagittarius/NodeFunction/3000',
+          settings: [],
+          nodes: [
+            {
+              id: 'gid://sagittarius/NodeFunction/3000',
+              functionDefinitionId: function_definition.to_global_id.to_s,
+              nextNodeId: nil,
+              parameters: Array.new(function_definition.parameter_definitions.count + 1) do
+                { value: { literalValue: { value: 1 } } }
+              end,
+            }
+          ],
+        },
+      }
+    end
+
+    it 'returns an invalid parameter index error' do
+      mutate!
+
+      expect(graphql_data_at(:namespaces_projects_flows_update, :errors).first['errorCode'])
+        .to eq('INVALID_PARAMETER_INDEX')
     end
   end
 
