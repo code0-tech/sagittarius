@@ -100,5 +100,5 @@ gem 'benchmark'
 gem 'opentelemetry-exporter-otlp', '~> 0.37.0' # we need this to get traces
 gem 'opentelemetry-exporter-otlp-logs', '~> 0.7.0' # we need this to get logs
 gem 'opentelemetry-exporter-otlp-metrics', '~> 0.15.0' # we need this to get metrics
-gem 'opentelemetry-instrumentation-all', '~> 0.96.0' # we need this for logs and traces
+gem 'opentelemetry-instrumentation-all', '~> 0.100.0' # we need this for logs and traces
 gem 'opentelemetry-instrumentation-logger', '~> 0.5.0' # we need this to get logs
