@@ -600,11 +600,11 @@ GEM
       logger
     thor (1.5.0)
     timeout (0.6.1)
-    triangulum (0.40.2)
+    triangulum (0.41.0)
       base64 (~> 0.3)
       json (~> 2.19)
       open3 (~> 0.2)
-      tucana (~> 0.0, >= 0.0.85)
+      tucana (~> 0.0, >= 0.0.86)
     tsort (0.2.0)
     tucana (0.0.86)
       grpc (~> 1.64)
@@ -666,7 +666,7 @@ DEPENDENCIES
   simplecov (~> 1.3.0)
   simplecov-cobertura (~> 4.0)
   test-prof (~> 1.0)
-  triangulum (= 0.40.2)
+  triangulum (= 0.41.0)
   tucana (= 0.0.86)
   tzinfo-data
 
