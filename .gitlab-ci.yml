@@ -10,7 +10,7 @@ include:
     file: ci-template.gitlab-ci.yml
 
 .rust:
-  image: rust:1.98
+  image: rust:1.99
   cache:
     key: cargo-${CI_COMMIT_REF_SLUG}
     paths:
