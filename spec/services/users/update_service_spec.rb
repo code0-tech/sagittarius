@@ -279,6 +279,32 @@ RSpec.describe Users::UpdateService do
       end
     end
 
+    context 'when an admin updates another user email' do
+      subject(:service_response) { described_class.new(create_authentication(current_user), user, mfa, params).execute }
+
+      let(:current_user) { create(:user, :admin) }
+      let(:user) { create(:user) }
+      let(:params) do
+        { email: generate(:email) }
+      end
+
+      it { is_expected.not_to be_success }
+
+      it 'fails because sending the verification email is not permitted' do
+        expect(service_response.payload[:error_code]).to eq(:email_verification_send_failed)
+      end
+
+      it 'can be rendered as a mutation response without raising' do
+        expect { service_response.to_mutation_response }.not_to raise_error
+      end
+
+      it 'does not change the email' do
+        expect { service_response }.not_to change { user.reload.email }
+      end
+
+      it { is_expected.not_to create_audit_event }
+    end
+
     it { is_expected.to be_success }
     it { expect(service_response.payload.reload).to be_valid }
 

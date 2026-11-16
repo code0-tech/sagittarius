@@ -82,7 +82,7 @@ module Users
           unless response.success?
             t.rollback_and_return! ServiceResponse.error(message: 'Failed to send verification email',
                                                          error_code: :email_verification_send_failed,
-                                                         details: response.payload)
+                                                         details: response.payload[:details])
           end
         end
 
