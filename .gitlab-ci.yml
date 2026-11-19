@@ -21,12 +21,12 @@ include:
     CARGO_HOME: ${CI_PROJECT_DIR}/.cargo
 
 .bundle:
-  image: ruby:3.4.7
+  image: ruby:3.4.13
   before_script:
     - bundle install --jobs $(nproc)
 
 .rails:
-  image: ghcr.io/code0-tech/build-images/ruby-postgres:584.1-ruby-3.4.7-postgres-18.3
+  image: ghcr.io/code0-tech/build-images/ruby-postgres:673.1-ruby-3.4.13-postgres-18.3
   before_script:
     - cp tooling/pipeline/sagittarius.yml config/sagittarius.yml
     - !reference [.bundle, before_script]
