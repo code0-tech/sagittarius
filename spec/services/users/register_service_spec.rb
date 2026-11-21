@@ -127,5 +127,18 @@ RSpec.describe Users::RegisterService do
       it_behaves_like 'invalid user'
       it { expect(service_response.payload[:details].full_messages).to include("Password can't be blank") }
     end
+
+    context 'when password does not meet the policy' do
+      let(:username) { generate(:username) }
+      let(:email) { generate(:email) }
+      let(:password) { 'weakpassword' }
+
+      it_behaves_like 'invalid user'
+
+      it 'reports the policy violation on the password' do
+        expect(service_response.payload[:details].where(:password).map(&:type))
+          .to include(:no_uppercase, :no_number, :no_special_character)
+      end
+    end
   end
 end

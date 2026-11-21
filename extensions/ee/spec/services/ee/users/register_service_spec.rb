@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Users::RegisterService do
   subject(:service_response) do
-    described_class.new('testuser', 'test@example.com', 'password123').execute
+    described_class.new('testuser', 'test@example.com', 'Password123!').execute
   end
 
   it { expect(described_class).to include_module(EE::Users::RegisterService) }

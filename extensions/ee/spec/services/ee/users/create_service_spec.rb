@@ -8,7 +8,7 @@ RSpec.describe Users::CreateService do
       create_authentication(current_user),
       username: 'newuser',
       email: 'new@example.com',
-      password: 'password123'
+      password: 'Password123!'
     ).execute
   end
 

@@ -65,6 +65,27 @@ RSpec.describe Users::CreateService do
 
       it_behaves_like 'does not create'
     end
+
+    context 'when password does not meet the policy' do
+      let(:params) do
+        {
+          email: generate(:email),
+          username: generate(:username),
+          password: 'weakpassword',
+          firstname: 'T',
+          lastname: 'U',
+          admin: false,
+        }
+      end
+
+      it_behaves_like 'does not create'
+
+      it 'reports the policy violation' do
+        expect(service_response.payload[:error_code]).to eq(:invalid_user)
+        expect(service_response.payload[:details].where(:password).map(&:type))
+          .to include(:no_uppercase, :no_number, :no_special_character)
+      end
+    end
   end
 
   context 'when user and params are valid and user is admin' do
