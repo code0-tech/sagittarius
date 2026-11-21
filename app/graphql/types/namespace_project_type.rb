@@ -17,12 +17,13 @@ module Types
 
     field :runtime_assignments, Types::NamespaceProjectRuntimeAssignmentType.connection_type,
           null: false,
+          method: :namespace_project_runtime_assignments,
           description: 'Runtime assignments of this project.'
     field :runtimes, Types::RuntimeType.connection_type, null: false, description: 'Runtimes assigned to this project'
 
     field :roles, Types::NamespaceRoleType.connection_type, null: false,
                                                             description: 'Roles assigned to this project',
-                                                            method: :assigned_roles
+                                                            method: :namespace_roles
 
     field :namespace, Types::NamespaceType, null: false,
                                             description: 'The namespace where this project belongs to'

@@ -51,7 +51,7 @@ RSpec.describe Users::DeleteService do
   context 'when the user owns a namespace' do
     let!(:namespace) { user.ensure_namespace }
     let!(:project) { create(:namespace_project, namespace: namespace) }
-    let!(:flow) { create(:flow, project: project) }
+    let!(:flow) { create(:flow, namespace_project: project) }
 
     it 'deletes the owned namespace and associated projects and flows' do
       expect { service_response }

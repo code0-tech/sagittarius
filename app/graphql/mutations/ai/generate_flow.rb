@@ -37,7 +37,7 @@ module Mutations
 
         flow = flow_id.present? ? SagittariusSchema.object_from_id(flow_id) : nil
         return error_response(:flow_not_found, 'Flow does not exist') if flow_id.present? && flow.nil?
-        if flow.present? && flow.project != project
+        if flow.present? && flow.namespace_project != project
           return error_response(:invalid_flow, 'Flow does not belong to the project')
         end
         return error_response(:no_primary_runtime, 'Project has no primary runtime') if project.primary_runtime.nil?

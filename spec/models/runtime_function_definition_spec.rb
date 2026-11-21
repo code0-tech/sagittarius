@@ -6,7 +6,7 @@ RSpec.describe RuntimeFunctionDefinition do
   subject(:function) { create(:runtime_function_definition) }
 
   describe 'validations' do
-    it { is_expected.to have_many(:parameters).inverse_of(:runtime_function_definition) }
+    it { is_expected.to have_many(:runtime_parameter_definitions).inverse_of(:runtime_function_definition) }
 
     it { is_expected.to validate_presence_of(:runtime_name) }
     it { is_expected.to validate_uniqueness_of(:runtime_name).case_insensitive.scoped_to(:runtime_id) }
@@ -45,7 +45,7 @@ RSpec.describe RuntimeFunctionDefinition do
     it { is_expected.to belong_to(:runtime_module).inverse_of(:runtime_function_definitions) }
 
     it do
-      is_expected.to have_many(:parameters)
+      is_expected.to have_many(:runtime_parameter_definitions)
         .class_name('RuntimeParameterDefinition')
         .inverse_of(:runtime_function_definition)
     end

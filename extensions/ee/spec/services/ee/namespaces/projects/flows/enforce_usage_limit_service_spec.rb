@@ -38,7 +38,8 @@ RSpec.describe Namespaces::Projects::Flows::EnforceUsageLimitService do
   def record_usage(for_flow, count, date: Date.current)
     count.times do
       RuntimeUsageDailyAggregate.record_execution!(
-        flow_id: for_flow.id, project_id: for_flow.project.id, namespace_id: for_flow.project.namespace_id,
+        flow_id: for_flow.id, project_id: for_flow.namespace_project.id,
+        namespace_id: for_flow.namespace_project.namespace_id,
         date: date, execution_time_us: 1, unique_by: %i[flow_id date]
       )
     end

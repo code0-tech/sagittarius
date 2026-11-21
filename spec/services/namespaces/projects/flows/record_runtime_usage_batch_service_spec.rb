@@ -6,8 +6,8 @@ RSpec.describe Namespaces::Projects::Flows::RecordRuntimeUsageBatchService do
   describe '#execute' do
     let(:runtime) { create(:runtime) }
     let(:project) { create(:namespace_project, primary_runtime: runtime) }
-    let(:flow) { create(:flow, project: project) }
-    let(:other_flow) { create(:flow, project: project) }
+    let(:flow) { create(:flow, namespace_project: project) }
+    let(:other_flow) { create(:flow, namespace_project: project) }
 
     before do
       create(:namespace_project_runtime_assignment, runtime: runtime, namespace_project: project)

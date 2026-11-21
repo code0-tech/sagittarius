@@ -6,7 +6,7 @@ RSpec.describe RuntimeUsageHandler do
   describe '#update' do
     let(:runtime) { create(:runtime) }
     let(:project) { create(:namespace_project, primary_runtime: runtime) }
-    let(:flow) { create(:flow, project: project) }
+    let(:flow) { create(:flow, namespace_project: project) }
 
     before do
       create(:namespace_project_runtime_assignment, runtime: runtime, namespace_project: project)
@@ -64,7 +64,7 @@ RSpec.describe RuntimeUsageHandler do
     it 'does not record usage for a flow belonging to a different runtime' do
       other_runtime = create(:runtime)
       other_project = create(:namespace_project, primary_runtime: other_runtime)
-      other_flow = create(:flow, project: other_project)
+      other_flow = create(:flow, namespace_project: other_project)
       create(:namespace_project_runtime_assignment, runtime: other_runtime, namespace_project: other_project)
 
       request = Tucana::Sagittarius::Rails::RuntimeUsageRequest.new(

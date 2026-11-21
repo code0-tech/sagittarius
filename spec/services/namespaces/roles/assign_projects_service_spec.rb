@@ -61,7 +61,7 @@ RSpec.describe Namespaces::Roles::AssignProjectsService do
 
     context 'when removing a project' do
       let(:projects) { [] }
-      let!(:role_assignment) { create(:namespace_role_project_assignment, role: role) }
+      let!(:role_assignment) { create(:namespace_role_project_assignment, namespace_role: role) }
 
       before do
         stub_allowed_ability(NamespacePolicy, :assign_role_projects, user: current_user, subject: role.namespace)
@@ -78,7 +78,8 @@ RSpec.describe Namespaces::Roles::AssignProjectsService do
           entity_id: role.id,
           entity_type: 'NamespaceRole',
           details: {
-            'old_projects' => [{ 'id' => role_assignment.project.id, 'name' => role_assignment.project.name }],
+            'old_projects' => [{ 'id' => role_assignment.namespace_project.id,
+                                 'name' => role_assignment.namespace_project.name }],
             'new_projects' => [],
           },
           target_id: role.namespace.id,
@@ -89,7 +90,7 @@ RSpec.describe Namespaces::Roles::AssignProjectsService do
 
     context 'when adding and removing a project' do
       let(:projects) { [create(:namespace_project, namespace: role.namespace)] }
-      let!(:role_assignment) { create(:namespace_role_project_assignment, role: role) }
+      let!(:role_assignment) { create(:namespace_role_project_assignment, namespace_role: role) }
 
       before do
         stub_allowed_ability(NamespacePolicy, :assign_role_projects, user: current_user, subject: role.namespace)
@@ -106,7 +107,8 @@ RSpec.describe Namespaces::Roles::AssignProjectsService do
           entity_id: role.id,
           entity_type: 'NamespaceRole',
           details: {
-            'old_projects' => [{ 'id' => role_assignment.project.id, 'name' => role_assignment.project.name }],
+            'old_projects' => [{ 'id' => role_assignment.namespace_project.id,
+                                 'name' => role_assignment.namespace_project.name }],
             'new_projects' => [{ 'id' => projects.first.id, 'name' => projects.first.name }],
           },
           target_id: role.namespace.id,

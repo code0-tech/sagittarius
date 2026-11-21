@@ -257,16 +257,16 @@ RSpec.describe 'sagittarius_rails.ModuleService ordered definitions', :need_grpc
       runtime_function = RuntimeFunctionDefinition.find_by!(runtime: runtime, runtime_name: 'ordering::func')
       runtime_flow_type = RuntimeFlowType.find_by!(runtime: runtime, identifier: 'RUNTIME_ORDERED_FLOW')
 
-      param_a = runtime_function.parameters.find_by!(runtime_name: 'param_a')
-      param_b = runtime_function.parameters.find_by!(runtime_name: 'param_b')
-      param_c = runtime_function.parameters.find_by!(runtime_name: 'param_c')
+      param_a = runtime_function.runtime_parameter_definitions.find_by!(runtime_name: 'param_a')
+      param_b = runtime_function.runtime_parameter_definitions.find_by!(runtime_name: 'param_b')
+      param_c = runtime_function.runtime_parameter_definitions.find_by!(runtime_name: 'param_c')
 
       rft_setting_a = runtime_flow_type.runtime_flow_type_settings.find_by!(identifier: 'setting_a')
       rft_setting_b = runtime_flow_type.runtime_flow_type_settings.find_by!(identifier: 'setting_b')
       rft_setting_c = runtime_flow_type.runtime_flow_type_settings.find_by!(identifier: 'setting_c')
 
       project = create(:namespace_project)
-      flow = create(:flow, project: project, flow_type: flow_type)
+      flow = create(:flow, namespace_project: project, flow_type: flow_type)
       node_function = create(:node_function, flow: flow, function_definition: function_definition)
 
       # Create node parameters (insertion order doesn't matter, ordering comes from definitions)

@@ -84,7 +84,7 @@ RSpec.describe Users::UpdateProjectPinsService do
     context 'when the user already had different pins in the same namespace' do
       before do
         create(:user_project_pin, user: user, namespace: organization_namespace,
-                                  project: create(:namespace_project, namespace: organization_namespace),
+                                  namespace_project: create(:namespace_project, namespace: organization_namespace),
                                   priority: 0)
       end
 
@@ -99,7 +99,7 @@ RSpec.describe Users::UpdateProjectPinsService do
       before do
         create(:namespace_member, namespace: other_namespace, user: user)
         create(:user_project_pin, user: user, namespace: other_namespace,
-                                  project: create(:namespace_project, namespace: other_namespace),
+                                  namespace_project: create(:namespace_project, namespace: other_namespace),
                                   priority: 0)
       end
 

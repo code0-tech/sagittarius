@@ -33,6 +33,7 @@ module Types
 
     field :project, Types::NamespaceProjectType,
           null: false,
+          method: :namespace_project,
           description: 'The project the flow belongs to'
     field :settings, Types::FlowSettingType.connection_type,
           null: false,

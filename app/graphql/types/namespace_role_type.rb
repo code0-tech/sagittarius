@@ -13,9 +13,11 @@ module Types
                                             description: 'The namespace where this role belongs to'
 
     field :assigned_projects, Types::NamespaceProjectType.connection_type,
+          method: :namespace_projects,
           description: 'The projects this role is assigned to'
 
     field :members, Types::NamespaceMemberType.connection_type,
+          method: :namespace_members,
           description: 'The members this role is assigned to'
 
     expose_abilities %i[
@@ -29,7 +31,7 @@ module Types
     timestamps
 
     def abilities
-      object.abilities.map(&:ability)
+      object.namespace_role_abilities.map(&:ability)
     end
   end
 end

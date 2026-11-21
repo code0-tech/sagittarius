@@ -11,11 +11,12 @@ class ExecutionNodeResult < ApplicationRecord
   self.table_name = 'p_execution_node_results'
   self.primary_key = %i[id created_at]
 
-  belongs_to :execution_result, foreign_key: %i[execution_result_id created_at], inverse_of: :node_results
+  belongs_to :execution_result, foreign_key: %i[execution_result_id created_at],
+                                inverse_of: :execution_node_results
   belongs_to :node_function, optional: true
   belongs_to :function_definition, optional: true
 
-  has_many :parameter_results,
+  has_many :execution_parameter_results,
            class_name: 'ExecutionParameterResult',
            foreign_key: %i[execution_node_result_id created_at],
            inverse_of: :execution_node_result

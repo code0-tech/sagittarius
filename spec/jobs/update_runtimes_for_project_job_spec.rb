@@ -6,12 +6,12 @@ RSpec.describe UpdateRuntimesForProjectJob do
   include ActiveJob::TestHelper
 
   let(:flow) { create(:flow) }
-  let(:runtimes) { create_list(:runtime, 2, namespace: flow.project.namespace) }
-  let!(:other_runtime) { create(:runtime, namespace: flow.project.namespace) }
+  let(:runtimes) { create_list(:runtime, 2, namespace: flow.namespace_project.namespace) }
+  let!(:other_runtime) { create(:runtime, namespace: flow.namespace_project.namespace) }
 
   before do
     runtimes.each do |runtime|
-      create(:namespace_project_runtime_assignment, namespace_project: flow.project, runtime: runtime)
+      create(:namespace_project_runtime_assignment, namespace_project: flow.namespace_project, runtime: runtime)
     end
   end
 
@@ -19,7 +19,7 @@ RSpec.describe UpdateRuntimesForProjectJob do
     allow(FlowHandler).to receive(:update_runtime)
 
     perform_enqueued_jobs do
-      described_class.perform_later(flow.project.id)
+      described_class.perform_later(flow.namespace_project.id)
     end
 
     runtimes.each do |runtime|

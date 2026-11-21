@@ -22,7 +22,7 @@ RSpec.describe ExecutionHandler do
   describe '#update' do
     let(:runtime) { create(:runtime) }
     let(:project) { create(:namespace_project, primary_runtime: runtime) }
-    let(:flow) { create(:flow, project: project) }
+    let(:flow) { create(:flow, namespace_project: project) }
     let(:started_at) { 1_780_430_000_000_000 }
     let(:finished_at) { 1_780_430_002_000_000 }
 

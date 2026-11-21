@@ -31,7 +31,7 @@ module Organizations
         create_object(t, NamespaceRoleAbility, namespace_role: namespace_role, ability: :namespace_administrator)
         organization_member = create_object(t, NamespaceMember, namespace: organization.ensure_namespace,
                                                                 user: current_authentication.user)
-        create_object(t, NamespaceMemberRole, member: organization_member, role: namespace_role)
+        create_object(t, NamespaceMemberRole, namespace_member: organization_member, namespace_role: namespace_role)
 
         AuditService.audit(
           :organization_created,

@@ -5,8 +5,8 @@ require 'rails_helper'
 RSpec.describe Namespaces::Projects::Flows::RecordRuntimeUsageBatchService do
   let(:runtime) { create(:runtime) }
   let(:project) { create(:namespace_project, primary_runtime: runtime) }
-  let(:flow) { create(:flow, project: project) }
-  let(:other_flow) { create(:flow, project: project) }
+  let(:flow) { create(:flow, namespace_project: project) }
+  let(:other_flow) { create(:flow, namespace_project: project) }
   let(:notification) { instance_double(Namespaces::Usage::NotifyLimitsService, execute: nil) }
 
   before do

@@ -130,7 +130,7 @@ module Runtimes
           db_object = DataType.find_or_initialize_by(runtime: current_runtime, identifier: data_type.identifier)
           db_object.removed_at = nil
           db_object.type = data_type.type
-          db_object.rules = update_rules(data_type.rules, db_object)
+          db_object.data_type_rules = update_rules(data_type.rules, db_object)
           db_object.names = update_translations(data_type.name, db_object.names)
           db_object.aliases = update_translations(data_type.alias, db_object.aliases)
           db_object.display_messages = update_translations(data_type.display_message, db_object.display_messages)
@@ -159,7 +159,7 @@ module Runtimes
         # @param rules [Array<Tucana::Shared::DefinitionDataTypeRule>] The list of rules to update.
         # @param data_type [DataType] The data type to which the rules belong.
         def update_rules(rules, data_type)
-          db_rules = data_type.rules.first(rules.length)
+          db_rules = data_type.data_type_rules.first(rules.length)
           rules.each_with_index do |rule, index|
             db_rules[index] ||= DataTypeRule.new
             db_rules[index].assign_attributes(

@@ -9,9 +9,11 @@ class Runtime < ApplicationRecord
 
   has_one :runtime_status, inverse_of: :runtime
 
-  has_many :project_assignments, class_name: 'NamespaceProjectRuntimeAssignment', inverse_of: :runtime
-  has_many :projects, class_name: 'NamespaceProject', through: :project_assignments, source: :namespace_project,
-                      inverse_of: :runtimes
+  has_many :namespace_project_runtime_assignments, class_name: 'NamespaceProjectRuntimeAssignment',
+                                                   inverse_of: :runtime
+  has_many :namespace_projects, class_name: 'NamespaceProject',
+                                through: :namespace_project_runtime_assignments, source: :namespace_project,
+                                inverse_of: :runtimes
   has_many :primary_projects, class_name: 'NamespaceProject', inverse_of: :primary_runtime
 
   has_many :runtime_modules, inverse_of: :runtime

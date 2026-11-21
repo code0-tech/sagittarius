@@ -55,7 +55,7 @@ module Namespaces
 
         def build_node_results(result, created_at)
           grpc_result.node_execution_results.each_with_index do |node_result, index|
-            node_record = result.node_results.build(
+            node_record = result.execution_node_results.build(
               position: index,
               started_at: node_result.started_at,
               finished_at: node_result.finished_at,
@@ -72,7 +72,7 @@ module Namespaces
 
         def build_parameter_results(node_record, node_result, created_at)
           node_result.parameter_results.each_with_index do |parameter_result, index|
-            node_record.parameter_results.build(
+            node_record.execution_parameter_results.build(
               position: index,
               value: node_value_raw_value(parameter_result),
               sub_flow_function_result: node_value_sub_flow_function_result(parameter_result),
@@ -83,8 +83,8 @@ module Namespaces
 
         def flow_for
           Flow
-            .includes(:project)
-            .joins(project: :runtime_assignments)
+            .includes(:namespace_project)
+            .joins(namespace_project: :namespace_project_runtime_assignments)
             .find_by(
               id: grpc_result.flow_id,
               namespace_project_runtime_assignments: { runtime_id: runtime_id }
@@ -101,7 +101,7 @@ module Namespaces
           return unless node_result.id == :function_identifier
 
           FunctionDefinition.find_by(
-            runtime: flow.project.primary_runtime,
+            runtime: flow.namespace_project.primary_runtime,
             identifier: node_result.function_identifier
           )
         end

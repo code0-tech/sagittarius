@@ -6,7 +6,7 @@ RSpec.describe DataTypeRule do
   subject(:rule) { create(:data_type_rule) }
 
   describe 'associations' do
-    it { is_expected.to belong_to(:data_type).inverse_of(:rules) }
+    it { is_expected.to belong_to(:data_type).inverse_of(:data_type_rules) }
   end
 
   describe 'validations' do

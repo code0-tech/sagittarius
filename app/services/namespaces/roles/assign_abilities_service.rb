@@ -20,7 +20,7 @@ module Namespaces
         end
 
         transactional do |t|
-          current_abilities = role.abilities
+          current_abilities = role.namespace_role_abilities
           old_abilities_for_audit_event = current_abilities.map(&:ability).map(&:to_sym)
 
           check_admin_existing(t)
@@ -39,7 +39,7 @@ module Namespaces
             )
           end
 
-          new_abilities = role.reload.abilities.map(&:ability)
+          new_abilities = role.reload.namespace_role_abilities.map(&:ability)
 
           AuditService.audit(
             :namespace_role_abilities_updated,
@@ -61,10 +61,10 @@ module Namespaces
       def check_admin_existing(t)
         return if role.namespace.owner?
 
-        unless role.namespace.roles.where.not(id: role.id)
-                   .joins(:abilities)
-                   .joins(:member_roles)
-                   .exists?(abilities: { ability: :namespace_administrator }) ||
+        unless role.namespace.namespace_roles.where.not(id: role.id)
+                   .joins(:namespace_role_abilities)
+                   .joins(:namespace_member_roles)
+                   .exists?(namespace_role_abilities: { ability: :namespace_administrator }) ||
                abilities.include?(:namespace_administrator)
           t.rollback_and_return! ServiceResponse.error(
             message: 'Cannot remove the last administrator ability',

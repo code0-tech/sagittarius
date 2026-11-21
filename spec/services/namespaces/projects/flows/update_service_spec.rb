@@ -21,7 +21,7 @@ RSpec.describe Namespaces::Projects::Flows::UpdateService do
       )
     )
   end
-  let(:flow) { create(:flow, project: namespace_project, flow_type: create(:flow_type, runtime: runtime)) }
+  let(:flow) { create(:flow, namespace_project: namespace_project, flow_type: create(:flow_type, runtime: runtime)) }
   let(:flow_input) do
     Struct.new(:settings, :signature, :starting_node_id, :nodes, :name, keyword_init: true).new(
       settings: [],

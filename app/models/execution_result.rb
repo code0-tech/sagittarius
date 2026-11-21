@@ -14,7 +14,7 @@ class ExecutionResult < ApplicationRecord
 
   belongs_to :flow, inverse_of: :execution_results
 
-  has_many :node_results,
+  has_many :execution_node_results,
            class_name: 'ExecutionNodeResult',
            foreign_key: %i[execution_result_id created_at],
            inverse_of: :execution_result

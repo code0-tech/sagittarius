@@ -7,24 +7,31 @@ RSpec.describe NamespaceProject do
 
   describe 'associations' do
     it { is_expected.to belong_to(:namespace).required }
-    it { is_expected.to have_many(:role_assignments).class_name('NamespaceRoleProjectAssignment').inverse_of(:project) }
 
     it {
-      is_expected.to have_many(:runtime_assignments).class_name('NamespaceProjectRuntimeAssignment')
-                                                    .inverse_of(:namespace_project)
+      is_expected.to have_many(:namespace_role_project_assignments).class_name('NamespaceRoleProjectAssignment')
+                                                                   .inverse_of(:namespace_project)
     }
 
-    it { is_expected.to have_many(:runtimes).through(:runtime_assignments).inverse_of(:projects) }
+    it {
+      is_expected.to have_many(:namespace_project_runtime_assignments).class_name('NamespaceProjectRuntimeAssignment')
+                                                                      .inverse_of(:namespace_project)
+    }
+
+    it {
+      is_expected.to have_many(:runtimes).through(:namespace_project_runtime_assignments)
+                                         .inverse_of(:namespace_projects)
+    }
 
     it do
-      is_expected.to have_many(:assigned_roles).class_name('NamespaceRole')
-                                               .through(:role_assignments)
-                                               .source(:role)
-                                               .inverse_of(:assigned_projects)
-      is_expected.to have_many(:flows).class_name('Flow').inverse_of(:project)
+      is_expected.to have_many(:namespace_roles).class_name('NamespaceRole')
+                                                .through(:namespace_role_project_assignments)
+                                                .source(:namespace_role)
+                                                .inverse_of(:namespace_projects)
+      is_expected.to have_many(:flows).class_name('Flow').inverse_of(:namespace_project)
     end
 
-    it { is_expected.to have_many(:user_project_pins).inverse_of(:project) }
+    it { is_expected.to have_many(:user_project_pins).inverse_of(:namespace_project) }
   end
 
   describe 'validations' do
@@ -58,7 +65,7 @@ RSpec.describe NamespaceProject do
     it 'requires primary runtime if containing flows' do
       is_expected.to be_valid
 
-      create(:flow, project: project)
+      create(:flow, namespace_project: project)
       is_expected.not_to be_valid
 
       project.primary_runtime = create(:runtime, namespace: nil)

@@ -12,7 +12,7 @@ RSpec.describe RuntimeUsageDailyAggregatesFinder do
       {
         flow_id: flow.id,
         project_id: flow.project_id,
-        namespace_id: flow.project.namespace_id,
+        namespace_id: flow.namespace_project.namespace_id,
         date: date,
         execution_count: execution_count,
         total_execution_time_us: total_execution_time_us,

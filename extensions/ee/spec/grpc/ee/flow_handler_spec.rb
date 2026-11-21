@@ -21,12 +21,12 @@ RSpec.describe FlowHandler do
 
   describe '#flows_for' do
     let(:flow) { create(:flow, validation_status: :valid) }
-    let(:runtime) { create(:runtime, namespace: flow.project.namespace) }
+    let(:runtime) { create(:runtime, namespace: flow.namespace_project.namespace) }
 
     before do
       create(
         :namespace_project_runtime_assignment,
-        namespace_project: flow.project,
+        namespace_project: flow.namespace_project,
         runtime: runtime,
         compatible: true
       )
@@ -51,13 +51,13 @@ RSpec.describe FlowHandler do
 
   describe 'project runtime updates' do
     let(:flow) { create(:flow, validation_status: :valid) }
-    let(:runtime) { create(:runtime, namespace: flow.project.namespace) }
+    let(:runtime) { create(:runtime, namespace: flow.namespace_project.namespace) }
     let(:gateway_client) { instance_double(Sagittarius::Gateway::Client, push_flow: nil) }
 
     before do
       create(
         :namespace_project_runtime_assignment,
-        namespace_project: flow.project,
+        namespace_project: flow.namespace_project,
         runtime: runtime,
         compatible: true
       )
@@ -74,7 +74,7 @@ RSpec.describe FlowHandler do
       end
 
       it 'does not push flow deletions' do
-        described_class.delete_flow(flow.project, flow.id)
+        described_class.delete_flow(flow.namespace_project, flow.id)
 
         expect(gateway_client).not_to have_received(:push_flow)
       end
@@ -93,13 +93,13 @@ RSpec.describe FlowHandler do
 
   describe '.update_runtime' do
     let(:flow) { create(:flow, validation_status: :valid) }
-    let(:runtime) { create(:runtime, namespace: flow.project.namespace) }
+    let(:runtime) { create(:runtime, namespace: flow.namespace_project.namespace) }
     let(:gateway_client) { instance_double(Sagittarius::Gateway::Client, push_flow: nil, push_module_configuration: nil) }
 
     before do
       create(
         :namespace_project_runtime_assignment,
-        namespace_project: flow.project,
+        namespace_project: flow.namespace_project,
         runtime: runtime,
         compatible: true
       )

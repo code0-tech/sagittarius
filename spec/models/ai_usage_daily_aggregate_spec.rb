@@ -7,8 +7,8 @@ RSpec.describe AiUsageDailyAggregate do
     it { is_expected.to belong_to(:flow).inverse_of(:ai_usage_daily_aggregates).optional }
 
     it {
-      is_expected.to belong_to(:project).class_name('NamespaceProject')
-                                        .inverse_of(:ai_usage_daily_aggregates).optional
+      is_expected.to belong_to(:namespace_project).class_name('NamespaceProject')
+                                                  .inverse_of(:ai_usage_daily_aggregates).optional
     }
 
     it { is_expected.to belong_to(:namespace).inverse_of(:ai_usage_daily_aggregates).optional }
@@ -50,7 +50,7 @@ RSpec.describe AiUsageDailyAggregate do
     end
 
     it 'keeps separate rows for different flows in the same project/day' do
-      flow = create(:flow, project: project)
+      flow = create(:flow, namespace_project: project)
 
       record(usage: 100)
       record(usage: 200, flow_id: flow.id)

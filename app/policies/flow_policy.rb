@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FlowPolicy < BasePolicy
-  delegate { subject.project }
+  delegate { subject.namespace_project }
 
   rule { can?(:read_flow) }.enable :trigger_execution
 end

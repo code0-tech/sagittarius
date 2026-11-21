@@ -29,13 +29,13 @@ module Namespaces
               )
             end
 
-            DeleteFlowForProjectJob.perform_later(flow.project.id, flow.id)
+            DeleteFlowForProjectJob.perform_later(flow.namespace_project.id, flow.id)
 
             AuditService.audit(
               :flow_deleted,
               author_id: current_authentication.user.id,
               entity: flow,
-              target: flow.project,
+              target: flow.namespace_project,
               details: {
                 **flow.attributes.except('created_at', 'updated_at'),
               }
