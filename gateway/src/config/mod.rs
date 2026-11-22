@@ -10,6 +10,7 @@ use crate::client::retry::RetryPolicy;
 
 const CONFIG_FILE_ENV_VAR: &str = "GATEWAY_CONFIG_PATH";
 const DEFAULT_CONFIG_PATH: &str = "gateway.yml";
+const DEFAULT_MAX_FILE_SIZE_BYTES: u64 = 100 * 1024 * 1024;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
@@ -22,6 +23,8 @@ pub struct Config {
     pub auth: Auth,
     pub backend: Backend,
     pub grpc: Grpc,
+    pub http: Http,
+    pub files: Files,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -46,6 +49,35 @@ pub struct Grpc {
     pub with_health_service: bool,
 }
 
+/// HTTP server that fronts the file-upload endpoint moved out of Rails
+/// (see #1131). Runs alongside the gRPC server.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
+pub struct Http {
+    pub enabled: bool,
+    pub port: u16,
+    pub host: String,
+}
+
+/// File-upload proxying configuration.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
+pub struct Files {
+    /// Rails endpoint the Proxy forwards the (authorized) upload to. Rails
+    /// remains the system of record: it runs the `Ability` check and persists
+    /// the blob via ActiveStorage.
+    pub rails_upload_url: String,
+    /// Rails endpoint for namespace-scoped storage objects (the FILE data type): receives the
+    /// multipart `POST` of user uploads and the raw, signed `PUT` of action uploads.
+    pub rails_storage_upload_url: String,
+    /// Rails endpoint the signed download URLs of storage objects are
+    /// resolved against; `GET /storage_objects/download` is streamed from here.
+    pub rails_storage_download_url: String,
+    /// Per-object size cap enforced while receiving the stream (default 100 MiB).
+    /// `0` disables the cap (Rails/ActiveStorage still applies its own limits).
+    pub max_file_size_bytes: u64,
+}
+
 impl Default for Config {
     fn default() -> Self {
         Self {
@@ -55,6 +87,31 @@ impl Default for Config {
             auth: Auth::default(),
             backend: Backend::default(),
             grpc: Grpc::default(),
+            http: Http::default(),
+            files: Files::default(),
+        }
+    }
+}
+
+impl Default for Http {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            port: 8080,
+            host: String::from("127.0.0.1"),
+        }
+    }
+}
+
+impl Default for Files {
+    fn default() -> Self {
+        Self {
+            rails_upload_url: String::from("http://127.0.0.1:3000/files/upload"),
+            rails_storage_upload_url: String::from("http://127.0.0.1:3000/storage_objects/upload"),
+            rails_storage_download_url: String::from(
+                "http://127.0.0.1:3000/storage_objects/download",
+            ),
+            max_file_size_bytes: DEFAULT_MAX_FILE_SIZE_BYTES,
         }
     }
 }
@@ -159,10 +216,41 @@ impl fmt::Display for Config {
             "    Address:   {}:{}",
             self.grpc.host, self.grpc.port
         )?;
-        write!(
+        writeln!(
             formatter,
             "    Health service: {}",
             self.grpc.with_health_service
+        )?;
+        writeln!(formatter, "  HTTP")?;
+        writeln!(formatter, "    Enabled:   {}", self.http.enabled)?;
+        writeln!(
+            formatter,
+            "    Address:   {}:{}",
+            self.http.host, self.http.port
+        )?;
+        writeln!(formatter, "  Files")?;
+        writeln!(
+            formatter,
+            "    Rails upload URL: {}",
+            self.files.rails_upload_url
+        )?;
+        writeln!(
+            formatter,
+            "    Rails storage upload URL: {}",
+            self.files.rails_storage_upload_url
+        )?;
+        writeln!(
+            formatter,
+            "    Rails storage download URL: {}",
+            self.files.rails_storage_download_url
+        )?;
+        write!(
+            formatter,
+            "    Max file size:    {}",
+            match self.files.max_file_size_bytes {
+                0 => String::from("<unlimited>"),
+                bytes => format!("{bytes} bytes"),
+            }
         )
     }
 }

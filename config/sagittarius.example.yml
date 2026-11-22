@@ -1,5 +1,8 @@
 rails:
   log_level: info
+  file_storage:
+    # Gateway HTTP ingress as reachable by actions; signed upload/download URLs are built from it
+    external_url: 'http://localhost:8080'
   mailer:
     from: Code0 <testmail@code0.tech>
     smtp_settings:

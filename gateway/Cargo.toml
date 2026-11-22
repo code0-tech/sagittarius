@@ -16,3 +16,9 @@ tokio-stream = { workspace = true }
 tonic = { workspace = true }
 tonic-health = { workspace = true }
 tucana = { workspace = true }
+
+# HTTP file ingress (#1131): the Proxy terminates the multipart upload, size-checks the
+# stream while forwarding it to Rails for authorization + storage, and streams downloads back.
+axum = { version = "0.8", features = ["multipart"] }
+reqwest = { version = "0.13", default-features = false, features = ["multipart", "json", "rustls", "stream"] }
+serde_json = "1.0"

@@ -600,9 +600,9 @@ GEM
       base64 (~> 0.3)
       json (~> 2.19)
       open3 (~> 0.2)
-      tucana (~> 0.0, >= 0.0.82)
+      tucana (>= 0.0.82)
     tsort (0.2.0)
-    tucana (0.0.83)
+    tucana (1.1.0)
       grpc (~> 1.64)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -663,7 +663,7 @@ DEPENDENCIES
   simplecov-cobertura (~> 4.0)
   test-prof (~> 1.0)
   triangulum (= 0.40.0)
-  tucana (= 0.0.83)
+  tucana (= 1.1.0)
   tzinfo-data
 
 RUBY VERSION

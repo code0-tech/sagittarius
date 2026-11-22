@@ -16,6 +16,8 @@ RSpec.describe SagittariusSchema.types['NamespaceProject'] do
       roles
       flows
       flow
+      storage_objects
+      storage_object
       runtime_usage
       ai_usage
       user_abilities

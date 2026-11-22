@@ -30,6 +30,8 @@ class NamespaceRoleAbility < ApplicationRecord
     delete_flow: { db: 25, description: 'Allows to delete flows in a namespace project' },
     update_flow: { db: 26, description: 'Allows to update flows in the project' },
     update_module_configurations: { db: 27, description: 'Allows to update module configurations in the project' },
+    create_storage_object: { db: 28, description: 'Allows to upload files into the project' },
+    delete_storage_object: { db: 29, description: 'Allows to delete files of the project' },
   }.with_indifferent_access
 
   enum :ability, ABILITIES.transform_values { |v| v[:db] }, prefix: :can

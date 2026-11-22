@@ -14,11 +14,35 @@ class Namespace < ApplicationRecord
 
   has_many :runtimes, inverse_of: :namespace
 
+  # Files belong to projects; the namespace is only the quota anchor.
+  has_many :storage_objects, through: :projects
+
   has_many :runtime_usage_daily_aggregates, class_name: 'RuntimeUsageDailyAggregate', inverse_of: :namespace
   has_many :ai_usage_daily_aggregates, class_name: 'AiUsageDailyAggregate', inverse_of: :namespace
 
   has_many :user_namespace_pins, inverse_of: :namespace
   has_many :user_project_pins, inverse_of: :namespace
+
+  # Applied when a namespace has not set its own override (the columns are NULL).
+  DEFAULT_MAX_FILE_SIZE_BYTES = 100.megabytes
+  DEFAULT_STORAGE_QUOTA_BYTES = 1.gigabyte
+
+  def effective_max_file_size_bytes
+    max_file_size_bytes || DEFAULT_MAX_FILE_SIZE_BYTES
+  end
+
+  def effective_storage_quota_bytes
+    storage_quota_bytes || DEFAULT_STORAGE_QUOTA_BYTES
+  end
+
+  # Only committed objects count against the quota; pending uploads do not.
+  def storage_used_bytes
+    storage_objects.status_committed.sum(:byte_size)
+  end
+
+  def storage_available_bytes
+    [effective_storage_quota_bytes - storage_used_bytes, 0].max
+  end
 
   def organization_type?
     parent_type == Organization.name

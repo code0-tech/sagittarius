@@ -2,6 +2,25 @@
 
 source 'https://rubygems.org'
 
+# TEMPORARY: triangulum (<= 0.41.0) declares `tucana ~> 0.0`, but it only forwards protobuf bytes to its bundled
+# validator, which reads tucana 1.x messages unchanged (1.x only added the file protos). Relax that single
+# requirement until a triangulum release accepts tucana 1.x; remove this block together with that bump.
+module RelaxTriangulumTucanaRequirement
+  def dependencies
+    deps = super
+    return deps unless name == 'triangulum'
+
+    # mutated in place: Bundler keeps references to this array
+    deps.each_with_index do |dep, index|
+      next unless dep.name == 'tucana' && dep.requirement.to_s.include?('~>')
+
+      deps[index] = Gem::Dependency.new('tucana', '>= 0.0.82', dep.type)
+    end
+  end
+end
+[Gem::Specification, Bundler::EndpointSpecification, Bundler::RemoteSpecification]
+  .each { |klass| klass.prepend(RelaxTriangulumTucanaRequirement) }
+
 ruby '3.4.7'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
@@ -79,7 +98,7 @@ gem 'good_job', '~> 4.0'
 gem 'rotp'
 
 gem 'grpc', '~> 1.67'
-gem 'tucana', '0.0.83'
+gem 'tucana', '1.1.0'
 
 gem 'code0-identities', '~> 0.0.6'
 

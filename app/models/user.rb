@@ -39,6 +39,8 @@ class User < ApplicationRecord
   has_many :namespace_memberships, class_name: 'NamespaceMember', inverse_of: :user
   has_many :namespaces, through: :namespace_memberships, inverse_of: :users
 
+  has_many :storage_objects, foreign_key: :created_by_id, inverse_of: :created_by, dependent: :nullify
+
   has_many :user_identities, inverse_of: :user
   has_many :user_custom_attributes, inverse_of: :user
   has_many :user_namespace_pins, -> { order(priority: :asc) }, inverse_of: :user

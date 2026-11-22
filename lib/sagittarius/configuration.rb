@@ -43,6 +43,11 @@ module Sagittarius
       end
     end
 
+    # Base URL of the gateway HTTP ingress as reachable by actions; signed file URLs are built from it.
+    def self.file_storage_external_url
+      config.dig(:rails, :file_storage, :external_url).to_s.chomp('/')
+    end
+
     def self.defaults
       {
         rails: {
@@ -65,6 +70,9 @@ module Sagittarius
             host: 'localhost:50060',
             jwt_secret: nil,
             jwt_ttl_seconds: 300,
+          },
+          file_storage: {
+            external_url: 'http://localhost:8080',
           },
           log_level: 'info',
           mailer: {
@@ -128,6 +136,11 @@ module Sagittarius
         reset_expired_flow_disables: {
           cron: '0 * * * *',
           class: 'ResetExpiredFlowDisablesJob',
+          set: { queue: 'cron' },
+        },
+        cleanup_storage_objects: {
+          cron: '0 * * * *',
+          class: 'StorageObjects::CleanupJob',
           set: { queue: 'cron' },
         },
       }

@@ -19,6 +19,7 @@ Represents a namespace project
 | `runtimeAssignments` | [`NamespaceProjectRuntimeAssignmentConnection!`](../object/namespaceprojectruntimeassignmentconnection.md) | Runtime assignments of this project. |
 | `runtimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Runtimes assigned to this project |
 | `slug` | [`String!`](../scalar/string.md) | Slug of the project used in URLs to identify flows |
+| `storageObjects` | [`StorageObjectConnection!`](../object/storageobjectconnection.md) | Stored files of the project |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this NamespaceProject was last updated |
 | `userAbilities` | [`NamespaceProjectUserAbilities!`](../object/namespaceprojectuserabilities.md) | Abilities for the current user on this NamespaceProject |
 
@@ -57,3 +58,13 @@ Returns [`[UsageBucket!]!`](../object/usagebucket.md).
 | `afterDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | Start of the usage range (inclusive) |
 | `aggregation` | [`UsageAggregation`](../enum/usageaggregation.md) | Granularity to bucket usage into |
 | `beforeDate` | [`ISO8601Date!`](../scalar/iso8601date.md) | End of the usage range (inclusive) |
+
+### storageObject
+
+Query a stored file by its id
+
+Returns [`StorageObject`](../object/storageobject.md).
+
+| Name | Type | Description |
+|------|------|-------------|
+| `id` | [`StorageObjectID!`](../scalar/storageobjectid.md) | GlobalID of the target storage object |

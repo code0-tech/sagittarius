@@ -45,6 +45,16 @@ RSpec.describe Namespaces::Projects::DeleteService do
     it { expect(service_response.payload).to eq(namespace_project) }
     it { expect { service_response }.to change { NamespaceProject.count }.by(-1) }
 
+    context 'when the project has stored files' do
+      before { create_list(:storage_object, 2, :committed, project: namespace_project) }
+
+      it 'removes the files and purges their blobs' do
+        expect { service_response }.to change { StorageObject.count }.by(-2)
+                                   .and change { ActiveStorage::Blob.count }.by(-2)
+        expect(service_response).to be_success
+      end
+    end
+
     it do
       expect { service_response }.to create_audit_event(
         :namespace_project_deleted,

@@ -19,6 +19,10 @@ RSpec.describe SagittariusSchema.types['Namespace'] do
       runtimeUsage
       aiUsage
       userAbilities
+      storageQuotaBytes
+      storageUsedBytes
+      storageAvailableBytes
+      maxFileSizeBytes
     ]
   end
 

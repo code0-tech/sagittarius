@@ -22,6 +22,7 @@ Represents the available error responses
 | `FAILED_TO_INVALIDATE_OLD_BACKUP_CODES` | The old backup codes could not be deleted |
 | `FAILED_TO_RESET_PASSWORD` | Failed to reset the user password |
 | `FAILED_TO_SAVE_VALID_BACKUP_CODE` | The new backup codes could not be saved |
+| `FILE_TOO_LARGE` | The file exceeds the maximum allowed size for the namespace |
 | `FLOW_GENERATION_FAILED` | Flow generation failed |
 | `FLOW_NOT_FOUND` | The flow with the given identifier was not found |
 | `FLOW_TYPE_NOT_FOUND` | The flow type with the given identifier was not found |
@@ -34,6 +35,7 @@ Represents the available error responses
 | `INVALID_DATA_TYPE` | The data type is invalid because of active model errors |
 | `INVALID_DATA_TYPE_LINK` | The data type link is invalid because of active model errors |
 | `INVALID_EXECUTION_RESULT` | The execution result is invalid because of active model errors |
+| `INVALID_EXPIRES_AT` | The expiry timestamp is not a valid epoch milliseconds value |
 | `INVALID_EXTERNAL_IDENTITY` | This external identity is invalid |
 | `INVALID_FLOW` | The flow is invalid because of active model errors |
 | `INVALID_FLOW_SETTING` | The flow setting is invalid because of active model errors |
@@ -64,6 +66,7 @@ Represents the available error responses
 | `INVALID_RUNTIME_PARAMETER_DEFINITION` | The runtime parameter definition is invalid |
 | `INVALID_RUNTIME_STATUS` | The runtime status is invalid because of active model errors |
 | `INVALID_SETTING` | Invalid setting provided |
+| `INVALID_STORAGE_OBJECT` | The storage object is invalid because of active model errors |
 | `INVALID_TOTP_SECRET` | The TOTP secret is invalid or cannot be verified |
 | `INVALID_USER` | The user is invalid because of active model errors |
 | `INVALID_USER_CUSTOM_ATTRIBUTE` | The user custom attribute is invalid because of active model errors |
@@ -97,6 +100,7 @@ Represents the available error responses
 | `OUTDATED_DEFINITION` | The primary runtime has a newer definition than this one |
 | `PRIMARY_LEVEL_NOT_FOUND` |  **Deprecated:** Outdated concept |
 | `PROJECT_NOT_FOUND` | The namespace project with the given identifier was not found |
+| `QUOTA_EXCEEDED` | The namespace storage quota would be exceeded |
 | `REFERENCED_VALUE_NOT_FOUND` | A referenced value could not be found |
 | `REGISTRATION_DISABLED` | Self-registration is disabled |
 | `RUNTIME_MISMATCH` | Resources are from different runtimes |
@@ -106,6 +110,7 @@ Represents the available error responses
 | `RUNTIME_NOT_FOUND` | The runtime with the given identifier was not found |
 | `RUNTIME_UNAVAILABLE` | The runtime is not currently connected to the gateway |
 | `SECONDARY_LEVEL_NOT_FOUND` |  **Deprecated:** Outdated concept |
+| `STORAGE_OBJECT_NOT_FOUND` | The storage object with the given identifier was not found |
 | `TERTIARY_LEVEL_EXCEEDS_PARAMETERS` |  **Deprecated:** Outdated concept |
 | `TOTP_SECRET_ALREADY_SET` | This user already has TOTP set up |
 | `TOTP_SECRET_NOT_SET` | This user does not have TOTP set up |

@@ -34,6 +34,7 @@ module Types
     mount_mutation Mutations::Runtimes::Delete
     mount_mutation Mutations::Runtimes::RotateToken
     mount_mutation Mutations::Runtimes::Update
+    mount_mutation Mutations::StorageObjects::Delete
     mount_mutation Mutations::Users::Identity::Link
     mount_mutation Mutations::Users::Identity::Login
     mount_mutation Mutations::Users::Identity::Register

@@ -18,6 +18,10 @@ module Namespaces
         end
 
         transactional do |t|
+          # The project is removed with a plain SQL delete (the database cascades the storage_objects
+          # rows), which would leave their ActiveStorage blobs behind, so purge those first.
+          namespace_project.storage_objects.find_each { |storage_object| storage_object.blob.purge }
+
           namespace_project.delete
 
           if namespace_project.persisted?

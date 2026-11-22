@@ -120,6 +120,11 @@ class ErrorCode
       execution_usage_recording_failed: { description: 'Failed to record execution usage counters' },
       generation_usage_recording_failed: { description: 'Failed to record AI generation usage counters' },
       runtime_unavailable: { description: 'The runtime is not currently connected to the gateway' },
+      file_too_large: { description: 'The file exceeds the maximum allowed size for the namespace' },
+      quota_exceeded: { description: 'The namespace storage quota would be exceeded' },
+      invalid_expires_at: { description: 'The expiry timestamp is not a valid epoch milliseconds value' },
+      invalid_storage_object: { description: 'The storage object is invalid because of active model errors' },
+      storage_object_not_found: { description: 'The storage object with the given identifier was not found' },
     }
   end
 end

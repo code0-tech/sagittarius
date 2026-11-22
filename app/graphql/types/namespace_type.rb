@@ -26,6 +26,19 @@ module Types
     field :roles, Types::NamespaceRoleType.connection_type, null: false, description: 'Roles of the namespace'
     field :runtimes, Types::RuntimeType.connection_type, null: false, description: 'Runtime of the namespace'
 
+    # rubocop:disable GraphQL/ExtractType -- these describe the namespace's own storage, kept flat intentionally
+    field :max_file_size_bytes, Types::BigIntType, null: false,
+                                                   description: 'Largest single file the namespace accepts, in bytes',
+                                                   method: :effective_max_file_size_bytes
+    field :storage_available_bytes, Types::BigIntType, null: false,
+                                                       description: 'Remaining storage available, in bytes'
+    field :storage_quota_bytes, Types::BigIntType, null: false,
+                                                   description: 'Total storage the namespace may use, in bytes',
+                                                   method: :effective_storage_quota_bytes
+    field :storage_used_bytes, Types::BigIntType, null: false,
+                                                  description: 'Committed storage currently used, in bytes'
+    # rubocop:enable GraphQL/ExtractType
+
     lookahead_field :members, base_scope: ->(object) { object.namespace_members },
                               conditional_lookaheads: { user: :user, namespace: :namespace }
 

@@ -35,8 +35,18 @@ module Types
 
     field :flows, Types::FlowType.connection_type, null: true, description: 'Fetches all flows in this project'
 
+    # rubocop:disable GraphQL/ExtractType -- the single and connection lookups of the same resource
+    field :storage_object, Types::StorageObjectType, null: true, description: 'Query a stored file by its id' do
+      argument :id, Types::GlobalIdType[::StorageObject], required: true,
+                                                          description: 'GlobalID of the target storage object'
+    end
+    field :storage_objects, Types::StorageObjectType.connection_type, null: false,
+                                                                      description: 'Stored files of the project'
+    # rubocop:enable GraphQL/ExtractType
+
     expose_abilities %i[
       create_flow
+      create_storage_object
       assign_project_runtimes
       delete_namespace_project
       update_namespace_project
@@ -50,6 +60,10 @@ module Types
 
     def flow(id:)
       object.flows.find(id.model_id)
+    end
+
+    def storage_object(id:)
+      object.storage_objects.find_by(id: id.model_id)
     end
   end
 end

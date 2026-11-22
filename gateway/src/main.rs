@@ -1,6 +1,7 @@
 use code0_flow::flow_telemetry::{self as telemetry, TelemetrySettings};
 use tonic::transport::{Channel, Server};
 use tucana::sagittarius_gateway::execution_service_server::ExecutionServiceServer;
+use tucana::sagittarius_gateway::file_service_server::FileServiceServer;
 use tucana::sagittarius_gateway::flow_service_server::FlowServiceServer;
 use tucana::sagittarius_gateway::module_service_server::ModuleServiceServer;
 use tucana::sagittarius_gateway::runtime_status_service_server::RuntimeStatusServiceServer;
@@ -8,6 +9,7 @@ use tucana::sagittarius_gateway::runtime_usage_service_server::RuntimeUsageServi
 
 use crate::auth::{JwtClient, JwtVerifier};
 use crate::client::execution_service_client::SagittariusRailsExecutionServiceClient;
+use crate::client::file_service_client::SagittariusRailsFileServiceClient;
 use crate::client::flow_service_client::SagittariusRailsFlowServiceClient;
 use crate::client::module_service_client::SagittariusRailsModuleServiceClient;
 use crate::client::runtime_status_service_client::SagittariusRailsRuntimeStatusServiceClient;
@@ -15,6 +17,7 @@ use crate::client::runtime_usage_service_client::SagittariusRailsRuntimeUsageSer
 use crate::client::token_service_client::SagittariusRailsTokenServiceClient;
 use crate::config::Config;
 use crate::server::execution_service_server::SagittariusExecutionService;
+use crate::server::file_service_server::SagittariusFileService;
 use crate::server::flow_service_server::SagittariusFlowService;
 use crate::server::health_service::GatewayHealthService;
 use crate::server::module_service_server::SagittariusModuleService;
@@ -24,6 +27,7 @@ use crate::server::runtime_usage_service_server::SagittariusRuntimeUsageService;
 mod auth;
 mod client;
 mod config;
+mod http;
 mod server;
 mod version;
 
@@ -64,6 +68,8 @@ async fn run(config: Config) -> anyhow::Result<()> {
     let rails_execution_client =
         SagittariusRailsExecutionServiceClient::connect(channel.clone(), retry_policy.clone())
             .await?;
+    let rails_file_client =
+        SagittariusRailsFileServiceClient::connect(channel.clone(), retry_policy.clone()).await?;
     let rails_flow_client =
         SagittariusRailsFlowServiceClient::connect(channel.clone(), retry_policy.clone()).await?;
     let rails_module_client =
@@ -93,6 +99,11 @@ async fn run(config: Config) -> anyhow::Result<()> {
         jwt_client.clone(),
         jwt_verifier.clone(),
     );
+    let rails_file_server = SagittariusFileService::new(
+        rails_file_client,
+        rails_token_client.clone(),
+        jwt_client.clone(),
+    );
     let rails_flow_server = SagittariusFlowService::new(
         rails_flow_client,
         rails_token_client.clone(),
@@ -114,6 +125,7 @@ async fn run(config: Config) -> anyhow::Result<()> {
         SagittariusRuntimeUsageService::new(rails_usage_client, rails_token_client, jwt_client);
     let mut server_builder = Server::builder()
         .add_service(ExecutionServiceServer::new(rails_execution_server))
+        .add_service(FileServiceServer::new(rails_file_server))
         .add_service(FlowServiceServer::new(rails_flow_server))
         .add_service(ModuleServiceServer::new(rails_module_server))
         .add_service(RuntimeStatusServiceServer::new(rails_status_server))
@@ -126,9 +138,27 @@ async fn run(config: Config) -> anyhow::Result<()> {
     }
 
     log::info!("Sagittarius gateway listening on {}", address);
-    server_builder
-        .serve_with_shutdown(address, shutdown_signal())
-        .await?;
+    let grpc_server = server_builder.serve_with_shutdown(address, shutdown_signal());
+
+    if config.http.enabled {
+        let http_address: std::net::SocketAddr =
+            format!("{}:{}", config.http.host, config.http.port).parse()?;
+        let listener = tokio::net::TcpListener::bind(http_address).await?;
+        let http_state = http::FileUploadState::new(config.files.clone(), reqwest::Client::new());
+        let http_server = axum::serve(listener, http::router(http_state))
+            .with_graceful_shutdown(shutdown_signal());
+
+        log::info!(
+            "Sagittarius gateway HTTP (file upload) listening on {}",
+            http_address
+        );
+        tokio::try_join!(
+            async move { grpc_server.await.map_err(anyhow::Error::from) },
+            async move { http_server.await.map_err(anyhow::Error::from) },
+        )?;
+    } else {
+        grpc_server.await?;
+    }
     log::info!("Sagittarius gateway stopped");
 
     Ok(())

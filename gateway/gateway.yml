@@ -31,3 +31,23 @@ grpc:
   port: 50051
   host: "127.0.0.1"
   with_health_service: false
+
+# HTTP ingress for file uploads and downloads (#1131). The Proxy terminates the multipart
+# upload, size-checks the stream while forwarding it to Rails, which runs authorization,
+# computes the checksum and persists the blob via ActiveStorage.
+http:
+  enabled: true
+  port: 8080
+  host: "127.0.0.1"
+
+files:
+  # Rails endpoint the Proxy forwards the upload to (the old public upload URL).
+  rails_upload_url: "http://127.0.0.1:3000/files/upload"
+  # Rails endpoint for namespace-scoped storage objects (the FILE data type). Receives the multipart POST
+  # of user uploads and the raw, signed PUT of action uploads (query string forwarded).
+  rails_storage_upload_url: "http://127.0.0.1:3000/storage_objects/upload"
+  # Rails endpoint signed download URLs are resolved against (streamed through the Proxy). Actions reach
+  # upload/download through the absolute URLs Rails signs from `rails.file_storage.external_url`.
+  rails_storage_download_url: "http://127.0.0.1:3000/storage_objects/download"
+  # Per-object size cap enforced while streaming (default 100 MiB). 0 disables the Proxy-side cap.
+  max_file_size_bytes: 104857600

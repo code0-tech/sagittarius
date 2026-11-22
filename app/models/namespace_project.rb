@@ -13,6 +13,9 @@ class NamespaceProject < ApplicationRecord
                             inverse_of: :assigned_projects,
                             source: :role
   has_many :flows, class_name: 'Flow', inverse_of: :project
+  # No `dependent:` on purpose: projects are removed with a SQL delete (the FK cascades the rows), so
+  # blobs are purged explicitly by Namespaces::Projects::DeleteService.
+  has_many :storage_objects, inverse_of: :project
   has_many :runtime_usage_daily_aggregates, class_name: 'RuntimeUsageDailyAggregate', inverse_of: :project
   has_many :ai_usage_daily_aggregates, class_name: 'AiUsageDailyAggregate', inverse_of: :project
 

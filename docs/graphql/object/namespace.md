@@ -12,11 +12,15 @@ Represents a Namespace
 | `currentLicense` | [`License`](../object/license.md) | (Cloud only) Currently active license of the namespace |
 | `id` | [`NamespaceID!`](../scalar/namespaceid.md) | Global ID of this Namespace |
 | `licenses` | [`LicenseConnection!`](../object/licenseconnection.md) | (Cloud only) Licenses of the namespace |
+| `maxFileSizeBytes` | [`BigInt!`](../scalar/bigint.md) | Largest single file the namespace accepts, in bytes |
 | `members` | [`NamespaceMemberConnection!`](../object/namespacememberconnection.md) | Members of the namespace |
 | `parent` | [`NamespaceParent!`](../union/namespaceparent.md) | Parent of this namespace |
 | `projects` | [`NamespaceProjectConnection!`](../object/namespaceprojectconnection.md) | Projects of the namespace |
 | `roles` | [`NamespaceRoleConnection!`](../object/namespaceroleconnection.md) | Roles of the namespace |
 | `runtimes` | [`RuntimeConnection!`](../object/runtimeconnection.md) | Runtime of the namespace |
+| `storageAvailableBytes` | [`BigInt!`](../scalar/bigint.md) | Remaining storage available, in bytes |
+| `storageQuotaBytes` | [`BigInt!`](../scalar/bigint.md) | Total storage the namespace may use, in bytes |
+| `storageUsedBytes` | [`BigInt!`](../scalar/bigint.md) | Committed storage currently used, in bytes |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this Namespace was last updated |
 | `userAbilities` | [`NamespaceUserAbilities!`](../object/namespaceuserabilities.md) | Abilities for the current user on this Namespace |
 

@@ -50,6 +50,8 @@ class AuditEvent < ApplicationRecord
     guest_user_created: 44, # Cloud-specific
     guest_profile_completed: 45, # Cloud-specific
     user_custom_attribute_updated: 46, # Cloud-specific
+    storage_object_created: 47,
+    storage_object_deleted: 48,
   }.with_indifferent_access
 
   # rubocop:disable-next Lint/StructNewOverride

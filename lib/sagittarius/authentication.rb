@@ -13,14 +13,15 @@ module Sagittarius
       (authentication.nil? && !none?) || type == :invalid
     end
 
-    %i[none session crater_login crater].each do |t|
+    %i[none session crater_login crater runtime].each do |t|
       define_method :"#{t}?" do
         type == t
       end
     end
 
     def user
-      authentication&.user
+      # a runtime authentication carries a Runtime, which has no user
+      authentication.try(:user)
     end
 
     # for declarative-policy output

@@ -621,7 +621,9 @@ CREATE TABLE namespaces (
     parent_type character varying NOT NULL,
     parent_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    storage_quota_bytes bigint,
+    max_file_size_bytes bigint
 );
 
 CREATE SEQUENCE namespaces_id_seq
@@ -1201,6 +1203,32 @@ CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
 
+CREATE TABLE storage_objects (
+    id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    created_by_id bigint,
+    file_name text NOT NULL,
+    content_type text NOT NULL,
+    byte_size bigint DEFAULT 0 NOT NULL,
+    checksum text,
+    execution_identifier text,
+    status integer DEFAULT 0 NOT NULL,
+    origin integer DEFAULT 0 NOT NULL,
+    expires_at timestamp with time zone,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    CONSTRAINT storage_objects_file_name_length CHECK ((char_length(file_name) <= 255))
+);
+
+CREATE SEQUENCE storage_objects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE storage_objects_id_seq OWNED BY storage_objects.id;
+
 CREATE TABLE sub_flow_parameters (
     id bigint CONSTRAINT sub_flow_settings_id_not_null NOT NULL,
     sub_flow_id bigint CONSTRAINT sub_flow_settings_sub_flow_id_not_null NOT NULL,
@@ -1494,6 +1522,8 @@ ALTER TABLE ONLY runtime_statuses ALTER COLUMN id SET DEFAULT nextval('runtime_s
 
 ALTER TABLE ONLY runtimes ALTER COLUMN id SET DEFAULT nextval('runtimes_id_seq'::regclass);
 
+ALTER TABLE ONLY storage_objects ALTER COLUMN id SET DEFAULT nextval('storage_objects_id_seq'::regclass);
+
 ALTER TABLE ONLY sub_flow_parameters ALTER COLUMN id SET DEFAULT nextval('sub_flow_parameters_id_seq'::regclass);
 
 ALTER TABLE ONLY sub_flows ALTER COLUMN id SET DEFAULT nextval('sub_flows_id_seq'::regclass);
@@ -1694,6 +1724,9 @@ ALTER TABLE ONLY runtimes
 
 ALTER TABLE ONLY schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+ALTER TABLE ONLY storage_objects
+    ADD CONSTRAINT storage_objects_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY sub_flow_parameters
     ADD CONSTRAINT sub_flow_parameters_pkey PRIMARY KEY (id);
@@ -1944,6 +1977,12 @@ CREATE INDEX index_runtimes_on_namespace_id ON runtimes USING btree (namespace_i
 
 CREATE UNIQUE INDEX index_runtimes_on_token ON runtimes USING btree (token);
 
+CREATE INDEX index_storage_objects_on_created_by_id ON storage_objects USING btree (created_by_id);
+
+CREATE INDEX index_storage_objects_on_expires_at ON storage_objects USING btree (expires_at) WHERE (expires_at IS NOT NULL);
+
+CREATE INDEX index_storage_objects_on_project_id_and_status ON storage_objects USING btree (project_id, status);
+
 CREATE INDEX index_sub_flow_parameters_on_sub_flow_id ON sub_flow_parameters USING btree (sub_flow_id);
 
 CREATE INDEX index_sub_flows_on_function_definition_id ON sub_flows USING btree (function_definition_id);
@@ -2184,6 +2223,9 @@ ALTER TABLE ONLY user_sessions
 ALTER TABLE ONLY namespace_members
     ADD CONSTRAINT fk_rails_a0a760b9b4 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY storage_objects
+    ADD CONSTRAINT fk_rails_a662eb6e5e FOREIGN KEY (created_by_id) REFERENCES users(id);
+
 ALTER TABLE ONLY sub_flows
     ADD CONSTRAINT fk_rails_a99aa3478f FOREIGN KEY (function_definition_id) REFERENCES function_definitions(id) ON DELETE RESTRICT;
 
@@ -2213,6 +2255,9 @@ ALTER TABLE ONLY user_project_pins
 
 ALTER TABLE ONLY namespace_project_runtime_assignments
     ADD CONSTRAINT fk_rails_c019e5b233 FOREIGN KEY (namespace_project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY storage_objects
+    ADD CONSTRAINT fk_rails_c2f10ce1f4 FOREIGN KEY (project_id) REFERENCES namespace_projects(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY active_storage_attachments
     ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES active_storage_blobs(id);
