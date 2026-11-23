@@ -14,6 +14,7 @@ RSpec.describe SagittariusSchema.types['ParameterDefinition'] do
       defaultValue
       optional
       hidden
+      removedAt
       createdAt
       updatedAt
     ]

@@ -17,5 +17,6 @@ Represents a parameter definition
 | `identifier` | [`String!`](../scalar/string.md) | Identifier of the parameter |
 | `names` | [`[Translation!]`](../object/translation.md) | Name of the parameter |
 | `optional` | [`Boolean!`](../scalar/boolean.md) | Indicates if the parameter is optional |
+| `removedAt` | [`Time`](../scalar/time.md) | The timestamp when this parameter definition was soft removed |
 | `runtimeParameterDefinition` | [`RuntimeParameterDefinition`](../object/runtimeparameterdefinition.md) | Runtime parameter definition |
 | `updatedAt` | [`Time!`](../scalar/time.md) | Time when this ParameterDefinition was last updated |

@@ -24,11 +24,18 @@ module Types
     field :hidden, Boolean, null: false, description: 'Indicates if the parameter is hidden'
     field :optional, Boolean, null: false, description: 'Indicates if the parameter is optional'
 
+    field :removed_at, Types::TimeType, null: true,
+                                        description: 'The timestamp when this parameter definition was soft removed'
+
     id_field ParameterDefinition
     timestamps
 
     def identifier
       object.runtime_parameter_definition&.runtime_name
+    end
+
+    def removed_at
+      object.runtime_parameter_definition&.removed_at
     end
   end
 end

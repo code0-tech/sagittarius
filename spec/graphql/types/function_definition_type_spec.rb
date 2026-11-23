@@ -22,6 +22,7 @@ RSpec.describe SagittariusSchema.types['FunctionDefinition'] do
       displayIcon
       design
       linkedDataTypes
+      removedAt
       createdAt
       updatedAt
     ]
