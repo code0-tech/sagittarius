@@ -48,6 +48,9 @@ module Types
           null: false,
           description: 'All data types referenced within this function definition'
 
+    field :removed_at, Types::TimeType, null: true,
+                                        description: 'The timestamp when this function definition was soft removed'
+
     id_field FunctionDefinition
     timestamps
 
