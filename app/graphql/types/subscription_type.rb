@@ -8,6 +8,6 @@ module Types
 
     mount_subscription Subscriptions::Ai::GenerateFlow
     mount_subscription Subscriptions::Echo
-    mount_subscription Subscriptions::Namespaces::Projects::Flows::ExecutionResult
+    mount_subscription Subscriptions::Namespaces::Projects::Flows::Execution
   end
 end

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'namespacesProjectsFlowsExecutionResult Subscription', type: :channel do
+RSpec.describe 'namespacesProjectsFlowsExecution Subscription', type: :channel do
   include AuthenticationHelpers
   include ActionCable::Channel::TestCase::Behavior
 
@@ -17,25 +17,8 @@ RSpec.describe 'namespacesProjectsFlowsExecutionResult Subscription', type: :cha
   let(:subscription_query) do
     <<~GQL
       subscription($flowId: FlowID!) {
-        namespacesProjectsFlowsExecutionResult(flowId: $flowId) {
-          executionResult {
-            success
-            nodeResults {
-              nodes {
-                success {
-                  ... on RawValue {
-                    value
-                  }
-                  ... on SubFlowFunctionResult {
-                    name
-                  }
-                }
-                parameterResults {
-                  value
-                }
-              }
-            }
-          }
+        namespacesProjectsFlowsExecution(flowId: $flowId) {
+          executionIdentifier
         }
       }
     GQL
@@ -49,38 +32,46 @@ RSpec.describe 'namespacesProjectsFlowsExecutionResult Subscription', type: :cha
   end
 
   context 'when subscribing' do
-    it 'does not deliver an execution result in the initial subscription response' do
+    it 'does not deliver an execution identifier in the initial subscription response' do
       perform :execute, query: subscription_query, variables: { flowId: flow.to_global_id.to_s }
 
-      execution_result = transmissions.last.dig('result', 'data', 'namespacesProjectsFlowsExecutionResult')
+      execution_result = transmissions.last.dig('result', 'data', 'namespacesProjectsFlowsExecution')
       expect(execution_result).to be_nil
     end
   end
 
   context 'when a new execution result is persisted for the flow after subscribing' do
-    it 'streams the result to the subscriber' do
+    it 'streams the execution identifier to the subscriber' do
       perform :execute, query: subscription_query, variables: { flowId: flow.to_global_id.to_s }
 
       result = create(:execution_result, flow: flow, success: { 'first' => true })
       SubscriptionTriggers.execution_result(result)
 
       first_transmission = transmissions.last
-      execution_result = first_transmission.dig('result', 'data', 'namespacesProjectsFlowsExecutionResult',
-                                                'executionResult')
-      expect(execution_result['success']).to eq({ 'first' => true })
+      execution_identifier = first_transmission.dig(
+        'result',
+        'data',
+        'namespacesProjectsFlowsExecution',
+        'executionIdentifier'
+      )
+      expect(execution_identifier).to eq(result.execution_identifier)
 
       other_result = create(:execution_result, flow: flow, success: { 'second' => true })
       SubscriptionTriggers.execution_result(other_result)
 
       second_transmission = transmissions.last
-      second_execution_result = second_transmission.dig('result', 'data', 'namespacesProjectsFlowsExecutionResult',
-                                                        'executionResult')
-      expect(second_execution_result['success']).to eq({ 'second' => true })
+      second_execution_identifier = second_transmission.dig(
+        'result',
+        'data',
+        'namespacesProjectsFlowsExecution',
+        'executionIdentifier'
+      )
+      expect(second_execution_identifier).to eq(other_result.execution_identifier)
     end
   end
 
   context 'when a result for a different flow is triggered' do
-    it 'does not deliver the result to the subscriber' do
+    it 'does not deliver the execution identifier to the subscriber' do
       perform :execute, query: subscription_query, variables: { flowId: flow.to_global_id.to_s }
       transmission_count_before_trigger = transmissions.count
 
