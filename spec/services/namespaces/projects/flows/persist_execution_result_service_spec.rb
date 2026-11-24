@@ -472,20 +472,20 @@ RSpec.describe Namespaces::Projects::Flows::PersistExecutionResultService do
       perform :execute,
               query: <<~GQL,
                 subscription($flowId: FlowID!) {
-                  namespacesProjectsFlowsExecutionResult(flowId: $flowId) {
-                    executionResult { success }
+                  namespacesProjectsFlowsExecution(flowId: $flowId) {
+                    executionIdentifier
                   }
                 }
               GQL
               variables: { flowId: flow.to_global_id.to_s }
     end
 
-    it 'delivers the execution result to subscribers without visibility profile error' do
+    it 'delivers the execution identifier to subscribers without visibility profile error' do
       service_response
 
       result = transmissions.last
-      expect(result.dig('result', 'data', 'namespacesProjectsFlowsExecutionResult', 'executionResult', 'success'))
-        .to eq({ 'result' => true })
+      expect(result.dig('result', 'data', 'namespacesProjectsFlowsExecution', 'executionIdentifier'))
+        .to eq(service_response.payload.execution_identifier)
     end
   end
 end
