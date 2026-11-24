@@ -12,7 +12,7 @@ module Types
                required: true,
                description: 'The identifier of the sub-flow parameter'
       argument :value, Types::Input::NodeParameterValueInputType,
-               required: true,
+               required: false,
                description: 'The value of the sub-flow parameter'
     end
   end
