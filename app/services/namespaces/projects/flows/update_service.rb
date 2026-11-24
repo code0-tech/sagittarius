@@ -141,7 +141,7 @@ module Namespaces
         end
 
         def update_node(t, current_node, current_node_input)
-          function_definition = flow.project.primary_runtime.function_definitions.find_by(
+          function_definition = flow.namespace_project.primary_runtime.function_definitions.find_by(
             id: current_node_input.function_definition_id.model_id
           )
           if function_definition.nil?
@@ -274,7 +274,7 @@ module Namespaces
             :flow_updated,
             author_id: current_authentication.user.id,
             entity: flow,
-            target: flow.project,
+            target: flow.namespace_project,
             details: {
               **flow.attributes.except('created_at', 'updated_at'),
             }
@@ -297,7 +297,7 @@ module Namespaces
 
             starting_node = starting_node_reference[:node]
           elsif sub_flow_input.function_identifier.present?
-            function_definition = flow.project.primary_runtime.function_definitions.find_by(
+            function_definition = flow.namespace_project.primary_runtime.function_definitions.find_by(
               identifier: sub_flow_input.function_identifier
             )
 

@@ -9,7 +9,7 @@ RSpec.describe Namespaces::Projects::Flows::RecordExecutionUsageService do
     it 'records a single denormalized usage row for the flow/project/namespace' do
       described_class.new(flow: flow, duration: 2_500).execute
 
-      project = flow.project
+      project = flow.namespace_project
 
       expect(RuntimeUsageDailyAggregate.find_by(flow_id: flow.id, date: Time.zone.today)).to have_attributes(
         execution_count: 1,

@@ -72,7 +72,7 @@ RSpec.describe DataTypesFinder do
 
     context 'with flow parameter' do
       let(:project) { create(:namespace_project) }
-      let(:flow) { create(:flow, project: project) }
+      let(:flow) { create(:flow, namespace_project: project) }
 
       before do
         create(:flow_data_type_link, flow: flow, referenced_data_type: data_type1)

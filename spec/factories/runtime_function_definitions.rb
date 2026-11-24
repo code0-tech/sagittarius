@@ -7,7 +7,7 @@ FactoryBot.define do
     runtime_name { generate(:runtime_function_definition_name) }
     runtime
     runtime_module { association(:runtime_module, runtime: runtime) }
-    parameters { [] }
+    runtime_parameter_definitions { [] }
     signature { '(): undefined' }
     version { '0.0.0' }
     definition_source { 'sagittarius' }

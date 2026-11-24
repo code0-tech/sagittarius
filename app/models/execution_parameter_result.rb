@@ -13,7 +13,7 @@ class ExecutionParameterResult < ApplicationRecord
 
   belongs_to :execution_node_result,
              foreign_key: %i[execution_node_result_id created_at],
-             inverse_of: :parameter_results
+             inverse_of: :execution_parameter_results
 
   validates :position, presence: true, numericality: { only_integer: true }
 end

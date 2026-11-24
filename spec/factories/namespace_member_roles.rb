@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :namespace_member_role do
-    role factory: :namespace_role
-    member factory: :namespace_member
+    namespace_role factory: :namespace_role
+    namespace_member factory: :namespace_member
   end
 end

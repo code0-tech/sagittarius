@@ -40,8 +40,8 @@ class User < ApplicationRecord
   has_many :user_sessions, inverse_of: :user
   has_many :authored_audit_events, class_name: 'AuditEvent', inverse_of: :author
 
-  has_many :namespace_memberships, class_name: 'NamespaceMember', inverse_of: :user
-  has_many :namespaces, through: :namespace_memberships, inverse_of: :users
+  has_many :namespace_members, class_name: 'NamespaceMember', inverse_of: :user
+  has_many :namespaces, through: :namespace_members, inverse_of: :users
 
   has_many :user_identities, inverse_of: :user
   has_many :user_custom_attributes, inverse_of: :user

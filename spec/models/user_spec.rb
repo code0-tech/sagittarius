@@ -8,8 +8,8 @@ RSpec.describe User do
   describe 'associations' do
     it { is_expected.to have_many(:user_sessions).inverse_of(:user) }
     it { is_expected.to have_many(:authored_audit_events).class_name('AuditEvent').inverse_of(:author) }
-    it { is_expected.to have_many(:namespace_memberships).class_name('NamespaceMember').inverse_of(:user) }
-    it { is_expected.to have_many(:namespaces).through(:namespace_memberships).inverse_of(:users) }
+    it { is_expected.to have_many(:namespace_members).class_name('NamespaceMember').inverse_of(:user) }
+    it { is_expected.to have_many(:namespaces).through(:namespace_members).inverse_of(:users) }
     it { is_expected.to have_many(:user_custom_attributes).inverse_of(:user) }
     it { is_expected.to have_many(:user_namespace_pins).inverse_of(:user) }
     it { is_expected.to have_many(:user_project_pins).inverse_of(:user) }

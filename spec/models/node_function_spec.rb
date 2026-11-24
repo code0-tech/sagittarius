@@ -21,19 +21,19 @@ RSpec.describe NodeFunction do
         :runtime_function_definition,
         runtime: runtime
       ).tap do |rfd|
-        rfd.parameters << create(
+        rfd.runtime_parameter_definitions << create(
           :runtime_parameter_definition,
           runtime_function_definition: rfd,
           runtime_name: 'param1'
         )
 
-        rfd.parameters << create(
+        rfd.runtime_parameter_definitions << create(
           :runtime_parameter_definition,
           runtime_function_definition: rfd,
           runtime_name: 'param2'
         )
 
-        rfd.parameters << create(
+        rfd.runtime_parameter_definitions << create(
           :runtime_parameter_definition,
           runtime_function_definition: rfd,
           runtime_name: 'param3'
@@ -58,7 +58,7 @@ RSpec.describe NodeFunction do
           node_function: node,
           parameter_definition: create(
             :parameter_definition,
-            runtime_parameter_definition: runtime_function_definition.parameters[1]
+            runtime_parameter_definition: runtime_function_definition.runtime_parameter_definitions[1]
           )
         )
         node.node_parameters << create(
@@ -66,7 +66,7 @@ RSpec.describe NodeFunction do
           node_function: node,
           parameter_definition: create(
             :parameter_definition,
-            runtime_parameter_definition: runtime_function_definition.parameters[2]
+            runtime_parameter_definition: runtime_function_definition.runtime_parameter_definitions[2]
           )
         )
         node.node_parameters << create(
@@ -74,7 +74,7 @@ RSpec.describe NodeFunction do
           node_function: node,
           parameter_definition: create(
             :parameter_definition,
-            runtime_parameter_definition: runtime_function_definition.parameters[0]
+            runtime_parameter_definition: runtime_function_definition.runtime_parameter_definitions[0]
           )
         )
       end
@@ -91,7 +91,7 @@ RSpec.describe NodeFunction do
     end
 
     it 'excludes node parameters whose runtime parameter definition was removed' do
-      runtime_function_definition.parameters[1].update!(removed_at: Time.current)
+      runtime_function_definition.runtime_parameter_definitions[1].update!(removed_at: Time.current)
 
       expect(node_function.ordered_parameters.to_a).to eq(
         [

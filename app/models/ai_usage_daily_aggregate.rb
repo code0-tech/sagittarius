@@ -20,7 +20,8 @@ class AiUsageDailyAggregate < ApplicationRecord
   # flow/project/namespace may have been deleted while this usage row, tied to the license,
   # must persist.
   belongs_to :flow, inverse_of: :ai_usage_daily_aggregates, optional: true
-  belongs_to :project, class_name: 'NamespaceProject', inverse_of: :ai_usage_daily_aggregates, optional: true
+  belongs_to :namespace_project, class_name: 'NamespaceProject', foreign_key: :project_id,
+                                 inverse_of: :ai_usage_daily_aggregates, optional: true
   belongs_to :namespace, inverse_of: :ai_usage_daily_aggregates, optional: true
 
   validates :date, presence: true, uniqueness: { scope: %i[project_id flow_id] }

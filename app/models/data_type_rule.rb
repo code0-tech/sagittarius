@@ -8,7 +8,7 @@ class DataTypeRule < ApplicationRecord
 
   enum :variant, VARIANTS, prefix: :variant
 
-  belongs_to :data_type, inverse_of: :rules
+  belongs_to :data_type, inverse_of: :data_type_rules
 
   validates :variant, presence: true,
                       inclusion: {

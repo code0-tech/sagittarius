@@ -12,6 +12,7 @@ module Types
     field :name, String, null: false, description: 'The name for the runtime'
     field :namespace, Types::NamespaceType, null: true, description: 'The parent namespace for the runtime'
     field :projects, Types::NamespaceProjectType.connection_type, null: false,
+                                                                  method: :namespace_projects,
                                                                   description: 'Projects associated with the runtime'
     field :status, Types::RuntimeStatusType, null: false, description: 'The status of the runtime',
                                              method: :runtime_status

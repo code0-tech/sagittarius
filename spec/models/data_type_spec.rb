@@ -11,7 +11,7 @@ RSpec.describe DataType do
     it { is_expected.to have_many(:names).class_name('Translation') }
     it { is_expected.to have_many(:aliases).class_name('Translation') }
     it { is_expected.to have_many(:display_messages).class_name('Translation') }
-    it { is_expected.to have_many(:rules).class_name('DataTypeRule').inverse_of(:data_type) }
+    it { is_expected.to have_many(:data_type_rules).class_name('DataTypeRule').inverse_of(:data_type) }
     it { is_expected.to have_many(:data_type_data_type_links).inverse_of(:data_type) }
 
     it do

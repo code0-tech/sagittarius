@@ -7,8 +7,8 @@ RSpec.describe RuntimeUsageDailyAggregate do
     it { is_expected.to belong_to(:flow).inverse_of(:runtime_usage_daily_aggregates).optional }
 
     it {
-      is_expected.to belong_to(:project).class_name('NamespaceProject')
-                                        .inverse_of(:runtime_usage_daily_aggregates).optional
+      is_expected.to belong_to(:namespace_project).class_name('NamespaceProject')
+                                                  .inverse_of(:runtime_usage_daily_aggregates).optional
     }
 
     it { is_expected.to belong_to(:namespace).inverse_of(:runtime_usage_daily_aggregates).optional }
@@ -22,7 +22,7 @@ RSpec.describe RuntimeUsageDailyAggregate do
 
   describe '.record_execution!' do
     let(:flow) { create(:flow) }
-    let(:project) { flow.project }
+    let(:project) { flow.namespace_project }
     let(:date) { Time.zone.today }
 
     def record(execution_time_us:, record_date: date, count: 1)

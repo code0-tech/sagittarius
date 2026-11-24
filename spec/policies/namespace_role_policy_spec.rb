@@ -11,8 +11,8 @@ RSpec.describe NamespaceRolePolicy do
   context 'when role is the personal namespace owner administrator role' do
     let(:namespace) { current_user.ensure_namespace }
     let(:namespace_role) do
-      namespace.namespace_members.find_by(user: current_user).roles
-               .joins(:abilities)
+      namespace.namespace_members.find_by(user: current_user).namespace_roles
+               .joins(:namespace_role_abilities)
                .find_by(namespace_role_abilities: { ability: :namespace_administrator })
     end
 

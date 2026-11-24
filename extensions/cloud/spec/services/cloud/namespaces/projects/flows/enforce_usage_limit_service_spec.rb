@@ -9,7 +9,7 @@ RSpec.describe Namespaces::Projects::Flows::EnforceUsageLimitService do
 
   let(:namespace) { create(:namespace) }
   let(:project) { create(:namespace_project, namespace: namespace) }
-  let(:flow) { create(:flow, project: project) }
+  let(:flow) { create(:flow, namespace_project: project) }
 
   before do
     allow(FlowHandler).to receive(:update_flow)
@@ -18,7 +18,8 @@ RSpec.describe Namespaces::Projects::Flows::EnforceUsageLimitService do
   def record_usage(for_flow, count, date: Date.current)
     count.times do
       RuntimeUsageDailyAggregate.record_execution!(
-        flow_id: for_flow.id, project_id: for_flow.project.id, namespace_id: for_flow.project.namespace_id,
+        flow_id: for_flow.id, project_id: for_flow.namespace_project.id,
+        namespace_id: for_flow.namespace_project.namespace_id,
         date: date, execution_time_us: 1, unique_by: %i[flow_id date]
       )
     end
@@ -86,7 +87,7 @@ RSpec.describe Namespaces::Projects::Flows::EnforceUsageLimitService do
     subject(:reenable_response) { described_class.new(namespace: namespace).reenable_flows }
 
     let!(:flow) do
-      create(:flow, project: project, disabled_reason: :usage_limit_exceeded,
+      create(:flow, namespace_project: project, disabled_reason: :usage_limit_exceeded,
                     disabled_until: Date.new(2026, 10, 15))
     end
 

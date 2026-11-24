@@ -84,7 +84,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
       create(:flow_type_setting, flow_type: ft, identifier: 'setting')
     end
   end
-  let(:flow) { create(:flow, project: project, flow_type: flow_type) }
+  let(:flow) { create(:flow, namespace_project: project, flow_type: flow_type) }
   let(:function_definition) do
     rfd = create(:runtime_function_definition, runtime: runtime)
     rpd = create(:runtime_parameter_definition, runtime_function_definition: rfd)
@@ -363,7 +363,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     end
 
     let(:flow) do
-      create(:flow, project: project, flow_type: flow_type).tap do |f|
+      create(:flow, namespace_project: project, flow_type: flow_type).tap do |f|
         node = create(:node_function, flow: f, function_definition: function_definition)
         create(
           :node_parameter,
@@ -405,7 +405,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     end
 
     let(:flow) do
-      create(:flow, project: project, flow_type: flow_type).tap do |f|
+      create(:flow, namespace_project: project, flow_type: flow_type).tap do |f|
         node1 = create(:node_function, flow: f, function_definition: function_definition)
         node2 = create(:node_function, flow: f, function_definition: function_definition)
         f.starting_node = node1
@@ -458,7 +458,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     end
 
     let(:flow) do
-      create(:flow, project: project, flow_type: flow_type).tap do |f|
+      create(:flow, namespace_project: project, flow_type: flow_type).tap do |f|
         node1 = create(:node_function, flow: f, function_definition: function_definition)
         parameter = create(:node_parameter,
                            node_function: node1,
@@ -520,7 +520,7 @@ RSpec.describe 'namespacesProjectsFlowsUpdate Mutation' do
     end
 
     let(:flow) do
-      create(:flow, project: project, flow_type: flow_type).tap do |f|
+      create(:flow, namespace_project: project, flow_type: flow_type).tap do |f|
         node1 = create(:node_function, flow: f, function_definition: function_definition)
         parameter = create(:node_parameter,
                            node_function: node1,

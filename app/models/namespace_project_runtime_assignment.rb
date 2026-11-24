@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class NamespaceProjectRuntimeAssignment < ApplicationRecord
-  belongs_to :runtime, inverse_of: :project_assignments
-  belongs_to :namespace_project, inverse_of: :runtime_assignments
+  belongs_to :runtime, inverse_of: :namespace_project_runtime_assignments
+  belongs_to :namespace_project, inverse_of: :namespace_project_runtime_assignments
 
   has_many :module_configurations,
            inverse_of: :namespace_project_runtime_assignment

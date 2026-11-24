@@ -14,13 +14,14 @@ RSpec.describe Runtime do
     it { is_expected.to have_many(:flow_types).inverse_of(:runtime) }
 
     it {
-      is_expected.to have_many(:project_assignments).class_name('NamespaceProjectRuntimeAssignment')
-                                                    .inverse_of(:runtime)
+      is_expected.to have_many(:namespace_project_runtime_assignments).class_name('NamespaceProjectRuntimeAssignment')
+                                                                      .inverse_of(:runtime)
     }
 
     it {
-      is_expected.to have_many(:projects).class_name('NamespaceProject').through(:project_assignments)
-                                         .inverse_of(:runtimes)
+      is_expected.to have_many(:namespace_projects).class_name('NamespaceProject')
+                                                   .through(:namespace_project_runtime_assignments)
+                                                   .inverse_of(:runtimes)
     }
 
     it { is_expected.to have_one(:runtime_status).inverse_of(:runtime) }

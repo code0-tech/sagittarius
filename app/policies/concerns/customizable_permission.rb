@@ -35,19 +35,18 @@ module CustomizablePermission
     def user_has_ability?(ability, user, subject)
       return false if namespace_member(user, subject).nil?
 
-      roles = namespace_member(user, subject).roles
+      roles = namespace_member(user, subject).namespace_roles
 
       project = project_scope(subject)
       roles = roles.applicable_to_project(project) if project.present?
 
-      roles.joins(:abilities).exists?(namespace_role_abilities: { ability: ability })
+      roles.joins(:namespace_role_abilities).exists?(namespace_role_abilities: { ability: ability })
     end
 
     def project_scope(subject)
       return subject if subject.is_a?(NamespaceProject)
-      return subject.namespace_project if subject.respond_to?(:namespace_project)
 
-      subject.project if subject.respond_to?(:project)
+      subject.namespace_project if subject.respond_to?(:namespace_project)
     end
   end
 end

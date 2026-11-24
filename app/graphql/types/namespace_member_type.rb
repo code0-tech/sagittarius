@@ -9,8 +9,11 @@ module Types
     field :namespace, Types::NamespaceType, null: false, description: 'Namespace this member belongs to'
     field :user, Types::UserType, null: false, description: 'User this member belongs to'
 
-    field :member_roles, NamespaceMemberRoleType.connection_type, null: false, description: 'Memberroles of the member'
-    field :roles, NamespaceRoleType.connection_type, null: false, description: 'Roles of the member'
+    field :member_roles, NamespaceMemberRoleType.connection_type, null: false,
+                                                                  method: :namespace_member_roles,
+                                                                  description: 'Memberroles of the member'
+    field :roles, NamespaceRoleType.connection_type, null: false, method: :namespace_roles,
+                                                     description: 'Roles of the member'
 
     expose_abilities %i[
       assign_member_roles

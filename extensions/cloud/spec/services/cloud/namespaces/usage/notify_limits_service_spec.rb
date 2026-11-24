@@ -15,7 +15,7 @@ RSpec.describe Namespaces::Usage::NotifyLimitsService do
     member = create(:namespace_member, namespace: namespace, user: namespace_administrator)
     role = create(:namespace_role, namespace: namespace)
     create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
-    create(:namespace_member_role, role: role, member: member)
+    create(:namespace_member_role, namespace_role: role, namespace_member: member)
   end
 
   def record_ai_usage(for_project, tokens)

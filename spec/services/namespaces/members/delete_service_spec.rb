@@ -10,12 +10,12 @@ RSpec.describe Namespaces::Members::DeleteService do
   let!(:admin_role) do
     create(:namespace_role, namespace: namespace).tap do |role|
       create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
-      create(:namespace_member_role, role: role)
+      create(:namespace_member_role, namespace_role: role)
     end
   end
   let!(:admin) do
     create(:namespace_member, namespace: namespace).tap do |member|
-      create(:namespace_member_role, member: member, role: admin_role)
+      create(:namespace_member_role, namespace_member: member, namespace_role: admin_role)
     end
   end
 
@@ -96,7 +96,8 @@ RSpec.describe Namespaces::Members::DeleteService do
       create(:user_namespace_pin, user: namespace_member.user, namespace: namespace)
     end
     let!(:project_pin) do
-      create(:user_project_pin, user: namespace_member.user, project: create(:namespace_project, namespace: namespace))
+      create(:user_project_pin, user: namespace_member.user,
+                                namespace_project: create(:namespace_project, namespace: namespace))
     end
 
     before do

@@ -3,7 +3,7 @@
 class RuntimeParameterDefinition < ApplicationRecord
   include HasTranslation
 
-  belongs_to :runtime_function_definition, inverse_of: :parameters
+  belongs_to :runtime_function_definition, inverse_of: :runtime_parameter_definitions
 
   has_translation :names, purpose: :name
   has_translation :descriptions, purpose: :description

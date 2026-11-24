@@ -7,15 +7,26 @@ RSpec.describe NamespaceRole do
 
   describe 'associations' do
     it { is_expected.to belong_to(:namespace).required }
-    it { is_expected.to have_many(:member_roles).class_name('NamespaceMemberRole').inverse_of(:role) }
-    it { is_expected.to have_many(:members).class_name('NamespaceMember').through(:member_roles).inverse_of(:roles) }
-    it { is_expected.to have_many(:project_assignments).class_name('NamespaceRoleProjectAssignment').inverse_of(:role) }
+
+    it {
+      is_expected.to have_many(:namespace_member_roles).class_name('NamespaceMemberRole').inverse_of(:namespace_role)
+    }
+
+    it {
+      is_expected.to have_many(:namespace_members).class_name('NamespaceMember').through(:namespace_member_roles)
+                                                  .inverse_of(:namespace_roles)
+    }
+
+    it {
+      is_expected.to have_many(:namespace_role_project_assignments).class_name('NamespaceRoleProjectAssignment')
+                                                                   .inverse_of(:namespace_role)
+    }
 
     it do
-      is_expected.to have_many(:assigned_projects).class_name('NamespaceProject')
-                                                  .through(:project_assignments)
-                                                  .source(:project)
-                                                  .inverse_of(:assigned_roles)
+      is_expected.to have_many(:namespace_projects).class_name('NamespaceProject')
+                                                   .through(:namespace_role_project_assignments)
+                                                   .source(:namespace_project)
+                                                   .inverse_of(:namespace_roles)
     end
   end
 

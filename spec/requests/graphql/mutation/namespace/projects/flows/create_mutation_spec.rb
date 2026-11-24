@@ -151,12 +151,12 @@ RSpec.describe 'namespacesProjectsFlowsCreate Mutation' do
         create(:namespace_role_ability, namespace_role: role, ability: :read_namespace_project)
       end
       namespace_member = create(:namespace_member, namespace: project.namespace, user: current_user)
-      create(:namespace_member_role, role: namespace_role, member: namespace_member)
+      create(:namespace_member_role, namespace_role: namespace_role, namespace_member: namespace_member)
     end
 
     context 'when flow name is taken' do
       before do
-        create(:flow, name: input[:flow][:name], project: project)
+        create(:flow, name: input[:flow][:name], namespace_project: project)
       end
 
       it 'returns an error' do

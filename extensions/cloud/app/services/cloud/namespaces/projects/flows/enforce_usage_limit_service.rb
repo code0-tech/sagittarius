@@ -38,7 +38,7 @@ module CLOUD
 
           override :flows_in_scope
           def flows_in_scope
-            Flow.where(project: NamespaceProject.where(namespace_id: namespace.id))
+            Flow.where(namespace_project: NamespaceProject.where(namespace_id: namespace.id))
           end
 
           private
@@ -46,7 +46,7 @@ module CLOUD
           # Enforcement derives the namespace from the flow being recorded; a license-triggered
           # re-enable passes the namespace explicitly, as there is no single flow in context.
           def namespace
-            @namespace || flow.project.namespace
+            @namespace || flow.namespace_project.namespace
           end
         end
       end

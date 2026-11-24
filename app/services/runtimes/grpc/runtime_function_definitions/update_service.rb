@@ -83,8 +83,10 @@ module Runtimes
             )
           end
 
-          db_object.parameters = update_parameters(db_object, runtime_function_definition.runtime_parameter_definitions,
-                                                   db_object.parameters, t)
+          db_object.runtime_parameter_definitions = update_parameters(
+            db_object, runtime_function_definition.runtime_parameter_definitions,
+            db_object.runtime_parameter_definitions, t
+          )
 
           link_data_types(db_object, runtime_function_definition.linked_data_type_identifiers, t)
           db_object

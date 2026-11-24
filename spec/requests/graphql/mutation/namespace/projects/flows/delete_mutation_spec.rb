@@ -23,7 +23,9 @@ RSpec.describe 'namespacesProjectsFlowsDelete Mutation' do
   let(:namespace_project) { create(:namespace_project) }
   let(:starting_node) { create(:node_function) }
   let(:flow_type) { create(:flow_type) }
-  let!(:flow) { create(:flow, project: namespace_project, flow_type: flow_type, starting_node: starting_node) }
+  let!(:flow) do
+    create(:flow, namespace_project: namespace_project, flow_type: flow_type, starting_node: starting_node)
+  end
   let(:input) do
     {
       flowId: flow.to_global_id.to_s,
@@ -40,7 +42,7 @@ RSpec.describe 'namespacesProjectsFlowsDelete Mutation' do
         create(:namespace_role_ability, namespace_role: role, ability: :read_namespace_project)
       end
       namespace_member = create(:namespace_member, namespace: namespace_project.namespace, user: current_user)
-      create(:namespace_member_role, role: namespace_role, member: namespace_member)
+      create(:namespace_member_role, namespace_role: namespace_role, namespace_member: namespace_member)
     end
 
     it 'deletes flow' do

@@ -162,7 +162,7 @@ RSpec.describe 'Crater authentication' do
       before do
         role = create(:namespace_role, namespace: namespace)
         create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator)
-        impersonated_user.namespace_memberships.find_by(namespace: namespace).roles << role
+        impersonated_user.namespace_members.find_by(namespace: namespace).namespace_roles << role
       end
 
       it 'reports readNamespaceOwnership as true' do

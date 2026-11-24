@@ -4,7 +4,7 @@ FactoryBot.define do
   sequence(:flow_name) { |n| "Flow#{n}" }
 
   factory :flow do
-    project factory: :namespace_project
+    namespace_project factory: :namespace_project
     flow_type
     validation_status { :unvalidated }
     starting_node { nil }

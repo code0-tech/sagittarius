@@ -10,7 +10,7 @@ RSpec.describe Namespace do
   describe 'associations' do
     it { is_expected.to belong_to(:parent).required }
     it { is_expected.to have_many(:namespace_members).inverse_of(:namespace) }
-    it { is_expected.to have_many(:roles).inverse_of(:namespace) }
+    it { is_expected.to have_many(:namespace_roles).inverse_of(:namespace) }
     it { is_expected.to have_many(:users).through(:namespace_members).inverse_of(:namespaces) }
     it { is_expected.to have_many(:user_namespace_pins).inverse_of(:namespace) }
   end
@@ -51,7 +51,7 @@ RSpec.describe Namespace do
       member = create(:namespace_member, namespace: namespace, user: user)
       role = create(:namespace_role, namespace: namespace)
       create(:namespace_role_ability, namespace_role: role, ability: :namespace_administrator) if administrator
-      create(:namespace_member_role, role: role, member: member)
+      create(:namespace_member_role, namespace_role: role, namespace_member: member)
     end
 
     it 'finds the members holding the administrator ability' do
@@ -85,12 +85,12 @@ RSpec.describe Namespace do
       namespace = user.ensure_namespace
 
       owner_member = namespace.namespace_members.find_by(user: user)
-      administrator_role = namespace.roles
-                                    .joins(:abilities)
+      administrator_role = namespace.namespace_roles
+                                    .joins(:namespace_role_abilities)
                                     .find_by(namespace_role_abilities: { ability: :namespace_administrator })
 
       expect(owner_member).to be_present
-      expect(owner_member.roles).to include(administrator_role)
+      expect(owner_member.namespace_roles).to include(administrator_role)
     end
   end
 end

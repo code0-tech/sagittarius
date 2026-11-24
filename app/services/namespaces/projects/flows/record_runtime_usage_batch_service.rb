@@ -50,13 +50,13 @@ module Namespaces
         private
 
         def namespaces_of(flows)
-          flows.map { |flow| flow.project.namespace }.uniq
+          flows.map { |flow| flow.namespace_project.namespace }.uniq
         end
 
         def flow_for(flow_id)
           Flow
-            .includes(:project)
-            .joins(project: :runtime_assignments)
+            .includes(:namespace_project)
+            .joins(namespace_project: :namespace_project_runtime_assignments)
             .find_by(
               id: flow_id,
               namespace_project_runtime_assignments: { runtime_id: runtime_id }

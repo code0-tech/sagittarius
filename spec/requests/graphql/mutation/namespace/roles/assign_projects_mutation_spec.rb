@@ -38,7 +38,7 @@ RSpec.describe 'namespacesRolesAssignProjects Mutation' do
       stub_all_abilities(NamespacePolicy)
       stub_allowed_ability(NamespacePolicy, :assign_role_projects, user: current_user, subject: namespace)
       stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: current_user, subject: projects.first)
-      create(:namespace_role_project_assignment, role: role, project: projects.last)
+      create(:namespace_role_project_assignment, namespace_role: role, namespace_project: projects.last)
     end
 
     it 'assigns the given projects to the role' do

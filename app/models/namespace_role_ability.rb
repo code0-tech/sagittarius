@@ -34,7 +34,7 @@ class NamespaceRoleAbility < ApplicationRecord
 
   enum :ability, ABILITIES.transform_values { |v| v[:db] }, prefix: :can
 
-  belongs_to :namespace_role, inverse_of: :abilities, class_name: 'NamespaceRole'
+  belongs_to :namespace_role, inverse_of: :namespace_role_abilities, class_name: 'NamespaceRole'
 
   validates :ability, presence: true,
                       inclusion: {

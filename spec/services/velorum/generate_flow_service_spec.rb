@@ -175,7 +175,7 @@ RSpec.describe Velorum::GenerateFlowService do
       instance_double(
         Flow,
         id: 55,
-        project: project,
+        namespace_project: project,
         to_generation_grpc: Tucana::Shared::GenerationFlow.new(name: 'Existing flow')
       )
     end

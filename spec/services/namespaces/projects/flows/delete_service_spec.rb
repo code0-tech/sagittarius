@@ -8,7 +8,9 @@ RSpec.describe Namespaces::Projects::Flows::DeleteService do
   let(:namespace_project) { create(:namespace_project) }
   let(:starting_node) { create(:node_function) }
   let(:flow_type) { create(:flow_type) }
-  let!(:flow) { create(:flow, project: namespace_project, flow_type: flow_type, starting_node: starting_node) }
+  let!(:flow) do
+    create(:flow, namespace_project: namespace_project, flow_type: flow_type, starting_node: starting_node)
+  end
 
   shared_examples 'does not delete' do
     it { is_expected.to be_error }
@@ -54,7 +56,7 @@ RSpec.describe Namespaces::Projects::Flows::DeleteService do
         details: {
           **flow.attributes.except('created_at', 'updated_at'),
         },
-        target_id: flow.project.id,
+        target_id: flow.namespace_project.id,
         target_type: 'NamespaceProject'
       )
     end

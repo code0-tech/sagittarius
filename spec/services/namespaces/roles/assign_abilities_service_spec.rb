@@ -17,7 +17,7 @@ RSpec.describe Namespaces::Roles::AssignAbilitiesService do
 
   let!(:admin_role_member) do
     member = create(:namespace_member, namespace: admin_role.namespace, user: create(:user))
-    create(:namespace_member_role, role: admin_role, member: member)
+    create(:namespace_member_role, namespace_role: admin_role, namespace_member: member)
   end
 
   context 'when user is nil' do

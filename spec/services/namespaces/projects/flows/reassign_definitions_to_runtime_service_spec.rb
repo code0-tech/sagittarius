@@ -32,7 +32,7 @@ RSpec.describe Namespaces::Projects::Flows::ReassignDefinitionsToRuntimeService 
   let!(:new_pd) { create(:parameter_definition, runtime_parameter_definition: new_rpd, function_definition: new_fd) }
 
   let(:namespace_project) { create(:namespace_project, primary_runtime: old_runtime) }
-  let(:flow) { create(:flow, project: namespace_project, flow_type: old_flow_type) }
+  let(:flow) { create(:flow, namespace_project: namespace_project, flow_type: old_flow_type) }
 
   let!(:node) { create(:node_function, flow: flow, function_definition: old_fd) }
   let!(:node_parameter) { create(:node_parameter, node_function: node, parameter_definition: old_pd) }

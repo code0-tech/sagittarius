@@ -42,8 +42,8 @@ RSpec.describe 'namespacesProjectsFlowsExecutionResult Subscription', type: :cha
   end
 
   before do
-    create(:namespace_member, namespace: flow.project.namespace, user: user)
-    stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: user, subject: flow.project)
+    create(:namespace_member, namespace: flow.namespace_project.namespace, user: user)
+    stub_allowed_ability(NamespaceProjectPolicy, :read_namespace_project, user: user, subject: flow.namespace_project)
 
     subscribe(token: token)
   end

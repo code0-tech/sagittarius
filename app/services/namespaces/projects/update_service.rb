@@ -53,7 +53,7 @@ module Namespaces
       private
 
       def validate_new_primary_runtime(runtime_id, t)
-        assignment = namespace_project.runtime_assignments.find_by(runtime_id: runtime_id)
+        assignment = namespace_project.namespace_project_runtime_assignments.find_by(runtime_id: runtime_id)
 
         if assignment.blank?
           t.rollback_and_return! ServiceResponse.error(

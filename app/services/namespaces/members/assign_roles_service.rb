@@ -27,15 +27,15 @@ module Namespaces
         end
 
         transactional do |t|
-          current_roles = member.member_roles.preload(:role)
+          current_roles = member.namespace_member_roles.preload(:namespace_role)
           old_roles_for_audit_event = current_roles.map do |member_role|
-            { id: member_role.role.id, name: member_role.role.name }
+            { id: member_role.namespace_role.id, name: member_role.namespace_role.name }
           end
 
-          current_roles.where.not(role: roles).delete_all
+          current_roles.where.not(namespace_role: roles).delete_all
 
-          (roles - current_roles.map(&:role)).map do |role|
-            namespace_member_role = NamespaceMemberRole.create(member: member, role: role)
+          (roles - current_roles.map(&:namespace_role)).map do |role|
+            namespace_member_role = NamespaceMemberRole.create(namespace_member: member, namespace_role: role)
 
             next if namespace_member_role.persisted?
 
@@ -47,7 +47,7 @@ module Namespaces
 
           check_last_admin_user(t)
 
-          new_roles = member.reload.member_roles
+          new_roles = member.reload.namespace_member_roles
 
           create_audit_event(new_roles, old_roles_for_audit_event, namespace)
 
@@ -64,7 +64,9 @@ module Namespaces
           entity: member,
           details: {
             old_roles: old_roles_for_audit_event,
-            new_roles: new_roles.map { |member_role| { id: member_role.role.id, name: member_role.role.name } },
+            new_roles: new_roles.map do |member_role|
+              { id: member_role.namespace_role.id, name: member_role.namespace_role.name }
+            end,
           },
           target: namespace
         )
@@ -73,9 +75,9 @@ module Namespaces
       def check_last_admin_user(t)
         return if member.namespace.owner?
 
-        unless member.namespace.roles
-                     .joins(:abilities, :member_roles)
-                     .exists?(abilities: { ability: :namespace_administrator })
+        unless member.namespace.namespace_roles
+                     .joins(:namespace_role_abilities, :namespace_member_roles)
+                     .exists?(namespace_role_abilities: { ability: :namespace_administrator })
           t.rollback_and_return! ServiceResponse.error(
             message: 'Cannot remove last administrator from namespace',
             error_code: :cannot_remove_last_administrator
