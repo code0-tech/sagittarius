@@ -9,10 +9,10 @@
     "export:erb": "node export-erb.mjs"
   },
   "devDependencies": {
-    "@react-email/ui": "6.9.1",
+    "@react-email/ui": "6.11.16",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "react-email": "6.9.1",
+    "react-email": "6.11.16",
     "react-dom": "19.2.4",
     "react": "19.2.4"
   }
