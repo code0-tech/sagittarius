@@ -10,6 +10,8 @@
 # that one. The exported ERB templates have one tag per value (see tooling/mails) and cannot drop
 # a row conditionally anyway.
 class UsageLimitMailer < ApplicationMailer
+  load_extension_views :ee
+
   # The react-email templates are complete mails.
   layout false
 
