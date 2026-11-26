@@ -3,6 +3,8 @@
 module AuditService
   module_function
 
+  include Code0::ZeroTrack::Loggable
+
   REQUIRED_EVENT_KEYS = %i[author_id entity_id entity_type details target_id target_type].freeze
 
   def audit(type, payload)
@@ -28,10 +30,14 @@ module AuditService
 
       raise InvalidAuditEvent, "Audit Event is missing the #{missing_keys} attributes" unless missing_keys.empty?
 
-      AuditEvent.create!(
+      event = AuditEvent.create!(
         action_type: type,
         **payload
       )
+
+      logger.info(message: 'Created audit event', action_type: type, **payload)
+
+      event
     end
   end
 
