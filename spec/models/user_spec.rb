@@ -26,6 +26,32 @@ RSpec.describe User do
 
     it { is_expected.to validate_length_of(:firstname).is_at_most(50) }
     it { is_expected.to validate_length_of(:lastname).is_at_most(50) }
+
+    describe 'password policy' do
+      subject(:user) { build(:user, password: password, enforce_password_policy: true) }
+
+      context 'when the password is compliant' do
+        let(:password) { 'Password123!' }
+
+        it { is_expected.to be_valid }
+      end
+
+      context 'when the password is weak' do
+        let(:password) { 'weak' }
+
+        it 'is invalid and reports the policy violations on the password' do
+          expect(user).not_to be_valid
+          expect(user.errors.where(:password).map(&:type))
+            .to include(:too_short, :no_uppercase, :no_number, :no_special_character)
+        end
+      end
+
+      context 'when the policy is not enforced' do
+        subject(:user) { build(:user, password: 'weak', enforce_password_policy: false) }
+
+        it { is_expected.to be_valid }
+      end
+    end
   end
 
   describe '#deletion_restriction' do

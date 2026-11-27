@@ -19,7 +19,7 @@ module Users
       end
 
       transactional do |t|
-        user = User.create(username: username, email: email, password: password)
+        user = User.create(username: username, email: email, password: password, enforce_password_policy: true)
         user.ensure_namespace
         unless user.persisted?
           return ServiceResponse.error(message: 'User is invalid', error_code: :invalid_user, details: user.errors)
