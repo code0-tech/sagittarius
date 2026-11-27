@@ -6,6 +6,9 @@ module Types
 
     authorize :read_namespace_member
 
+    # read_namespace_member delegates to Namespace#member?, which reads namespace_members.
+    authorization_preloads namespace: :namespace_members
+
     field :namespace, Types::NamespaceType, null: false, description: 'Namespace this member belongs to'
     field :user, Types::UserType, null: false, description: 'User this member belongs to'
 
@@ -19,5 +22,13 @@ module Types
 
     id_field NamespaceMember
     timestamps
+
+    def namespace
+      preload(:namespace)
+    end
+
+    def user
+      preload(:user)
+    end
   end
 end
