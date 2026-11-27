@@ -42,7 +42,7 @@ module Users
         unless email_verification_response.success?
           t.rollback_and_return! ServiceResponse.error(message: 'Failed to send verification email',
                                                        error_code: :email_verification_send_failed,
-                                                       details: email_verification_response.payload)
+                                                       details: email_verification_response.payload[:details])
         end
 
         AuditService.audit(
