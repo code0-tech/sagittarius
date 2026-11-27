@@ -31,6 +31,7 @@ Represents the available error responses
 | `IDENTITY_VALIDATION_FAILED` | Failed to validate the external identity |
 | `INCONSISTENT_NAMESPACE` | Resources are from different namespaces |
 | `INVALID_ATTACHMENT` | The attachment is invalid because of active model errors |
+| `INVALID_CURRENT_PASSWORD` | The provided current password is missing or incorrect |
 | `INVALID_DATA_TYPE` | The data type is invalid because of active model errors |
 | `INVALID_DATA_TYPE_LINK` | The data type link is invalid because of active model errors |
 | `INVALID_EXECUTION_RESULT` | The execution result is invalid because of active model errors |
